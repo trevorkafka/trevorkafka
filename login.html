@@ -1,0 +1,153 @@
+<head>
+	<title>Trevor Kafka - Academic Tutoring</title>
+	<link rel="stylesheet" href="style.css">
+	<link rel="shortcut icon" href="favicon.ico">
+
+	<!-- Google font stuff -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=block" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Freeman&display=block" rel="stylesheet">
+
+	<script type="text/javascript" src="script.js"></script>
+
+</head>
+
+<body>
+	<div class="navbar">
+		<div class="navbar-elements">
+			<a href="index.html">Trevor Kafka 🏠</a>
+			<a href="call.html">Call 📞</a>
+			<a href="login.html">Login 💯</a>
+		</div>
+	</div>
+	<div class="content">
+
+		<table>
+			<tr style="vertical-align: top">
+				<td style="width: calc(100%/3)">
+					<script type='text/javascript' src='https://app.tutorbird.com/Widget/v2/Login.ashx'></script>
+				</td>
+				<td>
+					<p>
+						Accounts are automatically created after submitting my registration form. Email me at <a href="mailto:tutor@trevorkafka.com">tutor@trevorkafka.com</a>. 
+						<span class="tooltip">
+							<button onclick="copyEmail('tooltip1')" onmouseout="outFunc('tooltip1')">
+								<span class="tooltiptext" id="tooltip1">Copy to clipboard</span>
+								<img src="copy.svg" width="10px">
+							</button> 
+						</span>
+						or sign up for a free introductory call with me here in order to get access to my registration form (registration is also free).
+					</p>
+
+					<p>If you are having trouble logging in and you haven't taken class with me in over a year, your account may have been archived. Please email me at at <a href="mailto:tutor@trevorkafka.com">tutor@trevorkafka.com</a>. 
+						<span class="tooltip">
+							<button onclick="copyEmail('tooltip2')" onmouseout="outFunc('tooltip2')">
+								<span class="tooltiptext" id="tooltip2">Copy to clipboard</span>
+								<img src="copy.svg" width="10px">
+							</button> 
+						</span>
+						to confirm availability and reactivate (I do this to prevent overbooking of appointments).
+					</p>
+					<div align="center" style="margin-top: 30px">
+						<img src="TK headshot 2.png">
+					</div>
+				</td>
+			</tr>
+		</table>
+		<details>
+			<summary class="red">Please note that I hold a strict 24-hour cancellation policy. (click for details)</summary>
+			<div style="background-color: #FFDCDC; border-radius: 10px">
+				<ul>
+					<li>The online registration system will not accept cancellations once the 24 hour window has passed.</li>
+					<li>Late-cancelled lessons (cancellations less than 24 hours in advance) are still billable.</li>
+					<li>Registrations can be made for classes up to 12 hours before a class start time. Please note that registrations made within 12-24 hours before a class start time cannot be cancelled online. If you make a registration in error when registering less than 24 hours in advance, email me immediately at <a href="mailto:tutor@trevorkafka.com">tutor@trevorkafka.com</a>
+						<span class="tooltip">
+							<button onclick="copyEmail('tooltip2')" onmouseout="outFunc('tooltip2')">
+								<span class="tooltiptext" id="tooltip2">Copy to clipboard</span>
+								<img src="copy.svg" width="10px">
+							</button> 
+						</span> 
+					or text me.</li>
+					<li>If you would like to make a reservation on shorter than 12 hours notice, please email me at <a href="mailto:tutor@trevorkafka.com">tutor@trevorkafka.com</a> 
+						<span class="tooltip">
+							<button onclick="copyEmail('tooltip3')" onmouseout="outFunc('tooltip3')">
+								<span class="tooltiptext" id="tooltip3">Copy to clipboard</span>
+								<img src="copy.svg" width="10px">
+							</button> 
+						</span> 
+					or text me to confirm availability. I cannot guarantee that my listed availability online is accurate with less than 12 hours notice, but I can make work what is possible.</li>
+					<li>Email reminders for appointments are automatically sent 36 hours in advance and SMS reminders (when opted-in) are sent 2 hours in advance. </li>
+					<li>Please make sure your contact information on your account is up-to-date and that notifications are on if you would like to receive reminders.</li>
+				</ul>
+				<p>
+					No-shows and late cancellations are truly my least favorite situations to encounter in the online teaching business, but it's a necessity in order for me to be able to keep teaching as a reliable and sustainable occupation, which is fundamentally what allows me to be able to provide teaching opportunities in the first place. 😊 Let's please work together to try to avoid late cancellation situations in the first place and we all will remain happy.
+				</p>
+			</div>
+		</details>
+		<details>
+			<summary>How do I enroll in automatic payments?</summary>
+			<div align="center"><img src="help - automatic payments.png"></div>
+		</details>
+		<details>
+			<summary>How do I make a one-time payment?</summary>
+			<div align="center"><img src="help - one time payment.png"></div>
+		</details>
+		<details>
+			<summary>How can I synchronize my class calendar with Google Calendar?</summary>
+			<div align="center"><img src="help - synchronize calendar.png"></div>
+		</details>
+		<details>
+			<summary>How do I register for a lesson?</summary>
+			<div align="center"><img src="help - register lesson.png"></div>
+		</details>
+		<details>
+			<summary>How do I cancel a lesson?</summary>
+			<div align="center"><img src="help - cancel lesson.png"></div>	
+		</details>
+
+	</div>
+	<script type="text/javascript">
+		// Script that makes sure that only one "details" panel can be opened at a time.
+		// Code source: https://stackoverflow.com/questions/16751345/automatically-close-all-the-other-details-tags-after-opening-a-specific-detai
+		
+		const All_Details = document.querySelectorAll('details');
+
+		All_Details.forEach(deet=>{
+		  deet.addEventListener('toggle', toggleOpenOneOnly)
+		})
+
+		function toggleOpenOneOnly(e) {
+		  if (this.open) {
+		    All_Details.forEach(deet=>{
+		      if (deet!=this && deet.open) deet.open = false
+		    });
+		  }
+		}
+	</script>
+</body>
+<footer align="center" style="background-color: #F2F2F2">
+	<div class="content" style="padding-top: 50px; padding-bottom: 30px;">
+		<table>
+			<tr>
+				<td><img src="TK portugal.png" alt="Trevor Kafka headshot in Portugal" style="width: 200px; margin-right: 20px;"></td>
+				<td align="center">
+					<p> Success for everyone is right around the corner. Take your first steps with me today. ~Trevor Kafka </p>
+
+					<p>
+						Contact me: <a href="mailto:tutor@trevorkafka.com">tutor@trevorkafka.com</a> 
+						<span class="tooltip">
+							<button onclick="copyEmail('tooltip0')" onmouseout="outFunc('tooltip0')">
+								<span class="tooltiptext" id="tooltip0">Copy to clipboard</span>
+								<img src="copy.svg" width="10px">
+							</button> 
+						</span>
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="index.html">Home</a> | <a href="call.html">Call</a> | <a href="login.html">Login</a>
+					</p>
+
+					<p style="color: grey">Please be aware that while tutoring can greatly enhance learning, specific outcomes cannot be guaranteed. However, I am committed to delivering high-quality tutoring services. It's important for students to actively engage and invest effort to attain their goals. I will provide you with the tools and guidance needed, but your dedication, hard work, and consistent practice are crucial for achieving success. Together, let's work towards your academic aspirations.</p>
+				</td>
+			</tr>
+		</table>
+	</div>
+</footer>

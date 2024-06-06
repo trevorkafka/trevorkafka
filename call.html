@@ -1,0 +1,104 @@
+<head>
+	<title>Trevor Kafka - Academic Tutoring</title>
+	<link rel="stylesheet" href="style.css">
+	<link rel="shortcut icon" href="favicon.ico">
+
+	<!-- Google font stuff -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=block" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Freeman&display=block" rel="stylesheet">
+
+	<script type="text/javascript" src="script.js"></script>
+
+</head>
+
+<body>
+	<div class="navbar">
+		<div class="navbar-elements">
+			<a href="index.html">Trevor Kafka 🏠</a>
+			<a href="call.html">Call 📞</a>
+			<a href="login.html">Login 💯</a>
+		</div>
+	</div>
+	<div class="content">
+		<h1>Reserve Your Free Introductory Call</h1>
+
+		<img src="TK indonesia.png" alt="Trevor Kafka headshot in Indonesia" style="float:left; margin-right: 50px; margin-bottom: 50px">
+		
+		<p>Your first step is to book a free 20-minute introductory call with me where we will discuss your current learning goals, current coursework to date (if applicable), the classes that I teach, how I can best help you, teaching methods, scheduling, billing, and anything else you'd like to discuss.</p>
+
+		<p>Register for your introductory call using the form below, and please keep in mind the following points:
+			<ul style="overflow:hidden"> <!-- overflow:hidden makes the bullets align up properly with respect to the float image -->
+				<li>Please note that introductory call times are only shown for the next 7 days.</li>
+				<li>If you do not see a time on the calendar that works for you, please reload this page at a later time. Availability is updated often.</li>
+			</ul>
+		</p>
+
+		<p>These sessions are free of charge. I'm looking forward to meeting you and helping YOU make a breakthrough in your own success! Want to connect via email beforehand? Email me at <a href="mailto:tutor@trevorkafka.com">tutor@trevorkafka.com</a>. 
+		<span class="tooltip">
+			<button onclick="copyEmail('tooltip1')" onmouseout="outFunc('tooltip1')">
+				<span class="tooltiptext" id="tooltip1">Copy to clipboard</span>
+				<img src="copy.svg" width="10px">
+			</button> 
+		</span> 
+		~Trevor Kafka </p>
+
+		<!-- OLD Calendly inline widget begin -->
+		<!-- <div class="calendly-inline-widget" style="min-width:320px;height:900px" data-url="https://calendly.com/trevor-kafka/20min"></div> -->
+		<!-- <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script> -->
+		<!-- OLD Calendly inline widget end -->
+		<!-- code to add to style above to make blurry: filter:grayscale(1) blur(3px); -->
+		<!-- div to put inside the above div in order to make it not-clickable: <div style="position: absolute; width: 100%; height:1200px; top: 0; left: 0; z-index:1;"></div> -->
+
+		<!-- NEW Calendly inline widget begin -->
+		<iframe src="https://calendly.com/trevor-kafka/20min?embed_domain=www.trevorkafka.com&amp;embed_type=Inline&hide_gdpr_banner=1" width="100%" height="100%" frameborder="0" title="Select a Date &amp; Time - Calendly"></iframe>
+		<!-- NEW Calendly inline widget end -->
+
+		<img src="breakthrough.jpg" width="100%" style="border-radius: 100px">
+
+	</div>
+	<script type="text/javascript">
+		// Script that makes sure that only one "details" panel can be opened at a time.
+		// Code source: https://stackoverflow.com/questions/16751345/automatically-close-all-the-other-details-tags-after-opening-a-specific-detai
+		
+		const All_Details = document.querySelectorAll('details');
+
+		All_Details.forEach(deet=>{
+		  deet.addEventListener('toggle', toggleOpenOneOnly)
+		})
+
+		function toggleOpenOneOnly(e) {
+		  if (this.open) {
+		    All_Details.forEach(deet=>{
+		      if (deet!=this && deet.open) deet.open = false
+		    });
+		  }
+		}
+	</script>
+</body>
+<footer align="center" style="background-color: #F2F2F2">
+	<div class="content" style="padding-top: 50px; padding-bottom: 30px;">
+		<table>
+			<tr>
+				<td><img src="TK portugal.png" alt="Trevor Kafka headshot in Portugal" style="width: 200px; margin-right: 20px;"></td>
+				<td align="center">
+					<p> Success for everyone is right around the corner. Take your first steps with me today. ~Trevor Kafka </p>
+
+					<p>
+						Contact me: <a href="mailto:tutor@trevorkafka.com">tutor@trevorkafka.com</a> 
+						<span class="tooltip">
+							<button onclick="copyEmail('tooltip0')" onmouseout="outFunc('tooltip0')">
+								<span class="tooltiptext" id="tooltip0">Copy to clipboard</span>
+								<img src="copy.svg" width="10px">
+							</button> 
+						</span>
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="index.html">Home</a> | <a href="call.html">Call</a> | <a href="login.html">Login</a>
+					</p>
+
+					<p style="color: grey">Please be aware that while tutoring can greatly enhance learning, specific outcomes cannot be guaranteed. However, I am committed to delivering high-quality tutoring services. It's important for students to actively engage and invest effort to attain their goals. I will provide you with the tools and guidance needed, but your dedication, hard work, and consistent practice are crucial for achieving success. Together, let's work towards your academic aspirations.</p>
+				</td>
+			</tr>
+		</table>
+	</div>
+</footer>
