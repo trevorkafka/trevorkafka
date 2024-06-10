@@ -47,10 +47,12 @@
 		<!-- <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script> -->
 		<!-- OLD Calendly inline widget end -->
 		<!-- code to add to style above to make blurry: filter:grayscale(1) blur(3px); -->
-		<!-- div to put inside the above div in order to make it not-clickable: <div style="position: absolute; width: 100%; height:1200px; top: 0; left: 0; z-index:1;"></div> -->
+		<!-- div to put inside the above div in order to make it not-clickable: <div style="width: 100%; height:1200px; top: 0; left: 0; z-index:1; pointer-events:none;"></div> -->
 
 		<!-- NEW Calendly inline widget begin -->
-		<iframe src="https://calendly.com/trevor-kafka/20min?embed_domain=www.trevorkafka.com&amp;embed_type=Inline&hide_gdpr_banner=1" width="100%" height="100%" frameborder="0" title="Select a Date &amp; Time - Calendly"></iframe>
+		<div style="width: 100%; height:1200px; top: 0; left: 0; z-index:1; pointer-events:none;">
+		<iframe style="filter:grayscale(1) blur(3px);" src="https://calendly.com/trevor-kafka/20min?embed_domain=www.trevorkafka.com&amp;embed_type=Inline&hide_gdpr_banner=1" width="100%" height="100%" frameborder="0" title="Select a Date &amp; Time - Calendly"></iframe>
+		</div>
 		<!-- NEW Calendly inline widget end -->
 
 		<img src="breakthrough.jpg" width="100%" style="border-radius: 100px">
