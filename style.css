@@ -40,7 +40,7 @@ body{
 }
 
 .navbar-elements{
-	width: 1000px;
+	width: min(1000px, 90vw);
 	margin: auto;
 }
 
@@ -57,7 +57,7 @@ body{
 }
 
 .content {
-	width: 1000px;
+	width: min(1000px, 90vw);
 	margin: auto;
 	margin-top: 100px;
 }
