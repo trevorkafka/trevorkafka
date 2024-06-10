@@ -1,16 +1,15 @@
-function copyEmail(tooltipId) {
-	
-	var copyText = "tutor@trevorkafka.com";
-	navigator.clipboard.writeText(copyText);
-
-	var tooltip = document.getElementById(tooltipId);
-	tooltip.innerHTML = "Copied: " + copyText;
-
+function setText(text) {
+	Array.from(document.getElementsByClassName("tooltiptext")).forEach(function (ele, index) {
+		ele.innerHTML = text;
+	}); 
 }
 
-function outFunc(tooltipId) {
+function copyEmail() {
+	var copyText = "tutor@trevorkafka.com";
+	navigator.clipboard.writeText(copyText);
+  setText("Copied: " + copyText);
+}
 
-  var tooltip = document.getElementById(tooltipId);
-  tooltip.innerHTML = "Copy to clipboard";
-
+function outFunc() {
+	setText("Copy to clipboard");
 }
