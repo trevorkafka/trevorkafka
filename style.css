@@ -58,10 +58,13 @@ body{
   font-family: Freeman;
 }
 
+.nav-spacer {
+	margin-top: 100px;  /* has narrowscreen override */
+}
+
 .content {
 	width: min(1000px, var(--widthmax));
 	margin: auto;
-	margin-top: 100px;  /* has narrowscreen override */
 }
 
 li, p {
@@ -278,7 +281,7 @@ table.timetable {
 		font-size: calc(32*(100vw/900));
 	}
 
-	.content {
+	.nav-spacer {
 		margin-top: calc(15px + 100*(100vw/900));
 	}
 }

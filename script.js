@@ -19,6 +19,7 @@ $('trevorkafka-nav').replaceWith(`
 			<a href="login.html">Login 💯</a>
 		</div>
 	</div>
+	<div class="nav-spacer"></div>
 	`)
 
 //replace <trevorkafka-footer> with footer code
