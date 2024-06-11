@@ -1,3 +1,7 @@
+//
+// SECTION 1: REPLACEMENTS
+//
+
 //replace <tutor-email> tag with code that will display email address with copy function and informational tooltip
 $('trevorkafka-email').replaceWith(`
 	<span class="tooltip">
@@ -5,25 +9,6 @@ $('trevorkafka-email').replaceWith(`
 		<span class="tooltiptext">Copy to clipboard</span>
 	</span>
 	`)
-
-//define function setText(text) that sets the all the tooltip texts to text
-function setText(text) {
-	Array.from(document.getElementsByClassName("tooltiptext")).forEach(function (ele, index) {
-		ele.innerHTML = text;
-	}); 
-}
-
-//define a function that both copies the email address and changes the tooltip text to notify that the email has been copied
-function copyEmail() {
-	var copyText = "tutor@trevorkafka.com";
-	navigator.clipboard.writeText(copyText);
-  setText("Copied: " + copyText);
-}
-
-//define a function that resets the tooltip text when the mouse is no longer hovering over the email address
-function outFunc() {
-	setText("Copy to clipboard");
-}
 
 //replace <trevorkafka-nav> with navigation bar code
 $('trevorkafka-nav').replaceWith(`
@@ -61,7 +46,7 @@ $('trevorkafka-footer').replaceWith(`
 			</table>
 		</div>
 		<div class="content narrowscreen" style="padding-top: 50px; padding-bottom: 30px;">
-			<img src="TK portugal.png" alt="Trevor Kafka headshot in Portugal" style="width: min(500px, 90vw); margin-right: 20px;">
+			<img src="TK portugal.png" alt="Trevor Kafka headshot in Portugal" style="width: 40vw">
 			<br><br>
 			<p> Success for everyone is right around the corner. Take your first steps with me today. ~Trevor Kafka </p>
 			<p>
@@ -79,8 +64,9 @@ $('trevorkafka-footer').replaceWith(`
 	</footer>
 	`)
 
+//replacements <trevorkafka-home-info1>
 $(`trevorkafka-home-info1`).replaceWith(`
-	<p style="font-size:500%; margin-bottom:-30px; font-family: Great Vibes">
+	<p style="font-size: min(80px, calc((80/600)*100vw)); margin-bottom:-10px; font-family: Great Vibes">
 		Trevor Kafka
 	</p>
 	<p>
@@ -310,8 +296,9 @@ $(`trevorkafka-home-info1`).replaceWith(`
 	</details>
 	`)
 
+//replacements <trevorkafka-home-info2>
 $(`trevorkafka-home-info2`).replaceWith(`
-	<img src="TK indonesia.png" alt="Trevor Kafka headshot in Indonesia" width="min(300px, 90vw)">
+	<img src="TK indonesia.png" alt="Trevor Kafka headshot in Indonesia" style="width: min(225px, 90vw)">
 	<div style="height:25px"></div>
 	<img src="arrows.png" width="200px" alt="downwards-pointing arrows">
 	<p><strong>Ready to make the change you've always dreamed of?</strong></p>
@@ -319,3 +306,45 @@ $(`trevorkafka-home-info2`).replaceWith(`
 		<div align="center">Schedule an intro call today!</div>
 	</a>
 	`)
+
+//
+// SECTION 2: SPECIFIC-USE FUNCTIONS
+//
+
+// Script that makes sure that only one "details" panel can be opened at a time.
+// Code source: https://stackoverflow.com/questions/16751345/automatically-close-all-the-other-details-tags-after-opening-a-specific-detai
+
+const All_Details = document.querySelectorAll('details');
+
+All_Details.forEach(deet=>{
+  deet.addEventListener('toggle', toggleOpenOneOnly)
+})
+
+function toggleOpenOneOnly(e) {
+  if (this.open) {
+    All_Details.forEach(deet=>{
+      if (deet!=this && deet.open) deet.open = false
+    });
+  }
+}
+
+// SECTION 2.1: EMAIL LINK TOOLTIP STUFF
+
+	//define function setText(text) that sets the all the tooltip texts to text
+	function setText(text) {
+		Array.from(document.getElementsByClassName("tooltiptext")).forEach(function (ele, index) {
+			ele.innerHTML = text;
+		}); 
+	}
+
+	//define a function that both copies the email address and changes the tooltip text to notify that the email has been copied
+	function copyEmail() {
+		var copyText = "tutor@trevorkafka.com";
+		navigator.clipboard.writeText(copyText);
+	  setText("Copied: " + copyText);
+	}
+
+	//define a function that resets the tooltip text when the mouse is no longer hovering over the email address
+	function outFunc() {
+		setText("Copy to clipboard");
+	}

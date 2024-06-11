@@ -2,6 +2,7 @@
 	<title>Login with Trevor Kafka - Academic Tutoring</title>
 
 	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width"> <!-- essential for making sure that the ACTUAL screen width is interpreted by the CSS as opposed to some idealized number presented by smartphones (980px+) -->	
 
 	<link rel="stylesheet" href="style.css">
 	<link rel="shortcut icon" href="favicon.ico">
@@ -21,34 +22,29 @@
 	<trevorkafka-nav></trevorkafka-nav>
 	<div class="content">
 		<h1>Login</h1>
-		<table style="margin-bottom: 50px">
-			<tr style="vertical-align: top">
-				<td style="width: calc(100%/3)">
-					<div>
-						<script type='text/javascript' src='https://app.tutorbird.com/Widget/v2/Login.ashx'></script>
-					</div>
-				</td>
-				<td>
-					<img src="TK headshot 2.png" width="200px" style="float:right; margin-left: 20px; margin-bottom: 20px;">
-					<p>
-						Accounts are automatically created after submitting my registration form. Email me at 							
-						<span class="tooltip">
-							<a onclick="copyEmail()" onmouseout="outFunc()">tutor@trevorkafka.com</a>
-							<span class="tooltiptext">Copy to clipboard</span>
-						</span>
-						or sign up for a <a href="call.html">free introductory call</a> with me here in order to get access to my registration form (registration is also free).
-					</p>
 
-					<p>If you are having trouble logging in and you haven't taken class with me in over a year, your account may have been archived. Please email me at at
-						<span class="tooltip">
-							<a onclick="copyEmail()" onmouseout="outFunc()">tutor@trevorkafka.com</a>
-							<span class="tooltiptext">Copy to clipboard</span>
-						</span>
-						to confirm availability and reactivate (I do this to prevent overbooking of appointments).
-					</p>
-				</td>
-			</tr>
-		</table>
+		<img src="TK headshot 2.png" width="200px" style="float:right; margin-left: 20px; margin-bottom: 20px;">
+		<p>
+			Accounts are automatically created after submitting my registration form. Email me at 							
+			<span class="tooltip">
+				<a onclick="copyEmail()" onmouseout="outFunc()">tutor@trevorkafka.com</a>
+				<span class="tooltiptext">Copy to clipboard</span>
+			</span>
+			or sign up for a <a href="call.html">free introductory call</a> with me here in order to get access to my registration form (registration is also free).
+		</p>
+
+		<p>If you are having trouble logging in and you haven't taken class with me in over a year, your account may have been archived. Please email me at at
+			<span class="tooltip">
+				<a onclick="copyEmail()" onmouseout="outFunc()">tutor@trevorkafka.com</a>
+				<span class="tooltiptext">Copy to clipboard</span>
+			</span>
+			to confirm availability and reactivate (I do this to prevent overbooking of appointments).
+		</p>
+
+		<div>
+			<script type='text/javascript' src='https://app.tutorbird.com/Widget/v2/Login.ashx'></script>
+		</div>
+		
 		<details>
 			<summary class="red">Please note that I hold a strict 24-hour cancellation policy. (click for details)</summary>
 			<div style="background-color: #FFDCDC; border-radius: 10px">
@@ -97,24 +93,7 @@
 		</details>
 
 	</div>
-	<script type="text/javascript">
-		// Script that makes sure that only one "details" panel can be opened at a time.
-		// Code source: https://stackoverflow.com/questions/16751345/automatically-close-all-the-other-details-tags-after-opening-a-specific-detai
-		
-		const All_Details = document.querySelectorAll('details');
-
-		All_Details.forEach(deet=>{
-		  deet.addEventListener('toggle', toggleOpenOneOnly)
-		})
-
-		function toggleOpenOneOnly(e) {
-		  if (this.open) {
-		    All_Details.forEach(deet=>{
-		      if (deet!=this && deet.open) deet.open = false
-		    });
-		  }
-		}
-	</script>
+	
 </body>
 
 <trevorkafka-footer></trevorkafka-footer>

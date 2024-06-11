@@ -1,7 +1,9 @@
+/* set variables for future use in the CSS */
 :root {
 	--defaultlink: #26AE90;
 	--hoverlink: #19705d;
 	--transitiontime: 0.2s;
+	--widthmax: 85vw; /* default max-width for main content */
 }
 
 html {
@@ -40,7 +42,7 @@ body{
 }
 
 .navbar-elements{
-	width: min(1000px, 90vw);
+	width: min(1000px, var(--widthmax));
 	margin: auto;
 }
 
@@ -48,18 +50,18 @@ body{
   float: left;
   display: block;
   text-align: center;
-  padding: 14px 50px 14px 0px;
+  padding: 14px 50px 14px 0px; /* has narrowscreen override */
   text-decoration: none;
   font-weight: bold;
-  font-size: 200%;
+  font-size: 200%; /* has narrowscreen override */
   color: black;
   font-family: Freeman;
 }
 
 .content {
-	width: min(1000px, 90vw);
+	width: min(1000px, var(--widthmax));
 	margin: auto;
-	margin-top: 100px;
+	margin-top: 100px;  /* has narrowscreen override */
 }
 
 li, p {
@@ -78,9 +80,9 @@ a:hover {
   color: var(--hoverlink);
 }
 
-.button div {
+.button div, .big-button div {
 	background-color: var(--defaultlink);
-	padding: 10px;
+	padding: 10px; /* has narrowscreen override */
 	border-radius: 10px;
 	box-shadow: 3px 3px 3px grey; /* right shift, down shift, blur */
 	color: white;
@@ -90,16 +92,10 @@ a:hover {
 	transition:background-color var(--transitiontime) ease-in-out; 
 }
 
+/* differences between .big-button div and .button div */
 .big-button div {
-	background-color: var(--defaultlink);
-	padding: 20px;
-	border-radius: 10px;
-	box-shadow: 3px 3px 3px grey; /* right shift, down shift, blur */
-	color: white;
+	padding: 20px; /* has narrowscreen override */
 	font-size: 200%;
-	font-weight: bold;
-	text-shadow: 1px 1px 2px black;
-	transition:background-color var(--transitiontime) ease-in-out; 
 }
 
 .button div:hover, .big-button div:hover {
@@ -116,7 +112,7 @@ td {
 
 blockquote { 
 	position: relative; 
-	padding: 1.5em 3em 0.5em 3em; 
+	padding: 1.5em 3em 0.5em 3em;  /* has narrowscreen override */
 	background: #0000000d; 
 	margin: 0 auto 30px; 
 	border-radius: 20px;
@@ -133,7 +129,7 @@ blockquote:before {
 }
 
 h1 {
-	margin-top: 50px;
+	margin-top: 50px;  /* has narrowscreen override */
 	margin-bottom: 20px;
 	font-family: freeman;
 	font-size: 300%;
@@ -148,10 +144,14 @@ details > div {
 	background-color: white; /* originally using #F3F3F3 */
 }
 
+.client-image {
+	width: min(150px, 15vw)
+}
+
 summary {
 	cursor: pointer;
 	list-style: none;
-	padding: 15px;
+	padding: 15px; /* has narrowscreen override */
 	color: #525252;
 	background-color: #f2f2f2;
 	transition:background-color var(--transitiontime) ease-in-out;
@@ -249,20 +249,36 @@ table.timetable {
   opacity: .9;
 }
 
-/*stuff that happens when the layout is wide */
-@media (min-width: 1000px) {
+/*overrides that happen when the layout is wide */
+/* apparently, the width inside the media query cannot be replaced by a variable :( */
+@media (width >= 900px) {
 	.narrowscreen{
 		display:none;
 	}
 }
 
-/* stuff that happens when the layout is narrow */
-@media (max-width: 1000px) {
+/* overrides that happen when the layout is narrow */
+/* apparently, the width inside the media query cannot be replaced by a variable :( */
+@media (width < 900px) {
 	.widescreen{
 		display:none;
 	}
 
-	summary{
-		padding: 30px;
+	blockquote{
+		font-size: 75%;
+		padding: 1.5em 1.5em 0.5em 3em; 
+	}
+
+	h1{
+		margin-top: 30px;
+	}
+
+	.navbar a {
+		padding: 14px calc(50*(100vw/900)) 14px 0px;
+		font-size: calc(32*(100vw/900));
+	}
+
+	.content {
+		margin-top: calc(15px + 100*(100vw/900));
 	}
 }
