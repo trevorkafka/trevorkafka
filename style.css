@@ -284,4 +284,8 @@ table.timetable {
 	.nav-spacer {
 		margin-top: calc(15px + 100*(100vw/900));
 	}
+
+	.announcement {
+		font-size: 80%
+	}
 }
