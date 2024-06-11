@@ -243,8 +243,9 @@ $(`trevorkafka-home-info1`).replaceWith(`
 			<td>&nbsp;</td>
 		</tr>
 		<tr>
+			<td></td>
 			<td class="available"></td>
-			<td colspan="7" style="text-align:left"> = classes generally offered </td>
+			<td colspan="6" style="text-align:left"> = classes generally offered </td>
 		</tr>
 	</table>
 		</div>
