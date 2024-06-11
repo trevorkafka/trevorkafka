@@ -1,5 +1,8 @@
 <head>
 	<title>Login with Trevor Kafka - Academic Tutoring</title>
+
+	<meta charset="utf-8">
+
 	<link rel="stylesheet" href="style.css">
 	<link rel="shortcut icon" href="favicon.ico">
 
@@ -9,18 +12,13 @@
 	<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=block" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Freeman&display=block" rel="stylesheet">
 
-	<script type="text/javascript" src="script.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> <!-- use JQuery -->
+	<script type="text/javascript" src="script.js" defer></script> <!-- defer means to wait to run the script until the whole page is ready -->
 
 </head>
 
 <body>
-	<div class="navbar">
-		<div class="navbar-elements">
-			<a href="index.html">Trevor Kafka 🏠</a>
-			<a href="call.html">Call 📞</a>
-			<a href="login.html">Login 💯</a>
-		</div>
-	</div>
+	<trevorkafka-nav></trevorkafka-nav>
 	<div class="content">
 		<h1>Login</h1>
 		<table style="margin-bottom: 50px">
@@ -38,7 +36,7 @@
 							<a onclick="copyEmail()" onmouseout="outFunc()">tutor@trevorkafka.com</a>
 							<span class="tooltiptext">Copy to clipboard</span>
 						</span>
-						or sign up for a free introductory call with me here in order to get access to my registration form (registration is also free).
+						or sign up for a <a href="call.html">free introductory call</a> with me here in order to get access to my registration form (registration is also free).
 					</p>
 
 					<p>If you are having trouble logging in and you haven't taken class with me in over a year, your account may have been archived. Please email me at at
@@ -118,26 +116,5 @@
 		}
 	</script>
 </body>
-<footer align="center" style="background-color: #F2F2F2">
-	<div class="content" style="padding-top: 50px; padding-bottom: 30px;">
-		<table>
-			<tr>
-				<td><img src="TK portugal.png" alt="Trevor Kafka headshot in Portugal" style="width: 200px; margin-right: 20px;"></td>
-				<td align="center">
-					<p> Success for everyone is right around the corner. Take your first steps with me today. ~Trevor Kafka </p>
 
-					<p>
-						Contact me:
-						<span class="tooltip">
-							<a onclick="copyEmail()" onmouseout="outFunc()">tutor@trevorkafka.com</a>
-							<span class="tooltiptext">Copy to clipboard</span>
-						</span>
-						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="index.html">Home</a> | <a href="call.html">Call</a> | <a href="login.html">Login</a>
-					</p>
-
-					<p style="color: grey">Please be aware that while tutoring can greatly enhance learning, specific outcomes cannot be guaranteed. However, I am committed to delivering high-quality tutoring services. It's important for students to actively engage and invest effort to attain their goals. I will provide you with the tools and guidance needed, but your dedication, hard work, and consistent practice are crucial for achieving success. Together, let's work towards your academic aspirations.</p>
-				</td>
-			</tr>
-		</table>
-	</div>
-</footer>
+<trevorkafka-footer></trevorkafka-footer>

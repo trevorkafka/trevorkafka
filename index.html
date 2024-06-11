@@ -1,13 +1,14 @@
 <!--
 To Do:
- (1) fiddle with javascript so that header and footer HTML can be in separate files and be applied to all pages
- (2) same thing as above with the email + copy button (and assignment of unique ids for the buttons and matching of those ids in the function calls)
+ (1) fiddle with javascript so that header and footer HTML can be in separate files and be applied to all pages ✅
+ (2) same thing as above with the email + copy button (and assignment of unique ids for the buttons and matching of those ids in the function calls) ✅
  (3) expand the call iframe based on the height of the content inside
  (4) smiling with teeth hoverover easter egg
 -->
 
 <head>
 	<title>Trevor Kafka - Academic Tutoring</title>
+
 	<link rel="stylesheet" href="style.css">
 	<link rel="shortcut icon" href="favicon.ico">
 
@@ -17,18 +18,13 @@ To Do:
 	<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=block" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Freeman&display=block" rel="stylesheet">
 
-	<script type="text/javascript" src="script.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> <!-- use JQuery -->
+	<script type="text/javascript" src="script.js" defer></script> <!-- defer means to wait to run the script until the whole page is ready -->
 
 </head>
 
 <body>
-	<div class="navbar">
-		<div class="navbar-elements">
-			<a href="index.html">Trevor Kafka 🏠</a>
-			<a href="call.html">Call 📞</a>
-			<a href="login.html">Login 💯</a>
-		</div>
-	</div>
+	<trevorkafka-nav></trevorkafka-nav>
 	<div class="content">
 
 		<h1>Individualized Online Academic Tutoring</h1>
@@ -37,250 +33,23 @@ To Do:
 
 		<iframe style="overflow-y: hidden; aspect-ratio:1.7765; border-radius:35px; margin: 20px 0px 20px 0px" width=100% src="https://www.youtube.com/embed/Dcrelp-pO2U?autoplay=1&mute=1&rel=0&modestbranding=1&hd=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-		<table class="top-align">
+		<table class="top-align widescreen">
 			<tr>
 				<td style="width: calc(200%/3);">
-					<p style="font-size:500%; margin-bottom:-30px; font-family: Great Vibes">
-						Trevor Kafka
-					</p>
-					<p>
-						Professional Online Tutor<br>
-						From United States<br>
-						Living in Boston, United States
-					</p>
-					<p>
-						<strong>Exams Taught:</strong> SAT, ACT, AP<br>
-						<strong>Levels Taught:</strong> Middle School &ndash; Adult<br>
-						<strong>Subjects:</strong> See <a href="#FAQ">FAQ</a> for full math and physics subject list.<br>
-						<strong>Contact email:</strong> 
-							<span class="tooltip">
-								<a onclick="copyEmail()" onmouseout="outFunc()">tutor@trevorkafka.com</a>
-								<span class="tooltiptext">Copy to clipboard</span>
-							</span>					
-						<br>
-					</p>
-
-					<details>
-						<summary>My Availability</summary>
-						<div align="center">
-							<table class="timetable tinytext">
-								<tr>
-									<td></td>
-									<td>Sun</td>
-									<td>Mon</td>
-									<td>Tue</td>
-									<td>Wed</td>
-									<td>Thu</td>
-									<td>Fri</td>
-									<td>Sat</td>
-								</tr>
-								<tr>
-									<td>08:00a</td>
-									<td></td>
-									<td class="available"></td>
-									<td class="available"></td>
-									<td class="available"></td>
-									<td class="available"></td>
-									<td></td>
-									<td></td>
-								</tr>
-								<tr>
-									<td>09:00a</td>
-									<td class="available"></td>
-									<td class="available"></td>
-									<td class="available"></td>
-									<td class="available"></td>
-									<td class="available"></td>
-									<td></td>
-									<td></td>
-								</tr>
-								<tr>
-									<td>10:00a</td>
-									<td class="available"></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-								</tr>
-								<tr>
-									<td>11:00a</td>
-									<td class="available"></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-								</tr>
-								<tr>
-									<td>12:00a</td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-								</tr>
-								<tr>
-									<td>01:00p</td>
-									<td class="available"></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-								</tr>
-								<tr>
-									<td>02:00p</td>
-									<td class="available"></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-								</tr>
-								<tr>
-									<td>03:00p</td>
-									<td class="available"></td>
-									<td class="available"></td>
-									<td class="available"></td>
-									<td class="available"></td>
-									<td class="available"></td>
-									<td></td>
-									<td></td>
-								</tr>
-								<tr>
-									<td>04:00p</td>
-									<td></td>
-									<td class="available"></td>
-									<td class="available"></td>
-									<td class="available"></td>
-									<td class="available"></td>
-									<td></td>
-									<td></td>
-								</tr>
-								<tr>
-									<td>05:00p</td>
-									<td></td>
-									<td class="available"></td>
-									<td class="available"></td>
-									<td class="available"></td>
-									<td class="available"></td>
-									<td></td>
-									<td></td>
-								</tr>
-								<tr>
-									<td>06:00p</td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-								</tr>
-								<tr>
-									<td>07:00p</td>
-									<td></td>
-									<td class="available"></td>
-									<td class="available"></td>
-									<td class="available"></td>
-									<td class="available"></td>
-									<td></td>
-									<td></td>
-								</tr>
-								<tr>
-									<td>08:00p</td>
-									<td></td>
-									<td class="available"></td>
-									<td class="available"></td>
-									<td class="available"></td>
-									<td class="available"></td>
-									<td></td>
-									<td></td>
-								</tr>
-								<tr>
-									<td>09:00p</td>
-									<td></td>
-									<td class="available"></td>
-									<td class="available"></td>
-									<td class="available"></td>
-									<td class="available"></td>
-									<td></td>
-									<td></td>
-								</tr>
-								<tr>
-									<td>&nbsp;</td>
-								</tr>
-								<tr>
-									<td class="available"></td>
-									<td colspan="7" style="text-align:left"> = classes generally offered </td>
-								</tr>
-							</table>
-						</div>
-						<div>
-							<ul>
-								<li>The above schedule is listed in US Eastern Time: UTC-4 or UTC-5 <a href="https://www.timeanddate.com/worldclock/converter.html?p1=43" target="_blank">depending on the time of the year</a>.</li>
-								<li>Classes must be scheduled at least 12h in advance of class time and may be cancelled or rescheduled up to 24h in advance of class time.
-								<li>All class scheduling and cancellations are managed through the student portal, accessed by registered students by <a href="login.html">logging in</a>.</li>
-								<li>No classes are offered June 14 through August 24, 2024.</li>
-							</ul>
-						</div>
-					</details>
-					<details>
-						<summary>My Education</summary>
-						<div>
-							✓ <strong>BS Physics</strong> from Brandeis University <br>
-							✓ <strong>BS Mathematics</strong> from Brandeis University <br>
-							✓ <strong>Magna Cum Laude</strong> recognition, <strong>GPA 3.9</strong> <br>
-						</div>
-					</details>
-					<details>
-						<summary>My Work Experience</summary>
-						<div>
-							✓ <strong>Professional Teacher</strong> since 2014 <br>
-							✓ <strong>Wellesley High School</strong> 2014-2016 <br>
-							✓ <strong>Boston Leadership Institute</strong> 2017-2018 <br>
-							✓ <strong>Shulman & Hill</strong> LLC 2017 <br>
-							✓ <strong>Self-employed tutoring</strong> 2015-now
-						</div>
-					</details>
-					<details>
-						<summary>My Credentials</summary>
-						<div>
-							✓ <strong>Highly experienced</strong> teacher and tutor (since 2014). <br>
-							✓ <strong>Highly experienced</strong> with online instruction (since summer 2019). <br>
-							✓ <strong>Highly enthusiastic</strong> about teaching YOU! <br>
-							✓ <strong><a href="https://www.polyglotassociation.org/members/trevor-kafka">Certified HYPIA Polyglot</a></strong> speaking 8 languages, and always learning more!
-						</div>
-					</details>
-					<details>
-						<summary>My Languages</summary>
-						<div>
-							<p>I love learning languages and am always spending time either practicing ones I've been learning for a while or exploring new ones.</p>
-
-							<p>Aside from being a native English speaker, my learned languages are Español (Spanish), Français (French), 汉语 (Mandarin), 日本語 (Japanese), 粵語 (Cantonese), Nederlands (Dutch), and ภาษาไทย (Thai), along with occasional dabbling in Tiếng Việt (Vietnamese) and Deutsch (German).</p>
-
-							<p>You can check out more information on my <a href="https://www.polyglotassociation.org/members/trevor-kafka">HYPIA profile</a>.</p>
-						</div>
-					</details>
+					<trevorkafka-home-info1></trevorkafka-home-info1>
 				</td>
 				<td align="center">
-					<img src="TK indonesia.png" alt="Trevor Kafka headshot in Indonesia" width="100%">
-					<div style="height:25px"></div>
-					<img src="arrows.png" width="200px" alt="downwards-pointing arrows">
-					<p><strong>Ready to make the change you've always dreamed of?</strong></p>
-					<a href="call.html" class="button">
-						<div align="center">Schedule an intro call today!</div>
-					</a>
+					<trevorkafka-home-info2></trevorkafka-home-info2>
 				</td>
 			</tr>
 		</table>
+
+		<div class="narrowscreen">
+			<trevorkafka-home-info1></trevorkafka-home-info1> <br>
+			<div align="center" style="margin:auto">
+				<trevorkafka-home-info2></trevorkafka-home-info2>
+			</div>
+		</div>		
 
 		<h1>About Me</h1>
 
@@ -390,7 +159,6 @@ To Do:
 		<details>
 			<summary>What platform do you use for your online classes?</summary>
 			<div style="overflow:auto;">
-				<img src="zoom.png" style="float:left; margin-right:10px">
 				<p><a href="zoom.us">Zoom</a> is my preferred internet communication tool for my tutoring sessions. After <a href="login.html">registering</a> for a tutoring session with me, you will receive a class reminder email with a Zoom link for class 36 hours in advance of your appointment start time.</p>
 			</div>
 		</details>
@@ -433,12 +201,7 @@ To Do:
 		<details>
 			<summary>Do you have references?</summary>
 			<div>
-				<p>Yes! However, references change often in order to stay most up to date, so please email me directly at
-					<span class="tooltip">
-						<a onclick="copyEmail()" onmouseout="outFunc()">tutor@trevorkafka.com</a>
-						<span class="tooltiptext">Copy to clipboard</span>
-					</span>
-				for my current references.</p>
+				<p>Yes! However, references change often in order to stay most up to date, so please email me directly at <trevorkafka-email></trevorkafka-email> for my current references.</p>
 			</div>
 		</details>
 		<details>
@@ -464,9 +227,7 @@ To Do:
 				</span><br>
 			Please begin by scheduling a free <a href="call.html">20-minute introductory video call</a> with me so that we can touch base about your current situation and how I can best help you.</p>
 
-			<p>If you'd like to skip the 20-minute introductory call, it is also possible to directly schedule your first session by emailing me at 
-				<span class="tooltip">
-					<a onclick="copyEmail()" onmouseout="outFunc()">tutor@trevorkafka.com</a><span class="tooltiptext">Copy to clipboard</span></span>. <!-- this stuff here must stay on one line or else an extra space will appear between the email and the ending period. -->
+			<p>If you'd like to skip the 20-minute introductory call, it is also possible to directly schedule your first session by emailing me at <trevorkafka-email></trevorkafka-email> and letting me know your availability.
 			</p>
 		</div>
 		<br>
@@ -499,27 +260,7 @@ To Do:
 		  }
 		}
 	</script>
+
 </body>
-<footer align="center" style="background-color: #F2F2F2">
-	<div class="content" style="padding-top: 50px; padding-bottom: 30px;">
-		<table>
-			<tr>
-				<td><img src="TK portugal.png" alt="Trevor Kafka headshot in Portugal" style="width: 200px; margin-right: 20px;"></td>
-				<td align="center">
-					<p> Success for everyone is right around the corner. Take your first steps with me today. ~Trevor Kafka </p>
 
-					<p>
-						Contact me:
-						<span class="tooltip">
-							<a onclick="copyEmail()" onmouseout="outFunc()">tutor@trevorkafka.com</a>
-							<span class="tooltiptext">Copy to clipboard</span>
-						</span>
-						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="index.html">Home</a> | <a href="call.html">Call</a> | <a href="login.html">Login</a>
-					</p>
-
-					<p style="color: grey">Please be aware that while tutoring can greatly enhance learning, specific outcomes cannot be guaranteed. However, I am committed to delivering high-quality tutoring services. It's important for students to actively engage and invest effort to attain their goals. I will provide you with the tools and guidance needed, but your dedication, hard work, and consistent practice are crucial for achieving success. Together, let's work towards your academic aspirations.</p>
-				</td>
-			</tr>
-		</table>
-	</div>
-</footer>
+<trevorkafka-footer></trevorkafka-footer>

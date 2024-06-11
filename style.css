@@ -71,6 +71,7 @@ a {
 	color: var(--defaultlink);
 	text-decoration:none;
 	transition:color var(--transitiontime) ease-in-out; 
+	font-size: inherit;
 }
 
 a:hover {
@@ -151,7 +152,6 @@ summary {
 	cursor: pointer;
 	list-style: none;
 	padding: 15px;
-	font-weight: bold;
 	color: #525252;
 	background-color: #f2f2f2;
 	transition:background-color var(--transitiontime) ease-in-out;
@@ -209,12 +209,11 @@ table.timetable {
 
 .tooltip {
   position: relative;
-  display: inline-block;
+  /* display: inline-block; */ /* this caused weird sizing things, not sure why this was here */
 }
 
 .tooltip .tooltiptext {
   visibility: hidden;
-  width: 140px;
   background-color: #555;
   color: #fff;
   text-align: center;
@@ -248,4 +247,22 @@ table.timetable {
 .tooltip:hover .tooltiptext {
   visibility: visible;
   opacity: .9;
+}
+
+/*stuff that happens when the layout is wide */
+@media (min-width: 1000px) {
+	.narrowscreen{
+		display:none;
+	}
+}
+
+/* stuff that happens when the layout is narrow */
+@media (max-width: 1000px) {
+	.widescreen{
+		display:none;
+	}
+
+	summary{
+		padding: 30px;
+	}
 }
