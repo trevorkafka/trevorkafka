@@ -70,7 +70,8 @@ $('trevorkafka-footer').replaceWith(`
 					<a onclick="copyEmail()" onmouseout="outFunc()">tutor@trevorkafka.com</a>
 					<span class="tooltiptext">Copy to clipboard</span>
 				</span>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="index.html">Home</a> | <a href="call.html">Call</a> | <a href="login.html">Login</a>
+				<br>
+				<a href="index.html">Home</a> | <a href="call.html">Call</a> | <a href="login.html">Login</a>
 			</p>
 
 			<p style="color: grey">Please be aware that while tutoring can greatly enhance learning, specific outcomes cannot be guaranteed. However, I am committed to delivering high-quality tutoring services. It's important for students to actively engage and invest effort to attain their goals. I will provide you with the tools and guidance needed, but your dedication, hard work, and consistent practice are crucial for achieving success. Together, let's work towards your academic aspirations.</p>
