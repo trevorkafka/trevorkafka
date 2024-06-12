@@ -1,15 +1,20 @@
 /* set variables for future use in the CSS */
 :root {
-	--defaultlink: #26AE90;
-	--hoverlink: #19705d;
+	--defaultlink: #d46a53;
+	--hoverlink: #FB7F64;
 	--transitiontime: 0.2s;
 	--widthmax: 85vw; /* default max-width for main content */
+	--color1: #3C303E;
+	--color2: #FB7F64;
+	--color3: #F5EEE2;
+	--color4: #C6B895;
 }
 
 html {
   scroll-behavior: smooth;
   margin: 0;
   padding: 0;
+  background-color: var(--color3);
 }
 
 .great-vibes-regular {
@@ -34,10 +39,10 @@ body{
 .navbar {
 	overflow: hidden;
 	position: fixed;
-	background-color: #FFFFFF;
+	background-color: var(--color3);
 	top: 0;
 	width: 100%;
-	box-shadow: 1px 1px 10px lightgrey; /* right shift, down shift, blur */
+	box-shadow: 1px 1px 10px grey; /* right shift, down shift, blur */
 	z-index: 100;
 }
 
@@ -54,7 +59,7 @@ body{
   text-decoration: none;
   font-weight: bold;
   font-size: 200%; /* has narrowscreen override */
-  color: black;
+  color: var(--color1);
   font-family: Freeman;
 }
 
@@ -70,6 +75,7 @@ body{
 li, p {
 	line-height: 1.5;
 	margin-top: 0px;
+	color: var(--color1);
 }
 
 a {
@@ -80,7 +86,7 @@ a {
 }
 
 a:hover {
-  color: var(--hoverlink);
+  color: var(--hoverlink	);
 }
 
 .button div, .big-button div {
@@ -140,15 +146,15 @@ h1 {
 	margin-bottom: 20px;
 	font-family: freeman;
 	font-size: 300%;
+	color: var(--color1);
 }
 
 details {
-	border: 2px solid white;
+	border-bottom: 2px solid var(--color3);
 }
 
 details > div {
 	padding: 15px;
-	background-color: white; /* originally using #F3F3F3 */
 }
 
 .client-image {
@@ -160,25 +166,41 @@ summary {
 	cursor: pointer;
 	list-style: none;
 	padding: 15px; /* has narrowscreen override */
-	color: #525252;
-	background-color: #f2f2f2;
+	color: var(-color1);
+	background-color: var(--color4);
 	transition:background-color var(--transitiontime) ease-in-out;
 	border-radius: 10px;
+	font-weight: bold;
 }
 
 summary.red{
 	background-color: #FFBABA;
 	border-radius: 10px;
+	border-style: solid;
+	border-color: darkred;
+	color: darkred;
 }
 
 summary:hover {
-	background-color: #E8E8E8;
+	background-color: #d1c9b4;
 	border-radius: 10px;
 }
 
 summary.red:hover {
 	background-color: #FFACAC;
 	border-radius: 10px;
+}
+
+footer {
+	background-color: var(--color1);
+}
+
+footer p {
+	color: var(--color3);
+}
+
+footer p.minortext {
+	color: var(--color4);
 }
 
 .label {
@@ -209,7 +231,7 @@ table.timetable {
 }
 
 .available {
-	background-color: #D9EAD3;
+	background-color: #b2cca9;
 }
 
 

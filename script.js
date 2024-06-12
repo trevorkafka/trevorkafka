@@ -24,7 +24,7 @@ $('trevorkafka-nav').replaceWith(`
 
 //replace <trevorkafka-footer> with footer code
 $('trevorkafka-footer').replaceWith(`
-	<footer align="center" style="background-color: #F2F2F2">
+	<footer align="center">
 		<div class="content widescreen" style="padding-top: 50px; padding-bottom: 30px;">
 			<table>
 				<tr>
@@ -41,7 +41,7 @@ $('trevorkafka-footer').replaceWith(`
 							&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a href="index.html">Home</a> | <a href="call.html">Call</a> | <a href="login.html">Login</a>
 						</p>
 
-						<p style="color: grey">Please be aware that while tutoring can greatly enhance learning, specific outcomes cannot be guaranteed. However, I am committed to delivering high-quality tutoring services. It's important for students to actively engage and invest effort to attain their goals. I will provide you with the tools and guidance needed, but your dedication, hard work, and consistent practice are crucial for achieving success. Together, let's work towards your academic aspirations.</p>
+						<p class="minortext">Please be aware that while tutoring can greatly enhance learning, specific outcomes cannot be guaranteed. However, I am committed to delivering high-quality tutoring services. It's important for students to actively engage and invest effort to attain their goals. I will provide you with the tools and guidance needed, but your dedication, hard work, and consistent practice are crucial for achieving success. Together, let's work towards your academic aspirations.</p>
 					</td>
 				</tr>
 			</table>
@@ -60,7 +60,7 @@ $('trevorkafka-footer').replaceWith(`
 				<a href="index.html">Home</a> | <a href="call.html">Call</a> | <a href="login.html">Login</a>
 			</p>
 
-			<p style="color: grey">Please be aware that while tutoring can greatly enhance learning, specific outcomes cannot be guaranteed. However, I am committed to delivering high-quality tutoring services. It's important for students to actively engage and invest effort to attain their goals. I will provide you with the tools and guidance needed, but your dedication, hard work, and consistent practice are crucial for achieving success. Together, let's work towards your academic aspirations.</p>
+			<p class="minortext">Please be aware that while tutoring can greatly enhance learning, specific outcomes cannot be guaranteed. However, I am committed to delivering high-quality tutoring services. It's important for students to actively engage and invest effort to attain their goals. I will provide you with the tools and guidance needed, but your dedication, hard work, and consistent practice are crucial for achieving success. Together, let's work towards your academic aspirations.</p>
 		</div>
 	</footer>
 	`)
@@ -311,10 +311,10 @@ $('trevorkafka-home-info2').replaceWith(`
 
 //replacements <trevorkafka-announcement>
 $('trevorkafka-announcement').replaceWith(`
-	<div class="announcement" style="background-color:#e3fad4; padding: 15px; text-align: center">
+	<div class="announcement" style="background-color:#e3fad4; padding: 15px; text-align: center; border-radius: 10px; border-style: solid; border-color: var(--color1)">
 		<p style="margin-bottom: 0px"><strong>A pause for the summer:</strong> My last day for tutoring sessions in the 2023-2024 school year will be Thursday June 13, 2024.
 		Tutoring sessions and introductory calls will resume on Sunday August 25, 2024. Please contact me by email if you would like references for tutors available over the summer: <span class="tooltip">
-		<a onclick="copyEmail()" onmouseout="outFunc()">tutor@trevorkafka.com</a><span class="tooltiptext">Copy to clipboard</span></span></p>
+		<a onclick="copyEmail()" onmouseout="outFunc()">tutor@trevorkafka.com.</a><span class="tooltiptext">Copy to clipboard</span></span> ~Trevor Kafka</p>
 	</div>
 	`)
 
