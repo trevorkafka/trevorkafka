@@ -312,11 +312,9 @@ $('trevorkafka-home-info2').replaceWith(`
 //replacements <trevorkafka-announcement>
 $('trevorkafka-announcement').replaceWith(`
 	<div class="announcement" style="background-color:#e3fad4; padding: 15px; text-align: center">
-		<strong>A pause for the summer:</strong> My last day for tutoring sessions in the 2023-2024 school year will be Thursday June 13, 2024.
+		<p style="margin-bottom: 0px"><strong>A pause for the summer:</strong> My last day for tutoring sessions in the 2023-2024 school year will be Thursday June 13, 2024.
 		Tutoring sessions and introductory calls will resume on Sunday August 25, 2024. Please contact me by email if you would like references for tutors available over the summer: <span class="tooltip">
-		<a onclick="copyEmail()" onmouseout="outFunc()">tutor@trevorkafka.com</a>
-		<span class="tooltiptext">Copy to clipboard</span>
-	</span>
+		<a onclick="copyEmail()" onmouseout="outFunc()">tutor@trevorkafka.com</a><span class="tooltiptext">Copy to clipboard</span></span></p>
 	</div>
 	`)
 
@@ -340,6 +338,26 @@ function toggleOpenOneOnly(e) {
     });
   }
 }
+
+// Script that makes "read more" links in the blockquote section
+
+$(document).ready(function() {
+    var max = 200;
+    $(".readMore").each(function() {
+        var str = $(this).text();
+        if (str.length > max) {
+            var subStr = str.substring(0, max);
+            var hiddenStr = str.substring(max, str.length);
+            $(this).empty().html(subStr);
+            $(this).append('<a href="javascript:void(0);" class="link">...read more.</a>');
+            $(this).append('<span class="addText">' + hiddenStr + '</span>');
+        }
+    });
+    $(".link").click(function() {
+        $(this).siblings(".addText").contents().unwrap();
+        $(this).remove();
+    });
+});
 
 // SECTION 2.1: EMAIL LINK TOOLTIP STUFF
 

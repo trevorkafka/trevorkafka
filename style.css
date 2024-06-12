@@ -113,6 +113,10 @@ td {
 	padding: 10px;
 }
 
+[class*="blockquote"] td { /* this is in order to hit any parent element that has blockquote as one of the classes, potentialy among others */
+	padding: 0px;
+}
+
 blockquote { 
 	position: relative; 
 	padding: 1.5em 3em 0.5em 3em;  /* has narrowscreen override */
@@ -148,7 +152,8 @@ details > div {
 }
 
 .client-image {
-	width: min(150px, 15vw)
+	width: min(150px, 15vw);
+	padding-right: 10px;
 }
 
 summary {
@@ -252,6 +257,10 @@ table.timetable {
   opacity: .9;
 }
 
+.readMore .addText {
+    display: none;
+}
+
 /*overrides that happen when the layout is wide */
 /* apparently, the width inside the media query cannot be replaced by a variable :( */
 @media (width >= 900px) {
@@ -268,7 +277,6 @@ table.timetable {
 	}
 
 	blockquote{
-		font-size: 75%;
 		padding: 1.5em 1.5em 0.5em 3em; 
 	}
 
