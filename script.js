@@ -254,7 +254,7 @@ $('trevorkafka-home-info1').replaceWith(`
 		</div>
 		<div>
 			<ul>
-				<li>The above schedule is listed in US Eastern Time: UTC-4 or UTC-5 <a href="https://www.timeanddate.com/worldclock/converter.html?p1=43" target="_blank">depending on the time of the year</a>.</li>
+				<li>The above schedule is listed in Boston time / US Eastern Time: UTC-4 or UTC-5 <a href="https://www.timeanddate.com/worldclock/converter.html?p1=43" target="_blank">depending on the time of the year</a>.</li>
 				<li>Classes must be scheduled at least 12h in advance of class time and may be cancelled or rescheduled up to 24h in advance of class time.
 				<li>All class scheduling and cancellations are managed through the student portal, accessed by registered students by <a href="login.html">logging in</a>.</li>
 				<li>No classes are offered June 14 through August 24, 2024.</li>
