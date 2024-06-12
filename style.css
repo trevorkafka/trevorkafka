@@ -15,6 +15,7 @@ html {
   margin: 0;
   padding: 0;
   background-color: var(--color3);
+  color: var(--color1);
 }
 
 .great-vibes-regular {
@@ -49,13 +50,15 @@ body{
 .navbar-elements{
 	width: min(1000px, var(--widthmax));
 	margin: auto;
+	padding-top: 14px;
+	padding-bottom: 14px;
 }
 
 .navbar a {
   float: left;
   display: block;
   text-align: center;
-  padding: 14px 50px 14px 0px; /* has narrowscreen override */
+  /* padding: 14px 50px 14px 0px; /* has narrowscreen override */
   text-decoration: none;
   font-weight: bold;
   font-size: 200%; /* has narrowscreen override */
@@ -70,6 +73,18 @@ body{
 .content {
 	width: min(1000px, var(--widthmax));
 	margin: auto;
+}
+
+.full-width-media {
+	width: min(1000px, var(--widthmax)); /* has narrowscreen override */
+	border-radius: 35px; /* has narrowscreen override */
+}
+
+.flexcontainer {
+	display:flex;
+	flex-wrap: wrap;
+	justify-content: space-around;
+	gap: 20px;
 }
 
 li, p {
@@ -298,6 +313,11 @@ table.timetable {
 		display:none;
 	}
 
+	.full-width-media {
+		width: 100%;
+		border-radius: 0px;
+	}
+
 	blockquote{
 		padding: 1.5em 1.5em 0.5em 3em; 
 	}
@@ -307,7 +327,7 @@ table.timetable {
 	}
 
 	.navbar a {
-		padding: 14px calc(50*(100vw/900)) 14px 0px;
+		/* padding: 14px calc(50*(100vw/900)) 14px 0px; */
 		font-size: calc(32*(100vw/900));
 	}
 

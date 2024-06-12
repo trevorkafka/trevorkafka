@@ -13,10 +13,12 @@ $('trevorkafka-email').replaceWith(`
 //replace <trevorkafka-nav> with navigation bar code
 $('trevorkafka-nav').replaceWith(`
 	<div class="navbar">
-		<div class="navbar-elements">
-			<a href="index.html">Trevor Kafka 🏠</a>
-			<a href="call.html">Call 📞</a>
-			<a href="login.html">Login 💯</a>
+		<div class="navbar-elements" style="justify-content: space-evenly">
+			<div class="flexcontainer">
+				<a href="index.html">Trevor Kafka 🏠</a>
+				<a href="call.html">Call 📞</a>
+				<a href="login.html">Login 💯</a>
+			</div>
 		</div>
 	</div>
 	<div class="nav-spacer"></div>
@@ -311,7 +313,7 @@ $('trevorkafka-home-info2').replaceWith(`
 
 //replacements <trevorkafka-announcement>
 $('trevorkafka-announcement').replaceWith(`
-	<div class="announcement" style="background-color:#e3fad4; padding: 15px; text-align: center; border-radius: 10px; border-style: solid; border-color: var(--color1)">
+	<div class="announcement" style="background: #0000000d; padding: 15px; text-align: center; border-radius: 10px; border-style: solid; border-color: var(--color1)">
 		<p style="margin-bottom: 0px"><strong>A pause for the summer:</strong> My last day for tutoring sessions in the 2023-2024 school year will be Thursday June 13, 2024.
 		Tutoring sessions and introductory calls will resume on Sunday August 25, 2024. Please contact me by email if you would like references for tutors available over the summer: <span class="tooltip">
 		<a onclick="copyEmail()" onmouseout="outFunc()">tutor@trevorkafka.com.</a><span class="tooltiptext">Copy to clipboard</span></span> ~Trevor Kafka</p>
