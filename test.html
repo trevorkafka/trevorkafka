@@ -1,0 +1,90 @@
+<head>
+	<title>Trevor Kafka - Academic Tutoring</title>
+
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width"> <!-- essential for making sure that the ACTUAL screen width is interpreted by the CSS as opposed to some idealized number presented by smartphones (980px+) -->
+
+	<link rel="stylesheet" href="style.css">
+	<link rel="shortcut icon" href="favicon.ico">
+
+	<!-- Google font stuff -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=block" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Freeman&display=block" rel="stylesheet">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> <!-- use JQuery -->
+	<script type="text/javascript" src="script.js" defer></script> <!-- defer means to wait to run the script until the whole page is ready -->
+	<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.js"></script> <!-- use Masonry JS from https://masonry.desandro.com/ -->
+	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script> <!-- use MathJax -->
+	<script id="MathJax-script" defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script> <!-- use MathJax, set to defer instead of async in order to prevent some typesetting errors -->
+
+</head>
+
+<body>
+	<trevorkafka-nav></trevorkafka-nav>
+	<div class="content">
+
+		<trevorkafka-announcement></trevorkafka-announcement>
+
+		<div style="padding-bottom: 20px"></div> 	
+
+		<!-- actual content -->
+
+		<h1>Logarithms</h1>
+	  	<p>
+	    	In this section, $a$ and $b$ represent positive real numbers. $b$ is referred to as "the base" and we restrict $b\neq 1$.
+	  	</p>
+
+		<div>
+			<div class="grid">
+				<div>
+					<strong>Definition.</strong> Logarithims ($\log$) form a family of functions of various bases defined so that the following two forms are equivalent and convey the same information. 
+					<h3>Exponential Form</h3>
+					$$a^b = c$$
+					$$\text{“$a$ to the $b$ equals $c$"}$$
+					<h3>Logarithmic Form</h3>
+					$$\log_b c = a$$
+					$$\text{“$\log$ base $b$ of $c$ equals $a$"}$$
+				</div>
+				<div>$$\log_b xy = \log_b x + \log_b y$$ $$\text{ for $x,y>0$}$$</div>
+				<div>$$\log_b \left( \frac{x}{y} \right) = \log_b x - \log_b y$$ $$\text{ for $x,y>0$}$$</div>
+				<div><h3>Domain and Range</h3> $y=\log_b x$ has a domain of $(0,\infty)$ and range of $(-\infty, \infty)$. Of important note, $\log_b x$ is undefined for any value of $x$ such that $x \leq 0$.</div>
+				<div>$$\log_b 1 = 0$$</div>
+				<div>$$\log_b (x^y) = y \log_b x$$ $$\text{ for $x>0$}$$</div>
+				<div><h3>Change of Base Rule</h3>$$\log_{b_1} x = \frac{\log_{b_2} x }{\log_{b_2} b_1}$$ $$\text{for $x > 0$}$$</div>
+				<div><h3>Logarithms as Inverses</h3> $$ \cancel b^{\cancel{\log_b} x} = x \text{ for $x > 0$}$$ $$\bcancel \log_b {\bcancel b}^x = x \text{ for all $x$}$$ In other words, if $f(x) = b^x$, then the inverse function is $f^{-1}(x) = \log_b x$.</div>
+				<div><h3>Special Notation</h3> $$\log x \text{ means } \log_{10} x$$ $$\ln x \text{ means } \log_e x$$ $	e \approx 2.718281828$ (Euler's number)</div>
+			</div>
+		</div>
+
+		<!-- masonry stuff -->
+
+		<style type="text/css">
+			.grid {
+				width: 100%;
+				margin: auto;
+			}
+			.grid > div {
+				padding: 15px;
+				box-sizing: border-box;
+				background-color: #0000000d;
+				border-radius: 20px;
+				float: left;	
+				width: 300;
+				border: solid var(--color1);
+				margin-bottom: 20px;
+			}
+
+			.grid > div > h3 {
+				text-align: center;
+				margin-top: 10px;
+				margin-bottom: 10px;
+			}
+		</style>
+
+	</div>
+	<div style="padding-bottom: 20px"></div>
+</body>
+
+<trevorkafka-footer></trevorkafka-footer>

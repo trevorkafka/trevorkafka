@@ -361,6 +361,38 @@ $(document).ready(function() {
     });
 });
 
+// //MathJax setup
+// 	window.MathJax = {
+// 	  tex: {
+// 	    inlineMath: [['$', '$'], ['\\(', '\\)']]
+// 	  }
+// 	};
+
+//Masonry setup
+	$('.grid').masonry({
+		itemSelector: '.grid > div',
+		columnWidth: 300,
+		gutter: 20,
+		fitWidth: true,
+		transitionDuration: 0
+	});
+
+//adds some mathjax command and, importantly, refreshes Masonry layout once mathjax is fully loaded
+window.MathJax = {
+	tex: {
+	    inlineMath: [['$', '$'], ['\\(', '\\)']]
+	  },
+  startup: {
+    ready: () => {
+      MathJax.startup.defaultReady();
+      MathJax.startup.promise.then(() => {
+      	refresh = setInterval("$('.grid').masonry()",100);
+      	setTimeout("clearInterval(refresh)", 1000); //workaround: performs ten refreshes spaced apart by 100ms in order to enusre that the masonry layout is adjusted in accordance with the completed mathjax rendering
+      });
+    }
+  }
+};
+
 // SECTION 2.1: EMAIL LINK TOOLTIP STUFF
 
 	//define function setText(text) that sets the all the tooltip texts to text
