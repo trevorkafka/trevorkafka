@@ -1,7 +1,8 @@
 <head>
-	<title>Login with Trevor Kafka - Academic Tutoring</title>
 
-	<meta charset="utf-8">
+	<title>Login for Trevor Kafka - Academic Tutoring</title>
+
+	<meta charset="utf-8"> <!--ensures that there aren't any issues with the display of emojis -->
 	<meta name="viewport" content="width=device-width"> <!-- essential for making sure that the ACTUAL screen width is interpreted by the CSS as opposed to some idealized number presented by smartphones (980px+) -->	
 
 	<link rel="stylesheet" href="style.css">
@@ -19,7 +20,9 @@
 </head>
 
 <body>
+
 	<trevorkafka-nav></trevorkafka-nav>
+
 	<div class="content">
 
 		<trevorkafka-announcement></trevorkafka-announcement>
@@ -43,56 +46,59 @@
 			to confirm availability and reactivate (I do this to prevent overbooking of appointments).
 		</p>
 
+		<!-- TUTORBIRD LOGIN WIDGET -->
 		<div>
 			<script type='text/javascript' src='https://app.tutorbird.com/Widget/v2/Login.ashx'></script>
 		</div>
 
-		<details style="padding-top: 1em">
-			<summary class="red">Please note that I hold a strict 24-hour cancellation policy. (click for details)</summary>
-			<div style="background-color: #FFDCDC; border-radius: 10px">
-				<ul>
-					<li>The online registration system will not accept cancellations once the 24 hour window has passed.</li>
-					<li>Late-cancelled lessons (cancellations less than 24 hours in advance) are still billable.</li>
-					<li>Registrations can be made for classes up to 12 hours before a class start time. Please note that registrations made within 12-24 hours before a class start time cannot be cancelled online. If you make a registration in error when registering less than 24 hours in advance, email me immediately at 
-						<span class="tooltip">
-							<a onclick="copyEmail()" onmouseout="outFunc()">tutor@trevorkafka.com</a>
-							<span class="tooltiptext">Copy to clipboard</span>
-						</span>
-					or text me.</li>
-					<li>If you would like to make a reservation on shorter than 12 hours notice, please email me at 
-						<span class="tooltip">
-							<a onclick="copyEmail()" onmouseout="outFunc()">tutor@trevorkafka.com</a>
-							<span class="tooltiptext">Copy to clipboard</span>
-						</span>
-					or text me to confirm availability. I cannot guarantee that my listed availability online is accurate with less than 12 hours notice, but I can make work what is possible.</li>
-					<li>Email reminders for appointments are automatically sent 36 hours in advance and SMS reminders (when opted-in) are sent 2 hours in advance. </li>
-					<li>Please make sure your contact information on your account is up-to-date and that notifications are on if you would like to receive reminders.</li>
-				</ul>
-				<p>
-					No-shows and late cancellations are truly my least favorite situations to encounter in the online teaching business, but it's a necessity in order for me to be able to keep teaching as a reliable and sustainable occupation, which is fundamentally what allows me to be able to provide teaching opportunities in the first place. 😊 Let's please work together to try to avoid late cancellation situations in the first place and we all will remain happy.
-				</p>
-			</div>
-		</details>
-		<details>
-			<summary>How do I enroll in automatic payments?</summary>
-			<div align="center"><img src="help - automatic payments.png" style="width: min(500px, 100%)"></div>
-		</details>
-		<details>
-			<summary>How do I make a one-time payment?</summary>
-			<div align="center"><img src="help - one time payment.png" style="width: min(500px, 100%)"></div>
-		</details>
-		<details>
-			<summary>How can I synchronize my class calendar with Google Calendar?</summary>
-			<div align="center"><img src="help - synchronize calendar.png" style="width: min(500px, 100%)"></div>
-		</details>
-		<details>
-			<summary>How do I register for a lesson?</summary>
-			<div align="center"><img src="help - register lesson.png" style="width: min(500px, 100%)"></div>
-		</details>
-		<details>
-			<summary>How do I cancel a lesson?</summary>
-			<div align="center"><img src="help - cancel lesson.png" style="width: min(500px, 100%)"></div>	
-		</details>
+		<div class="FAQ">
+			<details style="padding-top: 1em">
+				<summary class="red">Please note that I hold a strict 24-hour cancellation policy. (click for details)</summary>
+				<div style="background-color: #FFDCDC; border-radius: 10px">
+					<ul>
+						<li>The online registration system will not accept cancellations once the 24 hour window has passed.</li>
+						<li>Late-cancelled lessons (cancellations less than 24 hours in advance) are still billable.</li>
+						<li>Registrations can be made for classes up to 12 hours before a class start time. Please note that registrations made within 12-24 hours before a class start time cannot be cancelled online. If you make a registration in error when registering less than 24 hours in advance, email me immediately at 
+							<span class="tooltip">
+								<a onclick="copyEmail()" onmouseout="outFunc()">tutor@trevorkafka.com</a>
+								<span class="tooltiptext">Copy to clipboard</span>
+							</span>
+						or text me.</li>
+						<li>If you would like to make a reservation on shorter than 12 hours notice, please email me at 
+							<span class="tooltip">
+								<a onclick="copyEmail()" onmouseout="outFunc()">tutor@trevorkafka.com</a>
+								<span class="tooltiptext">Copy to clipboard</span>
+							</span>
+						or text me to confirm availability. I cannot guarantee that my listed availability online is accurate with less than 12 hours notice, but I can make work what is possible.</li>
+						<li>Email reminders for appointments are automatically sent 36 hours in advance and SMS reminders (when opted-in) are sent 2 hours in advance. </li>
+						<li>Please make sure your contact information on your account is up-to-date and that notifications are on if you would like to receive reminders.</li>
+					</ul>
+					<p>
+						No-shows and late cancellations are truly my least favorite situations to encounter in the online teaching business, but it's a necessity in order for me to be able to keep teaching as a reliable and sustainable occupation, which is fundamentally what allows me to be able to provide teaching opportunities in the first place. 😊 Let's please work together to try to avoid late cancellation situations in the first place and we all will remain happy.
+					</p>
+				</div>
+			</details>
+			<details>
+				<summary>How do I enroll in automatic payments?</summary>
+				<div align="center"><img src="help - automatic payments.png" style="width: min(500px, 100%)"></div>
+			</details>
+			<details>
+				<summary>How do I make a one-time payment?</summary>
+				<div align="center"><img src="help - one time payment.png" style="width: min(500px, 100%)"></div>
+			</details>
+			<details>
+				<summary>How can I synchronize my class calendar with Google Calendar?</summary>
+				<div align="center"><img src="help - synchronize calendar.png" style="width: min(500px, 100%)"></div>
+			</details>
+			<details>
+				<summary>How do I register for a lesson?</summary>
+				<div align="center"><img src="help - register lesson.png" style="width: min(500px, 100%)"></div>
+			</details>
+			<details>
+				<summary>How do I cancel a lesson?</summary>
+				<div align="center"><img src="help - cancel lesson.png" style="width: min(500px, 100%)"></div>	
+			</details>
+		</div>
 		<div style="padding-bottom: 20px"></div>
 	</div>
 	

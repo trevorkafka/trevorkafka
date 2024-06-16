@@ -1,7 +1,8 @@
 <head>
+	
 	<title>Call Trevor Kafka - Academic Tutoring</title>
 
-	<meta charset="utf-8">
+	<meta charset="utf-8"> <!--ensures that there aren't any issues with the display of emojis -->
 	<meta name="viewport" content="width=device-width"> <!-- essential for making sure that the ACTUAL screen width is interpreted by the CSS as opposed to some idealized number presented by smartphones (980px+) -->
 
 	<link rel="stylesheet" href="style.css">
@@ -19,7 +20,9 @@
 </head>
 
 <body>
+
 	<trevorkafka-nav></trevorkafka-nav>
+
 	<div class="content">
 
 		<trevorkafka-announcement></trevorkafka-announcement>
@@ -42,22 +45,16 @@
 
 		<p><strong style="color:red">Please note that introductory call bookings are currently suspended until classes resume following the summer break. Introductory calls and tutoring sessions will resume on August 25, 2024.</strong></p>
 
-		<!-- OLD Calendly inline widget begin -->
-		<!-- <div class="calendly-inline-widget" style="min-width:320px;height:900px" data-url="https://calendly.com/trevor-kafka/20min"></div> -->
-		<!-- <script type="text/javascript" src="https://assets.calendly.com/assets/external/widget.js"></script> -->
-		<!-- OLD Calendly inline widget end -->
-		<!-- code to add to style above to make blurry: filter:grayscale(1) blur(3px); -->
-		<!-- div to put inside the above div in order to make it not-clickable: <div style="width: 100%; height:1200px; top: 0; left: 0; z-index:1; pointer-events:none;"></div> -->
-
-		<!-- NEW Calendly inline widget begin -->
+		<!-- Calendly widget -->
 		<div style="width: 100%; height:1200px; top: 0; left: 0; z-index:1; pointer-events:none;">
 		<iframe style="filter:grayscale(1) blur(3px);" src="https://calendly.com/trevor-kafka/20min?embed_domain=www.trevorkafka.com&amp;embed_type=Inline&hide_gdpr_banner=1" width="100%" height="100%" frameborder="0" title="Select a Date &amp; Time - Calendly"></iframe>
 		</div>
-		<!-- NEW Calendly inline widget end -->
 
 		<img src="breakthrough.jpg" width="100%" style="border-radius: 100px">
 		<div style="padding-bottom: 20px"></div>
+
 	</div>
+
 </body>
 
 <trevorkafka-footer></trevorkafka-footer>

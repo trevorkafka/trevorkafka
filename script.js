@@ -88,216 +88,218 @@ $('trevorkafka-home-info1').replaceWith(`
 		<br>
 	</p>
 
-	<details>
-		<summary>My Availability</summary>
-		<div align="center">
-			<table class="timetable tinytext">
-		<tr>
-			<td></td>
-			<td>Sun</td>
-			<td>Mon</td>
-			<td>Tue</td>
-			<td>Wed</td>
-			<td>Thu</td>
-			<td>Fri</td>
-			<td>Sat</td>
-		</tr>
-		<tr>
-			<td>08:00a</td>
-			<td></td>
-			<td class="available"></td>
-			<td class="available"></td>
-			<td class="available"></td>
-			<td class="available"></td>
-			<td></td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>09:00a</td>
-			<td class="available"></td>
-			<td class="available"></td>
-			<td class="available"></td>
-			<td class="available"></td>
-			<td class="available"></td>
-			<td></td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>10:00a</td>
-			<td class="available"></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>11:00a</td>
-			<td class="available"></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>12:00a</td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>01:00p</td>
-			<td class="available"></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>02:00p</td>
-			<td class="available"></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>03:00p</td>
-			<td class="available"></td>
-			<td class="available"></td>
-			<td class="available"></td>
-			<td class="available"></td>
-			<td class="available"></td>
-			<td></td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>04:00p</td>
-			<td></td>
-			<td class="available"></td>
-			<td class="available"></td>
-			<td class="available"></td>
-			<td class="available"></td>
-			<td></td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>05:00p</td>
-			<td></td>
-			<td class="available"></td>
-			<td class="available"></td>
-			<td class="available"></td>
-			<td class="available"></td>
-			<td></td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>06:00p</td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>07:00p</td>
-			<td></td>
-			<td class="available"></td>
-			<td class="available"></td>
-			<td class="available"></td>
-			<td class="available"></td>
-			<td></td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>08:00p</td>
-			<td></td>
-			<td class="available"></td>
-			<td class="available"></td>
-			<td class="available"></td>
-			<td class="available"></td>
-			<td></td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>09:00p</td>
-			<td></td>
-			<td class="available"></td>
-			<td class="available"></td>
-			<td class="available"></td>
-			<td class="available"></td>
-			<td></td>
-			<td></td>
-		</tr>
-		<tr>
-			<td>&nbsp;</td>
-		</tr>
-		<tr>
-			<td></td>
-			<td class="available"></td>
-			<td colspan="6" style="text-align:left"> = classes generally offered </td>
-		</tr>
-	</table>
-		</div>
-		<div>
-			<ul>
-				<li>The above schedule is listed in Boston time / US Eastern Time: UTC-4 or UTC-5 <a href="https://www.timeanddate.com/worldclock/converter.html?p1=43" target="_blank">depending on the time of the year</a>.</li>
-				<li>Classes must be scheduled at least 12h in advance of class time and may be cancelled or rescheduled up to 24h in advance of class time.
-				<li>All class scheduling and cancellations are managed through the student portal, accessed by registered students by <a href="login.html">logging in</a>.</li>
-				<li>No classes are offered June 14 through August 24, 2024.</li>
-			</ul>
-		</div>
-	</details>
-	<details>
-		<summary>My Education</summary>
-		<div>
-			✓ <strong>BS Physics</strong> from Brandeis University <br>
-			✓ <strong>BS Mathematics</strong> from Brandeis University <br>
-			✓ <strong>Magna Cum Laude</strong> recognition, <strong>GPA 3.9</strong> <br>
-		</div>
-	</details>
-	<details>
-		<summary>My Work Experience</summary>
-		<div>
-			✓ <strong>Professional Teacher</strong> since 2014 <br>
-			✓ <strong>Wellesley High School</strong> 2014-2016 <br>
-			✓ <strong>Boston Leadership Institute</strong> 2017-2018 <br>
-			✓ <strong>Shulman & Hill</strong> LLC 2017 <br>
-			✓ <strong>Self-employed tutoring</strong> 2015-now
-		</div>
-	</details>
-	<details>
-		<summary>My Credentials</summary>
-		<div>
-			✓ <strong>Highly experienced</strong> teacher and tutor (since 2014). <br>
-			✓ <strong>Highly experienced</strong> with online instruction (since summer 2019). <br>
-			✓ <strong>Highly enthusiastic</strong> about teaching YOU! <br>
-			✓ <strong><a href="https://www.polyglotassociation.org/members/trevor-kafka">Certified HYPIA Polyglot</a></strong> speaking 8 languages, and always learning more!
-		</div>
-	</details>
-	<details>
-		<summary>My Languages</summary>
-		<div>
-			<p>I love learning languages and am always spending time either practicing ones I've been learning for a while or exploring new ones.</p>
+	<div class="FAQ">
+		<details>
+			<summary>My Availability</summary>
+			<div align="center">
+				<table class="timetable tinytext">
+			<tr>
+				<td></td>
+				<td>Sun</td>
+				<td>Mon</td>
+				<td>Tue</td>
+				<td>Wed</td>
+				<td>Thu</td>
+				<td>Fri</td>
+				<td>Sat</td>
+			</tr>
+			<tr>
+				<td>08:00a</td>
+				<td></td>
+				<td class="available"></td>
+				<td class="available"></td>
+				<td class="available"></td>
+				<td class="available"></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>09:00a</td>
+				<td class="available"></td>
+				<td class="available"></td>
+				<td class="available"></td>
+				<td class="available"></td>
+				<td class="available"></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>10:00a</td>
+				<td class="available"></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>11:00a</td>
+				<td class="available"></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>12:00a</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>01:00p</td>
+				<td class="available"></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>02:00p</td>
+				<td class="available"></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>03:00p</td>
+				<td class="available"></td>
+				<td class="available"></td>
+				<td class="available"></td>
+				<td class="available"></td>
+				<td class="available"></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>04:00p</td>
+				<td></td>
+				<td class="available"></td>
+				<td class="available"></td>
+				<td class="available"></td>
+				<td class="available"></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>05:00p</td>
+				<td></td>
+				<td class="available"></td>
+				<td class="available"></td>
+				<td class="available"></td>
+				<td class="available"></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>06:00p</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>07:00p</td>
+				<td></td>
+				<td class="available"></td>
+				<td class="available"></td>
+				<td class="available"></td>
+				<td class="available"></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>08:00p</td>
+				<td></td>
+				<td class="available"></td>
+				<td class="available"></td>
+				<td class="available"></td>
+				<td class="available"></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>09:00p</td>
+				<td></td>
+				<td class="available"></td>
+				<td class="available"></td>
+				<td class="available"></td>
+				<td class="available"></td>
+				<td></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td>&nbsp;</td>
+			</tr>
+			<tr>
+				<td></td>
+				<td class="available"></td>
+				<td colspan="6" style="text-align:left"> = classes generally offered </td>
+			</tr>
+		</table>
+			</div>
+			<div>
+				<ul>
+					<li>The above schedule is listed in Boston time / US Eastern Time: UTC-4 or UTC-5 <a href="https://www.timeanddate.com/worldclock/converter.html?p1=43" target="_blank">depending on the time of the year</a>.</li>
+					<li>Classes must be scheduled at least 12h in advance of class time and may be cancelled or rescheduled up to 24h in advance of class time.
+					<li>All class scheduling and cancellations are managed through the student portal, accessed by registered students by <a href="login.html">logging in</a>.</li>
+					<li>No classes are offered June 14 through August 24, 2024.</li>
+				</ul>
+			</div>
+		</details>
+		<details>
+			<summary>My Education</summary>
+			<div>
+				✓ <strong>BS Physics</strong> from Brandeis University <br>
+				✓ <strong>BS Mathematics</strong> from Brandeis University <br>
+				✓ <strong>Magna Cum Laude</strong> recognition, <strong>GPA 3.9</strong> <br>
+			</div>
+		</details>
+		<details>
+			<summary>My Work Experience</summary>
+			<div>
+				✓ <strong>Professional Teacher</strong> since 2014 <br>
+				✓ <strong>Wellesley High School</strong> 2014-2016 <br>
+				✓ <strong>Boston Leadership Institute</strong> 2017-2018 <br>
+				✓ <strong>Shulman & Hill</strong> LLC 2017 <br>
+				✓ <strong>Self-employed tutoring</strong> 2015-now
+			</div>
+		</details>
+		<details>
+			<summary>My Credentials</summary>
+			<div>
+				✓ <strong>Highly experienced</strong> teacher and tutor (since 2014). <br>
+				✓ <strong>Highly experienced</strong> with online instruction (since summer 2019). <br>
+				✓ <strong>Highly enthusiastic</strong> about teaching YOU! <br>
+				✓ <strong><a href="https://www.polyglotassociation.org/members/trevor-kafka">Certified HYPIA Polyglot</a></strong> speaking 8 languages, and always learning more!
+			</div>
+		</details>
+		<details>
+			<summary>My Languages</summary>
+			<div>
+				<p>I love learning languages and am always spending time either practicing ones I've been learning for a while or exploring new ones.</p>
 
-			<p>Aside from being a native English speaker, my learned languages are Español (Spanish), Français (French), 汉语 (Mandarin), 日本語 (Japanese), 粵語 (Cantonese), Nederlands (Dutch), and ภาษาไทย (Thai), along with occasional dabbling in Tiếng Việt (Vietnamese) and Deutsch (German).</p>
+				<p>Aside from being a native English speaker, my learned languages are Español (Spanish), Français (French), 汉语 (Mandarin), 日本語 (Japanese), 粵語 (Cantonese), Nederlands (Dutch), and ภาษาไทย (Thai), along with occasional dabbling in Tiếng Việt (Vietnamese) and Deutsch (German).</p>
 
-			<p>You can check out more information on my <a href="https://www.polyglotassociation.org/members/trevor-kafka">HYPIA profile</a>.</p>
-		</div>
-	</details>
+				<p>You can check out more information on my <a href="https://www.polyglotassociation.org/members/trevor-kafka">HYPIA profile</a>.</p>
+			</div>
+		</details>
+	</div>
 	`)
 
 //replacements <trevorkafka-home-info2>
@@ -324,10 +326,10 @@ $('trevorkafka-announcement').replaceWith(`
 // SECTION 2: SPECIFIC-USE FUNCTIONS
 //
 
-// Script that makes sure that only one "details" panel can be opened at a time.
+// SUMMARY/DETAILS: Script that makes sure that only one FAQ details panel can be opened at a time.
 // Code source: https://stackoverflow.com/questions/16751345/automatically-close-all-the-other-details-tags-after-opening-a-specific-detai
 
-const All_Details = document.querySelectorAll('details');
+const All_Details = document.querySelectorAll('div.FAQ > details');
 
 All_Details.forEach(deet=>{
   deet.addEventListener('toggle', toggleOpenOneOnly)
@@ -341,7 +343,7 @@ function toggleOpenOneOnly(e) {
   }
 }
 
-// Script that makes "read more" links in the blockquote section
+//READ MORE: cript that makes "read more" links in the blockquote section
 
 $(document).ready(function() {
     var max = 200;
@@ -361,39 +363,38 @@ $(document).ready(function() {
     });
 });
 
-// //MathJax setup
-// 	window.MathJax = {
-// 	  tex: {
-// 	    inlineMath: [['$', '$'], ['\\(', '\\)']]
-// 	  }
-// 	};
+//MASONRY: setup
 
-//Masonry setup
 	$('.grid').masonry({
 		itemSelector: '.grid > div',
 		columnWidth: 300,
 		gutter: 20,
 		fitWidth: true,
-		transitionDuration: 0
+		// transitionDuration: 0
 	});
 
-//adds some mathjax command and, importantly, refreshes Masonry layout once mathjax is fully loaded
-window.MathJax = {
-	tex: {
-	    inlineMath: [['$', '$'], ['\\(', '\\)']]
-	  },
-  startup: {
-    ready: () => {
-      MathJax.startup.defaultReady();
-      MathJax.startup.promise.then(() => {
-      	refresh = setInterval("$('.grid').masonry()",100);
-      	setTimeout("clearInterval(refresh)", 1000); //workaround: performs ten refreshes spaced apart by 100ms in order to enusre that the masonry layout is adjusted in accordance with the completed mathjax rendering
-      });
-    }
-  }
-};
+	$('summary').click(function () {
+		setTimeout(() => $('.grid').masonry(),1);
+	});
 
-// SECTION 2.1: EMAIL LINK TOOLTIP STUFF
+//MATHJAX: adds some mathjax commands and, importantly, refreshes Masonry layout once mathjax is fully loaded
+
+	window.MathJax = {
+		tex: {
+		    inlineMath: [['$', '$'], ['\\(', '\\)']]
+		  },
+	  startup: {
+	    ready: () => {
+	      MathJax.startup.defaultReady();
+	      MathJax.startup.promise.then(() => {
+	      	refresh = setInterval("$('.grid').masonry()",100);
+	      	setTimeout("clearInterval(refresh)", 1000); //workaround: performs ten refreshes spaced apart by 100ms in order to enusre that the masonry layout is adjusted in accordance with the completed mathjax rendering
+	      });
+	    }
+	  }
+	};
+
+//EMAIL LINK TOOLTIP STUFF
 
 	//define function setText(text) that sets the all the tooltip texts to text
 	function setText(text) {
