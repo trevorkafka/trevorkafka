@@ -22,7 +22,7 @@
 	}
 
 	body{
-		font-family: "Arial";
+		font-family: "Arial", sans-serif;
 		margin: 0;
 		padding: 0;
 	}
@@ -48,6 +48,7 @@
 	  font-style: normal;
 	}
 
+
 /* */
 /* TOP NAVIGATION BAR */
 /* */
@@ -57,12 +58,16 @@
 		position: fixed;
 		background-color: var(--color3);
 		top: 0;
-		width: 100%;
-		box-shadow: 1px 1px 10px grey; /* right shift, down shift, blur */
+		left: 50%; 
+		top: 20px;
+		transform: translateX(-50%);
+		border-radius: 100px;
+		border: solid 1px lightgrey;
+		box-shadow: 1px 1px 10px #00000020; /* right shift, down shift, blur */
 		z-index: 100;
 	}
 
-	.navbar-elements{
+	.navbar-elements {
 		width: min(1000px, var(--widthmax));
 		margin: auto;
 		padding-top: 14px;
@@ -70,19 +75,50 @@
 	}
 
 	.navbar a {
-	  float: left;
-	  display: block;
-	  text-align: center;
-	  /* padding: 14px 50px 14px 0px; /* has narrowscreen override */
-	  text-decoration: none;
-	  font-weight: bold;
-	  font-size: 200%; /* has narrowscreen override */
-	  color: var(--color1);
-	  font-family: Freeman;
+		 float: left;
+		 display: block;
+		 text-align: center;
+		 text-decoration: none;
+		 font-weight: bold;
+		 font-size: 200%; /* has narrowscreen override */
+		 color: var(--color1);
+		 font-family: Freeman;
 	}
 
 	.nav-spacer {
-		margin-top: 100px;  /* has narrowscreen override */
+		margin-top: 140px;  /* has narrowscreen override */
+	}
+
+	.active-link {
+		background-color: #0000000d;
+	}
+
+	.navbar a:hover {
+		background-color: #d1c9b4;
+		color: initial;
+	}
+
+	.navbar a {
+		padding: 0.3em;
+		border-radius: 0.3em;
+		transition: background-color var(--transitiontime);
+	}
+
+/* */
+/* FADE SLIDE IN */
+/* */ 
+/* adapted from https://blog.hubspot.com/website/css-fade-in */
+
+	.fade {
+	  opacity: 0;
+	  transform: translate(0, 10vh);
+	  transition-duration: 1s;
+	  transition-delay: 0.25s;
+	}
+
+	.fade.visible {
+	  opacity: 1;
+	  transform: translate(0, 0);
 	}
 
 /* */
@@ -134,7 +170,7 @@
 	}
 
 	a:hover {
-	  color: var(--hoverlink	);
+		color: var(--hoverlink);
 	}
 
 	.button div, .big-button div {
@@ -171,8 +207,23 @@
 		font-weight:bold;
 	}
 
-	.tinytext{
+	.tinytext {
 		font-size: 80%;
+	}
+
+	.color{
+		background-image: linear-gradient(330deg, var(--color2), rgb(175, 0, 105));
+		-webkit-text-fill-color: transparent;
+		-webkit-background-clip: text;
+	}
+
+	.hoverdisplay {
+		opacity: 0;
+		transition-duration: var(--transitiontime);
+	}
+
+	.hoverdisplay:hover {
+		opacity: 1;
 	}
 
 /* */
@@ -217,6 +268,10 @@
 		border-radius: 20px;
 	}
 
+	[class*="blockquote"] > tbody > tr:last-child > td > blockquote {
+		margin-bottom: 0px;
+	}
+
 	blockquote:before { 
 		position: absolute; 
 		content: '\201C'; 
@@ -256,7 +311,7 @@
 		list-style: none;
 		padding: 15px; /* has narrowscreen override */
 		color: var(-color1);
-		background-color: var(--color4);
+		background-color: #0000000d;
 		transition:background-color var(--transitiontime) ease-in-out;
 		border-radius: 10px;
 		font-weight: bold;
@@ -303,7 +358,6 @@
 
 	.tooltip {
 	  position: relative;
-	  /* display: inline-block; */ /* this caused weird sizing things, not sure why this was here */
 	}
 
 	.tooltip .tooltiptext {
@@ -335,7 +389,7 @@
 	}
 
 	.tooltip:hover {
-		cursor:pointer;
+		cursor:copy;
 	}
 
 	.tooltip:hover .tooltiptext {
@@ -381,17 +435,12 @@
 			padding: 1.5em 1.5em 0.5em 3em; 
 		}
 
-		h1{
-			margin-top: 30px;
-		}
-
 		.navbar a {
-			/* padding: 14px calc(50*(100vw/900)) 14px 0px; */
 			font-size: calc(32*(100vw/900));
 		}
 
 		.nav-spacer {
-			margin-top: calc(15px + 100*(100vw/900));
+			margin-top: calc(70px + 70*(100vw/900));
 		}
 
 		.announcement {

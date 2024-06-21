@@ -1,5 +1,4 @@
 <head>
-
 	<title>Login for Trevor Kafka - Academic Tutoring</title>
 
 	<meta charset="utf-8"> <!--ensures that there aren't any issues with the display of emojis -->
@@ -29,30 +28,35 @@
 
 		<h1>Login</h1>
 
-		<p>
-			Accounts are automatically created after submitting my registration form. Email me at 							
-			<span class="tooltip">
-				<a onclick="copyEmail()" onmouseout="outFunc()">tutor@trevorkafka.com</a>
-				<span class="tooltiptext">Copy to clipboard</span>
-			</span>
-			or sign up for a <a href="call.html">free introductory call</a> with me here in order to get access to my registration form (registration is also free).
-		</p>
+		<div class="flexcontainer">
+			<div style="flex-basis: 400px; flex-grow: 1">
+				<p>
+					Accounts are automatically created after submitting my registration form. Email me at 							
+					<span class="tooltip">
+						<a onclick="copyEmail()" onmouseout="outFunc()">tutor@trevorkafka.com</a>
+						<span class="tooltiptext">Copy to clipboard</span>
+					</span>
+					or sign up for a <a href="call.html">free introductory call</a> with me here in order to get access to my registration form (registration is also free).
+				</p>
 
-		<p>If you are having trouble logging in and you haven't taken class with me in over a year, your account may have been archived. Please email me at at
-			<span class="tooltip">
-				<a onclick="copyEmail()" onmouseout="outFunc()">tutor@trevorkafka.com</a>
-				<span class="tooltiptext">Copy to clipboard</span>
-			</span>
-			to confirm availability and reactivate (I do this to prevent overbooking of appointments).
-		</p>
-
-		<!-- TUTORBIRD LOGIN WIDGET -->
-		<div>
-			<script type='text/javascript' src='https://app.tutorbird.com/Widget/v2/Login.ashx'></script>
+				<p>If you are having trouble logging in and you haven't taken class with me in over a year, your account may have been archived. Please email me at at
+					<span class="tooltip">
+						<a onclick="copyEmail()" onmouseout="outFunc()">tutor@trevorkafka.com</a>
+						<span class="tooltiptext">Copy to clipboard</span>
+					</span>
+					to confirm availability and reactivate (I do this to prevent overbooking of appointments).
+				</p>
+			</div>
+			<div style="flex-grow: 1">
+				<!-- TUTORBIRD LOGIN WIDGET -->
+				<div>
+					<script type='text/javascript' src='https://app.tutorbird.com/Widget/v2/Login.ashx'></script>
+				</div>
+			</div>
 		</div>
 
-		<div class="FAQ">
-			<details style="padding-top: 1em">
+		<div class="FAQ" style="padding-top: 2em">
+			<details>
 				<summary class="red">Please note that I hold a strict 24-hour cancellation policy. (click for details)</summary>
 				<div style="background-color: #FFDCDC; border-radius: 10px">
 					<ul>
@@ -80,23 +84,23 @@
 			</details>
 			<details>
 				<summary>How do I enroll in automatic payments?</summary>
-				<div align="center"><img src="help - automatic payments.png" style="width: min(500px, 100%)"></div>
+				<div align="center"><img src="help - automatic payments.png" style="width: min(500px, 100%); border-radius: 20px"></div>
 			</details>
 			<details>
 				<summary>How do I make a one-time payment?</summary>
-				<div align="center"><img src="help - one time payment.png" style="width: min(500px, 100%)"></div>
+				<div align="center"><img src="help - one time payment.png" style="width: min(500px, 100%); border-radius: 20px"></div>
 			</details>
 			<details>
 				<summary>How can I synchronize my class calendar with Google Calendar?</summary>
-				<div align="center"><img src="help - synchronize calendar.png" style="width: min(500px, 100%)"></div>
+				<div align="center"><img src="help - synchronize calendar.png" style="width: min(500px, 100%); border-radius: 20px"></div>
 			</details>
 			<details>
 				<summary>How do I register for a lesson?</summary>
-				<div align="center"><img src="help - register lesson.png" style="width: min(500px, 100%)"></div>
+				<div align="center"><img src="help - register lesson.png" style="width: min(500px, 100%); border-radius: 20px"></div>
 			</details>
 			<details>
 				<summary>How do I cancel a lesson?</summary>
-				<div align="center"><img src="help - cancel lesson.png" style="width: min(500px, 100%)"></div>	
+				<div align="center"><img src="help - cancel lesson.png" style="width: min(500px, 100%); border-radius: 20px"></div>	
 			</details>
 		</div>
 		<div style="padding-bottom: 20px"></div>

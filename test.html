@@ -1,5 +1,4 @@
 <head>
-
 	<title>Trevor Kafka - Academic Tutoring</title>
 
 	<meta charset="utf-8"> <!--ensures that there aren't any issues with the display of emojis -->
@@ -43,7 +42,7 @@
 
 		<div>
 			<div class="grid">
-				<div>
+				<div class="container">
 					<h3>Definition</h3> 
 					Logarithms ($\log$) form a family of functions of various bases defined so that the following two forms are equivalent and convey the same information. 
 					<h4>Exponential Form</h4>
@@ -57,26 +56,106 @@
 						In $\log_b a$, despite its appearance, $a$ is not an exponent on $b$. The variable $b$ is what is called the base of the function $\log_b$ and $a$ is the input of that function $\log_b$.
 					</details>
 				</div>
-				<div>
+				<div class="container">
 					<h3>Logarithms as Inverses</h3> 
 					$$ \cancel b^{\cancel{\log_b} x} = x \text{ for $x > 0$}$$ $$\bcancel \log_b {\bcancel b}^x = x \text{ for all $x$}$$ In other words, if $f(x) = b^x$, then the inverse function is $f^{-1}(x) = \log_b x$.
 					<details>
-						<summary>examples</summary>
+						<summary>proofs</summary>
+						<details>
+						<summary>proof of first statement</summary>
+							Pick a positive value of $x$ and let $c$ be the unique solution to the equation $x = b^c$ (the requirement that $x>0$ is a necessary condition for this equation to have a unique solution). Converting to logarithmic form gives $$c = \log_b x.$$ Substituting this value of $c$ then gives $$x = b^{\log_b x}.$$
+						</details>
+						<details>
+							<summary>proof of second statement</summary>
+							Pick any value of $x$ and let $c = b^x$. Converting to logarithmic form gives $$x = \log_b c.$$ Substituting in $b^x$ for $c$ gives $$x = \log_b b^x.$$
+						</details>
+						<details>
+							<summary>proof of inverses</summary>
+							Let $f(x) = b^x$ and $g(x) = \log_b x$. Since $$f(g(x)) = b^{\log_b x} = x$$ and $$g(f(x)) = \log_b b^x = x,$$ $f$ and $g$ must be inverse functions, so $g = f^{-1}$.
+						</details>
+					</details>
+					<details>
+						<summary>tricky examples</summary>
 						$$\log_b 1 = 0$$
 						$$\log_b b = 1$$
 					</details>
-				</div>
-				<div><h3>Special Notation</h3> $$\log x \text{ means } \log_{10} x$$ $$\ln x \text{ means } \log_e x$$ $$e \approx 2.718281828$$ 
+				</div class="container">
+				<div class="container">
+					<h3>Special Notation</h3> 
+					$$\log x \text{ means } \log_{10} x$$ $$\ln x \text{ means } \log_e x$$ $$e = 2.718281828\ldots$$ 
 					<details>
 						<summary>note</summary>
-						$e$ is known as "Euler's number" or "the base of the natural logarithm," which is an irrational number.
+						$\ln$ is rerpesents what is called the "natural logarithm." $e$ is known as "Euler's number" or "the base of the natural logarithm," which is an irrational number. Both $\ln$ and $e$ come up frequently in calculus in order to model particular situations with simple constraints on rates of change.
 					</details>
 				</div>
-				<div>
+				<div class="container">
 					<h3>Domain and Range</h3> $y=\log_b x$ has a domain of $x > 0$ and range of all $y$ values.
+					<details>
+						<summary>proof</summary>
+						It is known that $f(x) = b^x$ has a domain of all $x$ values and a range of $y>0$. Since $f(x)$ is one-to-one, the inverse function $f^{-1}(x) = \log_b x$ thus has the "swapped" version of this domain and range.
+					</details>
 					<details>
 						<summary>note</summary>
 						Another way of interpreting the domain is to say$$\log_b \left( \begin{matrix} \text{zero or any} \\ \text{neg. number} \end{matrix} \right)$$ is always undefined.
+					</details>
+				</div>
+				<div class="container">
+					<h3>Multiplication Property</h3>
+					$$\log_b xy = \log_b x + \log_b y$$ $$\text{ for $x,y>0$}$$
+					<details>
+						<summary>proof</summary>
+						Pick any positive values of $x,y$ (this is a requirement for $\log_b x$ and $\log_b y$ to be defined). Note that by the exponent property $z^{m+n} = z^m \cdot z^n$, we have $$b^{\log_b x + \log_b y} = \bcancel b^{\bcancel{\log_b} x} \cdot \bcancel b^{\bcancel{\log_b} y},$$so $$b^{\log_b x + \log_b y} = xy,$$which when converted to logarithmic form gives $$\log_b xy = \log_b x + \log_b y.$$
+					</details>
+
+					<details>
+						<summary>warning</summary>
+						In general, the rule does not work in the following backwards sense: $$\color{red} \log_b \left( x + y \right) \neq (\log_b x )( \log_b y)$$ In fact, $\log_b \left( x + y \right)$ is generally not simplifiable.
+					</details>
+				</div>
+				<div class="container">
+					<h3>Division Property</h3>
+					$$\log_b \left( \frac{x}{y} \right) = \log_b x - \log_b y$$ $$\text{ for $x,y>0$}$$
+					<details>
+						<summary>proof</summary>
+						Pick any positive values of $x,y$ (this is a requirement for $\log_b x$ and $\log_b y$ to be defined). Note that by the exponent property $z^{m-n} = \frac{z^m}{z^n}$, we have $$b^{\log_b x - \log_b y} = \frac{\bcancel b^{\bcancel{\log_b} x} }{ \bcancel b^{\bcancel{\log_b} y}},$$so $$b^{\log_b x - \log_b y} = \frac{x}{y},$$which when converted to logarithmic form gives $$\log_b \left( \frac{x}{y} \right) = \log_b x - \log_b y.$$
+					</details>
+
+					<details>
+						<summary>warning</summary>
+						In general, the rule does not work in the following backwards sense: $$\color{red} \log_b \left( x - y \right) \neq \frac{\log_b x}{\log_b y}$$ In fact, $\log_b \left( x - y \right)$ is generally not simplifiable. However, $\frac{\log_b x}{\log_b y}$ simplifies via the change of base rule: $$\frac{\log_b x}{\log_b y} = \log_y x$$
+					</details>
+
+				</div>
+				<div class="container">
+					<h3>Exponent Property</h3>
+					$$\log_b (x^y) = y \log_b x$$ $$\text{ for $x>0$}$$
+					<details>
+						<summary>
+							proof
+						</summary>
+						Pick values of $x,y$ such that $x>0$. Let $c = \log_b(x^y)$. Converting to exponential form gives $$b^c = x^y$$and raising both sides to the power of $\frac{1}{y}$ gives $$b^{\frac{c}{y}} = x.$$ Now, converting back to logarithmic form gives $$\frac{c}{y} = \log_b x,$$so $$\log_b(x^y) = c = y \log_b x.$$
+					</details>
+
+					<details>
+						<summary>tricky examples</summary>
+						$$\log_b \frac{1}{x} = - \log_b x$$
+						$$\log_b \sqrt{x} = \frac{1}{2} \log_b x$$
+						$$\log_b \frac{1}{\sqrt x} = - \frac{1}{2} \log_b x$$
+						$$\log_b \sqrt[m]{x^n} = \frac{n}{m} \log_b x$$
+						$$\log_b \frac{1}{\sqrt[m]{x^n}} = -\frac{n}{m} \log_b x$$
+					</details>
+				</div>
+				<div class="container">
+					<h3>Change of Base Rule</h3>
+					$$\log_{b_1} x = \frac{\log_{b_2} x }{\log_{b_2} b_1}$$ $$\text{for $x > 0$}$$ This identity demonstrates a conversion from a base $b_1$ to a new base $b_2$.
+					<br><br>
+					<details>
+						<summary>proof</summary>
+						Pick any positive value $x$ and let $c = \log_{b_1} x$ ($x$ being positive is a requirement of $\log_{b_1} x$ being defined). Converting to exponential form gives $$b_1^c = x$$and taking $\log_{b_2}$ of both sides gives $$\log_{b_2} \left( b_1^c \right) = \log_{b_2} x,$$ $$c \cdot \log_{b_2} b_1 = \log_{b_2} x,$$ $$c = \frac{\log_{b_2} x}{\log_{b_2} b_1},$$so $$\log_{b_1} x = \frac{\log_{b_2} x }{\log_{b_2} b_1}$$.
+					</details>
+					<details>
+						<summary>note</summary>
+						It also works for $\log$ and $\ln$ since these are just the special cases where $b=10$ and $b=e\approx2.718$, respectively: $$\log_{b_1} x = \frac{\log x}{\log b_1} = \frac{\ln x}{\ln b_1}$$ $$\text{for $x>0$}$$
 					</details>
 				</div>
 				<div>
@@ -84,45 +163,35 @@
 						<div align="center">Graph of $y = \log_b x$</div>
 					</a>
 				</div>
-				<div>$$\log_b xy = \log_b x + \log_b y$$ $$\text{ for $x,y>0$}$$</div>
-				<div>$$\log_b \left( \frac{x}{y} \right) = \log_b x - \log_b y$$ $$\text{ for $x,y>0$}$$</div>
-				<div>
-					$$\log_b (x^y) = y \log_b x$$ $$\text{ for $x>0$}$$
-					<details>
-						<summary>examples</summary>
-						$$\log_b \frac{1}{x} = - \log_b x$$
-						$$\log_b \sqrt{x} = \frac{1}{2} \log_b x$$
-						$$\log_b \frac{1}{\sqrt x} = - \frac{1}{2} \log_b x$$
-						$$\log_b \sqrt[m]{x^n} = \frac{n}{m} \log_b x$$
-					</details>
-				</div>
-				<div>
-					<h3>Change of Base Rule</h3>
-					$$\log_{b_1} x = \frac{\log_{b_2} x }{\log_{b_2} b_1}$$ $$\text{for $x > 0$}$$ This identity demonstrates a conversion from a base $b_1$ to a new base $b_2$.
-					<br><br>
-					<details>
-						<summary>note</summary>
-						It also works for $\log$ and $\ln$ since these are just the special cases where $b=10$ and $b=e\approx2.718$, respectively: $$\log_{b_1} x = \frac{\log x}{\log b_1} = \frac{\ln x}{\ln b_1}$$ $$\text{for $x>0$}$$
-					</details>
-				</div>
 				
 			</div>
 		</div>
 
-		<!-- masonry stuff -->
+		<!-- masonry-related CSS -->
 
 		<style type="text/css">
 			.grid {
 				width: 100%;
 				margin: auto;
+				counter-reset: grid;
 			}
+
 			.grid > div {
+				margin-bottom: 20px;
+				width: 300;
+			}
+
+			.grid > div > h3::before {
+				counter-increment: grid;	
+				content: counter(grid) ". ";
+			}
+
+			.grid > div.container {
 				padding: 15px;
 				box-sizing: border-box;
-				background-color: #0000000d;
+				background-color: #00000005;
 				border-radius: 20px;
 				float: left;	
-				width: 300;
 				border: solid var(--color1);
 				margin-bottom: 20px;
 			}
@@ -141,8 +210,24 @@
 
 			.grid > div > details > summary {
 				font-weight: bold;
-				margin: 10px 0px 10px 0px /* would be nice to get rid of this if the summary is closed*/
 			}
+
+			.grid > div > details[open] > summary {
+				margin-bottom: 10px;
+			}
+
+			.grid > div > details > summary:first-child {
+				margin-top:10px;
+			}
+
+			.grid > div > details > details[open] > summary {
+				margin-bottom: 10px;
+			}
+
+			.grid > div > details > details{
+				margin: 10px 0px 10px 10px /* would be nice to get rid of the top/bottom padding if the summary is closed*/
+			}
+
 		</style>
 
 	</div>
