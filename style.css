@@ -426,6 +426,10 @@
 			display:none;
 		}
 
+		h1.smaller-for-narrow-screen {
+			font-size: 200%;
+		}
+
 		.full-width-media {
 			width: 100%;
 			border-radius: 0px;
