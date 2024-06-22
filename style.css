@@ -447,8 +447,8 @@
 			margin-top: calc(70px + 70*(100vw/900));
 		}
 
-		.announcement {
+		.announcement > p {
 			font-size: 80%;
-			line-height: 80%
+			line-height: 110%;
 		}
 	}
