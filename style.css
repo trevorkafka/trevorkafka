@@ -68,21 +68,21 @@
 	}
 
 	.navbar-elements {
-		width: min(1000px, var(--widthmax));
+		width: min(1100px, calc(var(--widthmax) + 7vw));
 		margin: auto;
 		padding-top: 14px;
 		padding-bottom: 14px;
 	}
 
 	.navbar a {
-		 float: left;
-		 display: block;
-		 text-align: center;
-		 text-decoration: none;
-		 font-weight: bold;
-		 font-size: 200%; /* has narrowscreen override */
-		 color: var(--color1);
-		 font-family: Freeman;
+		float: left;
+		display: block;
+		text-align: center;
+		text-decoration: none;
+		font-weight: bold;
+		font-size: 200%; /* has narrowscreen override */
+		color: var(--color1);
+		font-family: Freeman;
 	}
 
 	.nav-spacer {
@@ -99,8 +99,8 @@
 	}
 
 	.navbar a {
-		padding: 0.3em;
-		border-radius: 0.3em;
+		padding: 0.5em;
+		border-radius: 100px;
 		transition: background-color var(--transitiontime);
 	}
 
