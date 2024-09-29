@@ -248,8 +248,16 @@
 			border-spacing: 3px;
 	}
 
-	.available {
+	.available_easy {
 		background-color: #b2cca9;
+	}
+
+	.available_medium {
+		background-color: #E6D96A;
+	}
+
+	.available_hard {
+		background-color: #D46A6A;
 	}
 
 /* */
