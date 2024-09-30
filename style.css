@@ -217,15 +217,6 @@
 		-webkit-background-clip: text;
 	}
 
-	.hoverdisplay {
-		opacity: 0;
-		transition-duration: var(--transitiontime);
-	}
-
-	.hoverdisplay:hover {
-		opacity: 1;
-	}
-
 /* */
 /* TABLES */
 /* */
@@ -249,16 +240,20 @@
 	}
 
 	.available_easy {
-		background-color: #b2cca9;
+	    background-color: #b2cca9;
+	    color: #8fa889 !important; /* Darker version of #b2cca9 */
 	}
 
 	.available_medium {
-		background-color: #E6D96A;
+	    background-color: #E6D96A;
+	    color: #c4b857 !important; /* Darker version of #E6D96A */
 	}
 
 	.available_hard {
-		background-color: #D46A6A;
+	    background-color: #D46A6A;
+	    color: #b35555 !important; /* Darker version of #D46A6A */
 	}
+
 
 /* */
 /* BLOCKQUOTES */
@@ -459,4 +454,26 @@
 			font-size: 80%;
 			line-height: 110%;
 		}
+	}
+
+	/* */
+	/* HOVEROVER MAGIC */
+	/* */
+	.hoverdisplay {
+		opacity: 0;
+		transition-duration: var(--transitiontime);
+	}
+
+	.hoverdisplay:hover {
+		opacity: 1;
+	}
+
+
+	.hoverdisplay-text {
+		opacity: 0;
+		transition-duration: var(--transitiontime);
+	}
+
+	table:hover .hoverdisplay-text {
+		opacity: 1;
 	}
