@@ -118,6 +118,12 @@ $(document).ready(function() {
 	  setText("Copied: " + copyText);
 	}
 
+	function copyWaitlistEmail() {
+		var copyText = "tutor+waitlist@trevorkafka.com";
+		navigator.clipboard.writeText(copyText);
+	  setText("Copied: " + copyText);
+	}
+
 	//define a function that resets the tooltip text when the mouse is no longer hovering over the email address
 	function outFunc() {
 		setText("Copy to clipboard");
