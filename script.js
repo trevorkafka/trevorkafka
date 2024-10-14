@@ -124,6 +124,18 @@ $(document).ready(function() {
 	  setText("Copied: " + copyText);
 	}
 
+	function copyPersonalEmail() {
+		var copyText = "trevor@trevorkafka.com";
+		navigator.clipboard.writeText(copyText);
+	  setText("Copied: " + copyText);
+	}
+
+	function copyPhone() {
+		var copyText = "+19142550499";
+		navigator.clipboard.writeText(copyText);
+	  setText("Copied: " + copyText);
+	}
+
 	//define a function that resets the tooltip text when the mouse is no longer hovering over the email address
 	function outFunc() {
 		setText("Copy to clipboard");

@@ -456,24 +456,24 @@
 		}
 	}
 
-	/* */
-	/* HOVEROVER MAGIC */
-	/* */
-	.hoverdisplay {
-		opacity: 0;
-		transition-duration: var(--transitiontime);
-	}
+/* */
+/* HOVEROVER MAGIC */
+/* */
+.hoverdisplay {
+	opacity: 0;
+	transition-duration: var(--transitiontime);
+}
 
-	.hoverdisplay:hover {
-		opacity: 1;
-	}
+.hoverdisplay:hover {
+	opacity: 1;
+}
 
 
-	.hoverdisplay-text {
-		opacity: 0;
-		transition-duration: var(--transitiontime);
-	}
+.hoverdisplay-text {
+	opacity: 0;
+	transition-duration: var(--transitiontime);
+}
 
-	table:hover .hoverdisplay-text {
-		opacity: 1;
-	}
+table:hover .hoverdisplay-text {
+	opacity: 1;
+}
