@@ -59,7 +59,7 @@
 
 		<h2>Kinetic Energy</h2>
 
-			<p>The total kinetic energy $K$ is given as the sum of their individual kinetic energies.</p>
+			<p>The total kinetic energy $K$ is the sum of the individual kinetic energies of the planets.</p>
 
 			\begin{equation}
 				K = \frac{1}{2}m_1 \dot x_1^2 + \frac{1}{2}m_2 \dot x_2^2
@@ -99,10 +99,10 @@
 
 		<h2>The Lagrangian</h2>
 
-			<p>The Lagrangian $L$ for the system is then given by $L \overset{\text{def}}{=} K - U$, equation \eqref{eq:K}, and equation \eqref{eq:U}.
+			<p>The Lagrangian $L$ can be written from its definition.
 
-			\begin{equation}
-				L = \frac{1}{2} M\dot{x}^2 + \frac{\alpha}{x}
+			\begin{equation} \label{eq:L}
+				L \overset{\text{def}}{=} K - U \overset{\eqref{eq:K}\eqref{eq:U}}{=} \frac{1}{2} M\dot{x}^2 + \frac{\alpha}{x}
 			\end{equation}
 
 			The gradient of the Lagrangian with respect to the velocity vector $\nabla_{\dot{\mathbf x}} L$ will be important for the section that follows.
@@ -116,7 +116,7 @@
 
 			<h3>Angular Momentum</h3>
 
-			<p>The $L$ is invariant under spatial rotations as it is only dependent on the vector magnitudes $x$ and $\dot x$. Hence, angular momentum
+			<p>The Lagrangian $L$ is invariant under spatial rotations as it is only dependent on the vector magnitudes $x$ and $\dot x$. Hence, angular momentum
 
 			\begin{equation} \label{eq:angular-momentum}
 				\mathbf l \overset{\text{def}}{=} \mathbf x \times \nabla_{\dot{\mathbf x}} L \overset{\eqref{eq:gradient}}{=} M \mathbf x \times \dot{\mathbf x}
@@ -129,67 +129,59 @@
 			Since $\frac{\partial L}{\partial t}=0$, we have that the energy
 
 			\begin{equation} \label{eq:energy}
-				E \overset{\text{def}}{=} \nabla_{\dot{\mathbf x}} L \cdot \dot{\mathbf x} - L = \frac{1}{2}M\dot x^2 - \frac{\alpha}{x}
+				E \overset{\text{def}}{=} \nabla_{\dot{\mathbf x}} L \cdot \dot{\mathbf x} - L \overset{\eqref{eq:L}}{=} \frac{1}{2}M\dot x^2 - \frac{\alpha}{x}
 			\end{equation}
 
 			is constant, which reflects the familiar <em>law of conservation of energy</em>.
 
-		<h2>Polar Coordinates</h2>
+		<h2>Kepler's 1st Law: Elliptical Orbits</h2>
 
-			<p>From equation \eqref{eq:angular-momentum}, it follows that $\mathbf x, \dot{\mathbf x} \perp \mathbf l$, so since $\mathbf l$ is constant, we must have that $\mathbf x$ and $\dot{\mathbf x}$ remain in a single plane as time evolves. Given that the vectors of the system are restricted to a plane, let's set up a system of polar coordinates $(r, \theta)$ in that plane. Naturally in polar coordinates we have $\mathbf x = (r,0)$ and $\dot{\mathbf x} = (\dot r, r \dot \theta)$, which furthermore gives $x = r$ and $\dot x^2 = \dot r^2 + r^2 \dot \theta^2$.
+			<h3>Polr Coordinates</h3>
 
-			\begin{equation}
-			L = \frac{1}{2} M \dot{r}^2 + \frac{1}{2}Mr^2 \dot{\theta}^2 + \frac{\alpha}{r}
-			\end{equation}
+			<p>From equation \eqref{eq:angular-momentum}, it follows that $\mathbf x, \dot{\mathbf x} \perp \mathbf l$, so since $\mathbf l$ is constant, we must have that $\mathbf x$ and $\dot{\mathbf x}$ remain in a single plane as time evolves. Given that the vectors of the system are restricted to a plane, let's set up a system of polar coordinates $(r, \theta)$ in that plane. First, let's establish some key facts about this polar coordinate system.
 
-			From equation \eqref{eq:angular-momentum}, we can then write an expression for the magnitude of the angular momentum $l$ in polar coordinates since $\mathbf x \times \dot{\mathbf x} = r^2 \dot \theta$.
+			\begin{align}
+			\mathbf x &= \begin{bmatrix} r \vphantom{\dot \theta} \\ 0  \vphantom{\dot \theta} \\ 0 \vphantom{\dot \theta} \end{bmatrix}, & \dot{\mathbf x} &= \begin{bmatrix} \dot r  \vphantom{\dot \theta} \\ r \dot \theta \\ 0 \vphantom{\dot \theta} \end{bmatrix}, & x &= r, & \dot x^2 &= \dot r^2 + r^2 \dot \theta^2, & |\mathbf x \times \dot{\mathbf x}| &= r^2 \dot \theta
+			\end{align}
+
+			From this, we can write the magnitude $l$ of the angular momentum of equation \eqref{eq:angular-momentum}, and energy $E$ of equation \eqref{eq:energy} each in polar coordinate representations.
 
 			\begin{equation} \label{eq:angular-momentum2}
 			l = M r^2 \dot \theta
 			\end{equation}
 
-			Encouragingly, the conservation of this quantity is also implied by the Euler-Lagrange equation $\frac{d}{dt}(\frac{\partial L}{\partial \dot \theta}) = \frac{\partial L}{\partial \theta}$.</p>
-
-			<p>From equation \eqref{eq:energy}, we can write an expression for the energy $E$ in polar coordinates.
-
 			\begin{equation}
 				E = \frac{1}{2} M \dot{r}^2 + \frac{1}{2}Mr^2 \dot{\theta}^2 - \frac{\alpha}{r}
 			\end{equation}
 
-			This can be rephrased as a differential equation in $r$ only through the angular momentum $l$.
+			Combining these equations to eliminate $\dot \theta$ yields a differential equation for $r$.
 
 			\begin{equation} \label{eq:r-only}
 				E = \frac{1}{2} M \dot{r}^2 + \frac{1}{2} \frac{l^2}{Mr^2} - \frac{\alpha}{r}
 			\end{equation}
 			</p>
 
-		<h2>Kepler's 1st Law: Elliptical Orbits</h2>
+			<h3>Solving the Differential Equation</h3>
 
 			<p>Rearrange equation \eqref{eq:r-only} to provide an expression for $\dot r$ in terms of $r$.</p>
 
 			\begin{equation}
-				\dot r = \sqrt{\frac{2E}{m} - \frac{l^2}{m^2r^2} + \frac{2\alpha}{mr}}
+				\dot r = \sqrt{\frac{2E}{M} - \frac{l^2}{M^2r^2} + \frac{2\alpha}{Mr}}
 			\end{equation}
 
-			<p>Dividing this result by $\dot \theta = \frac{l}{mr^2}$ from equation \eqref{eq:angular-momentum2} yields an expression for $\frac{dr}{d\theta}$, which yields a separable differential equation for the function $r = r(\theta)$.</p>
+			<p>Dividing this result by $\dot \theta = \frac{l}{Mr^2}$ from equation \eqref{eq:angular-momentum2} yields an expression for $\frac{dr}{d\theta}$, which yields a separable differential equation for the function $r = r(\theta)$.</p>
 
 			\begin{equation}
-				\frac{dr}{d\theta} = \frac{\dot r}{\dot \theta} = \frac{\sqrt{\frac{2E}{m} - \frac{l^2}{m^2r^2} + \frac{2\alpha}{mr}}}{\frac{l}{mr^2}}
+				\frac{dr}{d\theta} = \frac{\dot r}{\dot \theta} = \frac{\sqrt{\frac{2E}{M} - \frac{l^2}{M^2r^2} + \frac{2\alpha}{Mr}}}{\frac{l}{Mr^2}}
 			\end{equation}
 
 			<p>Through some remarkable and nontrivial algebraic rearrangement, this can be reexpressed as follows.</p>
 
 			\begin{equation}
-				d\theta = -\frac{-\frac{\frac{l^2}{m\alpha} \frac{1}{r^2}}{\sqrt{1 + \frac{2EL^2}{m\alpha^2}}}}{\sqrt{1 - \left( \frac{\frac{l^2}{m\alpha} \frac{1}{r}-1}{\sqrt{1 + \frac{2El^2}{m\alpha^2}}} \right)^2}}\ dr
+				d\theta = -\frac{-\frac{\frac{l^2}{M\alpha} \frac{1}{r^2}}{\sqrt{1 + \frac{2EL^2}{M\alpha^2}}}}{\sqrt{1 - \left( \frac{\frac{l^2}{M\alpha} \frac{1}{r}-1}{\sqrt{1 + \frac{2El^2}{M\alpha^2}}} \right)^2}}\ dr
 			\end{equation}
 
-			<p>Let $p = \frac{l^2}{m\alpha}$ and $e = \sqrt{1 + \frac{2El^2}{m\alpha^2}}$.</p>
-
-			\begin{equation}
-				d\theta = -\frac{-\frac{p}{er^2}}{\sqrt{1 - \left( \frac{ \frac{p}{r}-1}{e} \right)^2}}\ dr
-			\end{equation}
-
-			<p>Integration yields gives the following result.</p>
+			<p>Let $p = \frac{l^2}{m\alpha}$ and $e = \sqrt{1 + \frac{2El^2}{m\alpha^2}}$. Integrate the result.</p>
 
 			\begin{equation}
 				\theta = \int -\frac{-\frac{p}{er^2}}{\sqrt{1 - \left( \frac{ \frac{p}{r}-1}{e} \right)^2}}\ dr = \arccos \left( \frac{ \frac{p}{r}-1}{e} \right) + C
@@ -200,28 +192,45 @@
 			\begin{equation}
 				r(\theta) = \frac{p}{1 + e\cos \theta} \text{ where } 
 				\begin{cases}
-					p = \frac{l^2}{m\alpha} \vphantom{\sqrt{\frac{a^2}{b^2}}} \\[0.5em]
-					e = \sqrt{1 + \frac{2El^2}{m\alpha^2}} \\[0.5em]
-					m = \frac{m_1 m_2}{m_1 + m_2} \vphantom{\sqrt{\frac{a^2}{b^2}}} \\[0.5em]
+					p = \frac{l^2}{m\alpha} \vphantom{\sqrt{\frac{a^2}{b^2}}} & \text{semi-latus rectum} \\[0.5em]
+					e = \sqrt{1 + \frac{2El^2}{m\alpha^2}} & \text{eccentricity} \\[0.5em]
+					M = \frac{m_1 m_2}{m_1 + m_2} \vphantom{\sqrt{\frac{a^2}{b^2}}} & \text{reduced mass} \\[0.5em]
 					\alpha = G m_1 m_2 \vphantom{\sqrt{\frac{a^2}{b^2}}} \\[0.5em]
-					E = \frac{1}{2} M \dot{r}^2 + \frac{1}{2} \frac{l^2}{Mr^2} - \frac{\alpha}{r} \text{ (constant)} \vphantom{\sqrt{\frac{a^2}{b^2}}} \\[0.5em]
-					l = Mr^2 \dot \theta \text{ (constant)} \vphantom{\sqrt{\frac{a^2}{b^2}}}
+					G \approx 6.67\times 10^{-11} \frac{\text{N} \cdot \text{m}^2}{\text{kg}^2} & \text{gravitational constant} \\[0.5em]
+					E = \frac{1}{2} M \dot{r}^2 + \frac{1}{2} \frac{l^2}{Mr^2} - \frac{\alpha}{r} & \text{energy (conserved)} \vphantom{\sqrt{\frac{a^2}{b^2}}} \\[0.5em]
+					l = Mr^2 \dot \theta & \text{ angular momentum (conserved)} \vphantom{\sqrt{\frac{a^2}{b^2}}}
 				\end{cases}
 			\end{equation}
 
-			<p>Therefore, the curve swept out by $\mathbf r$ is an <em>ellipse</em> with <em>latus rectum</em> $p$, <em>eccentricity</em> $e$, and one focus at the origin of the polar coordinate system.</p>
+			<p>Therefore, the curve swept out by $\mathbf x = \mathbf x_1 - \mathbf x_2$ is an <em>ellipse</em> with <em>latus rectum</em> $p$, <em>eccentricity</em> $e$, and one focus at the origin of the polar coordinate system. This establishes Kepler's First Law.</p>
 
 		<h2>Kepler's 2nd Law: Equal Areas in Equal Time</h2>
 
 			<p>Note that polar area $A$ is swept out throughout the orbit at the rate
 			
 			\begin{equation}
-				\frac{dA}{dt} = \frac{1}{2}r^2 \dot{\theta} = \frac{l}{2m}.
+				\frac{dA}{dt} = \frac{1}{2}r^2 \dot{\theta} = \frac{l}{2M}.
 			\end{equation}
 
 			Since angular momentum $l$ is constant, then the rate at which area is swept out by the orbit $\frac{dA}{dt}$ must also be constant. In other words, equal polar areas are swept out in equal times, which is Kepler's Second Law.</p>
 
 		<h2>Kepler's 3rd Law: A Proportionality Law for Period and Orbital Size</h2>
+
+			<p>
+				For some constants $\xi$ and $\eta$, perform the space and time scalings $\mathbf x \mapsto \xi \mathbf x$ and $t \mapsto \eta t$ on the Lagrangian as shown in equation \eqref{eq:L}.
+
+				\begin{equation}
+					L = \frac{\xi^2}{\eta^2} \frac{1}{2} M \dot{x}^2 + \frac{1}{\xi} \frac{\alpha}{x}
+				\end{equation}
+
+				This new Lagrangian $L$ must be a constant multiple of the Lagrangian shown in equation \eqref{eq:L} in order to yield the same dynamics. Hence, we must conclude that $\frac{\xi^2}{\eta^2} = \frac{1}{\xi}$, which implies 
+
+				\begin{equation}
+				\xi^3 = \eta^2.
+				\end{equation}
+
+				The constant $\xi$ can be interpereted as a scale factor of orbital size and $\eta$ as a scale factor of orbital period for this particular transformation. Hence, this relationship establishes Kepler's Third Law.
+			</p>
 		
 	</div>
 
