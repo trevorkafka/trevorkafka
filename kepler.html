@@ -22,9 +22,11 @@
 	<!-- MathJax Configuration -->
     <script type="text/javascript">
         window.MathJax = {
+        	loader: {load: ['[tex]/cancel']},
             tex: {
             	inlineMath: [['$', '$'], ['\\(', '\\)']],
                 displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                packages: {'[+]': ['cancel']},
                 tags: 'ams'  // Enables equation numbering
             }
         };
@@ -33,13 +35,17 @@
 	<script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script> <!-- use MathJax -->
 </head>
 
+<style type="text/css">
+	summary {
+		font-style: italic;
+	}
+</style>
+
 <body>
 
 	<div class="content">
 
 		<h1>The Kepler Problem</h1>
-
-		<h2>Notation</h2>
 
 			<p>On this page, I use the following notational conventions.</p>
 			<ul>
@@ -49,7 +55,18 @@
 
 		<h2>The Situation</h2>
 
-			<p>Consider two planets with masses $m_1$ and $m_2$ and position vectors $\mathbf x_1$ and $\mathbf x_2$. Using overdot notation, velocities of the planets will thus be written as $\dot{\mathbf x}_1$ and $\dot{\mathbf x}_2$. Let us presume that we are observing these two planets from a reference frame wherein the center of mass is stationary.</p>
+			<p>Consider two moving planets with properties represented through the symbols summarized in the table below.
+
+			$$
+				\begin{array}{c|cc}
+					& \text{planet 1} & \text{planet 2} \\ \hline
+					\text{mass} & m_1 & m_2 \\
+					\text{position} & \mathbf x_1 & \mathbf x_2 \\
+					\text{velocity} & \dot{\mathbf x}_1 & \dot{\mathbf x}_2
+				\end{array}
+			$$
+
+			Let us presume that we are observing these two planets from a reference frame wherein the center of mass is stationary.</p>
 
 			\begin{equation} \label{eq:center-of-mass}
 				\frac{m_1\dot{\mathbf x}_1 + m_2 \dot{\mathbf x}_2}{m_1+m_2} = \mathbf{0}
@@ -65,13 +82,21 @@
 				K = \frac{1}{2}m_1 \dot x_1^2 + \frac{1}{2}m_2 \dot x_2^2
 			\end{equation}
 
-			<p>This expression can be rewritten in the following manner. While this reformatting is nontrivial, it is straightforward to verify.</p>
+			<p>This expression can be generally rewritten in the following manner.</p>
+
+			<details>
+				<summary>Show intermediate steps</summary>
+				\begin{gather}
+				K = \frac{1}{2}\frac{(m_1 + m_2) m_1 \dot x_1^2 + (m_1 + m_2) m_2 \dot x_2^2}{m_1+m_2} \\[1em]
+				K = \frac{1}{2}\frac{m_1^2 \dot x_1^2 + m_2^2 \dot x_2^2 + 2m_1m_2 \dot{\mathbf x}_1 \cdot \dot{\mathbf x}_2}{m_1+m_2} + \frac{1}{2} \frac{m_1 m_2\dot{x}_1^2 + m_1 m_2 \dot x_2^2 - 2m_1m_2 \dot{\mathbf x}_1 \cdot \dot{\mathbf x}_2}{m_1 + m_2}
+				\end{gather}
+			</details>
 
 			\begin{equation}
 				K = \frac{1}{2}(m_1+m_2) \left| \frac{m_1\dot{\mathbf x}_1 + m_2 \dot{\mathbf x}_2}{m_1+m_2} \right|^2 + \frac{1}{2}\left( \frac{m_1 m_2}{m_1 + m_2} \right) |\dot{\mathbf x}_1 - \dot{\mathbf x}_2|^2
 			\end{equation}
 
-			<p>By equation \eqref{eq:center-of-mass}, the first term vanishes.</p>
+			<p>The first term vanishes in the frame of reference of the center of the mass according to equation \eqref{eq:center-of-mass}.</p>
 
 			\begin{equation}
 				K = \frac{1}{2}\left( \frac{m_1 m_2}{m_1 + m_2} \right) |\dot{\mathbf x}_1 - \dot{\mathbf x}_2|^2
@@ -91,7 +116,7 @@
 				U = -\frac{Gm_1 m_2}{|\mathbf x_1 - \mathbf x_2|} \text{, where } G \approx 6.67\times 10^{-11} \frac{\text{N} \cdot \text{m}^2}{\text{kg}^2}
 			\end{equation}
 
-			<p>For simplicity, let $\alpha = G m_1 m_2$ and also adopt the convention $\mathbf x = \mathbf x_1 - \mathbf x_2$ from the previous section.</p>
+			<p>For simplicity, let $\alpha = G m_1 m_2$ and also adopt the relative position vector from the previous section.</p>
 
 			\begin{equation} \label{eq:U}
 				U = -\frac{\alpha}{x}
@@ -105,10 +130,23 @@
 				L \overset{\text{def}}{=} K - U \overset{\eqref{eq:K}\eqref{eq:U}}{=} \frac{1}{2} M\dot{x}^2 + \frac{\alpha}{x}
 			\end{equation}
 
-			The gradient of the Lagrangian with respect to the velocity vector $\nabla_{\dot{\mathbf x}} L$ will be important for the section that follows.
+			The gradient of the Lagrangian with respect to the velocity vector $\frac{\partial L}{\partial \dot{\mathbf x}}$ will be important for the section that follows.
+
+			<details>
+				<summary>Show intermediate steps</summary>
+				\begin{equation}
+					L = \frac{1}{2} M \dot{\mathbf x} \cdot \dot{\mathbf x} + \frac{\alpha}{x}
+				\end{equation}
+				<p>The gradient $\frac{\partial L}{\partial \dot{\mathbf x}}$ is defined as the unique vector field such that for any vector $\mathbf v$ the dot product $\frac{\partial L}{\partial \dot{\mathbf x}} \cdot \mathbf v$ represents the directional derivative of $L$ along $\mathbf v$.</p>
+				\begin{gather}
+					\frac{\partial L}{\partial \dot{\mathbf x}} \cdot \dot{\mathbf x} \overset{\text{def}}{=} \lim_{\epsilon \to 0} \frac{\left( \frac{1}{2} M \left( \dot{\mathbf x} + \epsilon \dot{\mathbf x} \right) \cdot \left( \dot{\mathbf x} + \epsilon \dot{\mathbf x} \right) + \frac{\alpha}{x} \right) - \left( \frac{1}{2} M \dot{\mathbf x} \cdot \dot{\mathbf x} + \frac{\alpha}{x} \right) }{\epsilon} \\[0.5em]
+					\frac{\partial L}{\partial \dot{\mathbf x}} \cdot \dot{\mathbf x} = \lim_{\epsilon \to 0} \frac{\left( \epsilon + \frac{1}{2}\epsilon^2 \right) M \dot{\mathbf x} \cdot \dot{\mathbf x}}{\epsilon} \\[0.5em]
+					\frac{\partial L}{\partial \dot{\mathbf x}} \cdot \dot{\mathbf x} = M \dot{\mathbf x} \cdot \dot{\mathbf x}
+				\end{gather}
+			</details>
 
 			\begin{equation} \label{eq:gradient}
-				\nabla_{\dot{\mathbf x}} L = M \dot{\mathbf x}
+				\frac{\partial L}{\partial \dot{\mathbf x}} = M \dot{\mathbf x}
 			\end{equation}
 			</p>
 
@@ -119,7 +157,7 @@
 			<p>The Lagrangian $L$ is invariant under spatial rotations as it is only dependent on the vector magnitudes $x$ and $\dot x$. Hence, angular momentum
 
 			\begin{equation} \label{eq:angular-momentum}
-				\mathbf l \overset{\text{def}}{=} \mathbf x \times \nabla_{\dot{\mathbf x}} L \overset{\eqref{eq:gradient}}{=} M \mathbf x \times \dot{\mathbf x}
+				\mathbf l \overset{\text{def}}{=} \mathbf x \times \frac{\partial L}{\partial \dot{\mathbf x}} \overset{\eqref{eq:gradient}}{=} M \mathbf x \times \dot{\mathbf x}
 			\end{equation}
 
 			is constant, which reflects the familiar <em>law of conservation of angular momentum</em>. </p>
@@ -129,7 +167,7 @@
 			Since $\frac{\partial L}{\partial t}=0$, we have that the energy
 
 			\begin{equation} \label{eq:energy}
-				E \overset{\text{def}}{=} \nabla_{\dot{\mathbf x}} L \cdot \dot{\mathbf x} - L \overset{\eqref{eq:L}}{=} \frac{1}{2}M\dot x^2 - \frac{\alpha}{x}
+				E \overset{\text{def}}{=} \frac{\partial L}{\partial \dot{\mathbf x}} \cdot \dot{\mathbf x} - L \overset{\eqref{eq:L}}{=} \frac{1}{2}M\dot x^2 - \frac{\alpha}{x}
 			\end{equation}
 
 			is constant, which reflects the familiar <em>law of conservation of energy</em>.
@@ -181,7 +219,7 @@
 				d\theta = -\frac{-\frac{\frac{l^2}{M\alpha} \frac{1}{r^2}}{\sqrt{1 + \frac{2EL^2}{M\alpha^2}}}}{\sqrt{1 - \left( \frac{\frac{l^2}{M\alpha} \frac{1}{r}-1}{\sqrt{1 + \frac{2El^2}{M\alpha^2}}} \right)^2}}\ dr
 			\end{equation}
 
-			<p>Let $p = \frac{l^2}{m\alpha}$ and $e = \sqrt{1 + \frac{2El^2}{m\alpha^2}}$. Integrate the result.</p>
+			<p>Let $p = \frac{l^2}{M\alpha}$ and $e = \sqrt{1 + \frac{2El^2}{M\alpha^2}}$. Integrate the result.</p>
 
 			\begin{equation}
 				\theta = \int -\frac{-\frac{p}{er^2}}{\sqrt{1 - \left( \frac{ \frac{p}{r}-1}{e} \right)^2}}\ dr = \arccos \left( \frac{ \frac{p}{r}-1}{e} \right) + C
@@ -192,8 +230,8 @@
 			\begin{equation}
 				r(\theta) = \frac{p}{1 + e\cos \theta} \text{ where } 
 				\begin{cases}
-					p = \frac{l^2}{m\alpha} \vphantom{\sqrt{\frac{a^2}{b^2}}} & \text{semi-latus rectum} \\[0.5em]
-					e = \sqrt{1 + \frac{2El^2}{m\alpha^2}} & \text{eccentricity} \\[0.5em]
+					p = \frac{l^2}{M\alpha} \vphantom{\sqrt{\frac{a^2}{b^2}}} & \text{semi-latus rectum} \\[0.5em]
+					e = \sqrt{1 + \frac{2El^2}{M\alpha^2}} & \text{eccentricity} \\[0.5em]
 					M = \frac{m_1 m_2}{m_1 + m_2} \vphantom{\sqrt{\frac{a^2}{b^2}}} & \text{reduced mass} \\[0.5em]
 					\alpha = G m_1 m_2 \vphantom{\sqrt{\frac{a^2}{b^2}}} \\[0.5em]
 					G \approx 6.67\times 10^{-11} \frac{\text{N} \cdot \text{m}^2}{\text{kg}^2} & \text{gravitational constant} \\[0.5em]

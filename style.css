@@ -417,6 +417,11 @@
 		.narrowscreen{
 			display:none;
 		}
+
+		p{
+			text-align: justify;
+			hyphens: auto;
+		}
 	}
 
 /* */
