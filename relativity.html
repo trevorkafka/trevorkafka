@@ -117,7 +117,7 @@
 			\gamma = \frac{1}{\sqrt{1 - \beta^2}}\ \text{(Lorentz factor)}
 		\end{equation}
 
-		Furthermore, transformation laws for the time coordinates can also be deduced.</p>
+		Note that $\gamma \geq 1$ and can take on arbitrarily large values as $v \to c$. Furthermore, transformation laws for the time coordinates can also be deduced.</p>
 
 		<details>
 			<summary>Show intermediate steps</summary>
@@ -205,7 +205,75 @@
 			In the last step, I used the fact that $\gamma^2 = \frac{1}{1-\beta^2}$.</p>
 		</details>
 
-		<p>Hence, the <em>four-vector dot product</em> defined by $\mathbf A \cdot \mathbf B = a_0 b_0 - a_1 b_1 - a_2 b_2 - a_3 b_3$, which preserves all spatial notions of a vector dot product (up to a minus sign), is a quantity that remains invariant under a Lorentz transformation of arbitrary four-vectors $\mathbf A$ and $\mathbf B$.
+		<p>Hence, for arbitrary four-vectors $\mathbf A$ and $\mathbf B$, the <em>four-vector dot product</em> defined by $\mathbf A \cdot \mathbf B = a_0 b_0 - a_1 b_1 - a_2 b_2 - a_3 b_3$, which preserves all spatial notions of a vector dot product (up to a minus sign), is a quantity that remains invariant under a Lorentz transformation of arbitrary four-vectors $\mathbf A$ and $\mathbf B$.
+
+		\begin{equation}
+			\mathbf A \cdot \mathbf B = \mathbf A' \cdot \mathbf B'
+		\end{equation}
+		</p>
+
+		<h2>Time dilation</h2>
+
+		<p>Imagine a clock going "tick tock" placed at the origin of $S$ with "ticks" and "tocks" separated by a time $\Delta t$. The four-displacement $\Delta \mathbf X$ of a clock "tick" and the subsequent "tock" can then be written and transformed into the $S'$ frame as $\Delta \mathbf X'$.
+
+		\begin{gather}
+			\Delta \mathbf X = \mathbf X_\textsf{tock} - \mathbf X_\textsf{tick} = \begin{bmatrix} c \Delta t \\ 0 \\ 0 \\ 0 \end{bmatrix} \\[0.5em]
+			\Delta \mathbf X' = \Lambda \Delta \mathbf X = \begin{bmatrix} \gamma & -\beta \gamma & 0 & 0 \\ -\beta \gamma & \gamma & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} c \Delta t \\ 0 \\ 0 \\ 0 \end{bmatrix} = \begin{bmatrix} \gamma c \Delta t \\ - \gamma \beta c \Delta t \\ 0 \\ 0 \end{bmatrix}
+		\end{gather}
+
+		Hence, reading from the first component of $\Delta \mathbf X'$, we can conclude that as observed from the $S'$ frame the clock's "ticks" and "tocks" are separated by greater time 
+
+		\begin{equation}
+			\Delta t' = \gamma \Delta t,
+		\end{equation} 
+		a phenomenon often referred to as <em>time dilation</em> (since $\gamma > 1$ when  $v > 0$).</p>
+
+		<h2>Length contraction</h2>
+
+		<p>
+			Imagine an object at rest in $S$, whose length along the $x$-axis $\Delta x$ in the frame $S$ is to be measured by an observer in $S'$. The locations of the two ends of the object are measured simultaneously from frame $S'$ to have a physical separation $\Delta x'$. The four-displacement $\Delta \mathbf X'$ of the two measurement events (one measurement event for each end) in $S'$ can then be written and transformed into the $S$ frame as $\Delta \mathbf X$.
+
+			\begin{gather}
+				\Delta \mathbf X' = \mathbf X_\textsf{end 2}' - \mathbf X_\textsf{end 1}' = \begin{bmatrix} 0 \\ \Delta x' \\ 0 \\ 0 \end{bmatrix} \\[0.5em]
+				\Delta \mathbf X = \Lambda^{-1} \Delta \mathbf X' = \begin{bmatrix} \gamma & \beta \gamma & 0 & 0 \\ \beta \gamma & \gamma & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} 0 \\ \Delta x \\ 0 \\ 0 \end{bmatrix} = \begin{bmatrix} \gamma \beta \Delta x'\\ \gamma \Delta x' \\ 0 \\ 0 \end{bmatrix}
+			\end{gather}
+
+			This means that the observed physical separation of the two ends of the object along the $x$-axis $\Delta x$ as measured in $S$ is related to $\Delta x'$ by $\Delta x = \gamma \Delta x'$, which implies
+			\begin{equation}
+				\Delta x' = \frac{\Delta x}{\gamma},
+			\end{equation}
+			a phenomenon often referred to as length contraction (since $\gamma > 1$ when  $v > 0$). Also, observe that the events that were seen to be simultaneous in the frame $S'$ are no longer simultaneous in $S$. <em>Simultineaity is relative, not absolute, in special relativity. Events simultaneous in one frame will not be simultaneous in a frame moving relative to it</em>
+		</p>
+
+		<h2>Relativistic velocity</h2>
+
+		<p>Imagine an object moving along the $x$-axis at a constant velocity $u$ as observed in $S$. The velocity is measured by computing the ratio $\frac{\Delta x}{\Delta t}$ from two distinct events within the object's trajectory. From the coordinates of $S'$, the velocity $u'$ of the same object would be computed analogously as $u' = \frac{\Delta x'}{\Delta t'}$.</p>
+
+		<details>
+			<summary>Show intermediate steps</summary>
+			<p>The velocity in each frame is computed based on two events. The four-displacement $\Delta \mathbf X$ of these two events in $S$ can be written and transformed into $S'$ frame as $\Delta \mathbf X'$.
+
+			\begin{gather}
+				\Delta \mathbf X = \mathbf X_\textsf{event 2}' - \mathbf X_\textsf{event 1}' = \begin{bmatrix} c \Delta t \\ \Delta x \\ 0 \\ 0 \end{bmatrix} \\[0.5em]
+				\Delta \mathbf X' = \Lambda \Delta \mathbf X = \begin{bmatrix} \gamma & -\beta \gamma & 0 & 0 \\ -\beta \gamma & \gamma & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} c \Delta t \\ \Delta x \\ 0 \\ 0 \end{bmatrix} = \begin{bmatrix} \gamma c \Delta t - \gamma \beta \Delta x \\ \gamma \Delta x - \gamma \beta c \Delta t \\ 0 \\ 0 \end{bmatrix}
+			\end{gather}
+
+			Compute out $u' = \frac{\Delta x'}{\Delta t'}$.
+
+			\begin{equation}
+				u' = \frac{\Delta x'}{\Delta t'} = \frac{\gamma \Delta x - \gamma \beta c \Delta t}{\frac{1}{c}(\gamma c \Delta t - \gamma \beta \Delta x)} = \frac{\frac{\Delta x}{\Delta t} - \beta c}{1 - \frac{1}{c} \beta \frac{\Delta x}{\Delta t}}
+			\end{equation}
+			</p>
+		</details>
+
+		<p>This yields
+			\begin{equation}
+				u'=\frac{u-v}{1-\frac{uv}{c^{2}}},
+			\end{equation}
+			or, by writing $\alpha = \frac{u}{c}$ and $\alpha' = \frac{u'}{c}$, we get the more compact form
+			\begin{equation}
+				\alpha' = \frac{\alpha - \beta}{1 - \alpha \beta}.
+			\end{equation}
 		</p>
 
 		<h2>Relativistic energy and momentum</h2>
@@ -239,7 +307,7 @@
 			\mathbf P = \begin{bmatrix} \gamma m c \\ \gamma mv \\ 0 \\ 0 \end{bmatrix}
 		\end{equation}
 
-		When $v \ll c$, approximations can be made for $p_0$ and $p_1$ that reveal their connection to classical quantities.</p>
+		When $v \ll c$, approximations can be made for $p_0$ and $p_1$ that reveal their connections to classical quantities.</p>
 		<details>
 			<summary>Show intermediate steps</summary>
 			<p>
@@ -277,7 +345,7 @@
 			\mathbf P = \begin{bmatrix} E/c \\ p \\ 0 \\ 0 \end{bmatrix}
 			\end{equation}
 
-			We can transform this into the $S'$ frame via $\Lambda$.
+			We can transform this into the $S'$ frame.
 		</p>
 
 			<details>
@@ -323,9 +391,18 @@
 					  &= mc^2 + \frac{p^2}{2m} - \frac{p^4}{8m^3c^2} + \frac{p^6}{16m^5c^4} + \cdots
 				\end{align}
 
-				Hence, when $p \ll mc$, i.e. $\gamma v \ll c$, we have $E \approx \frac{p^2}{2m}$, which matches the classical relationship.
+				Hence, when $p \ll mc$, i.e. $\gamma v \ll c$, we have $E - mc^2 \approx \frac{p^2}{2m}$, which matches the classical relationship (remember, since relativistic energy $E$ represents the sum of rest mass energy $mc^2$ and kinetic energy, the quantity $E - mc^2$ represents just the kinetic energy)
 				</p>
 			</details>
+		</p>
+
+		<h2>Relativistic doppler shift</h2>
+
+		<p>Imagine a light pulse at frequency $f$ eminates from the origin of $S$ in the $+x$-direction. The next pulse eminates at a time $\frac{1}{f}$ later as measured in $S$. Let $\Delta x$ and $\Delta t$ represent the spatial and temporal separations of consecutive light pulses being received at a fixed point in $S'$ as measured by $S$. Tracking the movement of the frame, we have $\Delta x=v\Delta t$ and tracking the movement of the pulse, we have $\Delta x=c ( \Delta t-\frac{1}{f} )$, so thus $\Delta t=\frac{1}{f( 1-\beta )}$. Since $\Delta x=v\Delta t$ we also have $\Delta t=\gamma \Delta t'=\frac{\gamma }{f'}$, so $\frac{f'}{f} =\gamma ( 1-\beta )$. This simplifes to the relativistic doppler shift formula.
+
+		\begin{equation}
+		\frac{f'}{f} =\sqrt{\frac{1-\beta }{1+\beta }}
+		\end{equation}
 		</p>
 
 	</div>
