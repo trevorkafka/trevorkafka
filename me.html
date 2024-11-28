@@ -41,6 +41,33 @@
 
 		<div style="padding-bottom: 10px"></div> 	
 
+		<!-- last updated info script -->
+
+		<script type="text/javascript">
+			const lastUpdateDate = new Date('2024-11-27'); // CHANGE DATE HERE in the format 'YYYY-MM-DD'
+
+			function updateDaysAgo() {
+			    const today = new Date();
+			    const timeDifference = today - lastUpdateDate - 5 * 1000 * 60 * 60 ; // Difference in milliseconds and account for UTC-5 time zone
+			    const daysAgo = Math.floor(timeDifference / (1000 * 60 * 60 * 24)); // Convert to days
+
+			    // Update the text content of the placeholders
+			    const lastUpdatedElements = document.getElementsByClassName('last-updated');
+			    for (let i = 0; i < lastUpdatedElements.length; i++) {
+			        if (daysAgo === 0) {
+			            lastUpdatedElements[i].textContent = `today`;
+			        } else if (daysAgo === 1) {
+			            lastUpdatedElements[i].textContent = `yesterday`;
+			        } else {
+			            lastUpdatedElements[i].textContent = `${daysAgo} days ago`;
+			        }
+			    }
+			}
+
+			// Call the function when the page loads
+			window.onload = updateDaysAgo;
+		</script>
+
 		<!-- actual content -->
 
 		<div class="widescreen">
@@ -97,7 +124,7 @@
 					<p>Here are some ways to keep up with me elsewhere on the internet!</p>
 					<ul>
 						<li><a href="http://www.trevorkafka.com" target=”_blank”>www.trevorkafka.com</a> - my math/physics tutoring business</li>
-						<li><a href="http://www.facebook.com/trevorkafka" target=”_blank”>Facebook</a> & <a href="http://www.instagram.com/trevorkafka/" target=”_blank”>Instagram</a> - socials</li>
+						<li><a href="https://bsky.app/profile/trevorkafka.com" target="_blank">BlueSky</a>, <a href="http://www.facebook.com/trevorkafka" target=”_blank”>Facebook</a>, & <a href="http://www.instagram.com/trevorkafka/" target=”_blank”>Instagram</a> - socials</li>
 						<li><a href="https://nomads.com/@trevorkafka" target=”_blank”>Nomads</a> - documentation of my digital nomad travels</li>
 						<li><a href="https://www.polyglotassociation.org/members/trevor-kafka" target="_blank">HYPIA</a> - The International Association of Hyperpolyglots</li>
 						<li><a href="https://www.italki.com/user/4746304" target="_blank">italki</a> - I am currently a language learner on italki but also was a <a href="https://www.italki.com/trevorkafka/" target="_blank" style="color: inherit; text-decoration: underline">teacher</a> in 2019–2024</li>
@@ -223,34 +250,6 @@
 					</div>
 				</div>
 		</div>
-
-		<!-- last updated info script -->
-
-		<script type="text/javascript">
-			// Set the last update date here in the format 'YYYY-MM-DD'
-			const lastUpdateDate = new Date('2024-11-14'); 
-
-			function updateDaysAgo() {
-			    const today = new Date();
-			    const timeDifference = today - lastUpdateDate - 5 * 1000 * 60 * 60 ; // Difference in milliseconds and account for UTC-5 time zone
-			    const daysAgo = Math.floor(timeDifference / (1000 * 60 * 60 * 24)); // Convert to days
-
-			    // Update the text content of the placeholders
-			    const lastUpdatedElements = document.getElementsByClassName('last-updated');
-			    for (let i = 0; i < lastUpdatedElements.length; i++) {
-			        if (daysAgo === 0) {
-			            lastUpdatedElements[i].textContent = `today`;
-			        } else if (daysAgo === 1) {
-			            lastUpdatedElements[i].textContent = `yesterday`;
-			        } else {
-			            lastUpdatedElements[i].textContent = `${daysAgo} days ago`;
-			        }
-			    }
-			}
-
-			// Call the function when the page loads
-			window.onload = updateDaysAgo;
-		</script>
 
 		<!-- page-specific CSS -->
 
