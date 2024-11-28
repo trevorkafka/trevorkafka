@@ -217,6 +217,20 @@
 		-webkit-background-clip: text;
 	}
 
+	span.titlebutton {
+		margin: 10px 10px 10px 0px;
+		padding: 15px;
+		background-color: #0000000A;
+		border-radius: 10px;
+		transition-duration: 0.5s;
+		display: inline-block;
+		color: var(--color1);
+	}
+
+	span.titlebutton:hover {
+		background-color: #00000020;
+	}
+
 /* */
 /* TABLES */
 /* */

@@ -8,7 +8,7 @@ $('trevorkafka-nav').load('snippets/navigation.html', function() {
     });
 
 //other replacements
-$('trevorkafka-email').load('snippets/email.html')
+$('trevorkafka-email').load('/snippets/email.html')
 $('trevorkafka-footer').load('snippets/footer.html')
 $('trevorkafka-announcement').load('snippets/announcement.html')
 
