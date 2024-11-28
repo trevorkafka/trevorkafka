@@ -1,10 +1,10 @@
 <head>
-	<title>The Kepler Problem</title>
+	<title>The Kepler Problem - Trevor Kafka</title>
 
 	<meta charset="utf-8"> <!--ensures that there aren't any issues with the display of emojis -->
 	<meta name="viewport" content="width=device-width"> <!-- essential for making sure that the ACTUAL screen width is interpreted by the CSS as opposed to some idealized number presented by smartphones (980px+) -->
 
-	<link rel="stylesheet" href="style.css">
+	<link rel="stylesheet" href="/style.css">
 	<link rel="shortcut icon" href="favicon.ico">
 
 	<!-- Google font stuff -->
@@ -14,13 +14,13 @@
 	<link href="https://fonts.googleapis.com/css2?family=Freeman&display=block" rel="stylesheet">
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> <!-- use JQuery -->
-	<script type="text/javascript" src="script.js" defer></script> <!-- defer means to wait to run the script until the whole page is ready -->
+	<script type="text/javascript" src="/script.js" defer></script> <!-- defer means to wait to run the script until the whole page is ready -->
 
 	<!-- Masonry -->
 	<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.js"></script> <!-- use Masonry JS from https://masonry.desandro.com/ -->
 
-	<!-- MathJax Configuration -->
-    <script type="text/javascript">
+	<script type="text/javascript">
+    	// MathJax Configuration
         window.MathJax = {
         	loader: {load: ['[tex]/cancel']},
             tex: {
@@ -30,12 +30,24 @@
                 tags: 'ams'  // Enables equation numbering
             }
         };
+
+        // LANGUAGE SPECIFICATION FOR HYPHENATION
+		// sets lang="en-US" for all <p> tags so that hyphens: auto in the CSS will hyphenate words for line breaks
+
+		document.addEventListener('DOMContentLoaded', () => {
+		    document.querySelectorAll('p').forEach(p => p.setAttribute('lang', 'en-US'));
+		});
     </script>
 	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script> <!-- use MathJax -->
 	<script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script> <!-- use MathJax -->
 </head>
 
 <style type="text/css">
+	p{
+			text-align: justify;
+			hyphens: auto;
+		}
+		
 	summary {
 		font-style: italic;
 	}
@@ -45,7 +57,33 @@
 
 	<div class="content">
 
-		<h1>The Kepler Problem</h1>
+		<a href="/articles"><span class="titlebutton" style="margin-top:50px">⮜ Articles</span></a>
+
+		<h1 style="margin-top: 20px">The Kepler Problem</h1>
+
+		<div style="float:right; margin-left: 50px; margin-bottom: 20px">
+			<img src="../media/TK indonesia.png" alt="Trevor Kafka headshot in Indonesia" style="width: min(40vw, 225px); border-radius:100%">
+			<p><em><center>
+				Article written by <a href="../" target="_blank">Trevor Kafka</a><br>
+				November 2024 <br>
+				<trevorkafka-email></trevorkafka-email>
+			</center></em></p>
+		</div>
+		
+			<p>
+		        This article provides a detailed mathematical exploration of the Kepler Problem, which describes the motion of two bodies influenced by gravitational forces. It systematically derives and explains the principles underlying the motion, including the conservation of energy and angular momentum, and culminates in the establishment of Kepler's three laws of planetary motion. Key topics include:
+		    </p>
+		    <ul>
+		        <li>Setting up the problem with center-of-mass reference frames and vector notations.</li>
+		        <li>Deriving expressions for kinetic and potential energy in the context of celestial mechanics.</li>
+		        <li>Formulating the Lagrangian and its applications to conserved quantities.</li>
+		        <li>Mathematical proof and derivation of Kepler's First, Second, and Third Laws.</li>
+		    </ul>
+		    <p>
+		        The content is rigorous and technical, aimed at readers with a background in physics or mathematics who seek an in-depth understanding of celestial mechanics.
+		    </p>
+
+		<h2>Notation</h2>
 
 			<p>On this page, I use the following notational conventions.</p>
 			<ul>
@@ -182,7 +220,7 @@
 			\mathbf x &= \begin{bmatrix} r \vphantom{\dot \theta} \\ 0  \vphantom{\dot \theta} \\ 0 \vphantom{\dot \theta} \end{bmatrix}, & \dot{\mathbf x} &= \begin{bmatrix} \dot r  \vphantom{\dot \theta} \\ r \dot \theta \\ 0 \vphantom{\dot \theta} \end{bmatrix}, & x &= r, & \dot x^2 &= \dot r^2 + r^2 \dot \theta^2, & |\mathbf x \times \dot{\mathbf x}| &= r^2 \dot \theta
 			\end{align}
 
-			From this, we can write the magnitude $l$ of the angular momentum of equation \eqref{eq:angular-momentum}, and energy $E$ of equation \eqref{eq:energy} each in polar coordinate representations.
+			From this, we can write the magnitude of the angular momentum $l$ from equation \eqref{eq:angular-momentum} and energy $E$ from equation \eqref{eq:energy} each in polar coordinate representations.
 
 			\begin{equation} \label{eq:angular-momentum2}
 			l = M r^2 \dot \theta
@@ -192,7 +230,7 @@
 				E = \frac{1}{2} M \dot{r}^2 + \frac{1}{2}Mr^2 \dot{\theta}^2 - \frac{\alpha}{r}
 			\end{equation}
 
-			Combining these equations to eliminate $\dot \theta$ yields a differential equation for $r$.
+			Combining these equations to eliminate $\dot \theta$ yields a differential equation for $r = r(t)$.
 
 			\begin{equation} \label{eq:r-only}
 				E = \frac{1}{2} M \dot{r}^2 + \frac{1}{2} \frac{l^2}{Mr^2} - \frac{\alpha}{r}
@@ -216,7 +254,7 @@
 			<p>Through some remarkable and nontrivial algebraic rearrangement, this can be reexpressed as follows.</p>
 
 			\begin{equation}
-				d\theta = -\frac{-\frac{\frac{l^2}{M\alpha} \frac{1}{r^2}}{\sqrt{1 + \frac{2EL^2}{M\alpha^2}}}}{\sqrt{1 - \left( \frac{\frac{l^2}{M\alpha} \frac{1}{r}-1}{\sqrt{1 + \frac{2El^2}{M\alpha^2}}} \right)^2}}\ dr
+				d\theta = -\frac{\displaystyle -\frac{\frac{l^2}{M\alpha} \frac{1}{r^2}}{\sqrt{1 + \frac{2EL^2}{M\alpha^2}}}}{\displaystyle \sqrt{1 - \left( \frac{\frac{l^2}{M\alpha} \frac{1}{r}-1}{\sqrt{1 + \frac{2El^2}{M\alpha^2}}} \right)^2}}\ dr
 			\end{equation}
 
 			<p>Let $p = \frac{l^2}{M\alpha}$ and $e = \sqrt{1 + \frac{2El^2}{M\alpha^2}}$. Integrate the result.</p>
@@ -236,7 +274,7 @@
 					\alpha = G m_1 m_2 \vphantom{\sqrt{\frac{a^2}{b^2}}} \\[0.5em]
 					G \approx 6.67\times 10^{-11} \frac{\text{N} \cdot \text{m}^2}{\text{kg}^2} & \text{gravitational constant} \\[0.5em]
 					E = \frac{1}{2} M \dot{r}^2 + \frac{1}{2} \frac{l^2}{Mr^2} - \frac{\alpha}{r} & \text{energy (conserved)} \vphantom{\sqrt{\frac{a^2}{b^2}}} \\[0.5em]
-					l = Mr^2 \dot \theta & \text{ angular momentum (conserved)} \vphantom{\sqrt{\frac{a^2}{b^2}}}
+					l = Mr^2 \dot \theta & \text{angular momentum (conserved)} \vphantom{\sqrt{\frac{a^2}{b^2}}}
 				\end{cases}
 			\end{equation}
 

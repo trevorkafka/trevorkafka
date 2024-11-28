@@ -1,0 +1,507 @@
+<head lang="en-US">
+	<title>Special Relativity - Trevor Kafka</title>
+
+	<meta charset="utf-8"> <!--ensures that there aren't any issues with the display of emojis -->
+	<meta name="viewport" content="width=device-width"> <!-- essential for making sure that the ACTUAL screen width is interpreted by the CSS as opposed to some idealized number presented by smartphones (980px+) -->
+
+	<link rel="stylesheet" href="/style.css">
+	<link rel="shortcut icon" href="favicon.ico">
+
+	<!-- Google font stuff -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=block" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Freeman&display=block" rel="stylesheet">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> <!-- use JQuery -->
+	<script type="text/javascript" src="/script.js" defer></script> <!-- defer means to wait to run the script until the whole page is ready -->
+
+	<!-- Masonry -->
+	<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.js"></script> <!-- use Masonry JS from https://masonry.desandro.com/ -->
+
+    <script type="text/javascript">
+    	// MathJax Configuration
+        window.MathJax = {
+        	loader: {load: ['[tex]/cancel']},
+            tex: {
+            	inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                packages: {'[+]': ['cancel']},
+                tags: 'ams'  // Enables equation numbering
+            }
+        };
+
+        // LANGUAGE SPECIFICATION FOR HYPHENATION
+		// sets lang="en-US" for all <p> tags so that hyphens: auto in the CSS will hyphenate words for line breaks
+
+		document.addEventListener('DOMContentLoaded', () => {
+		    document.querySelectorAll('p').forEach(p => p.setAttribute('lang', 'en-US'));
+		});
+    </script>
+	<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script> <!-- use MathJax -->
+	<script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script> <!-- use MathJax -->
+</head>
+
+<style type="text/css">
+	p{
+		text-align: justify;
+		hyphens: auto;
+	}
+		
+	summary {
+		font-style: italic;
+	}
+
+	details[open] summary {
+		padding-bottom: 1em;
+	}
+
+	details[open] {
+		border-color: --color1;
+		border-left-style: solid;
+		padding-left: 10px;
+	}
+
+	details {
+		margin-bottom: 1em;
+	}
+</style>
+
+<body>
+
+	<div class="content">
+
+		<a href="/articles"><span class="titlebutton" style="margin-top:50px">⮜ Articles</span></a>
+
+		<h1 style="margin-top: 20px">Special Relativity</h1>
+
+		<div style="float:right; margin-left: 50px; margin-bottom: 20px">
+			<img src="/media/TK indonesia.png" alt="Trevor Kafka headshot in Indonesia" style="width: min(40vw, 225px); border-radius:100%">
+			<p><em><center>
+				Article written by <a href="/" target="_blank">Trevor Kafka</a><br>
+				November 2024 <br>
+				<trevorkafka-email></trevorkafka-email>
+			</center></em></p>
+		</div>
+
+		<p>
+	        This article explores the theory of special relativity, introducing its foundational principles, mathematical framework, and key physical consequences. Aimed at readers with a background in physics and mathematics, it provides a comprehensive treatment of relativistic concepts, including transformations, invariance, and observable effects. Key topics include:
+	    </p>
+	    <ul>
+	        <li><strong>Fundamental principles</strong>: The constancy of the speed of light and the universality of physical laws across inertial frames.</li>
+	        <li><strong>Lorentz transformations</strong>: Mathematical tools for relating space and time between inertial frames.</li>
+	        <li><strong>Relativistic effects</strong>: Time dilation, length contraction, and relative simultaneity.</li>
+	        <li><strong>Energy and momentum</strong>: Derivation of relativistic expressions, including Einstein’s famous \(E = mc^2\).</li>
+	        <li><strong>Doppler shift</strong>: The frequency changes observed for light in relativistic contexts.</li>
+	    </ul>
+	    <p>
+	        The article emphasizes rigorous mathematical derivation and demonstrates the profound implications of relativity in reconciling the behavior of space, time, and energy.
+	    </p>
+
+		<h2>Fundamental Principles</h2>
+
+		<p>The fundamental principles of special relativity are as follows.
+
+		<ol>
+			<li>All inertial reference frames abide by the same laws of physics.</li>
+			<li>Light has the speed $c \approx 3.00\times 10^8\ \frac{\text{m}}{\text{s}}$ in all reference frames.</li>
+		</ol>
+
+		It is from these two principles that the entire theory of special relativity can be deduced.</p>
+
+		<h2>The Lorentz factor and Lorentz transformation</h2>
+
+		<p>Since speed is calculated using measurements of distance and time, the second principle can only align with our traditional understanding of how objects appear to move in different reference frames if we accept that measurements of distance and time vary between frames. Recognizing this variability was the key insight that enabled the formulation of the theory’s fundamental principles and the profound consequences that stem from them.</p>
+
+		<p>The traditional argumentation begins by considering, <em>outside of the context of special relativity</em>, i.e. according to classical mechanics, two inertial reference frames $S$ and $S'$ which are coincident at time $t = 0$. Frame $S'$ moves relative to $S$ in the $+x$-direction at velocity $v$. The transformation law for $x$-coordinates between the two frames can then be easily written.
+
+		\begin{equation}
+			\begin{cases}
+				x = x' + vt \\
+				x' = x - vt
+			\end{cases}\ \ \text{(non-relativistic)}
+		\end{equation}
+
+		In order to incorporate the new desired flexibility that measurements of distance and time vary between frames, introduce a constant $\gamma$ that represents the ratio of a length measurement along the $x$-axis in each frame. Classically one would expect $\gamma = 1$, as a length measurement in $S$ would be considered equivalent to a length measurement in $S'$. However, for our purposes of building a theory consistent with the aforementioned principles of special relativity, we will allow values of $\gamma \neq 1$. Since all reference frames are equivalent, this constant $\gamma$ must be incorporated in identical ways for both transformation laws.</p> 
+
+		<p>In addition, since we are opening up the ability for time measurements to vary between frames, we must make a distinction between the time coordinates of both frames. Just as $x$ and $x'$ represent position coordinates as measured in each frame, $t$ and $t'$ will now represent the time coordinates as measured in each frame. <em>We can no longer establish time as an agreed-upon quantity between both frames.</em> Both frames' coordinate systems will still be coincident when $t = t' = 0$.
+
+		\begin{equation} \label{eq:position-transformation-laws}
+			\begin{cases}
+				x = \gamma \left( x' + vt' \right) \\
+				x' = \gamma \left( x - vt \right)
+			\end{cases}
+		\end{equation}
+
+		Now, imagine a light pulse travels from the coincident origins of the two frames in the $+x$-direction. Its subsequent motion is then observed in both frames through the coordinates $(x,t)$ in frame $S$ and the coordinates $(x',t')$ in the frame $S'$. Since the light pulse is observed to travel at speed $c$ in both frames, we must have $x = ct$ and $x' = ct'$. From this, the quantity $\gamma$, known as the <em>Lorentz factor</em> can be deduced as a function of the dimensionless quantity $\beta = \frac{v}{c}$. </p>
+
+		<details>
+			<summary>Show intermediate steps</summary>
+			
+			<p>Substitute $x = ct$ and $x' = ct'$ into equations \eqref{eq:position-transformation-laws} and multiply both equations together. 
+
+			\begin{gather}
+				ct \cdot ct' = \gamma (ct' + vt')\cdot \gamma (ct - vt) \\[0.5em]
+				c^2 tt' = \gamma^2 tt' (c^2 - v^2) \\[0.5em]
+				\gamma = \frac{1}{\sqrt{1 - \frac{v^2}{c^2}}}
+			\end{gather}
+			</p>
+
+		</details>
+
+		<p>
+		\begin{equation}
+			\gamma = \frac{1}{\sqrt{1 - \beta^2}} \text{ where } \beta = \frac{v}{c} \text{ (Lorentz factor)}
+		\end{equation}
+
+		Note that $\gamma \geq 1$ and can take on arbitrarily large values as $v \to c$. Furthermore, transformation laws for the time coordinates can also be deduced.</p>
+
+		<details>
+			<summary>Show intermediate steps</summary>
+			
+			<p>Substitute the second of equations \eqref{eq:position-transformation-laws} into the first and rearrange for $t'$.
+
+			\begin{gather}
+				x = \gamma \left( \gamma \left( x - vt \right) + vt' \right) \\[0.5em]
+				\frac{x}{v} (1 - \gamma^2) = - \gamma^2 t + \gamma t' \\[0.5em]
+				t' = \gamma \left[ t - \frac{x}{v} \left( 1 - \frac{1}{\gamma^2} \right) \right] \\[0.5em]
+				t' = \gamma \left( t - \frac{xv}{c^2} \right)
+			\end{gather}
+			
+			In the last step, I used the fact that $1 - \frac{1}{\gamma^2} = \beta^2 = \frac{v^2}{c^2}$. Since the reference frames are equivalent and $v$ becomes $-v$ when switching frames, the inverse transformation law can be immediately written. </p>
+
+		</details>
+
+		<p>
+		\begin{equation}
+			\begin{cases} \label{eq:time-transformation-laws}
+				\displaystyle t = \gamma \left( t' + \frac{x'v}{c^2} \right) \\[0.5em]
+				\displaystyle t' = \gamma \left( t - \frac{xv}{c^2} \vphantom{\frac{x'v}{c^2}} \right)
+			\end{cases}
+		\end{equation}
+		
+		Equations \eqref{eq:position-transformation-laws} and \eqref{eq:time-transformation-laws} can be rewritten in a more symmetric form through the use of $\beta$. For simplicity, only the $S$-to-$S'$ tranformation laws will be provided from this point forward. For completeness, I'll add the trivial $y$- and $z$-coordinate transformations as well.
+
+		\begin{equation}
+			\begin{cases}
+				ct' = \gamma \left( ct - \beta x \right) \\[0.5em]
+				x' = \gamma \left( x - \beta ct \right) \\[0.5em]
+				y' = y \\[0.5em]
+				z' = z \\[0.5em]
+			\end{cases}
+		\end{equation}
+
+		This motivates a restructuring of the coordinate system as $(x_0, x_1, x_2, x_3) = (ct, x, y, z)$, which reveals a highly symmetric form of the transformation laws where time (proportional to $x_0$) and $x$-position ($x_1$) are given equal footing.
+
+		\begin{equation} \label{eq:symmetric-transformations}
+			\begin{cases}
+				x_0' = \gamma \left( x_0 - \beta x_1 \right) \\[0.5em]
+				x_1' = \gamma \left( x_1 - \beta x_0 \right) \\[0.5em]
+				x_2' = x_2 \\[0.5em]
+				x_3' = x_3
+			\end{cases}
+		\end{equation}
+
+		</p>
+
+		<h2>Four-vectors</h2>
+
+		<p>
+		Events hence are uniquely specified by their so-called <em>four-position vectors</em> $\mathbf X = (x_0, x_1, x_2, x_3)$, which transform between $S$ and $S'$ according to the so-called <em>Lorentz transformation</em>.
+
+		\begin{equation}
+			\begin{bmatrix} x_0' \\ x_1' \\ x_2' \\ x_3' \end{bmatrix} = \underbrace{ \begin{bmatrix} \gamma & -\beta \gamma & 0 & 0 \\ -\beta \gamma & \gamma & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{bmatrix} }_{\Lambda} \begin{bmatrix} x_0 \\ x_1 \\ x_2 \\ x_3 \end{bmatrix}\ \text{(Lorentz transformation)} \\[0.5em]
+		\end{equation}
+
+		In more compact matrix notation, writing the $4\times 4$ matrix above as $\Lambda$, we can also write $\mathbf X' = \Lambda \mathbf X$. Here, $\mathbf X'$ represents the four position as seen from frame $S'$, the Lorentz-transformed version of the four position $\mathbf X$ as seen from $S$.</p>
+
+		<p>The notion of the four-position vector $\mathbf X$ can be generalized into a <em>four-vector</em>, which shall be defined as a four-dimensional vector that transforms between the frames $S$ and $S'$ according to the Lorentz transformation $\Lambda$. Applying this Lorentz transformation to arbitrary vectors $\mathbf A = (a_0, a_1, a_2, a_3)$ and $\mathbf B = (b_0, b_1, b_2, b_3)$, one can show that the components of $\mathbf A' = \Lambda \mathbf A$ and $\mathbf B' = \Lambda \mathbf B$ satisfy the identity $a_0' b_0' - a_1' b_1' = a_0 b_0 - a_1 b_1$.</p>
+
+		<details>
+			<summary>Show proof</summary>
+			<p>According to the Lorentz transformation, we have the following relationships between the first two coordinates of $\mathbf A$ and $\mathbf B$ in $S$ and $S'$.
+
+			\begin{equation}
+				\begin{cases}
+					a_0' = \gamma \left( a_0 - \beta a_1 \right) \\[0.5em]
+					a_1' = \gamma \left( a_1 - \beta a_0 \right) \\[0.5em]
+					b_0' = \gamma \left( b_0 - \beta b_1 \right) \\[0.5em]
+					b_1' = \gamma \left( b_1 - \beta b_0 \right)
+				\end{cases}
+			\end{equation}
+
+			This allows us to compute $a_0' b_0' - a_1' b_1'$ directly and simplify.
+
+			\begin{align}
+				a_0' b_0' - a_1' b_1' &= \left[ \gamma \left( a_0 - \beta a_1 \right) \right] \left[ \gamma \left( b_0 - \beta b_1 \right) \right] - \left[ \gamma \left( a_1 - \beta a_0 \right) \right] \left[ \gamma \left( b_1 - \beta b_0 \right) \right] \\[0.5em]
+				&= \gamma^2 \left( a_0 b_0 - \beta a_0 b_1 - \beta a_1 b_0 + \beta^2 a_1 b_1 \right) - \gamma^2 \left( a_1 b_1 - \beta a_1 b_0 - \beta a_0 b_1 + \beta^2 a_0 b_0 \right) \\[0.5em]
+				&= \gamma^2 (1 - \beta^2) ( a_0 b_0 - a_1 b_1 ) \\[0.5em]
+				&= a_0 b_0 - a_1 b_1\ \checkmark
+			\end{align}
+			
+			In the last step, I used the fact that $\gamma^2 = \frac{1}{1-\beta^2}$.</p>
+		</details>
+
+		<p>Hence, for arbitrary four-vectors $\mathbf A$ and $\mathbf B$, the <em>four-vector dot product</em> defined by $\mathbf A \cdot \mathbf B = a_0 b_0 - a_1 b_1 - a_2 b_2 - a_3 b_3$, which preserves all spatial notions of a vector dot product (up to a minus sign), is a quantity that remains invariant under a Lorentz transformation of arbitrary four-vectors $\mathbf A$ and $\mathbf B$.
+
+		\begin{equation} \label{eq:invariant}
+			\mathbf A \cdot \mathbf B = \mathbf A' \cdot \mathbf B'
+		\end{equation}
+		</p>
+
+		<h2>Time dilation</h2>
+
+		<p>Imagine a clock going "tick tock" placed at the origin of $S$ with "ticks" and "tocks" separated by a time $\Delta t$. The four-displacement $\Delta \mathbf X$ of a clock "tick" and the subsequent "tock" can then be written and transformed into the $S'$ frame as $\Delta \mathbf X'$.
+
+		<details>
+			<summary>Show intermediate steps</summary>
+			<p>
+				\begin{gather}
+					\Delta \mathbf X = \mathbf X_\textsf{tock} - \mathbf X_\textsf{tick} = \begin{bmatrix} c \Delta t \\ 0 \\ 0 \\ 0 \end{bmatrix} \\[0.5em]
+					\Delta \mathbf X' = \Lambda \Delta \mathbf X = \begin{bmatrix} \gamma & -\beta \gamma & 0 & 0 \\ -\beta \gamma & \gamma & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} c \Delta t \\ 0 \\ 0 \\ 0 \end{bmatrix} = \begin{bmatrix} \gamma c \Delta t \\ - \gamma \beta c \Delta t \\ 0 \\ 0 \end{bmatrix}
+				\end{gather}
+			</p>
+		</details>
+
+		From this, we can conclude that as observed from the $S'$ frame the clock's "ticks" and "tocks" are separated in $S'$ by a time greater than that of $S$, namely by
+
+		\begin{equation} \label{eq:length-contraction}
+			\Delta t' = \gamma \Delta t,
+		\end{equation} 
+		a phenomenon often referred to as <em>time dilation</em> (since $\gamma > 1$ when  $v > 0$).</p>
+
+		<h2>Length contraction</h2>
+
+		<p>
+			Imagine an object at rest in $S$, whose length along the $x$-axis $\Delta x$ in the frame $S$ is to be measured by an observer in $S'$. The locations of the two ends of the object are measured simultaneously from frame $S'$ to have a physical separation $\Delta x'$. The four-displacement $\Delta \mathbf X'$ of the two measurement events (one measurement event for each end) in $S'$ can then be written and transformed into the $S$ frame as $\Delta \mathbf X$.
+		</p>
+
+			<details>
+			<summary>Show intermediate steps</summary>
+			<p>
+				\begin{gather}
+					\Delta \mathbf X' = \mathbf X_\textsf{end 2}' - \mathbf X_\textsf{end 1}' = \begin{bmatrix} 0 \\ \Delta x' \\ 0 \\ 0 \end{bmatrix} \\[0.5em]
+					\Delta \mathbf X = \Lambda^{-1} \Delta \mathbf X' = \begin{bmatrix} \gamma & \beta \gamma & 0 & 0 \\ \beta \gamma & \gamma & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} 0 \\ \Delta x \\ 0 \\ 0 \end{bmatrix} = \begin{bmatrix} \gamma \beta \Delta x'\\ \gamma \Delta x' \\ 0 \\ 0 \end{bmatrix}
+				\end{gather}
+			</p>
+		</details>
+
+			<p>From this, we can deduce that the observed physical separation of the two ends of the object along the $x$-axis $\Delta x$ as measured in $S$ is related to $\Delta x'$ by $\Delta x = \gamma \Delta x'$, which implies
+			\begin{equation} \label{eq:time-dilation}
+				\Delta x' = \frac{\Delta x}{\gamma},
+			\end{equation}
+			a phenomenon often referred to as length contraction (since $\gamma > 1$ when  $v > 0$). Also, observe that the events that were seen to be simultaneous in the frame $S'$ are no longer simultaneous in $S$ (this is seen by the fact that $\Delta x_0 = \gamma \beta \Delta x' \neq 0$). <em>Simultineaity is relative, not absolute, in special relativity. Events simultaneous in one frame will not be simultaneous in a frame moving relative to it</em>
+		</p>
+
+		<h2>Relativistic velocity</h2>
+
+		<p>Imagine an object moving along the $x$-axis at a constant velocity $u$ as observed in $S$. The velocity is measured by computing the ratio $\frac{\Delta x}{\Delta t}$ from two distinct events within the object's trajectory. From the coordinates of $S'$, the velocity $u'$ of the same object would be computed analogously as $u' = \frac{\Delta x'}{\Delta t'}$.</p>
+
+		<details>
+			<summary>Show intermediate steps</summary>
+			<p>The velocity in each frame is computed based on two events. The four-displacement $\Delta \mathbf X$ of these two events in $S$ can be written and transformed into $S'$ frame as $\Delta \mathbf X'$.
+
+			\begin{gather}
+				\Delta \mathbf X = \mathbf X_\textsf{event 2}' - \mathbf X_\textsf{event 1}' = \begin{bmatrix} c \Delta t \\ \Delta x \\ 0 \\ 0 \end{bmatrix} \\[0.5em]
+				\Delta \mathbf X' = \Lambda \Delta \mathbf X = \begin{bmatrix} \gamma & -\beta \gamma & 0 & 0 \\ -\beta \gamma & \gamma & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} c \Delta t \\ \Delta x \\ 0 \\ 0 \end{bmatrix} = \begin{bmatrix} \gamma c \Delta t - \gamma \beta \Delta x \\ \gamma \Delta x - \gamma \beta c \Delta t \\ 0 \\ 0 \end{bmatrix}
+			\end{gather}
+
+			Compute out $u' = \frac{\Delta x'}{\Delta t'}$.
+
+			\begin{equation}
+				u' = \frac{\Delta x'}{\Delta t'} = \frac{\gamma \Delta x - \gamma \beta c \Delta t}{\frac{1}{c}(\gamma c \Delta t - \gamma \beta \Delta x)} = \frac{\frac{\Delta x}{\Delta t} - \beta c}{1 - \frac{1}{c} \beta \frac{\Delta x}{\Delta t}}
+			\end{equation}
+			</p>
+		</details>
+
+		<p>This yields
+			\begin{equation}
+				u'=\frac{u-v}{1-\frac{uv}{c^{2}}},
+			\end{equation}
+			or, by writing $\alpha = \frac{u}{c}$ and $\alpha' = \frac{u'}{c}$, we get the more compact form
+			\begin{equation}
+				\alpha' = \frac{\alpha - \beta}{1 - \alpha \beta}.
+			\end{equation}
+		</p>
+
+		<h2>Relativistic energy and momentum</h2>
+
+		<p>Now, consider an object at rest in $S'$. As viewed by $S$, the object is moving in the $+x$ direction at velocity $v$. A <em>four-momentum</em> $\mathbf P = (p_0, p_1, p_2, p_3)$ in $S$ can be defined by first determining its <em>four-velocity</em> $\mathbf V$ and multiplying the result by the mass of the moving object $m$: $\mathbf P = m \mathbf V$.
+
+		<details>
+			<summary>Show intermediate steps</summary>
+			<p>In $S'$, all of the spatial coordinates of the object $x_1$, $x_2$, and $x_3$ are constant (note that $x_0$ is not constant even for an object at rest since this component of $\mathbf X$ corresponds to time). So, the object's <em>four-displacement</em> $\Delta \mathbf X'$ in $S'$ takes the form
+
+			\begin{equation}
+				\Delta \mathbf X' = \begin{bmatrix} \Delta x_0 \\ 0 \\ 0 \\ 0 \end{bmatrix} = \begin{bmatrix} c\Delta t' \\ 0 \\ 0 \\ 0 \end{bmatrix}
+			\end{equation}
+
+			This allows us to compute the object's <em>four-velocity</em> $\mathbf V'$ in $S'$ according to the classical definition.
+
+			\begin{equation}
+				\mathbf V' = \lim_{\Delta t' \to 0} \frac{\Delta \mathbf X}{\Delta t'} = \begin{bmatrix} c \\ 0 \\ 0 \\ 0 \end{bmatrix}
+			\end{equation}
+
+			We can use the inverse transformation $\Lambda^{-1}$ to construct the velocity vector $\mathbf V$ of the object in $S$.
+
+			\begin{equation}
+				\mathbf V = \Lambda^{-1} \mathbf V' = \begin{bmatrix} \gamma & \beta \gamma & 0 & 0 \\ \beta \gamma & \gamma & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} c \\ 0 \\ 0 \\ 0 \end{bmatrix} = \begin{bmatrix} \gamma c \\ \gamma \beta c \\ 0 \\ 0 \end{bmatrix} = \begin{bmatrix} \gamma c \\ \gamma v \\ 0 \\ 0 \end{bmatrix}
+			\end{equation}
+			Finally, substitute into the definition $\mathbf P = m \mathbf V$.
+			</p>
+		</details>
+
+		\begin{equation}
+			\mathbf P = \begin{bmatrix} \gamma m c \\ \gamma mv \\ 0 \\ 0 \end{bmatrix}
+		\end{equation}
+
+		When $v \ll c$, approximations can be made for $p_0$ and $p_1$ that reveal their connections to classical quantities.</p>
+		<details>
+			<summary>Show intermediate steps</summary>
+			<p>
+				Expand $\gamma$ through the binomial theorem.
+				\begin{align}
+					\gamma &= \left( 1 - \beta^2 \right)^{-\frac{1}{2}} = \sum_{k=0}^\infty \binom{-\frac{1}{2}}{k} (-1)^k \beta^{2k} \\[0.5em]
+					       &= 1 + \frac{\beta^2}{2} + \frac{3\beta^4}{8} + \frac{5\beta^6}{16} + \cdots \\[0.5em]
+					       &= 1 + \frac{v^2}{2c^2} + \frac{3v^4}{8c^4} + \frac{5v^6}{16c^6} + \cdots
+				\end{align}
+
+				Compute $p_0 = \gamma mc$ and $p_1 = \gamma mv$ via this expansion.
+
+				\begin{equation}
+					\begin{cases}
+						\displaystyle p_0 = mc + \frac{mv^2}{2c} + \frac{3mv^4}{8c^3} + \frac{5mv^6}{16c^5} + \cdots \\[0.5em]
+						\displaystyle p_1 = mv + \frac{mv^3}{2c^2} + \frac{3mv^5}{8c^4} + \frac{5mv^7}{16c^6} + \cdots
+					\end{cases}
+				\end{equation}
+
+				When $\beta \approx 0$, or in other words when $v \ll c$, we can approximate $p_0$ and $p_1$ by eliminating some higher-order terms.
+			</p>
+		</details>
+
+		<p>
+			\begin{equation}
+				\begin{cases}
+					\displaystyle p_0 = \gamma mc \approx \frac{1}{c} \left( mc^2 + \frac{1}{2} mv^2 \right) \\[0.5em]
+					\displaystyle p_1 = \gamma mv \approx mv
+				\end{cases}
+			\end{equation}
+
+			We can recognize $\frac{1}{2} mv^2$ as the kinetic energy of the object in $S$ and $mv$ as its momentum in $S$. For $p_0$, the expression in the parentheses represents a constant energy value, known as the <em>rest mass energy</em> $mc^2$, added to the classical kinetic energy $\frac{1}{2}mv^2$. This motivates us to define the <em>relativistic energy</em> (rest mass plus kinetic energy) $E = \gamma mc^2 \approx mc^2 + \frac{1}{2}mv^2$ and <em>relativistic momentum</em> $p = \gamma mv \approx mv$.
+
+			\begin{equation}
+			\mathbf P = \begin{bmatrix} E/c \\ p \\ 0 \\ 0 \end{bmatrix}
+			\end{equation}
+
+			We can transform this into the $S'$ frame.
+		</p>
+
+			<details>
+				<summary>Show intermediate steps</summary>
+			<p>\begin{equation}
+					\mathbf P' = \Lambda \mathbf P = \begin{bmatrix} \gamma & -\beta \gamma & 0 & 0 \\ -\beta \gamma & \gamma & 0 & 0 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} \gamma mc \\ \gamma mv \\ 0 \\ 0 \end{bmatrix} = \begin{bmatrix} \gamma^2 mc - \gamma^2 \beta mv \\ \gamma mv - \gamma \beta mc \\ 0 \\ 0 \end{bmatrix} = \begin{bmatrix} \gamma^2 mc (1- \beta^2) \\ \gamma m (v - \beta c) \\ 0 \\ 0 \end{bmatrix} = \begin{bmatrix} mc \\ 0 \\ 0 \\ 0 \end{bmatrix}
+				\end{equation}
+				For the last equality, I used the fact that $v = \beta c$ and that $\gamma^2 = \frac{1}{1-\beta^2}.$
+			</p>
+			</details>
+
+		<p>
+			\begin{equation}
+			\mathbf P' = \begin{bmatrix} mc \\ 0 \\ 0 \\ 0 \end{bmatrix}
+			\end{equation}
+
+			Since $\mathbf P \cdot \mathbf P = \mathbf P' \cdot \mathbf P'$ by equation \eqref{eq:invariant}, we can hence obtain a rather remarkable relativistic energy-momentum relationship.
+		</p>
+
+			<details>
+				<summary>Show intermediate steps</summary>
+				<p>\begin{gather}
+						p_0^2 - p_1^2 = p_0'^2 - p_1'^2 \\[0.5em]
+						\left( \frac{E}{c} \right)^2 - p^2 = (mc)^2 - 0^2 
+					\end{gather}</p>
+			</details>
+
+		<p>
+			\begin{equation}
+				E^2 = m^2 c^4 + p^2 c^2
+			\end{equation}
+
+			Of course, when an object is at rest, we have that $p=0$ and this reduces to Einstein's famous equation $E = mc^2$.
+
+			<details>
+				<summary>Additional note</summary>
+				<p>To further verify that this equation agrees with classical laws at low speeds, apply the binomial theorem to $E = mc^2 \sqrt{1 + \frac{p^2}{m^2c^2}}$.
+
+				\begin{align}
+					E &= mc^2 \left( 1 + \frac{p^2}{m^2c^2} \right)^{\frac{1}{2}} \\[0.5em]
+					  &= mc^2 \sum_{k=0}^\infty \binom{\frac{1}{2}}{k} \left(\frac{p^2}{m^2c^2}\right)^k \\[0.5em] 
+					  &= mc^2 \left( 1 + \frac{1}{2}\frac{p^2}{m^2c^2} - \frac{1}{8}\frac{p^4}{m^4c^4} + \frac{1}{16}\frac{p^6}{m^6c^6} + \cdots \right) \\[0.5em]
+					  &= mc^2 + \frac{p^2}{2m} - \frac{p^4}{8m^3c^2} + \frac{p^6}{16m^5c^4} + \cdots
+				\end{align}
+
+				Hence, when $p \ll mc$, i.e. $\gamma v \ll c$, we have $E - mc^2 \approx \frac{p^2}{2m}$, which matches the classical relationship (remember, since relativistic energy $E$ represents the sum of rest mass energy $mc^2$ and kinetic energy, the quantity $E - mc^2$ represents just the kinetic energy)
+				</p>
+			</details>
+		</p>
+
+		<p>In general, experiments support the <em>law of conservation of four-momentum</em>, which due to its time-like and space-like components encapsulates the relativistic version of both the classical conservation of momentum and conservation of energy. When four-momentum is conserved in one frame, it is also conserved in another frame, a fact which follows directly from the fact that the Lorentz Transformation is a linear transformation.</p>
+
+		<h2>Relativistic doppler shift</h2>
+
+		<p>Imagine that a light pulse at frequency $f$ eminates from the origin of $S$ in the $+x$-direction. As measured from $S$, the next pulse eminates at a time $\frac{1}{f}$ later, furthermore meaning that the physical separation of the pulses is $\frac{c}{f}$.</p>
+
+		<p>Pick some fixed point $Q'$ in $S'$ that the light pulses will eventually reach (keep in mind that since $Q'$ moves with $S'$, point $Q'$ will move at velocity $v$ as viewed from $S$). Let $\Delta x$ and $\Delta t$ represent the differences in position and time measurements, as measured in $S$, of the events corresponding to each of the light pulses reaching the fixed point $Q'$. </p>
+
+		<p>As viewed from $S$ and between these two events:
+			<ul>
+				<li>Point $Q'$ moves the distance $\Delta x$ in time $\Delta t$ at speed $v$, so $\Delta x=v\Delta t$.</li>
+				<li>The pulses themselves move a distance $\Delta x + \frac{c}{f}$ in a time $\Delta t$ at speed $c$. So, $\Delta x + \frac{c}{f} = c \Delta t$.</li>
+			</ul>
+
+		<details>
+			<summary>Show intermediate steps</summary>
+			<p>
+				Substitute the equation of the first point above $\Delta x=v\Delta t$ into the equation from the second point above $\Delta x + \frac{c}{f} = c \Delta t$.
+
+				\begin{gather}
+					v \Delta t + \frac{c}{f} = c \Delta t \\[0.5em]
+					\beta \Delta t + \frac{1}{f} = \Delta t
+				\end{gather}
+			</p>
+		</details>
+
+		From the above, we can deduce that 
+
+		\begin{equation} \label{eq:438039}
+			\Delta t =\frac{1}{f( 1-\beta )}.
+		\end{equation}</p>
+
+		<p>In frame $S'$, point $Q'$ is stationary, so $\Delta t'$ defines the observed frequency in $S'$ by 
+		\begin{equation} \label{eq:078522}
+		f' = \frac{1}{\Delta t'}.
+		\end{equation}
+		Due to the principles of time dilation, a time measurement $\Delta t'$ at a stationary point in $S'$ will corespond to a time measurement 
+		\begin{equation} \label{eq:225628}
+			\Delta t = \gamma \Delta t'
+		\end{equation}
+		in $S$. This mathematical statement may at first seem contrary to \eqref{eq:time-dilation}, but keep in mind that the derivation of equation \eqref{eq:time-dilation}, our stationary clock was located in $S$, not $S'$.</p>
+
+		<details>
+			<summary>Show intermediate steps</summary>
+			<p>
+				\begin{equation}
+					f' \overset{\eqref{eq:078522}}{=} \frac{1}{\Delta t'} \overset{\eqref{eq:225628}}{=} \frac{\gamma}{\Delta t} \overset{\eqref{eq:438039}}{=} \gamma f (1 - \beta) = f \cdot \frac{\sqrt{(1-\beta)^2}}{\sqrt{1 - \beta^2}} = f \sqrt{\frac{1-\beta }{1+\beta }}
+				\end{equation}
+			</p>
+		</details>
+
+		<p>From the above argumentation follows the relativistic doppler shift formula.
+
+		\begin{equation}
+			\frac{f'}{f} = \sqrt{\frac{1-\beta }{1+\beta }}
+		\end{equation}
+		</p>
+
+	</div>
+
+</body>
