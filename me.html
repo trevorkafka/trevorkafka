@@ -24,6 +24,8 @@
 	<link href="https://fonts.googleapis.com/css2?family=Kaisei+Tokumin:wght@400;500;700;800&display=swap" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Yuji+Mai&display=swap" rel="stylesheet">
 
+	<!-- icon library -->
+	<script src="https://kit.fontawesome.com/157b2a3980.js" crossorigin="anonymous"></script>
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> <!-- use JQuery -->
 	<script type="text/javascript" src="script.js" defer></script> <!-- defer means to wait to run the script until the whole page is ready -->
@@ -92,7 +94,7 @@
 		<!-- actual content -->
 
 		<div class="widescreen">
-		<h1><span style="opacity:15%; padding-right: 20px; font-size: 80%">www.</span><span style="font-size: 120%"><span style="margin-right: 20px">Trevor</span>Kafka</span><span style="opacity:15%; padding-left: 20px; font-size: 80%">.com/me</span></h1>
+		<h1><span style="opacity:15%; padding-right: 20px; font-size: 80%">www.</span><span style="font-size: 120%"><span style="margin-right: 20px">Trevor</span>Kafka</span><span style="opacity:15%; padding-left: 20px; font-size: 80%">.com<span style="padding-left: 5px; padding-right: 5px">/</span>me</span></h1>
 		<h2 style="margin-top: 0px">
 			<span class="bigname" style="font-family: 'Noto Serif'" title="English (IPA)">/trɛˈvɜr kɑˈfkə/</span>
 			<span class="bigname" style="font-family: 'Yuji Mai'" title="Chinese (Mandarin: kāng míng; Cantonese: hong1 ming4)">康明</span>
@@ -121,16 +123,27 @@
 					<img src="media/TK indonesia.png" style="width:300px" class="circle-image"></img>
 				</div>
 				<div class="container">
-					<h3>Contact Me</h3>
-					<p>📧 <span class="tooltip">
-					<a onclick="copyPersonalEmail()" onmouseout="outFunc()">trevor@trevorkafka.com</a>
+					<h3>Contact me</h3>
+					<p>Pick your favorite messenger, email me, or text me!</p>
+						<p>
+							<center>
+								<a href="sms:+19142550499" class="fa-solid fa-comment-sms" target=”_blank” title="texting"></a>
+								<a href="https://m.me/trevorkafka" class="fa-brands fa-facebook-messenger" target=”_blank” title="facebook messenger"></a>
+								<a href="https://wa.me/19142550499" class="fa-brands fa-whatsapp" target=”_blank” title="whatsapp"></a>
+								<a href="https://signal.me/#eu/_hIU4Yp_67Q-RGaKl6D7Rl2yACZAxujdY3V-FoXs3K0p7oMb92VOwZadlgiC1dVj" class="fa-brands fa-signal-messenger" target=”_blank” title="signal"></a>
+								<a href="https://ig.me/m/trevorkafka" class="fa-brands fa-instagram" target="_blank" title="instagram direct"></a>
+							</center>
+						</p>
+					<p><span class="tooltip">
+					<span class="fa-regular fa-envelope"></span> <a onclick="copyPersonalEmail()" onmouseout="outFunc()">trevor@trevorkafka.com</a>
 					<span class="tooltiptext">Copy to clipboard</span></p>
-					<p>📱 <span class="tooltip">
-					<a onclick="copyPhone()" onmouseout="outFunc()">+1 (914) 255-0499</a><span class="tooltiptext">Copy to clipboard</span></span><br>(via text, <a href="https://wa.me/19142550499" target="_blank">WhatsApp</a>, or <a href="https://signal.me/#eu/_hIU4Yp_67Q-RGaKl6D7Rl2yACZAxujdY3V-FoXs3K0p7oMb92VOwZadlgiC1dVj" target="_blank">Signal</a>)</p>
-					<p>I also check <a href="https://m.me/trevorkafka" target="_blank">Facebook Messenger</a> and <a href="https://ig.me/m/trevorkafka" target="_blank">Instagram Direct</a>.</p>
+					<p><span class="tooltip">
+					<span class="fa-solid fa-phone"></span> <a onclick="copyPhone()" onmouseout="outFunc()">+1 (914) 255-0499</a><span class="tooltiptext">Copy to clipboard</span></span>
+					<!-- <br>(via text, <a href="https://wa.me/19142550499" target="_blank">WhatsApp</a>, or <a href="https://signal.me/#eu/_hIU4Yp_67Q-RGaKl6D7Rl2yACZAxujdY3V-FoXs3K0p7oMb92VOwZadlgiC1dVj" target="_blank">Signal</a>)</p> -->
+					<!-- <p>I also check <a href="https://m.me/trevorkafka" target="_blank">Facebook Messenger</a> and <a href="https://ig.me/m/trevorkafka" target="_blank">Instagram Direct</a>.</p> -->
 				</div>
 				<div class="container">
-					<h3>What I do for Work</h3>
+					<h3>What I do for work</h3>
 					<p>I'm a self-employed and work-from-home <a href="http://www.trevorkafka.com" target="_blank">online physics and math tutor</a>. This is a career path that branched off of my two years as a high school physics teacher at <a href="https://wellesleyps.org/whs/" target="_blank">Wellesley High School</a> in 2014–2016.</p>
 					<p>Most of my teaching time is focused on Sundays 9:00am–4:00pm and Mondays–Thursdays 3:00pm-10:00pm, late August through early June. It's unfortunately not the best work schedule from the perspective of being able to socalize, but I'm passionate about this job enough that it is worth it for me.</p>
 					<p>You can learn more about my work on my main website at <a href="http://www.trevorkafka.com">www.trevorkafka.com</a>.</p>
@@ -141,34 +154,29 @@
 					</details>
 				</div>
 				<div class="container">
-					<h3>Keep up with Me!</h3> 
+					<h3>Follow me</h3> 
 					<p>Here are some ways to keep up with me elsewhere on the internet!</p>
-					<ul>
-						<li><a href="http://www.trevorkafka.com" target=”_blank”>www.trevorkafka.com</a> – my math/physics tutoring business</li>
-						<li><a href="https://bsky.app/profile/trevorkafka.com" target="_blank">BlueSky</a>, <a href="http://www.facebook.com/trevorkafka" target=”_blank”>Facebook</a>, & <a href="http://www.instagram.com/trevorkafka/" target=”_blank”>Instagram</a> – socials</li>
-						<li><a href="https://nomads.com/@trevorkafka" target=”_blank”>Nomads</a> - documentation of my digital nomad travels</li>
-						<li><a href="https://www.polyglotassociation.org/members/trevor-kafka" target="_blank">HYPIA</a> – The International Association of Hyperpolyglots</li>
-						<li><a href="https://www.italki.com/user/4746304" target="_blank">italki</a> – I am currently a language learner on italki but also was a <a href="https://www.italki.com/trevorkafka/" target="_blank" style="color: inherit; text-decoration: underline">teacher</a> in 2019–2024</li>
-						<li><a href="https://www.strava.com/athletes/142469165" target="_blank">Strava</a> – Cycling and walking routes</li>
-						<li><a href="https://www.codecademy.com/profiles/trevorkafka" target="_blank">Codecademy</a>, <a href="https://www.duolingo.com/profile/TrevorKafka" target="_blank">Duolingo</a> – miscellaneous learning</li>
-					</ul>
-				</div>
-				<div class="container">
-					<h3>Love of Learning</h3>
-					<p><strong>Physics & Math</strong> – I have been and always will be a huge physics and math nerd. I lean towards a strong understanding of the fundamentals over trying to get as advanced as possible. Always open to chatting if you're a fellow nerd too!</p> $$e^{i\pi} + 1 = 0$$
 					<p>
-						<strong>Foreign Languages</strong> – Some languages I have enjoyed studying over the years include 
-						<span class="lang">Español (Spanish)</span>,
-						<span class="lang">Français (French)</span>, 
-						<span class="lang">汉语 (Mandarin)</span>,
-						<span class="lang">日本語 (Japanese)</span>, 
-						<span class="lang">粵語 (Cantonese)</span>,
-						<span class="lang">Nederlands (Dutch)</span>,
-						<span class="lang">ภาษาไทย (Thai)</span>, and
-						<span class="lang">tiếng Việt (Vietnamese)</span> along with occasional dabbling in 
-						<span class="lang">Deutsch (German)</span>. 
-						None are perfect; some are far from perfect!
+						<center>
+							<a href="http://www.trevorkafka.com" class="fa-solid fa-globe" target=”_blank” title="website"></a>
+							<a href="https://bsky.app/profile/trevorkafka.com" class="fa-brands fa-bluesky" target=”_blank” title="bluesky"></a>
+							<a href="http://www.facebook.com/trevor.kafka" class="fa-brands fa-facebook" target=”_blank” title="facebook"></a>
+							<a href="http://www.instagram.com/trevorkafka/" class="fa-brands fa-instagram" target=”_blank” title="instagram"></a>
+							<a href="https://www.strava.com/athletes/142469165" class="fa-brands fa-strava" target=”_blank” title="strava"></a>
+						</center>
 					</p>
+					<details>
+						<summary>More socials</summary>
+						<ul>
+							<!-- <li><a href="http://www.trevorkafka.com" target=”_blank”>www.trevorkafka.com</a> – my math/physics tutoring business</li>
+							<li><a href="https://bsky.app/profile/trevorkafka.com" target="_blank">BlueSky</a>, <a href="http://www.facebook.com/trevorkafka" target=”_blank”>Facebook</a>, & <a href="http://www.instagram.com/trevorkafka/" target=”_blank”>Instagram</a> – socials</li> -->
+							<li><a href="https://nomads.com/@trevorkafka" target=”_blank”>Nomads</a> - documentation of my digital nomad travels</li>
+							<li><a href="https://www.polyglotassociation.org/members/trevor-kafka" target="_blank">HYPIA</a> – The International Association of Hyperpolyglots</li>
+							<li><a href="https://www.italki.com/user/4746304" target="_blank">italki</a> – I am currently a language learner on italki but also was a <a href="https://www.italki.com/trevorkafka/" target="_blank">teacher</a> in 2019–2024</li>
+							<!-- <li><a href="https://www.strava.com/athletes/142469165" target="_blank">Strava</a> – Cycling and walking routes</li> -->
+							<li><a href="https://www.codecademy.com/profiles/trevorkafka" target="_blank">Codecademy</a>, <a href="https://www.duolingo.com/profile/TrevorKafka" target="_blank">Duolingo</a> – miscellaneous learning</li>
+						</ul>
+					</details>
 				</div>
 			</div>
 
@@ -177,6 +185,23 @@
 			<p class="widescreen fade">Here is how I have been spending my free time lately. All of our habits change frequently, so stuff in this section will change frequently too!</p>
 			<center class="narrowscreen fade"><p>Here is how I have been spending my free time lately. All of our habits change frequently, so stuff in this section will change frequently too!</p></center>
 				<div class="grid fade">
+					<div class="container">
+						<h3>Love of Learning</h3>
+						<p><strong>Physics & Math</strong> – I have been and always will be a huge physics and math nerd. I lean towards a strong understanding of the fundamentals over trying to get as advanced as possible. Always open to chatting if you're a fellow nerd too!</p> $$e^{i\pi} + 1 = 0$$
+						<p>
+							<strong>Foreign Languages</strong> – Some languages I have enjoyed studying over the years include 
+							<span class="lang">Español (Spanish)</span>,
+							<span class="lang">Français (French)</span>, 
+							<span class="lang">汉语 (Mandarin)</span>,
+							<span class="lang">日本語 (Japanese)</span>, 
+							<span class="lang">粵語 (Cantonese)</span>,
+							<span class="lang">Nederlands (Dutch)</span>,
+							<span class="lang">ภาษาไทย (Thai)</span>, and
+							<span class="lang">tiếng Việt (Vietnamese)</span> along with occasional dabbling in 
+							<span class="lang">Deutsch (German)</span>. 
+							None are perfect; some are far from perfect!
+						</p>
+					</div>
 					<div class="container">
 						<h3>Practicing Yoga</h3>
 						<p>Yoga is something I've been practicing on-and-off for a very, very long time—since roughly 2008. Sometimes I get into a good groove with it and sometimes it just needs to take a bit of a pause for a while (especially when travelling).</p>
@@ -192,6 +217,7 @@
 					<div class="container">
 						<h3>Biking</h3>
 						<p>I'm an enthusiastic user of biking-as-transit. I love getting around my neighborhood and the city on my bike. Getting an ebike in winter 2023 has been transformational for me has allowed me to increase my tolerance of biking for an errand from 20 minutes as the one-way trip to even an hour at times. It was even enough for me to decide to sell my car in spring 2024. I also enjoy advocating for better cycle infrastructure and public transit in my community. Rain or shine, you might see me outside getting around by bike because as the Dutch say "You are not made of sugar, you won't melt in the rain!".</p>
+						<p>I also enjoy occasionally posting my biking routes on <a href="https://www.strava.com/athletes/142469165" target="_blank">Strava</a>.</p>
 					</div>
 					<div class="container">
 						<h3>Learning Vietnamese</h3>
@@ -241,6 +267,11 @@
 					<div class="container">
 						<h3>(TBD) Thailand & Vietnam</h3>
 						<p>My plans after SCUBA diving in Wakatobi are still to be determined, but likely will involve some combination of both destinations in Thailand as well as destinations in Vietnam (which is why I am currently working to learn some Vietnamese). I have been to Thailand twice so far, but this would be my first visit to Vietnam.</p>
+					</div>
+					<div class="container">
+						<h3>(TBD) Spain – Mallorca</h3>
+						<h4>August 2026</h4>
+						<p>Spain will see a solar eclipse on August 12, 2026 and plan to view it at sunset from beautiful Mallorca, Spain. More details to come soon.</p>
 					</div>
 				</div>
 
