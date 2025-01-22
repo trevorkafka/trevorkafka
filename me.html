@@ -47,7 +47,7 @@
 		<!-- last updated info script -->
 
 		<script type="text/javascript">
-			const lastUpdateDate = new Date('2025-01-14'); // CHANGE DATE HERE in the format 'YYYY-MM-DD'
+			const lastUpdateDate = new Date('2025-01-22'); // CHANGE DATE HERE in the format 'YYYY-MM-DD'
 
 			function updateDaysAgo() {
 			    const today = new Date();
@@ -68,28 +68,41 @@
 			}
 
 			const location1 = 'Las Palmas, Grand Canary, Spain'
+			const timeOffset1 = 0
 			const location2 = 'Santa Cruz de Tenerife, Spain'
+			const timeOffset2 = 0
 			const travelDate = new Date('2025-02-04'); // CHANGE DATE HERE in the format 'YYYY-MM-DD'
 
-			function updateLocation() {
-			    const today = new Date();
-			    const timeDifference = today - travelDate - 5 * 1000 * 60 * 60 ; // Difference in milliseconds and account for UTC-5 time zone
+			function updateLocationAndTime() {
+			    const now = new Date();
+			    const timeDifference = now - travelDate - 5 * 1000 * 60 * 60 ; // Difference in milliseconds and account for UTC-5 time zone
 			    const daysAgo = Math.floor(timeDifference / (1000 * 60 * 60 * 24)); // Convert to days
+			    const hour = now.getUTCHours();
+				const minute = now.getUTCMinutes();
+				const formattedMinutes = minute.toString().padStart(2, '0');
 
-			    // Update the text content of the placeholders
-			    const lastUpdatedElements = document.getElementsByClassName('location');
-			    for (let i = 0; i < lastUpdatedElements.length; i++) {
+			    // Update the text content of the location placeholders
+			    const lastUpdatedElementsLocation = document.getElementsByClassName('location');
+			    for (let i = 0; i < lastUpdatedElementsLocation.length; i++) {
 			        if (daysAgo < 0) {
-			            lastUpdatedElements[i].textContent = location1;
+			            lastUpdatedElementsLocation[i].textContent = location1;
 			        } else {
-			            lastUpdatedElements[i].textContent = location2;
+			            lastUpdatedElementsLocation[i].textContent = location2;
 			        }
 			    }
+
+			    // Update the text content of the time placeholders
+				const lastUpdatedElementsTime = document.getElementsByClassName('time');
+				for (let i = 0; i < lastUpdatedElementsTime.length; i++) {
+					const adjustedHour = daysAgo < 0 ? hour + timeOffset1 : hour + timeOffset2;
+			        const normalizedHour = adjustedHour % 24; // Ensure the hour stays within 24-hour range
+			        lastUpdatedElementsTime[i].textContent = `${normalizedHour}:${formattedMinutes}`;
+				}
 			}
 
 			// Call the function when the page loads
 			window.addEventListener('load', updateDaysAgo);
-			window.addEventListener('load', updateLocation);
+			window.addEventListener('load', updateLocationAndTime);
 		</script>
 
 		<!-- actual content -->
@@ -103,7 +116,7 @@
 			<span class="bigname" style="font-family: Sriracha" title="Thai (tree wə̂ə)"> เทรเวอร์ </span>
 		</h2>
 
-		<p style="margin-bottom: 50px">Page last updated <strong><span class="last-updated"></span></strong>. Currently located in <strong><span class="location"></span></strong>.</p>
+		<p style="margin-bottom: 50px">Page last updated <strong><span class="last-updated"></span></strong>. Currently located in <strong><span class="location"></span></strong>. (Current time <strong><span class="time"></span></strong>)</p>
 		</div>
 
 		<center class="narrowscreen">
@@ -115,57 +128,62 @@
 			<span class="smallname" style="font-family: Sriracha" title="Thai (tree wə̂ə)"> เทรเวอร์ </span>
 		</h2>
 
-		<p style="margin-bottom: 50px">Page last updated <strong><span class="last-updated"></span></strong>. Currently located in <strong><span class="location"></span></strong>.</p>
+		<p style="margin-bottom: 50px">Page last updated <strong><span class="last-updated"></span></strong>. Currently located in <strong><span class="location"></span></strong>.  (Current time <strong><span class="time"></span></strong>)</p>
 		</center>
 
 		<div>
 			<div class="grid">
-				<div>
-					<img src="media/TK indonesia.png" style="width:300px;" class="circle-image widescreen"></img>
-					<div width="300 px" class="narrowscreen" style="text-align:center;">
-						<img src="media/TK indonesia.png" style="width:200px;" class="circle-image narrowscreen"></img>
-					</div>
+				<div width="300 px" style="text-align:center;">
+					<img src="media/TK indonesia.png" style="width:300px; margin-bottom: 30px" class="circle-image widescreen"></img>
+					<img src="media/TK indonesia.png" style="width:200px; margin-bottom: 15px" class="circle-image narrowscreen"></img>
 				</div>
 				<div class="container">
-					<h3>Contact me</h3>
-					<!-- <p>Pick your favorite messenger, email me, or text me!</p> -->
-						<p>
-							<center>
-								<span class="narrowscreen"><a href="sms:+19142550499" class="icon fa-solid fa-comment-sms" target="_blank" title="texting"></a>
-								</span>
-								<!-- <a href="https://m.me/trevorkafka" class="icon fa-brands fa-facebook-messenger" target="_blank" title="facebook messenger"></a> -->
-								<!-- <a href="https://wa.me/19142550499" class="icon fa-brands fa-whatsapp" target="_blank" title="whatsapp"></a> -->
-								<span class="narrowscreen"><a href="https://signal.me/#eu/_hIU4Yp_67Q-RGaKl6D7Rl2yACZAxujdY3V-FoXs3K0p7oMb92VOwZadlgiC1dVj" class="icon fa-brands fa-signal-messenger" target="_blank" title="signal"></a></span>
-								<!-- <a href="https://ig.me/m/trevorkafka" class="icon fa-brands fa-instagram" target="_blank" title="instagram direct"></a> -->
-							</center>
-						</p>
-					<p><span class="tooltip">
-					<span class="fa-regular fa-envelope"></span> <a onclick="copyPersonalEmail()" onmouseout="outFunc()">trevor@trevorkafka.com</a>
-					<span class="tooltiptext">Copy to clipboard</span></p>
-					<p><span class="tooltip">
-					<span class="fa-solid fa-phone"></span> <a onclick="copyPhone()" onmouseout="outFunc()">+1 (914) 255-0499</a><span class="tooltiptext">Copy to clipboard</span></span> <span class="widescreen"><a href="https://signal.me/#eu/_hIU4Yp_67Q-RGaKl6D7Rl2yACZAxujdY3V-FoXs3K0p7oMb92VOwZadlgiC1dVj" class="icon fa-brands fa-signal-messenger" target="_blank" title="signal"></a></span>
-					<!-- <br>(via text, <a href="https://wa.me/19142550499" target="_blank">WhatsApp</a>, or <a href="https://signal.me/#eu/_hIU4Yp_67Q-RGaKl6D7Rl2yACZAxujdY3V-FoXs3K0p7oMb92VOwZadlgiC1dVj" target="_blank">Signal</a>)</p> -->
-					<!-- <p>I also check <a href="https://m.me/trevorkafka" target="_blank">Facebook Messenger</a> and <a href="https://ig.me/m/trevorkafka" target="_blank">Instagram Direct</a>.</p> -->
-					<!-- <p>Please note that I will be phasing out my Meta products on February 15, 2025, which will mean that Facebook, Instagram, and WhatsApp will be removed from this list.</p> -->
-				</div>
-				<div class="container">
-					<h3>Follow me</h3> 
-					<p>Here are some ways to keep up with me elsewhere on the internet!</p>
-					<p>
-						<center>
-							<a href="http://www.trevorkafka.com" class="icon fa-solid fa-globe" target="_blank" title="website"></a>
-							<a href="https://bsky.app/profile/trevorkafka.com" class="icon fa-brands fa-bluesky" target="_blank" title="bluesky"></a>
-							<!-- <a href="http://www.facebook.com/trevor.kafka" class="icon fa-brands fa-facebook" target="_blank" title="facebook"></a> -->
-							<!-- <a href="http://www.instagram.com/trevorkafka/" class="icon fa-brands fa-instagram" target="_blank" title="instagram"></a> -->
-							<a href="https://www.reddit.com/user/trevorkafka/" class="icon fa-brands fa-reddit" target="_blank" title="reddit"></a>
-							<a href="https://discordapp.com/users/633310860714180618" class="icon fa-brands fa-discord" target="_blank" title="discord"></a>
-							<!-- <a href="https://www.strava.com/athletes/142469165" class="icon fa-brands fa-strava" target="_blank" title="strava"></a> -->
-						</center>
+					<h3>Contact Me</h3>
+					<p class="narrowscreen" style="text-align: center;">
+						<a href="sms:+19142550499" class="icon fa-solid fa-comment-sms" target="_blank" title="texting"></a>
+						<!-- <a href="https://m.me/trevorkafka" class="icon fa-brands fa-facebook-messenger" target="_blank" title="facebook messenger"></a> -->
+						<!-- <a href="https://wa.me/19142550499" class="icon fa-brands fa-whatsapp" target="_blank" title="whatsapp"></a> -->
+						<a href="https://signal.me/#eu/_hIU4Yp_67Q-RGaKl6D7Rl2yACZAxujdY3V-FoXs3K0p7oMb92VOwZadlgiC1dVj" class="icon fa-brands fa-signal-messenger" target="_blank" title="signal"></a>
+						<!-- <a href="https://ig.me/m/trevorkafka" class="icon fa-brands fa-instagram" target="_blank" title="instagram direct"></a> -->
 					</p>
-					<!-- <p>Please note that I will be phasing out my Meta products on February 15, 2025, which will mean that Facebook, Instagram, and WhatsApp will be removed from this list.</p> -->
+
+					<p style="text-align: center;">
+						<span class="tooltip">
+							<span class="fa-regular fa-envelope"></span> 
+							<a onclick="copyPersonalEmail()" onmouseout="outFunc()">trevor@trevorkafka.com</a>
+							<span class="tooltiptext">Copy to clipboard</span>
+						</span>
+					</p>
+
+					<p style="text-align: center;">
+						<span class="tooltip">
+							<span class="fa-solid fa-phone"></span> 
+							<a onclick="copyPhone()" onmouseout="outFunc()">+1 (914) 255-0499</a>
+							<span class="tooltiptext">Copy to clipboard</span></span> 
+							<span class="widescreen">
+								<a href="https://signal.me/#eu/_hIU4Yp_67Q-RGaKl6D7Rl2yACZAxujdY3V-FoXs3K0p7oMb92VOwZadlgiC1dVj" class="icon fa-brands fa-signal-messenger" target="_blank" title="signal"></a>
+						</span>
+						<!-- <br>(via text, <a href="https://wa.me/19142550499" target="_blank">WhatsApp</a>, or <a href="https://signal.me/#eu/_hIU4Yp_67Q-RGaKl6D7Rl2yACZAxujdY3V-FoXs3K0p7oMb92VOwZadlgiC1dVj" target="_blank">Signal</a>)</p> -->
+						<!-- <p>I also check <a href="https://m.me/trevorkafka" target="_blank">Facebook Messenger</a> and <a href="https://ig.me/m/trevorkafka" target="_blank">Instagram Direct</a>. -->
+					</p>
+
+					<hr style="margin-bottom: 20px;">
+
+					<h3>Follow Me</h3>
+
+					<p style="text-align: center;">
+						<a href="http://www.trevorkafka.com" class="icon fa-solid fa-globe" target="_blank" title="website"></a>
+						<a href="https://bsky.app/profile/trevorkafka.com" class="icon fa-brands fa-bluesky" target="_blank" title="bluesky"></a>
+						<!-- <a href="http://www.facebook.com/trevor.kafka" class="icon fa-brands fa-facebook" target="_blank" title="facebook"></a> -->
+						<!-- <a href="http://www.instagram.com/trevorkafka/" class="icon fa-brands fa-instagram" target="_blank" title="instagram"></a> -->
+						<a href="https://www.reddit.com/user/trevorkafka/" class="icon fa-brands fa-reddit" target="_blank" title="reddit"></a>
+						<a href="https://discordapp.com/users/633310860714180618" class="icon fa-brands fa-discord" target="_blank" title="discord"></a>
+						<!-- <a href="https://www.strava.com/athletes/142469165" class="icon fa-brands fa-strava" target="_blank" title="strava"></a> -->
+					</p>
+
 					<details>
 						<summary>More links</summary>
-						<ul>
+						<ul style="text-align: left">
 							<!-- <li><a href="http://www.trevorkafka.com" target="_blank">www.trevorkafka.com</a> – my math/physics tutoring business</li>
 							<li><a href="https://bsky.app/profile/trevorkafka.com" target="_blank">BlueSky</a>, <a href="http://www.facebook.com/trevorkafka" target="_blank">Facebook</a>, & <a href="http://www.instagram.com/trevorkafka/" target="_blank">Instagram</a> – socials</li> -->
 							<li><a href="https://nomads.com/@trevorkafka" target="_blank">Nomads</a> - documentation of my digital nomad travels</li>
@@ -178,9 +196,10 @@
 				</div>
 				<div class="container">
 					<h3>What I do for work</h3>
-					<p>I'm a self-employed and work-from-home <a href="http://www.trevorkafka.com" target="_blank">online physics and math tutor</a>. This is a career path that branched off of my two years as a high school physics teacher at <a href="https://wellesleyps.org/whs/" target="_blank">Wellesley High School</a> in 2014–2016.</p>
+					<p>I'm a self-employed and work-from-home <a href="http://www.trevorkafka.com" target="_blank">online physics and math tutor</a>. I spend a good fraction of the year working remotely in various destinations aorund the world and the remainder of the time from my home base Somerville, MA, USA.</p>
 					<details>
 						<summary>More information</summary>
+						<p>This is a career path that branched off of my two years as a high school physics teacher at <a href="https://wellesleyps.org/whs/" target="_blank">Wellesley High School</a> in 2014–2016.</p>
 						<p>Most of my teaching time is focused on Sundays 9:00am–4:00pm and Mondays–Thursdays 3:00pm-10:00pm, late August through early June. It's unfortunately not the best work schedule from the perspective of being able to socalize, but I'm passionate about this job enough that it is worth it for me.</p>
 						<p>You can learn more about my work on my main website at <a href="http://www.trevorkafka.com">www.trevorkafka.com</a>.</p>
 					</details>
@@ -192,11 +211,11 @@
 				</div>
 			</div>
 
-			<h1 class="widescreen fade"><span class="bigshadow">✨</span> Current Interests</h1>
-			<center class="narrowscreen fade"><h1>Current Interests<br><span class="bigshadow">✨</span></h1></center>
-			<p class="widescreen fade">Here is how I have been spending my free time lately. All of our habits change frequently, so stuff in this section will change frequently too!</p>
-			<center class="narrowscreen fade"><p>Here is how I have been spending my free time lately. All of our habits change frequently, so stuff in this section will change frequently too!</p></center>
-				<div class="grid fade">
+			<h1 class="widescreen"><span class="bigshadow">✨</span> Current Interests</h1>
+			<center class="narrowscreen"><h1>Current Interests<br><span class="bigshadow">✨</span></h1></center>
+			<p class="widescreen">Here is how I have been spending my free time lately. All of our habits change frequently, so stuff in this section will change frequently too!</p>
+			<center class="narrowscreen"><p>Here is how I have been spending my free time lately. All of our habits change frequently, so stuff in this section will change frequently too!</p></center>
+				<div class="grid">
 					<div class="container">
 						<h3>Love of Learning</h3>
 						<p><strong>Physics & Math</strong> – I have been and always will be a huge physics and math nerd. I lean towards a strong understanding of the fundamentals over trying to get as advanced as possible. Always open to chatting if you're a fellow nerd too!</p> $$e^{i\pi} + 1 = 0$$
@@ -243,11 +262,11 @@
 					</div>
 				</div>
 
-			<h1 class="widescreen fade"><span class="bigshadow">✈️</span> Travel Plans</h1>
-			<center class="narrowscreen fade"><h1>Travel Plans<br><span class="bigshadow">✈️</span></h1></center>
-			<p class="widescreen fade">Travelling at the same time and in the same place as me? Shoot me a message and maybe let's meet up!</p>
-			<center class="narrowscreen fade"><p>Travelling at the same time and in the same place as me? Shoot me a message and maybe let's meet up!</p></center>
-				<div class="grid fade">
+			<h1 class="widescreen"><span class="bigshadow">✈️</span> Travel Plans</h1>
+			<center class="narrowscreen"><h1>Travel Plans<br><span class="bigshadow">✈️</span></h1></center>
+			<p class="widescreen">Travelling at the same time and in the same place as me? Shoot me a message and maybe let's meet up!</p>
+			<center class="narrowscreen"><p>Travelling at the same time and in the same place as me? Shoot me a message and maybe let's meet up!</p></center>
+				<div class="grid">
 					<!-- <div class="container">
 						<h3>Upstate New York</h3>
 						<h4>November 23 – December 7, 2024<br>Hampton & Glens Falls, NY</h4>
@@ -257,9 +276,14 @@
 					<div class="container">
 						<center><span class="fi fi-es fis"></span></center>
 						<h3>Spain – Canary Islands</h3>
-						<h4>January 3 – February 4, 2025<br>Las Palmas de Grand Canaria</h4>
+						<h4>January 3 – January 17, 2025<br>Las Palmas de Grand Canaria</h4>
+						<h4>January 17 – February 20, 2025<br>Lanzarote</h4>
+						<h4>January 20 – February 4, 2025<br>Las Palmas de Grand Canaria</h4>
 						<h4>February 4 – 14, 2025<br>Santa Cruz de Tenerife</h4>
-						<p>I'm excited to be spending four weeks escaping winter and practicing Spanish at one of my favorite winter destinations, Las Palmas de Grand Canaria, for the third time. I will also be taking a week and a half to explore a new-to-me city: Santa Cruz de Tenerife. Both of these destinations are great for remote working, beaches and swimming, as well as nature exploring.</p>
+						<p>I'm excited to be spending four weeks escaping winter and practicing Spanish at one of my favorite winter destinations, Las Palmas de Grand Canaria, for the third time. I will also be doing a weekend trip to Lanzarote and will be taking a week and a half to explore a new-to-me city: Santa Cruz de Tenerife. Both of these destinations are great for remote working, beaches and swimming, as well as nature exploring.</p>
+						<p style="text-align:center;"><a href="https://photos.app.goo.gl/Sc8Nm1u2e7qKby3dA" target="_blank">
+							<span class="fa-solid fa-image"></span> trip photos
+						</a></p>
 					</div>
 					<div class="container">
 						<center><span class="fi fi-it fis"></span></center>
@@ -293,11 +317,11 @@
 					</div>
 				</div>
 
-			<h1 class="widescreen fade"><span class="bigshadow">🔗</span> Referral Links</h1>
-			<center class="narrowscreen fade"><h1>Referral Links<br><span class="bigshadow">🔗</span></h1></center>
-			<p class="widescreen fade">Use a referral link to sign up for any of the services I use below and we both benefit! These are all businesses I am passionate about personally, so let's chat if you have any questions.</p>
-			<center class="narrowscreen fade"><p>Use a referral link to sign up for any of the services I use below and we both benefit! These are all businesses I am passionate about personally, so let's chat if you have any questions.</p></center>
-				<div class="grid fade">
+			<h1 class="widescreen"><span class="bigshadow">🔗</span> Referral Links</h1>
+			<center class="narrowscreen"><h1>Referral Links<br><span class="bigshadow">🔗</span></h1></center>
+			<p class="widescreen">Use a referral link to sign up for any of the services I use below and we both benefit! These are all businesses I am passionate about personally, so let's chat if you have any questions.</p>
+			<center class="narrowscreen"><p>Use a referral link to sign up for any of the services I use below and we both benefit! These are all businesses I am passionate about personally, so let's chat if you have any questions.</p></center>
+				<div class="grid">
 					<div class="container">
 						<h3>ClassPass – fitness classes</h3>
 						<p>ClassPass offers a really nice way to access a variety of fitness classes at hundreds of different studios for a combined affordable monthly rate. I use it in the Boston area, but classes are available all over the world. Use my <a href="https://classpass.com/refer/HO9LK9913" target="_blank">referral link</a> and we both get a reward when you become a paying member.</p>
