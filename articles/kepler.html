@@ -51,6 +51,20 @@
 	summary {
 		font-style: italic;
 	}
+
+	details[open] summary {
+		padding-bottom: 1em;
+	}
+
+	details[open] {
+		border-color: --color1;
+		border-left-style: solid;
+		padding-left: 10px;
+	}
+
+	details {
+		margin-bottom: 1em;
+	}
 </style>
 
 <body>
@@ -87,8 +101,9 @@
 
 			<p>On this page, I use the following notational conventions.</p>
 			<ul>
-				<li><em>Unbolded vectors</em>: if $\mathbf a$ is a vector, then $a$ shall denote $|\mathbf a|$.</li>
+				<li><em>Unbolded vectors</em>: if $\mathbf a$ is a vector, then $a$ shall denote the magnitude $|\mathbf a|$.</li>
 				<li><em>Overdot notation</em>: if $w(t)$ and $\dot w(t)$ are functions of time, then $\dot w = \frac{dw}{dt}$.</li>
+				<li><em>Gradient</em>: if $f$ is a scalar function of a vector $\mathbf a$, then $\frac{\partial f}{\partial \mathbf a}$ denotes the gradient of $f$ with respect to $\mathbf a$.</li>
 			</ul>
 
 		<h2>The Situation</h2>
@@ -154,7 +169,7 @@
 				U = -\frac{Gm_1 m_2}{|\mathbf x_1 - \mathbf x_2|} \text{, where } G \approx 6.67\times 10^{-11} \frac{\text{N} \cdot \text{m}^2}{\text{kg}^2}
 			\end{equation}
 
-			<p>For simplicity, let $\alpha = G m_1 m_2$ and also adopt the relative position vector from the previous section.</p>
+			<p>For simplicity, let $\alpha = G m_1 m_2$ and also adopt the relative position vector $\mathbf x = \mathbf x_1 - \mathbf x_2$ from the previous section.</p>
 
 			\begin{equation} \label{eq:U}
 				U = -\frac{\alpha}{x}
@@ -212,9 +227,9 @@
 
 		<h2>Kepler's 1st Law: Elliptical Orbits</h2>
 
-			<h3>Polr Coordinates</h3>
+			<h3>Polar Coordinates</h3>
 
-			<p>From equation \eqref{eq:angular-momentum}, it follows that $\mathbf x, \dot{\mathbf x} \perp \mathbf l$, so since $\mathbf l$ is constant, we must have that $\mathbf x$ and $\dot{\mathbf x}$ remain in a single plane as time evolves. Given that the vectors of the system are restricted to a plane, let's set up a system of polar coordinates $(r, \theta)$ in that plane. First, let's establish some key facts about this polar coordinate system.
+			<p>From equation \eqref{eq:angular-momentum}, it follows that $\mathbf x, \dot{\mathbf x} \perp \mathbf l$, so since $\mathbf l$ is constant, we must have that $\mathbf x$ and $\dot{\mathbf x}$ remain in a single plane as time evolves. Given that the vectors of the system are restricted to a plane, let's set up a system of polar coordinates $(r, \theta)$ in that plane. The origin of this coordinate system will correspond to $\mathbf x = 0$. First, let's establish some key facts about this polar coordinate system.
 
 			\begin{align}
 			\mathbf x &= \begin{bmatrix} r \vphantom{\dot \theta} \\ 0  \vphantom{\dot \theta} \\ 0 \vphantom{\dot \theta} \end{bmatrix}, & \dot{\mathbf x} &= \begin{bmatrix} \dot r  \vphantom{\dot \theta} \\ r \dot \theta \\ 0 \vphantom{\dot \theta} \end{bmatrix}, & x &= r, & \dot x^2 &= \dot r^2 + r^2 \dot \theta^2, & |\mathbf x \times \dot{\mathbf x}| &= r^2 \dot \theta
@@ -305,7 +320,13 @@
 				\xi^3 = \eta^2.
 				\end{equation}
 
-				The constant $\xi$ can be interpereted as a scale factor of orbital size and $\eta$ as a scale factor of orbital period for this particular transformation. Hence, this relationship establishes Kepler's Third Law.
+				The constant $\xi$ can be interpereted as a scale factor of orbital size and $\eta$ as a scale factor of orbital period for this particular transformation. Hence, this relationship establishes Kepler's Third Law. Commonly in the literature, one write $\xi = \frac{r_1}{r_2}$ and $\eta = \frac{T_1}{T_2}$, where $r_1$ and $r_2$ are corresponding length measurements (such as orbital radii, in the case of a circular orbit) and $T_1$ and $T_2$ are corresponding time measurements (such as orbital periods) in two geometrically similar orbits.
+
+				\begin{equation}
+				\left( \frac{r_1}{r_2} \right)^3 = \left( \frac{T_1}{T_2} \right)^2
+				\end{equation}
+
+				This is Kepler's 3rd Law.
 			</p>
 		
 	</div>
