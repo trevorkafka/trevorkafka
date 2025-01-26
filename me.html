@@ -96,7 +96,8 @@
 				for (let i = 0; i < lastUpdatedElementsTime.length; i++) {
 					const adjustedHour = daysAgo < 0 ? hour + timeOffset1 : hour + timeOffset2;
 			        const normalizedHour = adjustedHour % 24; // Ensure the hour stays within 24-hour range
-			        lastUpdatedElementsTime[i].textContent = `${normalizedHour}:${formattedMinutes}`;
+			        const formattedNormalizedHour = normalizedHour.toString().padStart(2, `0`);
+			        lastUpdatedElementsTime[i].textContent = `${formattedNormalizedHour}:${formattedMinutes}`;
 				}
 			}
 
@@ -116,7 +117,7 @@
 			<span class="bigname" style="font-family: Sriracha" title="Thai (tree wə̂ə)"> เทรเวอร์ </span>
 		</h2>
 
-		<p style="margin-bottom: 50px">Page last updated <strong><span class="last-updated"></span></strong>. Currently located in <strong><span class="location"></span></strong>. (Current time <strong><span class="time"></span></strong>)</p>
+		<p style="margin-bottom: 50px">Page last updated <strong><span class="last-updated"></span></strong>. Currently located in <strong><span class="location"></span></strong>, current time <strong><span class="time"></span></strong>.</p>
 		</div>
 
 		<center class="narrowscreen">
@@ -219,6 +220,7 @@
 					<div class="container">
 						<h3>Love of Learning</h3>
 						<p><strong>Physics & Math</strong> – I have been and always will be a huge physics and math nerd. I lean towards a strong understanding of the fundamentals over trying to get as advanced as possible. Always open to chatting if you're a fellow nerd too!</p> $$e^{i\pi} + 1 = 0$$
+						<p>Check out some <a href="/articles">articles</a> I have been writing lately! More to come soon.</p>
 						<p>
 							<strong>Foreign Languages</strong> – Some languages I have enjoyed studying over the years include 
 							<span class="lang">Español (Spanish)</span>,
