@@ -48,7 +48,7 @@
 		<!-- last updated info script -->
 
 		<script type="text/javascript">
-			const lastUpdateDate = new Date('2025-02-17'); // CHANGE DATE HERE in the format 'YYYY-MM-DD'
+			const lastUpdateDate = new Date('2025-02-18'); // CHANGE DATE HERE in the format 'YYYY-MM-DD'
 
 			function updateDaysAgo() {
 			    const today = new Date();
@@ -212,348 +212,346 @@
 					</details>
 				</div>
 			</div>
+		</div>
+	</div>
 
-			<center style="width: 100vw; margin-left: -7.5vw">
-				<style>
-					:root {
-						--calendarColor1: transparent;
-						--calendarColor2: rgba(190, 70, 70, 0.5); /* Deep red‐brown */
-						--calendarColor3: rgba(250, 140, 70, 0.5); /* Burnt orange */
-						--calendarColor4: rgba(230, 150, 50, 0.5); /* Golden brown */
-						--calendarColor5: rgba(170, 150, 80, 0.5); /* Warm olive */
-						--calendarColor6: rgba(180, 160, 140, 0.5); /* Soft taupe */
-						--calendarColor7: rgba(210, 190, 160, 0.5); /* Light caramel */
-					}
+	<!-- here begins the calendar section which does not follow the same margin rules as the usual content class -->
 
-					html {
-						background-color: #f5eee2;
-					}
+	<style>
+		:root {
+			--calendarColor1: transparent;
+			--calendarColor2: rgba(190, 70, 70, 0.5); /* Deep red‐brown */
+			--calendarColor3: rgba(250, 140, 70, 0.5); /* Burnt orange */
+			--calendarColor4: rgba(230, 150, 50, 0.5); /* Golden brown */
+			--calendarColor5: rgba(170, 150, 80, 0.5); /* Warm olive */
+			--calendarColor6: rgba(180, 160, 140, 0.5); /* Soft taupe */
+			--calendarColor7: rgba(210, 190, 160, 0.5); /* Light caramel */
+		}
 
-					td {
-						color: rgba(0, 0, 0, 1);
-						transition-duration: 0.3s;
-						font-family: sans-serif;
-						font-weight: bold;
-					}
+		html {
+			background-color: #f5eee2;
+		}
 
-					.date {
-						transform: rotate(-40deg);
-					}
+		td {
+			color: rgba(0, 0, 0, 1);
+			transition-duration: 0.3s;
+			font-family: sans-serif;
+			font-weight: bold;
+		}
 
-					.info {
-						opacity: 90%;
-					}
+		.date {
+			transform: rotate(-40deg);
+		}
 
-					table.calendar {
-						border-collapse: collapse;
-					}
+		.info {
+			opacity: 90%;
+		}
 
-					table.calendar td {
-						padding: 8px;
-						height: 40px;
-						text-align: center;
-						vertical-align: middle;
-					}
+		table.calendar {
+			border-collapse: collapse;
+		}
 
-					table.calendar a {
-						padding: 5px 10px 5px 10px;
-						border-radius: 10px;
-						background-color: var(--color3);
-					}
+		table.calendar td {
+			padding: 8px;
+			height: 40px;
+			text-align: center;
+			vertical-align: middle;
+		}
 
-					@keyframes flashYellow {
-					  0% {
-					    background-color: inherit; /* or specify a color (e.g., white) */
-					  }
-					  50% {
-					    background-color: yellow;
-					  }
-					  100% {
-					    background-color: inherit; /* back to the original color */
-					  }
-					}
+		table.calendar a {
+			padding: 5px 10px 5px 10px;
+			border-radius: 10px;
+			background-color: var(--color3);
+		}
 
-					div:target {
-						animation: flashYellow 2s ease-out;
-					}
+		@keyframes flashYellow {
+		  0% {
+		    background-color: inherit; /* or specify a color (e.g., white) */
+		  }
+		  50% {
+		    background-color: yellow;
+		  }
+		  100% {
+		    background-color: inherit; /* back to the original color */
+		  }
+		}
 
-					.calendarColor1 {
-					background-color: var(--calendarColor1);
-					}
-					.calendarColor2 {
-					background-color: var(--calendarColor2);
-					}
-					.calendarColor3 {
-					background-color: var(--calendarColor3);
-					}
-					.calendarColor4 {
-					background-color: var(--calendarColor4);
-					}
-					.calendarColor5 {
-					background-color: var(--calendarColor5);
-					}
-					.calendarColor6 {
-					background-color: var(--calendarColor6);
-					}
-					.calendarColor7 {
-					background-color: var(--calendarColor7);
-					}
+		div:target {
+			animation: flashYellow 2s ease-out;
+		}
 
-					/* Gradient Background Classes */
-					.gradient-1-2 {
-						background: linear-gradient(
-						  135deg,
-						  var(--calendarColor1) 50%,
-						  var(--calendarColor2) 50%
-						);
-					}
-					.gradient-2-3 {
-						background: linear-gradient(
-						  135deg,
-						  var(--calendarColor2) 50%,
-						  var(--calendarColor3) 50%
-						);
-					}
-					.gradient-3-2 {
-						background: linear-gradient(
-						  135deg,
-						  var(--calendarColor3) 50%,
-						  var(--calendarColor2) 50%
-						);
-					}
-					.gradient-2-4 {
-						background: linear-gradient(
-						  135deg,
-						  var(--calendarColor2) 50%,
-						  var(--calendarColor4) 50%
-						);
-					}
-					.gradient-4-5 {
-						background: linear-gradient(
-						  135deg,
-						  var(--calendarColor4) 50%,
-						  var(--calendarColor5) 50%
-						);
-					}
-					.gradient-5-6 {
-						background: linear-gradient(
-						  135deg,
-						  var(--calendarColor5) 50%,
-						  var(--calendarColor6) 50%
-						);
-					}
-					.gradient-6-7 {
-						background: linear-gradient(
-						  135deg,
-						  var(--calendarColor6) 50%,
-						  var(--calendarColor7) 50%
-						);
-					}
-					.gradient-7-1 {
-						background: linear-gradient(
-						  135deg,
-						  var(--calendarColor7) 50%,
-						  var(--calendarColor1) 50%
-						);
-					}
-					/* Optional styling for the week column */
-					.week {
-						font-weight: bold;
-					}
-			    </style>
+		.calendarColor1 {
+		background-color: var(--calendarColor1);
+		}
+		.calendarColor2 {
+		background-color: var(--calendarColor2);
+		}
+		.calendarColor3 {
+		background-color: var(--calendarColor3);
+		}
+		.calendarColor4 {
+		background-color: var(--calendarColor4);
+		}
+		.calendarColor5 {
+		background-color: var(--calendarColor5);
+		}
+		.calendarColor6 {
+		background-color: var(--calendarColor6);
+		}
+		.calendarColor7 {
+		background-color: var(--calendarColor7);
+		}
 
-			    <div style="overflow-x: auto; overflow-y: hidden; padding: 0 7.5vw 0 7.5vw">
-				    <div style="
-				    	width: max-content;
-				    	margin-bottom: 20px;
-				    	border: solid var(--color1); 
-				    	border-radius: 20px; 
-				    	padding: 20px; 
-				    	background-color: #00000005;
-				    ">
-				    	<h2 style="margin-top: 0px">
-							Winter 2025 Travel Calendar <br>
-							⤷ <a href="https://photos.app.goo.gl/Sc8Nm1u2e7qKby3dA" target="_blank"><span class="fa-solid fa-image"></span> trip photos</a>
-						</h2>
+		/* Gradient Background Classes */
+		.gradient-1-2 {
+			background: linear-gradient(
+			  135deg,
+			  var(--calendarColor1) 50%,
+			  var(--calendarColor2) 50%
+			);
+		}
+		.gradient-2-3 {
+			background: linear-gradient(
+			  135deg,
+			  var(--calendarColor2) 50%,
+			  var(--calendarColor3) 50%
+			);
+		}
+		.gradient-3-2 {
+			background: linear-gradient(
+			  135deg,
+			  var(--calendarColor3) 50%,
+			  var(--calendarColor2) 50%
+			);
+		}
+		.gradient-2-4 {
+			background: linear-gradient(
+			  135deg,
+			  var(--calendarColor2) 50%,
+			  var(--calendarColor4) 50%
+			);
+		}
+		.gradient-4-5 {
+			background: linear-gradient(
+			  135deg,
+			  var(--calendarColor4) 50%,
+			  var(--calendarColor5) 50%
+			);
+		}
+		.gradient-5-6 {
+			background: linear-gradient(
+			  135deg,
+			  var(--calendarColor5) 50%,
+			  var(--calendarColor6) 50%
+			);
+		}
+		.gradient-6-7 {
+			background: linear-gradient(
+			  135deg,
+			  var(--calendarColor6) 50%,
+			  var(--calendarColor7) 50%
+			);
+		}
+		.gradient-7-1 {
+			background: linear-gradient(
+			  135deg,
+			  var(--calendarColor7) 50%,
+			  var(--calendarColor1) 50%
+			);
+		}
 
-					    <table class="calendar">
-					      <colgroup>
-					      	<col style="min-width: 20px"></col>
-					      	<col style="min-width: 50px"></col>
-					      	<col style="min-width: 50px"></col>
-					      	<col style="min-width: 50px"></col>
-					      	<col style="min-width: 50px"></col>
-					      	<col style="min-width: 50px"></col>
-					      	<col style="min-width: 50px"></col>
-					        <col style="min-width: 50px"></col>
-					      	<col style="min-width: 200px"></col>
-					      </colgroup>
-					      <tr>
-					        <td class="calendarColor1 week"></td>
-					        <td>S</td>
-					        <td>M</td>
-					        <td>T</td>
-					        <td>W</td>
-					        <td>T</td>
-					        <td>F</td>
-					        <td>S</td>
-					        <td></td>
-					      </tr>
-					      <tr>
-					        <td class="calendarColor1 week">1</td>
-					        <td></td>
-					        <td></td>
-					        <td></td>
-					        <td class="calendarColor1"></td>
-					        <td class="calendarColor1"></td>
-					        <td class="calendarColor2" style="border-top-left-radius: 20px">
-					          <div class="date">3<br />JAN</div>
-					        </td>
-					        <td class="calendarColor2"></td>
-					        <td class="calendarColor2 info" style="border-top-right-radius: 20px" rowspan="2">
-					          <a href="#canary">Las Palmas de Gran Canaria, Spain</a>
-					        </td>
-					      </tr>
-					      <tr>
-					        <td class="calendarColor1 week">2</td>
-					        <td class="calendarColor2" style="border-top-left-radius: 20px"></td>
-					        <td class="calendarColor2"></td>
-					        <td class="calendarColor2"></td>
-					        <td class="calendarColor2"></td>
-					        <td class="calendarColor2"></td>
-					        <td class="calendarColor2"></td>
-					        <td class="calendarColor2"></td>
-					      </tr>
-					      <tr>
-					        <td class="calendarColor1 week">3</td>
-					        <td class="calendarColor2"></td>
-					        <td class="calendarColor2"></td>
-					        <td class="calendarColor2"></td>
-					        <td class="calendarColor2"></td>
-					        <td class="calendarColor2"></td>
-					        <td class="gradient-2-3">
-					          <div class="date">17<br />JAN</div>
-					        </td>
-					        <td class="calendarColor3"></td>
-					        <td class="calendarColor3 info">
-					        	<a href="#canary">Lanzarote, Spain</a>
-					        </td>
-					      </tr>
-					      <tr>
-					        <td class="calendarColor1 week">4</td>
-					        <td class="calendarColor3"></td>
-					        <td class="gradient-3-2">
-					          <div class="date">20<br />JAN</div>
-					        </td>
-					        <td class="calendarColor2"></td>
-					        <td class="calendarColor2"></td>
-					        <td class="calendarColor2"></td>
-					        <td class="calendarColor2"></td>
-					        <td class="calendarColor2"></td>
-					        <td class="calendarColor2 info"></td>
-					      </tr>
-					      <tr>
-					        <td class="calendarColor1 week">5</td>
-					        <td class="calendarColor2"></td>
-					        <td class="calendarColor2"></td>
-					        <td class="calendarColor2"></td>
-					        <td class="calendarColor2"></td>
-					        <td class="calendarColor2"></td>
-					        <td class="calendarColor2"></td>
-					        <td class="calendarColor2"></td>
-					        <td class="calendarColor2 info"></td>
-					      </tr>
-					      <tr>
-					        <td class="calendarColor1 week">6</td>
-					        <td class="calendarColor2"></td>
-					        <td class="calendarColor2"></td>
-					        <td class="gradient-2-4">
-					          <div class="date">4<br />FEB</div>
-					        </td>
-					        <td class="calendarColor4"></td>
-					        <td class="calendarColor4"></td>
-					        <td class="calendarColor4"></td>
-					        <td class="calendarColor4"></td>
-					        <td class="calendarColor4 info">
-					        	<a href="#canary">Santa Cruz de Tenerife, Spain</a>
-					        </td>
-					      </tr>
-					      <tr>
-					        <td class="calendarColor1 week">7</td>
-					        <td class="calendarColor4"></td>
-					        <td class="calendarColor4"></td>
-					        <td class="calendarColor4"></td>
-					        <td class="calendarColor4"></td>
-					        <td class="calendarColor4"></td>
-					        <td class="gradient-4-5">
-					          <div class="date">14<br />FEB</div>
-					        </td>
-					        <td class="calendarColor5"></td>
-					        <td class="calendarColor5 info">
-					        	<a href="#italy">Venice, Italy</a>
-					        </td>
-					      </tr>
-					      <tr>
-					        <td class="calendarColor1 week">8</td>
-					        <td class="calendarColor5"></td>
-					        <td class="gradient-5-6">
-					          <div class="date">17<br />FEB</div>
-					        </td>
-					        <td class="calendarColor6"></td>
-					        <td class="calendarColor6"></td>
-					        <td class="calendarColor6"></td>
-					        <td class="calendarColor6">
-					        	<div class="date">21<br />FEB</div>
-					        </td>
-					        <td class="calendarColor7">
-					         	<div class="date">22<br />FEB</div>
-					        </td>
-					        <td class="calendarColor6 info">
-					        	<a href="#italy">Rome, Italy</a>
-					        </td>
-					      </tr>
-					      <tr>
-					        <td class="calendarColor1 week">9</td>
-					        <td class="calendarColor7"></td>
-					        <td class="calendarColor7"></td>
-					        <td class="calendarColor7"></td>
-					        <td class="calendarColor7"></td>
-					        <td class="calendarColor7"></td>
-					        <td class="calendarColor7"></td>
-					        <td class="calendarColor7"></td>
-					        <td class="calendarColor7 info" style="border-bottom-right-radius: 20px" rowspan=2>
-					        	<a href="#taiwan">Taipei, Taiwan</a>
-					        </td>
-					      </tr>
-					      <tr>
-					        <td class="calendarColor1 week">10</td>
-					        <td class="calendarColor7"></td>
-					        <td class="calendarColor7"></td>
-					        <td class="calendarColor7"></td>
-					        <td class="calendarColor7"></td>
-					        <td class="calendarColor7"></td>
-					        <td class="calendarColor7"></td>
-					        <td class="calendarColor7"></td>
-					      </tr>
-					      <tr>
-					        <td class="calendarColor1 week">11</td>
-					        <td class="calendarColor7" style="border-bottom-left-radius: 20px"></td>
-					        <td class="calendarColor7"></td>
-					        <td class="calendarColor7"></td>
-					        <td class="calendarColor7"></td>
-					        <td class="calendarColor7"></td>
-					        <td class="calendarColor7"></td>
-					        <td class="gradient-7-1">
-					          <div class="date">15<br />MAR</div>
-					        </td>
-					        <td class="calendarColor1"></td>
-					      </tr>
-					    </table>
-					    <p class="narrowscreen" style="text-align: left; margin: 20px 0px 0px 0px; font-weight: bold;">↔ Drag to scroll on narrow screens. ↔</p>
-					</div>
-				</div>
-			</center>
+		.week {
+			font-weight: bold;
+		}
+    </style>
 
+    <div style="overflow-x: auto; overflow-y: hidden; width: 100%"> <!-- this is an invisible div wrapper for controlling margins and scrolling -->
+    	<div style="margin: 0 auto; width: max-content">
+		    <div style="width: max-content; margin: 0 7.5vw 20px 7.5vw; border: solid var(--color1); border-radius: 20px; padding: 20px; background-color: #00000005;"> <!-- this is the actual bordered visible div -->
+		    	<h2 style="margin-top: 0px; text-align: center;">
+					Winter 2025 Travel Calendar <br>
+					⤷ <a href="https://photos.app.goo.gl/Sc8Nm1u2e7qKby3dA" target="_blank"><span class="fa-solid fa-image"></span> trip photos</a>
+				</h2>
+
+			    <table class="calendar">
+			      <colgroup>
+			      	<col style="min-width: 20px"></col>
+			      	<col style="min-width: 50px"></col>
+			      	<col style="min-width: 50px"></col>
+			      	<col style="min-width: 50px"></col>
+			      	<col style="min-width: 50px"></col>
+			      	<col style="min-width: 50px"></col>
+			      	<col style="min-width: 50px"></col>
+			        <col style="min-width: 50px"></col>
+			      	<col style="min-width: 200px"></col>
+			      </colgroup>
+			      <tr>
+			        <td class="calendarColor1 week"></td>
+			        <td>S</td>
+			        <td>M</td>
+			        <td>T</td>
+			        <td>W</td>
+			        <td>T</td>
+			        <td>F</td>
+			        <td>S</td>
+			        <td></td>
+			      </tr>
+			      <tr>
+			        <td class="calendarColor1 week">1</td>
+			        <td></td>
+			        <td></td>
+			        <td></td>
+			        <td class="calendarColor1"></td>
+			        <td class="calendarColor1"></td>
+			        <td class="calendarColor2" style="border-top-left-radius: 20px">
+			          <div class="date">3<br />JAN</div>
+			        </td>
+			        <td class="calendarColor2"></td>
+			        <td class="calendarColor2 info" style="border-top-right-radius: 20px" rowspan="2">
+			          <a href="#canary">Las Palmas de Gran Canaria, Spain</a>
+			        </td>
+			      </tr>
+			      <tr>
+			        <td class="calendarColor1 week">2</td>
+			        <td class="calendarColor2" style="border-top-left-radius: 20px"></td>
+			        <td class="calendarColor2"></td>
+			        <td class="calendarColor2"></td>
+			        <td class="calendarColor2"></td>
+			        <td class="calendarColor2"></td>
+			        <td class="calendarColor2"></td>
+			        <td class="calendarColor2"></td>
+			      </tr>
+			      <tr>
+			        <td class="calendarColor1 week">3</td>
+			        <td class="calendarColor2"></td>
+			        <td class="calendarColor2"></td>
+			        <td class="calendarColor2"></td>
+			        <td class="calendarColor2"></td>
+			        <td class="calendarColor2"></td>
+			        <td class="gradient-2-3">
+			          <div class="date">17<br />JAN</div>
+			        </td>
+			        <td class="calendarColor3"></td>
+			        <td class="calendarColor3 info">
+			        	<a href="#canary">Lanzarote, Spain</a>
+			        </td>
+			      </tr>
+			      <tr>
+			        <td class="calendarColor1 week">4</td>
+			        <td class="calendarColor3"></td>
+			        <td class="gradient-3-2">
+			          <div class="date">20<br />JAN</div>
+			        </td>
+			        <td class="calendarColor2"></td>
+			        <td class="calendarColor2"></td>
+			        <td class="calendarColor2"></td>
+			        <td class="calendarColor2"></td>
+			        <td class="calendarColor2"></td>
+			        <td class="calendarColor2 info"></td>
+			      </tr>
+			      <tr>
+			        <td class="calendarColor1 week">5</td>
+			        <td class="calendarColor2"></td>
+			        <td class="calendarColor2"></td>
+			        <td class="calendarColor2"></td>
+			        <td class="calendarColor2"></td>
+			        <td class="calendarColor2"></td>
+			        <td class="calendarColor2"></td>
+			        <td class="calendarColor2"></td>
+			        <td class="calendarColor2 info"></td>
+			      </tr>
+			      <tr>
+			        <td class="calendarColor1 week">6</td>
+			        <td class="calendarColor2"></td>
+			        <td class="calendarColor2"></td>
+			        <td class="gradient-2-4">
+			          <div class="date">4<br />FEB</div>
+			        </td>
+			        <td class="calendarColor4"></td>
+			        <td class="calendarColor4"></td>
+			        <td class="calendarColor4"></td>
+			        <td class="calendarColor4"></td>
+			        <td class="calendarColor4 info">
+			        	<a href="#canary">Santa Cruz de Tenerife, Spain</a>
+			        </td>
+			      </tr>
+			      <tr>
+			        <td class="calendarColor1 week">7</td>
+			        <td class="calendarColor4"></td>
+			        <td class="calendarColor4"></td>
+			        <td class="calendarColor4"></td>
+			        <td class="calendarColor4"></td>
+			        <td class="calendarColor4"></td>
+			        <td class="gradient-4-5">
+			          <div class="date">14<br />FEB</div>
+			        </td>
+			        <td class="calendarColor5"></td>
+			        <td class="calendarColor5 info">
+			        	<a href="#italy">Venice, Italy</a>
+			        </td>
+			      </tr>
+			      <tr>
+			        <td class="calendarColor1 week">8</td>
+			        <td class="calendarColor5"></td>
+			        <td class="gradient-5-6">
+			          <div class="date">17<br />FEB</div>
+			        </td>
+			        <td class="calendarColor6"></td>
+			        <td class="calendarColor6"></td>
+			        <td class="calendarColor6"></td>
+			        <td class="calendarColor6">
+			        	<div class="date">21<br />FEB</div>
+			        </td>
+			        <td class="calendarColor7">
+			         	<div class="date">22<br />FEB</div>
+			        </td>
+			        <td class="calendarColor6 info">
+			        	<a href="#italy">Rome, Italy</a>
+			        </td>
+			      </tr>
+			      <tr>
+			        <td class="calendarColor1 week">9</td>
+			        <td class="calendarColor7"></td>
+			        <td class="calendarColor7"></td>
+			        <td class="calendarColor7"></td>
+			        <td class="calendarColor7"></td>
+			        <td class="calendarColor7"></td>
+			        <td class="calendarColor7"></td>
+			        <td class="calendarColor7"></td>
+			        <td class="calendarColor7 info" style="border-bottom-right-radius: 20px" rowspan=2>
+			        	<a href="#taiwan">Taipei, Taiwan</a>
+			        </td>
+			      </tr>
+			      <tr>
+			        <td class="calendarColor1 week">10</td>
+			        <td class="calendarColor7"></td>
+			        <td class="calendarColor7"></td>
+			        <td class="calendarColor7"></td>
+			        <td class="calendarColor7"></td>
+			        <td class="calendarColor7"></td>
+			        <td class="calendarColor7"></td>
+			        <td class="calendarColor7"></td>
+			      </tr>
+			      <tr>
+			        <td class="calendarColor1 week">11</td>
+			        <td class="calendarColor7" style="border-bottom-left-radius: 20px"></td>
+			        <td class="calendarColor7"></td>
+			        <td class="calendarColor7"></td>
+			        <td class="calendarColor7"></td>
+			        <td class="calendarColor7"></td>
+			        <td class="calendarColor7"></td>
+			        <td class="gradient-7-1">
+			          <div class="date">15<br />MAR</div>
+			        </td>
+			        <td class="calendarColor1"></td>
+			      </tr>
+			    </table>
+			    <p class="narrowscreen" style="text-align: left; margin: 20px 0px 0px 0px; font-weight: bold;">↔ Drag to scroll on narrow screens. ↔</p>
+			</div>
+		</div>
+	</div>
+
+	<div class="content">
 			<h1 class="widescreen"><span class="bigshadow">✨</span> Current Interests</h1>
 			<center class="narrowscreen"><h1>Current Interests<br><span class="bigshadow">✨</span></h1></center>
 			<p class="widescreen">Here is how I have been spending my free time lately. All of our habits change frequently, so stuff in this section will change frequently too!</p>
