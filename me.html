@@ -33,7 +33,8 @@
 
 	<!-- JavaScript code specific to this page -->
 	<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.js"></script> <!-- use Masonry JS from https://masonry.desandro.com/ -->
-	<!-- <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script> <!-- use MathJax --> -->
+	<!-- <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script> -->
+	<!-- use MathJax -->
 	<script id="MathJax-script" defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script> <!-- use MathJax, set to defer instead of async in order to prevent some typesetting errors -->
 
 </head>
@@ -212,7 +213,7 @@
 				</div>
 			</div>
 
-			<center>
+			<center style="width: 100vw; margin-left: -7.5vw">
 				<style>
 					:root {
 						--calendarColor1: transparent;
@@ -254,14 +255,10 @@
 						vertical-align: middle;
 					}
 
-					table.calendar a:not(:hover) {
-						color: black;
-						text-decoration: underline;
-					}
-
-					table.calendar a:hover {
-						color: gray;
-						text-decoration: underline;
+					table.calendar a {
+						padding: 5px 10px 5px 10px;
+						border-radius: 10px;
+						background-color: var(--color3);
 					}
 
 					@keyframes flashYellow {
@@ -365,7 +362,7 @@
 					}
 			    </style>
 
-			    <div style="overflow-x: auto; overflow-y: hidden;">
+			    <div style="overflow-x: auto; overflow-y: hidden; padding: 0 7.5vw 0 7.5vw">
 				    <div style="
 				    	width: max-content;
 				    	margin-bottom: 20px;
@@ -375,7 +372,7 @@
 				    	background-color: #00000005;
 				    ">
 				    	<h2 style="margin-top: 0px">
-							Winter 2025<span class="widescreen"> Travel</span> Calendar <br>
+							Winter 2025 Travel Calendar <br>
 							⤷ <a href="https://photos.app.goo.gl/Sc8Nm1u2e7qKby3dA" target="_blank"><span class="fa-solid fa-image"></span> trip photos</a>
 						</h2>
 
@@ -413,7 +410,7 @@
 					          <div class="date">3<br />JAN</div>
 					        </td>
 					        <td class="calendarColor2"></td>
-					        <td class="calendarColor2 info" style="border-top-right-radius: 20px">
+					        <td class="calendarColor2 info" style="border-top-right-radius: 20px" rowspan="2">
 					          <a href="#canary">Las Palmas de Gran Canaria, Spain</a>
 					        </td>
 					      </tr>
@@ -426,7 +423,6 @@
 					        <td class="calendarColor2"></td>
 					        <td class="calendarColor2"></td>
 					        <td class="calendarColor2"></td>
-					        <td class="calendarColor2 info"></td>
 					      </tr>
 					      <tr>
 					        <td class="calendarColor1 week">3</td>
@@ -525,7 +521,7 @@
 					        <td class="calendarColor7"></td>
 					        <td class="calendarColor7"></td>
 					        <td class="calendarColor7"></td>
-					        <td class="calendarColor7 info">
+					        <td class="calendarColor7 info" style="border-bottom-right-radius: 20px" rowspan=2>
 					        	<a href="#taiwan">Taipei, Taiwan</a>
 					        </td>
 					      </tr>
@@ -538,7 +534,6 @@
 					        <td class="calendarColor7"></td>
 					        <td class="calendarColor7"></td>
 					        <td class="calendarColor7"></td>
-					        <td class="calendarColor7 info" style="border-bottom-right-radius: 20px"></td>
 					      </tr>
 					      <tr>
 					        <td class="calendarColor1 week">11</td>
@@ -609,6 +604,10 @@
 						<p>I'm VERY amateur at this sort of stuff, but I have been having quite a fun time building webpages for myself from scratch (such as this one and the rest of my <a href="http://www.trevorkafka.com." target="_blank">website</a>) using HTML, CSS, and a teeney tiny bit of JavaScript. </p>
 						<p>I built my basics with JavaScript and Python through <a href="http://www.codecademy.com/" target="_blank">Codecademy</a>. I hope to be able to create more interactive webpages using JavaScript in the future as well as be able to create mathematics animations with <a href="https://vpython.org/" target="_blank">VPython</a> and <a href="https://www.manim.community/" target="_blank">Manim</a>.</p>
 					</div>
+					<div class="container">
+						<h3>World Travel</h3>
+						<p>I absolutely love to travel. It's an amazing way to explore different cultures, ways of life, and cuisines. I also love using the opportunities I can to practice foreign languages and escape Boston winter. Check the next section for all of my upcoming travel plans.</p>
+					</div>
 				</div>
 
 			<h1 class="widescreen"><span class="bigshadow">✈️</span> Travel Plans</h1>
@@ -617,12 +616,6 @@
 			<center class="narrowscreen"><p>Travelling at the same time and in the same place as me? Shoot me a message and maybe let's meet up!</p></center>
 
 				<div class="grid">
-					<!-- <div class="container">
-						<h3>Upstate New York</h3>
-						<h4>November 23 – December 7, 2024<br>Hampton & Glens Falls, NY</h4>
-						<p>
-							Thanksgiving has always been a time for family for me and this year will be no exception. I will be spending two weeks visiting family in upstate New York near the Vermont border.
-					</div> -->
 					<div id="canary" class="container">
 						<center><span class="fi fi-es fis"></span></center>
 						<h3>
@@ -653,6 +646,11 @@
 						<h4>February 22 – March 15, 2025</h4>
 						<p>For three weeks in February and March, I will be spending time in Taipei exploring the city, enjoying the delicious food at night markets, and practicing my Mandarin with the locals.</p>
 						<div style="text-align: center"><a href="https://photos.app.goo.gl/Sc8Nm1u2e7qKby3dA" target="_blank"><span class="fa-solid fa-image"></span> trip photos</a></div>
+					</div>
+					<div class="container">
+						<h3>Upstate New York</h3>
+						<h4>April 4 – 12, 2025<br>Hampton & Glens Falls, NY</h4>
+						<p>Just another of my ordinary trips to go visit my parents in upstate New York. 😊</p>
 					</div>
 					<div id="indonesia" class="container">
 						<center><span class="fi fi-id fis"></span></center>
