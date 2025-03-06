@@ -7,10 +7,10 @@
 		--hoverlink: #FB7F64;
 		--transitiontime: 0.2s;
 		--widthmax: 85vw; /* default max-width for main content */
-		--color1: #3C303E;
-		--color2: #FB7F64;
-		--color3: #F5EEE2;
-		--color4: #C6B895;
+		--color1: #3C303E; /* purple brown */
+		--color2: #FB7F64; /* bright orange */
+		--color3: #F5EEE2; /* light tan */
+		--color4: #C6B895; /* dark tan */
 	}
 
 	html {
@@ -33,7 +33,7 @@
 	}
 
 /* */
-/* FONT SETUP */
+/* FONT AND RUBY SETUP */
 /* */
 
 	.great-vibes-regular {
@@ -48,6 +48,11 @@
 	  font-style: normal;
 	}
 
+	rt {
+		font-family: "Noto Sans TC";
+		font-size: 30%;
+		ruby-align: center;
+	}
 
 /* */
 /* TOP NAVIGATION BAR */
