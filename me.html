@@ -97,7 +97,7 @@
 				const lastUpdatedElementsTime = document.getElementsByClassName('time');
 				for (let i = 0; i < lastUpdatedElementsTime.length; i++) {
 					const adjustedHour = daysAgo < 0 ? hour + timeOffset1 : hour + timeOffset2;
-			        const normalizedHour = adjustedHour % 24; // Ensure the hour stays within 24-hour range
+			        const normalizedHour = ((adjustedHour % 24) + 24) % 24; // Ensure the hour stays within 24-hour range; extra math accounts for the way that remainders work on negative numbers in JS
 			        const formattedNormalizedHour = normalizedHour.toString().padStart(2, `0`);
 			        lastUpdatedElementsTime[i].textContent = `${formattedNormalizedHour}:${formattedMinutes}`;
 				}
