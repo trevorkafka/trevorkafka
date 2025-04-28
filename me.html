@@ -365,9 +365,6 @@
 					transform: rotate(-40deg);
 				}
 
-				.info {
-					opacity: 90%;
-				}
 
 				table.calendar {
 					border-collapse: collapse;
@@ -380,7 +377,14 @@
 					vertical-align: middle;
 				}
 
-				table.calendar td:hover {
+				.info {
+					opacity: 90%;
+					text-align: left !important;
+					padding-left: 20px !important;
+
+				}
+
+				table.calendar td.highlight:hover {
 					opacity: 50%;
 				}
 
@@ -508,7 +512,8 @@
 					      <col style="min-width: 50px" />
 					      <col style="min-width: 50px" />
 					      <col style="min-width: 50px" />
-					      <col style="min-width: 300px" />
+					      <col style="min-width: 100px" />
+					      <col style="min-width: 100px" />
 					    </colgroup>
 					    <tr>
 					      <td class="calendarColor1 week"></td>
@@ -523,149 +528,191 @@
 					    <tr>
 					      <td class="calendarColor1 week">1</td>
 					      <td></td>
-					      <td class="calendarColor2" style="border-top-left-radius: 20px;">
+					      <td class="calendarColor2 highlight" style="border-top-left-radius: 20px;">
 					        <div class="date">27<br />MAY</div>
 					      </td>
-  					      <td class="calendarColor2"></td>
-					      <td class="calendarColor2"></td>
-					      <td class="calendarColor2"></td>
-					      <td class="gradient-2-3">
+  					      <td class="calendarColor2 highlight"></td>
+					      <td class="calendarColor2 highlight"></td>
+					      <td class="calendarColor2 highlight"></td>
+					      <td class="gradient-2-3 highlight">
 					        <div class="date">30<br />MAY</div>
 					      </td>
-					      <td class="calendarColor3"></td>
+					      <td class="calendarColor3 highlight"></td>
+					      <td class="calendarColor2 info">
+					        Bali
+					      </td>
+					      <td class="calendarColor2 info">
+					        Indonesia
+					      </td>
 					      <td class="calendarColor2 info" style="border-top-right-radius: 20px;">
-					        Bali, Indonesia
+					        <span class="fi fi-id fis">
 					      </td>
 					    </tr>
 					    <tr>
 					      <td class="calendarColor1 week">2</td>
-					      <td class="calendarColor3" style="border-top-left-radius: 20px;"></td>
-					      <td class="calendarColor3"></td>
-					      <td class="calendarColor3"></td>
-					      <td class="calendarColor3"></td>
-					      <td class="calendarColor3"></td>
-					      <td class="calendarColor3"></td>
-					      <td class="calendarColor3"></td>
+					      <td class="calendarColor3 highlight" style="border-top-left-radius: 20px;"></td>
+					      <td class="calendarColor3 highlight"></td>
+					      <td class="calendarColor3 highlight"></td>
+					      <td class="calendarColor3 highlight"></td>
+					      <td class="calendarColor3 highlight"></td>
+					      <td class="calendarColor3 highlight"></td>
+					      <td class="calendarColor3 highlight"></td>
 					      <td class="calendarColor3 info">
-					        Wakatobi, Indonesia (SCUBA)
+					        Wakatobi
+					      </td>
+					      <td class="calendarColor3 info">
+					        Indonesia
+					      </td>
+					      <td class="calendarColor3 info">
+					        <span class="fi fi-id fis">
 					      </td>
 					    </tr>
 					    <tr>
 					      <td class="calendarColor1 week">3</td>
-					      <td class="calendarColor3"></td>
-					      <td class="gradient-3-2">
+					      <td class="calendarColor3 highlight"></td>
+					      <td class="gradient-3-2 highlight">
 					        <div class="date">9<br />JUN</div>
 					      </td>
-					      <td class="gradient-2-4">
+					      <td class="gradient-2-4 highlight">
 					        <div class="date">10<br />JUN</div>
 					      </td>
-					      <td class="calendarColor4"></td>
-					      <td class="calendarColor4"></td>
-					      <td class="calendarColor4"></td>
-					      <td class="calendarColor4"></td>
+					      <td class="calendarColor4 highlight"></td>
+					      <td class="calendarColor4 highlight"></td>
+					      <td class="calendarColor4 highlight"></td>
+					      <td class="calendarColor4 highlight"></td>
 					      <td class="calendarColor4 info">
-						      Bangkok, Thailand
+						      Bangkok
+						  </td>
+						  <td class="calendarColor4 info">
+						      Thailand
+						  </td>
+						  <td class="calendarColor4 info">
+						      <span class="fi fi-th fis">
 						  </td>
 					    </tr>
 					    <tr>
 					      <td class="calendarColor1 week">4</td>
-					      <td class="calendarColor4"></td>
-					      <td class="calendarColor4"></td>
-					      <td class="calendarColor4"></td>
-					      <td class="gradient-4-5">
+					      <td class="calendarColor4 highlight"></td>
+					      <td class="calendarColor4 highlight"></td>
+					      <td class="calendarColor4 highlight"></td>
+					      <td class="gradient-4-5 highlight">
 					        <div class="date">
 					          18 <br />
 					          JUN
 					        </div>
 					      </td>
-					      <td class="calendarColor5"></td>
-					      <td class="calendarColor5"></td>
-					      <td class="calendarColor5"></td>
-					      <td class="calendarColor5" class="info">
-						      Hanoi, Vietnam
+					      <td class="calendarColor5 highlight"></td>
+					      <td class="calendarColor5 highlight"></td>
+					      <td class="calendarColor5 highlight"></td>
+					      <td class="calendarColor5 info">
+						      Hanoi
+						  </td>
+						  <td class="calendarColor5 info">
+						      Vietnam
+						  </td>
+						  <td class="calendarColor5 info">
+						      <span class="fi fi-vn fis">
 						  </td>
 					    </tr>
 					    <tr>
 					      <td class="calendarColor1 week">5</td>
-					      <td class="calendarColor5"></td>
-					      <td class="gradient-5-6">
+					      <td class="calendarColor5 highlight"></td>
+					      <td class="gradient-5-6 highlight">
 					        <div class="date">
 					          23 <br />
 					          JUN
 					        </div>
 					      </td>
-					      <td class="calendarColor6"></td>
-					      <td class="calendarColor6"></td>
-					      <td class="calendarColor6"></td>
-					      <td class="calendarColor6"></td>
-					      <td class="calendarColor6">
+					      <td class="calendarColor6 highlight"></td>
+					      <td class="calendarColor6 highlight"></td>
+					      <td class="calendarColor6 highlight"></td>
+					      <td class="calendarColor6 highlight"></td>
+					      <td class="calendarColor6 highlight">
 					        <div class="date">
 					          28 <br />
 					          JUN
 					        </div>
 					      </td>
 					      <td class="calendarColor6 info">
-						      Ho Chi Minh City, Vietnam
+						      Ho Chi Minh City
+					      </td>
+					      <td class="calendarColor6 info">
+						      Vietnam
+					      </td>
+					      <td class="calendarColor6 info">
+						      <span class="fi fi-vn fis">
 					      </td>
 					    </tr>
 					    <tr>
 					      <td class="calendarColor1 week">6</td>
-					      <td class="calendarColor7">
+					      <td class="calendarColor7 highlight">
 					        <div class="date">
 					          29 <br />
 					          JUN
 					        </div>
 					      </td>
-					      <td class="calendarColor7"></td>
-					      <td class="calendarColor7"></td>
-					      <td class="calendarColor7"></td>
-					      <td class="calendarColor7"></td>
-					      <td class="calendarColor7"></td>
-					      <td class="calendarColor7"></td>
+					      <td class="calendarColor7 highlight"></td>
+					      <td class="calendarColor7 highlight"></td>
+					      <td class="calendarColor7 highlight"></td>
+					      <td class="calendarColor7 highlight"></td>
+					      <td class="calendarColor7 highlight"></td>
+					      <td class="calendarColor7 highlight"></td>
 					      <td class="calendarColor7 info">
-						      Tokyo, Japan
+						      Tokyo
+						  </td>
+						  <td class="calendarColor7 info">
+						      Japan
+						  </td>
+						  <td class="calendarColor7 info">
+						      <span class="fi fi-jp fis">
 						  </td>
 					    </tr>
 					    <tr>
 					      <td class="calendarColor1 week">7</td>
-					      <td class="calendarColor7"></td>
-					      <td class="calendarColor7"></td>
-					      <td class="calendarColor7"></td>
-					      <td class="calendarColor7"></td>
-					      <td class="calendarColor7"></td>
-					      <td class="calendarColor7"></td>
-					      <td class="calendarColor7"></td>
+					      <td class="calendarColor7 highlight"></td>
+					      <td class="calendarColor7 highlight"></td>
+					      <td class="calendarColor7 highlight"></td>
+					      <td class="calendarColor7 highlight"></td>
+					      <td class="calendarColor7 highlight"></td>
+					      <td class="calendarColor7 highlight"></td>
+					      <td class="calendarColor7 highlight"></td>
+					      <td class="calendarColor7 info"></td>
+					      <td class="calendarColor7 info"></td>
 					      <td class="calendarColor7 info"></td>
 					    </tr>
 					    <tr>
-					      <td class="calendarColor1 week">8</td>
-					      <td class="calendarColor7"></td>
-					      <td class="calendarColor7"></td>
-					      <td class="calendarColor7"></td>
-					      <td class="calendarColor7"></td>
-					      <td class="calendarColor7"></td>
-					      <td class="calendarColor7"></td>
-					      <td class="calendarColor7"></td>
+					      <td class="calendarColor1 week">7</td>
+					      <td class="calendarColor7 highlight"></td>
+					      <td class="calendarColor7 highlight"></td>
+					      <td class="calendarColor7 highlight"></td>
+					      <td class="calendarColor7 highlight"></td>
+					      <td class="calendarColor7 highlight"></td>
+					      <td class="calendarColor7 highlight"></td>
+					      <td class="calendarColor7 highlight"></td>
+					      <td class="calendarColor7 info"></td>
+					      <td class="calendarColor7 info"></td>
 					      <td class="calendarColor7 info"></td>
 					    </tr>
 					    <tr>
 					      <td class="calendarColor1 week">9</td>
-					      <td class="calendarColor7"></td>
-					      <td class="calendarColor7"></td>
-					      <td class="calendarColor7"></td>
-					      <td class="calendarColor7"></td>
-					      <td class="calendarColor7"></td>
-					      <td class="calendarColor7"></td>
-					      <td class="calendarColor7"></td>
+					      <td class="calendarColor7 highlight"></td>
+					      <td class="calendarColor7 highlight"></td>
+					      <td class="calendarColor7 highlight"></td>
+					      <td class="calendarColor7 highlight"></td>
+					      <td class="calendarColor7 highlight"></td>
+					      <td class="calendarColor7 highlight"></td>
+					      <td class="calendarColor7 highlight"></td>
+					      <td class="calendarColor7 info"></td>
+					      <td class="calendarColor7 info"></td>
 					      <td class="calendarColor7 info" style="border-bottom-right-radius: 20px;"></td>
 					    </tr>
 					    <tr>
 					      <td class="calendarColor1 week">10</td>
-					      <td class="calendarColor7" style="border-bottom-left-radius: 20px;"></td>
-					      <td class="calendarColor7"></td>
-					      <td class="calendarColor7"></td>
-					      <td class="calendarColor7"></td>
-					      <td class="calendarColor7"></td>
+					      <td class="calendarColor7 highlight" style="border-bottom-left-radius: 20px;"></td>
+					      <td class="calendarColor7 highlight"></td>
+					      <td class="calendarColor7 highlight"></td>
+					      <td class="calendarColor7 highlight"></td>
+					      <td class="calendarColor7 highlight"></td>
 					      <td class="gradient-7-1">
 					        <div class="date">
 					          1 <br />
@@ -992,7 +1039,7 @@
 				text-shadow: 0px 0px 10px white;
 			}
 
-			.container > center > .fis {
+			.fis {
 				border-radius: 100%; 
 				font-size: 200%;
 				margin: 0px 5px 0px 5px;
