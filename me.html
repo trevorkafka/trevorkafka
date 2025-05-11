@@ -54,14 +54,14 @@
 			// *************************************************************************************
 			// *************************************************************************************
 			// *************************************************************************************
-			const lastUpdateDate = new Date('2025-04-13'); // CHANGE DATE HERE in the format 'YYYY-MM-DD'
+			const lastUpdateDate = new Date('2025-05-11'); // CHANGE DATE HERE in the format 'YYYY-MM-DD'
 			// *************************************************************************************
 			// *************************************************************************************
 			// *************************************************************************************
 
 			function updateDaysAgo() {
 			    const today = new Date();
-			    const timeDifference = today - lastUpdateDate - 5 * 1000 * 60 * 60 ; // Difference in milliseconds and account for UTC-5 time zone
+			    const timeDifference = today - lastUpdateDate - 4 * 1000 * 60 * 60 ; // Difference in milliseconds and account for UTC-5 time zone (needs to be switched to UTC-4 during daylight savings)
 			    const daysAgo = Math.floor(timeDifference / (1000 * 60 * 60 * 24)); // Convert to days
 
 			    // Update the text content of the placeholders
@@ -711,14 +711,14 @@
 					      <td class="calendarColor7 highlight" style="border-bottom-left-radius: 20px;"></td>
 					      <td class="calendarColor7 highlight"></td>
 					      <td class="calendarColor7 highlight"></td>
-					      <td class="calendarColor7 highlight"></td>
-					      <td class="calendarColor7 highlight"></td>
 					      <td class="gradient-7-1">
 					        <div class="date">
-					          1 <br />
-					          AUG
+					          30 <br />
+					          JUL
 					        </div>
 					      </td>
+					      <td></td>
+					      <td></td>
 					  </table>
 					    
 					    <p class="narrowscreen" style="text-align: left; margin: 20px 0px 0px 0px; font-weight: bold;">↔ Drag to scroll on narrow screens. ↔</p>
@@ -934,7 +934,7 @@
 							<span class="lang">Nederlands (Dutch)</span>,
 							<span class="lang">ภาษาไทย (Thai)</span>, and
 							<span class="lang">tiếng Việt (Vietnamese)</span> along with occasional dabbling in 
-							<span class="lang">Deutsch (German)</span>. 
+							<span class="lang"><span style="font-family: nasin-nanpa">toki+pona</span> (toki pona)</span> and <span class="lang">Deutsch (German)</span>. 
 							None are perfect; some are far from perfect!
 						</p>
 					</div>
