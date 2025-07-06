@@ -11,6 +11,7 @@
 		--color2: #FB7F64; /* bright orange */
 		--color3: #F5EEE2; /* light tan */
 		--color4: #C6B895; /* dark tan */
+		--color4light: #C6B89540;
 	}
 
 	html {
@@ -30,6 +31,25 @@
 	.content {
 		width: min(1000px, var(--widthmax));
 		margin: auto;
+	}
+
+	input, button { 
+		padding: 10px;
+		border-radius: 15px;
+		border: none;
+		font-size: 100%;
+		margin: 3px;
+		text-align: center;
+	}
+
+	input {
+		background-color: var(--color4light);
+		width: 150px;
+	}
+
+	button {
+		background-color: var(--color1);
+		color: var(--color3);
 	}
 
 /* */

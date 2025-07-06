@@ -1,0 +1,47 @@
+<head>
+	<title>My notes with Trevor Kafka - Academic Tutoring</title>
+
+	<meta charset="utf-8"> <!--ensures that there aren't any issues with the display of emojis -->
+	<meta name="viewport" content="width=device-width"> <!-- essential for making sure that the ACTUAL screen width is interpreted by the CSS as opposed to some idealized number presented by smartphones (980px+) -->	
+
+	<link rel="stylesheet" href="style.css">
+	<link rel="shortcut icon" href="favicon.ico">
+
+	<!-- Google font stuff -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=block" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Freeman&display=block" rel="stylesheet">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> <!-- use JQuery -->
+	<script type="text/javascript" src="script.js" defer></script> <!-- defer means to wait to run the script until the whole page is ready -->
+
+</head>
+
+<body>
+
+	<trevorkafka-nav></trevorkafka-nav>
+
+	<div class="content">
+
+		<trevorkafka-announcement></trevorkafka-announcement>
+
+		<h1>My Class Notes</h1>
+
+		<p>Comprehensive notes and class materials from our tutoring sessions (both present and past) are stored on Google Drive and are available for access by students at any time. A Google Drive account is <em>not</em> needed to view our files on Google Drive. To find the link to your Google Drive folder, complete the form below.</p>
+
+		<span style="display: flex; justify-content: center;">
+			<p>
+				<input type="text" id="codeInput" placeholder="last name"/>
+				<input type="text" id="codeInput" placeholder="birth year" maxlength="4"/>
+			    <button onclick="submitCode()">find my notes</button>
+			</p>
+		</span>
+
+		<p>Encountering difficulties locating your notes? Email me at <trevorkafka-email></trevorkafka-email> and I will assist as soon as possible.</p>
+
+	</div>
+	
+</body>
+
+<trevorkafka-footer></trevorkafka-footer>
