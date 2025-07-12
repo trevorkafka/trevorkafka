@@ -38,7 +38,7 @@
 		border-radius: 15px;
 		border: none;
 		font-size: 100%;
-		margin: 3px;
+		margin: 6px;
 		text-align: center;
 	}
 
@@ -485,7 +485,7 @@
 		}
 
 		.navbar a {
-			font-size: calc(32*(100vw/900));
+			font-size: calc(32*(100vw/1100));
 		}
 
 		.nav-spacer {
