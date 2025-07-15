@@ -22,25 +22,69 @@
 
 	<trevorkafka-nav></trevorkafka-nav>
 
-	<div class="content">
+	<div class="content" style="padding-bottom: 100px">
 
 		<trevorkafka-announcement></trevorkafka-announcement>
 
 		<h1>My Class Notes</h1>
+		
+		<div style="border: solid 1px black; border-radius: 5px; line-height: 24px; padding: 10px; margin: 20px; background-color: #FFFFFF80; text-align: center">
+			<strong>Please note:</strong> this form will work only if you have taken a class with me since July 2025.
+		</div>
 
-		<p>Comprehensive notes and class materials from our tutoring sessions (both present and past) are stored on Google Drive and are available for access by students at any time. A Google Drive account is <em>not</em> needed to view our files on Google Drive. To find the link to your Google Drive folder, complete the form below.</p>
+		<p>Comprehensive notes and class materials from our tutoring sessions (both present and past) are stored on Google Drive and are available for access by students at any time. A Google Drive account is <em>not</em> needed to view our files on Google Drive. To find the link to your Google Drive folder, type your first and last name below.</p>
 
-		<span style="display: flex; justify-content: center;">
-			<p>
-				<input type="text" id="codeInput" placeholder="last name"/>
-				<input type="text" id="codeInput" placeholder="birth year" maxlength="4"/>
-			    <button onclick="submitCode()">find my notes</button>
+		<div style="display: block; justify-content: center; text-align:center">
+			<p style="text-align:center">
+				<input type="text" id="firstName" placeholder="first name"/>
+				<input type="text" id="lastName" placeholder="last name"/>
+			    <button onclick="lookup()">find my notes</button>
 			</p>
-		</span>
+			<p id="message" style="color: red; font-weight: bold"></p>
+		</div>
 
 		<p>Encountering difficulties locating your notes? Email me at <trevorkafka-email></trevorkafka-email> and I will assist as soon as possible.</p>
-
 	</div>
+
+	<script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbwbRwQWkZuOdSOs8mpNg1K958DCXlipopfJXCqo_r7-beecZz9z0E_2BtMWmE-Kyfhyqg/exec";
+
+    function lookup() {
+      const first = document.getElementById("firstName").value.trim();
+      const last  = document.getElementById("lastName").value.trim();
+      const msg = document.getElementById("message");
+
+      if (!first || !last) {
+        msg.textContent = "Please enter both first and last name.";
+        return;
+      }
+
+      msg.textContent = "Checking...";
+      
+      fetch(`${API_URL}?first=${encodeURIComponent(first)}&last=${encodeURIComponent(last)}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.link) {
+            window.location.href = data.link;
+          } else {
+            msg.textContent = data.error || "No match found.";
+          }
+        })
+        .catch(err => {
+          msg.textContent = "Error contacting the server. Please try again.";
+          console.error(err);
+        });
+    }
+
+    //Listen for Enter key on both inputs
+	    document.getElementById("firstName").addEventListener("keypress", function (e) {
+		    if (e.key === "Enter") lookup();
+		  });
+
+	  document.getElementById("lastName").addEventListener("keypress", function (e) {
+		    if (e.key === "Enter") lookup();
+		  });
+  </script>
 	
 </body>
 
