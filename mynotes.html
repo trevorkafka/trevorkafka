@@ -63,6 +63,7 @@
         .then(res => res.json())
         .then(data => {
           if (data.link) {
+          	msg.textContent = "Success! Redirecting now...";
             window.location.href = data.link;
           } else {
             msg.textContent = data.error || "No match found.";
