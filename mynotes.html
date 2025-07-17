@@ -24,13 +24,17 @@
 
 	<div class="content" style="padding-bottom: 100px">
 
+		<trevorkafka-announcement></trevorkafka-announcement>
+
 		<h1>My Class Notes</h1>
 		
 		<div style="border: solid 1px black; border-radius: 5px; line-height: 24px; padding: 10px; margin: 20px; background-color: #FFFFFF80; text-align: center">
-			<strong>Please note:</strong> this form will work only if you have taken a class with me since June 2025.
+			Tutoring students can access their class notes and materials at any time by filling out the form below.
 		</div>
 
 		<p>Comprehensive notes and class materials from our tutoring sessions (both present and past) are stored on Google Drive and are available for access by students at any time. A Google Drive account is <em>not</em> needed to view our files on Google Drive. To find the link to your Google Drive folder, type your first and last name below.</p>
+
+		<p><strong>Please note:</strong> Since this functionality on my website is new, this form may not work if you haven't taken a class with me since June 2025.</p>
 
 		<div style="display: block; justify-content: center; text-align:center">
 			<p style="text-align:center">
@@ -40,8 +44,6 @@
 			</p>
 			<p id="message" style="color: red; font-weight: bold"></p>
 		</div>
-
-		<p>Encountering difficulties locating your notes? Email me at <trevorkafka-email></trevorkafka-email> and I will assist as soon as possible.</p>
 	</div>
 
 	<script>
@@ -66,7 +68,8 @@
           	msg.textContent = "Success! Redirecting now...";
             window.location.href = data.link;
           } else {
-            msg.textContent = data.error || "No match found.";
+            msg.textContent = "No match found. If you input your name correcly, email me at tutor@trevorkafka.com and I will assist as soon as possible.";
+            // removed this from the previous line: data.error ||
           }
         })
         .catch(err => {
