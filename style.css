@@ -281,19 +281,21 @@
 	.available_easy {
 	    background-color: #b2cca9;
 	    color: #8fa889 !important; /* Darker version of #b2cca9 */
-	    font-weight: bold;
 	}
 
 	.available_medium {
 	    background-color: #E6D96A;
 	    color: #c4b857 !important; /* Darker version of #E6D96A */
-	    font-weight: bold;
 	}
 
 	.available_hard {
 	    background-color: #D46A6A;
 	    color: #b35555 !important; /* Darker version of #D46A6A */
-	    font-weight: bold;
+	}
+
+	.available_easy, .available_medium, .available_hard {
+		font-weight: 900;
+    border-radius: 5px;
 	}
 
 
@@ -517,7 +519,7 @@
 	transition-duration: var(--transitiontime);
 }
 
-table:hover .hoverdisplay-text {
+div.hovertarget:hover .hoverdisplay-text {
 	opacity: 1;
 }
 
