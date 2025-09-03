@@ -17,12 +17,12 @@
 </head>
 <style>
 	:root {
-		--require-background-color: #E55C4B;;
-		--require-text-color: #4C0000;;
-		--emphasize-background-color: #E3DC4B;
-		--emphasize-text-color: #4C4C00;
-		--allow-background-color: #63DC4B;
-		--allow-text-color: #004C00;
+		--require-background-color: #56B4E9; /* blue */
+		--require-text-color: Black;
+		--emphasize-background-color: #F0E442; /* orange */
+		--emphasize-text-color: DarkRed;
+		--allow-background-color: #009E73; /* green */
+		--allow-text-color: HoneyDew;
 	}
 
 	.japanese {
@@ -43,35 +43,52 @@
 		width: 250px;
 	}
 
+	.kana-table {
+		border-spacing: 5px;
+		border-collapse: separate;
+	}
+
 	#word-container {
 		text-align: center;
 	}
 
 	.button {
+		border: solid 1px LightGrey;
 		border-radius: 10px;
 		text-align: center;
 		padding: 10px 5px;
 		cursor: pointer;
-		box-shadow: 2px 2px 0px grey ;
+		box-shadow: 2px 2px 0px black;
 		transition: background-color 0.3s ease;
 		user-select: none;
 	}
 
-	.kana.button {
-		background-color: white;
+	.button {
+		background-color: var(--color3);
 	}
 
 	.all.button {
-		background-color: gainsboro;
+		border: solid 1px black;
+		background-color: DarkSalmon;
+		color: white;
+		font-weight: bold;
 	}
 
 	.button:active {
 		transform: translate(2px, 2px);
-		box-shadow: 0px 0px 0px grey;
+		box-shadow: 0px 0px 0px black;
 	}
 
-	.button:hover {
+	/*.button:hover {
 		background-color: gainsboro;
+	}*/
+
+	.top-bar.button {
+		font-weight: bold; 
+		padding: 5px 10px; 
+		border: solid 1px black;
+		margin: 10px;
+		transition: background-color 0.3s ;
 	}
 
 	td:empty {
@@ -80,21 +97,27 @@
 
 	.require, .button[data-state="require"] {
 		background-color: var(--require-background-color);
+		border-color: var(--require-text-color);
 		color: var(--require-text-color);
 	}
 
 	.emphasize, .button[data-state="emphasize"] {
 		background-color: var(--emphasize-background-color);
+		border-color: var(--emphasize-text-color);
 		color: var(--emphasize-text-color);
 	}
 
 	.allow, .button[data-state="allow"] {
 		background-color: var(--allow-background-color);
+		border-color: black;
 		color: var(--allow-text-color);
 	}
 
 	.inline-box {
-		padding: 5px;
+		display: inline-block;
+		margin-top: 5px;
+		margin-bottom: 5px;
+		padding: 3px 6px;
 		border-radius: 5px;
 		font-weight: bold;
 	}
@@ -104,25 +127,117 @@
 		transition: opacity 0.3s ease, background-color 0.3s ease;
 	}
 
+	.vertical-align-top td {
+		vertical-align: top;
+	}
+
+	.eight-px-up {
+		transform: translateY(-8px);
+	}
+
 </style>
 
 <body>
-	<div class="japanese" style="position: absolute; left: 40px; z-index: 0; font-size: 20vw; opacity: 5%; letter-spacing: -0.1em; user-select: none">
+	<div class="japanese" style="position: absolute; left: 40px; top: 60px; z-index: 0; font-size: 20vw; opacity: 5%; letter-spacing: -0.1em; user-select: none">
 		カタカナ<br/>リーダー
 	</div>
-	<div class="content" style="position: relative; z-index: 1">
-		<h1>Katakana Reader</h1>
-		<p>Welcome to Katakana Reader, a tool that will allow you to practice your katakana reading abilities. Simply indicate which katakana you would like to practice and you will be shown a randomized list of words that use those specific katakana. Add new katakana once you feel ready.</p>
 
-		<p>Hepburn romanization is used to represent the pronunciation of Japanese words using Latin letters, though long vowels are indicated with doubled letters instead of macrons (e.g. - aa instead of ā). The list of katakana words, spelling of katakana words, and their English translations are sourced from JMdict.</p>
-		
-		<h2>Select Katakana</h2>
-		<p>Which katakana do you want to practice? Here, toggle each katakana that you would like to practice by tagging it as <span class="require inline-box">require</span>, <span class="emphasize inline-box">emphasize</span>, or <span class="allow inline-box">allow</span>. Select the type of tag below and then click the kana you would like to apply the tag to. Click the arrows to apply the tag to entire rows at once.</p>
+	<div style="width: 100%; background-color: var(--allow-background-color); height: 60px; z-index: 2; position: fixed; top: 0; display: flex; align-items: center; box-shadow: 0px 4px 10px Grey;">
+		<div class="content" style="display: flex; align-items: center">
+			<span style="font-family: Freeman; font-size: 150%; color: white">Tag Mode:</span>
+			<span class="top-bar button" style="background-color: white;">cycle</span>
+			<span class="top-bar button" style="background-color: var(--color3);">clear</span>
+			<span class="top-bar button require">require</span>
+			<span class="top-bar button emphasize">emphasize</span>
+			<span class="top-bar button allow">allow</span>
+		</div>
+	</div>
+
+	<div class="content" style="position: relative; z-index: 1; top: 60px">
+		<h1>Katakana Reader</h1>
+		<p>© 2025 Trevor Kafka</p>
+		<p>Welcome to Katakana Reader, a tool that will allow you to practice and improve your katakana reading abilities. Tag the katakana in the charts below based on your level of mastery of each by clicking on each katakana. The katakana tagging mode can be switched using the toolbar at the top of the page. Modify your tags as you master reading each katakana. A description of each tag is below.</p>
+
+			<table class="vertical-align-top" style="border: solid 2px black; border-radius: 10px;">
+				<tr style="font-weight: bold; border-bottom: solid 1px black">
+					<td>Tag</td>
+					<td>Description</td>
+					<td>Use Case</td>
+				</tr>
+				<tr>
+					<td><span class="require inline-box eight-px-up">require</span></td>
+					<td><em>All</em> tagged katakana appear in <em>each word</em>. Use sparingly.</td>
+					<td>brand-new katakana</td>
+				</tr>
+				<tr>
+					<td><span class="emphasize inline-box eight-px-up">emphasize</span></td>
+					<td><em>At least one</em> tagged katakana appears in <em>each word</em>.</td>
+					<td>katakana still being learned</td>
+				</tr>
+				<tr>
+					<td><span class="allow inline-box eight-px-up">allow</span></td>
+					<td>Other katakana that may be used in any word. Use liberally.</td>
+					<td>well-mastered katakana</td>
+				</tr>
+			</table>
+
+		<br/>
+
+		<p>After setting your tags, begin to read the words in the word list, which are displayed at random. Click each word to reveal the pronunciation and meaning. The more words you read, the more your reading skills will improve.</p>
+
+		<details>
+			<summary>More information</summary>
+			<ul>
+				<li><a href="https://en.wikipedia.org/wiki/Hepburn_romanization">Hepburn romanization</a> is used to represent the pronunciation of Japanese words using Latin letters throughout this website, though long vowels are indicated with doubled letters instead of macrons (e.g. - aa instead of ā) to emphasize to learners the function of the vowel extending symbol <strong>ー</strong>.</li>
+
+				<li>The list of katakana words, spelling of katakana words, and their English translations are sourced from and August 2025 version of <a href="https://www.edrdg.org/jmdict/j_jmdict.html">JMdict</a>.</li>
+
+				<li>Katakana Reader was created as a free tool and passion project by Trevor Kafka. Do you have questions about or suggestions for Katakana Reader? Send an email to 
+					<script>
+						function setText(text) {
+							Array.from(document.getElementsByClassName("tooltiptext")).forEach(function (ele, index) {
+							ele.innerHTML = text;
+							}); 
+						}
+
+						function copyEmail() {
+							var copyText = "trevor+katakanareader@trevorkafka.com";
+							navigator.clipboard.writeText(copyText);
+							setText("Copied: " + copyText);
+						}
+
+						function outFunc() {
+							setText("Copy to clipboard");
+						}
+					</script>
+					<span class="tooltip">
+						<a onclick="copyEmail()" onmouseout="outFunc()">trevor+katakanareader@trevorkafka.com</a>.<span class="tooltiptext"> <!-- period placement is important here—it avoids unneeded whitespace between email address and period -->
+							Copy to clipboard
+						</span>
+					</span>
+				</li> 
+			</ul>
+		</details>
+
 		<h3>Basic Katakana (Learn These First)</h3>
+
+		<details>
+			<summary>Information</summary>
+			<ul>
+				<li>The katakana below are displayed in traditional alphabetical order, which reflect their phonological categorizations with some exceptions.</li>
+				<li>The katakana <strong>ヰ wi</strong>, <strong>ヱ we</strong>, and <strong>ヲ wo</strong> have been omitted because in modern Japanese the combinations <strong>ウィ wi</strong>, <strong>ウェ we</strong>, and <strong>ウォ wo</strong> are used instead (see <em>Katakana with Vowel Modifiers</em> section for the bigger picture).</li>
+			</ul>
+		</details>
+		<br/>
+
 		<table class="kana-table">
 			<tr>
+				<td></td>
+				<td colspan="5" class="all button">all ▼</td>
+			</tr>
+			<tr>
 				<td class="all button">
-					all <br> →
+					all <br> ▶
 				</td>
 				<td class="kana button" id="ア">
 					<span class="japanese">ア</span><br/>
@@ -146,6 +261,9 @@
 				</td>
 			</tr>
 			<tr>
+				<td class="all button">
+					all <br> ▶
+				</td>
 				<td class="kana button" id="カ">
 					<span class="japanese">カ</span><br/>
 					<span class="romaji">ka</span>
@@ -168,6 +286,9 @@
 				</td>
 			</tr>
 			<tr>
+				<td class="all button">
+					all <br> ▶
+				</td>
 				<td class="kana button" id="サ">
 					<span class="japanese">サ</span><br/>
 					<span class="romaji">sa</span>
@@ -190,6 +311,9 @@
 				</td>
 			</tr>
 			<tr>
+				<td class="all button">
+					all <br> ▶
+				</td>
 				<td class="kana button" id="タ">
 					<span class="japanese">タ</span><br/>
 					<span class="romaji">ta</span>
@@ -212,6 +336,9 @@
 				</td>
 			</tr>
 			<tr>
+				<td class="all button">
+					all <br> ▶
+				</td>
 				<td class="kana button" id="ナ">
 					<span class="japanese">ナ</span><br/>
 					<span class="romaji">na</span>
@@ -234,6 +361,9 @@
 				</td>
 			</tr>
 			<tr>
+				<td class="all button">
+					all <br> ▶
+				</td>
 				<td class="kana button" id="ハ">
 					<span class="japanese">ハ</span><br/>
 					<span class="romaji">ha</span>
@@ -256,6 +386,9 @@
 				</td>
 			</tr>
 			<tr>
+				<td class="all button">
+					all <br> ▶
+				</td>
 				<td class="kana button" id="マ">
 					<span class="japanese">マ</span><br/>
 					<span class="romaji">ma</span>
@@ -278,6 +411,9 @@
 				</td>
 			</tr>
 			<tr>
+				<td class="all button">
+					all <br> ▶
+				</td>
 				<td class="kana button" id="ヤ">
 					<span class="japanese">ヤ</span><br/>
 					<span class="romaji">ya</span>
@@ -294,6 +430,9 @@
 				</td>
 			</tr>
 			<tr>
+				<td class="all button">
+					all <br> ▶
+				</td>
 				<td class="kana button" id="ラ">
 					<span class="japanese">ラ</span><br/>
 					<span class="romaji">ra</span>
@@ -316,6 +455,7 @@
 				</td>
 			</tr>
 			<tr>
+				<td></td>
 				<td class="kana button" id="ワ">
 					<span class="japanese">ワ</span><br/>
 					<span class="romaji">wa</span>
@@ -328,6 +468,9 @@
 		</table>
 		<br/>
 		<table class="kana-table">
+			<tr>
+				<td colspan="3" class="all button">all ▼</td>
+			</tr>
 			<tr>
 				<td class="kana button" id="ン" style="width: 33.33%">
 					<span class="japanese">ン</span><br/>
@@ -344,10 +487,17 @@
 			</tr>
 		</table>
 		<br/>
-		<p>Note: The katakana ツ tsu and ッ (glottal stop) are distinguished by their size.</p>
+		<p>Note: The katakana <strong>ツ tsu</strong> and <strong>ッ (glottal stop)</strong> are distinguished by their size.</p>
+		
 		<h3>Katakana with Consonant Modifiers</h3>
+		
 		<table class="kana-table">
 			<tr>
+				<td></td>
+				<td colspan="5" class="all button">all ▼</td>
+			</tr>
+			<tr>
+				<td></td>
 				<td></td>
 				<td></td>
 				<td class="kana button" id="ヴ">
@@ -358,6 +508,9 @@
 				<td></td>
 			</tr>
 			<tr>
+				<td class="all button">
+					all <br> ▶
+				</td>
 				<td class="kana button" id="ガ">
 					<span class="japanese">ガ</span><br/>
 					<span class="romaji">ga</span>
@@ -380,6 +533,9 @@
 				</td>
 			</tr>
 			<tr>
+				<td class="all button">
+					all <br> ▶
+				</td>
 				<td class="kana button" id="ザ">
 					<span class="japanese">ザ</span><br/>
 					<span class="romaji">za</span>
@@ -402,6 +558,9 @@
 				</td>
 			</tr>
 			<tr>
+				<td class="all button">
+					all <br> ▶
+				</td>
 				<td class="kana button" id="ダ">
 					<span class="japanese">ダ</span><br/>
 					<span class="romaji">da</span>
@@ -424,6 +583,9 @@
 				</td>
 			</tr>
 			<tr>
+				<td class="all button">
+					all <br> ▶
+				</td>
 				<td class="kana button" id="バ">
 					<span class="japanese">バ</span><br/>
 					<span class="romaji">ba</span>
@@ -446,6 +608,9 @@
 				</td>
 			</tr>
 			<tr>
+				<td class="all button">
+					all <br> ▶
+				</td>
 				<td class="kana button" id="パ">
 					<span class="japanese">パ</span><br/>
 					<span class="romaji">pa</span>
@@ -469,16 +634,28 @@
 			</tr>
 		</table>
 		<h3>Katakana with Vowel Modifiers</h3>
+
 		<details>
 			<summary>Information</summary>
 			<br/>
-			<p>The small katakana ャ, ュ, ョ, ァ, ィ, ゥ, ェ, and ォ are used in <em>somewhat</em> consistent ways to modify vowels of existing katakana symbols.</p>
+			<p>The small katakana ャ, ュ, ョ, ァ, ィ, ゥ, ェ, and ォ are used in <em>somewhat</em> consistent ways to modify vowels of existing katakana symbols. These small katakana symbols never appear without a full-size katakana preceeding them and do not have sounds on their own. These symbols can be thought of as modifiers on the preceeding full-size katakana.</p>
 		</details>
+
 		<br/>
-		<div class="button" id="show-duplicates" style="width: 250px">toggle duplicates</div>
+
+		<div class="all button" id="show-duplicates" style="width: 250px;">toggle duplicates</div>
+
 		<br/>
+
 		<table class="kana-table">
 			<tr>
+				<td></td>
+				<td colspan="5" class="all button">all ▼</td>
+			</tr>
+			<tr>
+				<td class="all button">
+					all <br> ▶
+				</td>
 				<td class="duplicate kana button" id="ワ">
 					<span class="japanese">ワ</span><br/>
 					<span class="romaji">wa</span>
@@ -498,6 +675,9 @@
 				</td>
 			</tr>
 			<tr>
+				<td class="all button">
+					all <br> ▶
+				</td>
 				<td class="kana button" id="ヴァ">
 					<span class="japanese">ヴァ</span><br/>
 					<span class="romaji">va</span>
@@ -520,6 +700,9 @@
 				</td>
 			</tr>
 			<tr>
+				<td class="all button">
+					all <br> ▶
+				</td>
 				<td class="kana button" id="キャ">
 					<span class="japanese">キャ</span><br/>
 					<span class="romaji">kya</span>
@@ -536,6 +719,9 @@
 				</td>
 			</tr>
 			<tr>
+				<td class="all button">
+					all <br> ▶
+				</td>
 				<td class="kana button" id="ギャ">
 					<span class="japanese">ギャ</span><br/>
 					<span class="romaji">gya</span>
@@ -552,6 +738,9 @@
 				</td>
 			</tr>
 			<tr>
+				<td class="all button">
+					all <br> ▶
+				</td>
 				<td class="kana button" id="シャ">
 					<span class="japanese">シャ</span><br/>
 					<span class="romaji">sha</span>
@@ -574,6 +763,9 @@
 				</td>
 			</tr>
 			<tr>
+				<td class="all button">
+					all <br> ▶
+				</td>
 				<td class="kana button" id="ジャ">
 					<span class="japanese">ジャ</span><br/>
 					<span class="romaji">ja</span>
@@ -596,6 +788,9 @@
 				</td>
 			</tr>
 			<tr>
+				<td class="all button">
+					all <br> ▶
+				</td>
 				<td class="duplicate kana button" id="タ">
 					<span class="japanese">タ</span><br/>
 					<span class="romaji">ta</span>
@@ -618,6 +813,9 @@
 				</td>
 			</tr>
 			<tr>
+				<td class="all button">
+					all <br> ▶
+				</td>
 				<td class="duplicate kana button" id="ダ">
 					<span class="japanese">ダ</span><br/>
 					<span class="romaji">da</span>
@@ -640,6 +838,9 @@
 				</td>
 			</tr>
 			<tr>
+				<td class="all button">
+					all <br> ▶
+				</td>
 				<td class="kana button" id="チャ">
 					<span class="japanese">チャ</span><br/>
 					<span class="romaji">cha</span>
@@ -662,6 +863,9 @@
 				</td>
 			</tr>
 			<tr>
+				<td class="all button">
+					all <br> ▶
+				</td>
 				<td class="kana button" id="ツァ">
 					<span class="japanese">ツァ</span><br/>
 					<span class="romaji">tsa</span>
@@ -681,6 +885,9 @@
 				</td>
 			</tr>
 			<tr>
+				<td class="all button">
+					all <br> ▶
+				</td>
 				<td class="kana button" id="ニャ">
 					<span class="japanese">ニャ</span><br/>
 					<span class="romaji">nya</span>
@@ -697,6 +904,9 @@
 				</td>
 			</tr>
 			<tr>
+				<td class="all button">
+					all <br> ▶
+				</td>
 				<td class="kana button" id="ヒャ">
 					<span class="japanese">ヒャ</span><br/>
 					<span class="romaji">hya</span>
@@ -713,6 +923,9 @@
 				</td>
 			</tr>
 			<tr>
+				<td class="all button">
+					all <br> ▶
+				</td>
 				<td class="kana button" id="ビャ">
 					<span class="japanese">ビャ</span><br/>
 					<span class="romaji">bya</span>
@@ -729,6 +942,9 @@
 				</td>
 			</tr>
 			<tr>
+				<td class="all button">
+					all <br> ▶
+				</td>
 				<td class="kana button" id="ピャ">
 					<span class="japanese">ピャ</span><br/>
 					<span class="romaji">pya</span>
@@ -745,6 +961,9 @@
 				</td>
 			</tr>
 			<tr>
+				<td class="all button">
+					all <br> ▶
+				</td>
 				<td class="kana button" id="ファ">
 					<span class="japanese">ファ</span><br/>
 					<span class="romaji">fa</span>
@@ -767,6 +986,9 @@
 				</td>
 			</tr>
 			<tr>
+				<td class="all button">
+					all <br> ▶
+				</td>
 				<td class="kana button" id="ミャ">
 					<span class="japanese">ミャ</span><br/>
 					<span class="romaji">mya</span>
@@ -783,6 +1005,9 @@
 				</td>
 			</tr>
 			<tr>
+				<td class="all button">
+					all <br> ▶
+				</td>
 				<td class="kana button" id="リャ">
 					<span class="japanese">リャ</span><br/>
 					<span class="romaji">rya</span>
