@@ -45,12 +45,17 @@ const idGroups = {
 	};
 
 function union(...sets) {
-  return new Set(sets.flatMap(set => [...set]));
+	return new Set(sets.flatMap(set => [...set]));
 };
 
 function isSuperset(setA, setB) {
-  for (const el of setB) if (!setA.has(el)) return false;
-  return true;
+	for (const el of setB) if (!setA.has(el)) return false;
+	return true;
+}
+
+function nonEmptyIntersection(setA, setB) {
+	for (const el of setB) if (setA.has(el)) return true;
+	return false;
 }
 
 function filterWordList() {
@@ -64,8 +69,9 @@ function filterWordList() {
 			: text.filter(([, , , components]) => {
 				const componentSet = new Set(components);
 				const satisfiesRequire = isSuperset(componentSet, idGroups.require);
+				const satisfiesEmphasize = idGroups.emphasize.size === 0 || nonEmptyIntersection(componentSet, idGroups.emphasize);
 				const satisfiesAllow = isSuperset(idUnion, componentSet);
-				return satisfiesRequire && satisfiesAllow;
+				return satisfiesRequire && satisfiesEmphasize && satisfiesAllow;
 			});
 
 		word_container.innerHTML = "";
@@ -107,6 +113,7 @@ function toggle(el) {
 }
 
 function clickAction (e) {
+
 	const el = e.target.closest(".button");
 
 	if(el.classList.contains("all")) {
@@ -114,7 +121,7 @@ function clickAction (e) {
 		const rowEls = Array.from(
 			row.querySelectorAll("td.button:not(.all)")
 		)
-		.filter(cell => cell !== el)        // exclude the clicked one (safety)
+		.filter(cell => (cell !== el && getComputedStyle(cell).opacity !== "0"))        // exclude the clicked one (safety) and ones with an opacity of zero
 
 		rowEls.forEach((rowEl) => {
 			toggle(rowEl)
