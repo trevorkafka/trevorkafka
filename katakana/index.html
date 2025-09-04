@@ -25,6 +25,10 @@
 		--allow-text-color: HoneyDew;
 	}
 
+	html {
+		scroll-padding-top: 80px; /* buffer for scrolling becuase of top bar */
+	}
+
 	.japanese {
 		font-family: Noto Serif;
 		font-weight: 900;
@@ -39,14 +43,14 @@
 		border-radius: 10px;
 	}
 
-	table.kana-table {
-		width: 250px;
-	}
-
 	.kana-table {
+		margin: auto;
 		border-spacing: 5px;
 		border-collapse: separate;
+		table-layout: fixed;
+		width: 330px;
 	}
+
 
 	#word-container {
 		text-align: center;
@@ -67,21 +71,17 @@
 		background-color: var(--color3);
 	}
 
-	.all.button {
+	.all.button, .all-col.button {
 		border: solid 1px black;
 		background-color: DarkSalmon;
 		color: white;
 		font-weight: bold;
 	}
 
-	.button:active {
+	.button:active, .fixed-bottom-button:active {
 		transform: translate(2px, 2px);
 		box-shadow: 0px 0px 0px black;
 	}
-
-	/*.button:hover {
-		background-color: gainsboro;
-	}*/
 
 	.top-bar.button {
 		font-weight: bold; 
@@ -89,6 +89,83 @@
 		border: solid 1px black;
 		margin: 10px;
 		transition: background-color 0.3s ;
+	}
+
+	.top-bar.toolbar {
+		width: 100%; 
+		height: 60px; z-index: 2; 
+		position: fixed; top: 0; 
+		display: flex; 
+		align-items: center; 
+		box-shadow: 0px 0px 10px Grey;
+	}
+
+	.top-bar.toolbar.tag-mode-cycle {
+		background-color: White; 
+		transition: background-color 0.3s ease;
+	}
+
+	.top-bar.toolbar.tag-mode-cycle span.top-bar.title {
+		color: Black;
+		transition: color 0.3s ease;
+	}
+
+	.top-bar.toolbar.tag-mode-clear {
+		background-color: var(--color3); 
+		transition: background-color 0.3s ease;
+	}
+
+	.top-bar.toolbar.tag-mode-clear span.top-bar.title {
+		color: Black;
+		transition: color 0.3s ease;
+	}
+
+	.top-bar.toolbar.tag-mode-require {
+		background-color: var(--require-background-color); 
+		transition: background-color 0.3s ease;
+	}
+
+	.top-bar.toolbar.tag-mode-require span.top-bar.title {
+		color: var(--require-text-color);
+		transition: color 0.3s ease;
+	}
+
+	.top-bar.toolbar.tag-mode-emphasize {
+		background-color: var(--emphasize-background-color); 
+		transition: background-color 0.3s ease;
+	}
+
+	.top-bar.toolbar.tag-mode-emphasize span.top-bar.title {
+		color: var(--emphasize-text-color);
+		transition: color 0.3s ease;
+	}
+
+	.top-bar.toolbar.tag-mode-allow {
+		background-color: var(--allow-background-color); 
+		transition: background-color 0.3s ease;
+	}
+
+	.top-bar.toolbar.tag-mode-allow span.top-bar.title {
+		color: white;
+		transition: color 0.3s ease;
+	}
+
+	 @media(width < 900px) {
+
+		.top-bar.button {
+			padding: 5px 5px;
+			margin: 3px;
+			font-size: 80%;
+		}
+
+		.top-bar.title {
+			font-size: 80% !important;
+		}
+
+		.table {
+			font-size: 80%;
+		}
+
 	}
 
 	td:empty {
@@ -115,8 +192,6 @@
 
 	.inline-box {
 		display: inline-block;
-		margin-top: 5px;
-		margin-bottom: 5px;
 		padding: 3px 6px;
 		border-radius: 5px;
 		font-weight: bold;
@@ -131,51 +206,111 @@
 		vertical-align: top;
 	}
 
-	.eight-px-up {
-		transform: translateY(-8px);
+	.nudge-up {
+		transform: translateY(-3px);
+	}
+
+	.flex-container {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 20px;
+		width: min(1500px, var(--widthmax));
+		margin: auto;
+	}
+
+	.flex-element {
+		flex: 1 1 400px;
+		min-width: 400px;
+	}
+
+	.fixed-bottom-buttons {
+		position: fixed;
+		bottom: 20px;  
+		right: 20px;   
+		display: flex;
+		z-index: 3;
+	}
+
+	.fixed-bottom-button {
+		margin-left: 10px;
+		display: flex;
+		background-color: DarkSalmon;
+		color: white;
+		font-weight: bold;
+		font-size: 120%;
+		width: 80px;
+		height: 80px;
+		border-radius: 80px;
+		text-align: center;
+		justify-content: center;
+		align-items: center;
+		user-select: none;
+		cursor: pointer;
+		transition: background-color 0.2s ease;
+		border: solid 1px black;
+		box-shadow: 2px 2px 0px black;
+	}
+
+	.fixed-bottom-button:hover {
+		background-color: chocolate;
 	}
 
 </style>
 
 <body>
-	<div class="japanese" style="position: absolute; left: 40px; top: 60px; z-index: 0; font-size: 20vw; opacity: 5%; letter-spacing: -0.1em; user-select: none">
+	<div class="japanese" style="position: absolute; left: 40px; top: 60px; z-index: -1; font-size: 20vw; opacity: 5%; letter-spacing: -0.1em; user-select: none">
 		カタカナ<br/>リーダー
 	</div>
 
-	<div style="width: 100%; background-color: var(--allow-background-color); height: 60px; z-index: 2; position: fixed; top: 0; display: flex; align-items: center; box-shadow: 0px 4px 10px Grey;">
+	<div class="top-bar toolbar tag-mode-allow" id="top-toolbar">
 		<div class="content" style="display: flex; align-items: center">
-			<span style="font-family: Freeman; font-size: 150%; color: white">Tag Mode:</span>
-			<span class="top-bar button" style="background-color: white;">cycle</span>
-			<span class="top-bar button" style="background-color: var(--color3);">clear</span>
-			<span class="top-bar button require">require</span>
-			<span class="top-bar button emphasize">emphasize</span>
-			<span class="top-bar button allow">allow</span>
+			<span class="top-bar title" style="font-family: Freeman; font-size: 150%;">Tag Mode:</span>
+			<span class="top-bar button" style="background-color: white;" id="tag-mode-cycle">cycle</span>
+			<span class="top-bar button" style="background-color: var(--color3);" id="tag-mode-clear">clear</span>
+			<span class="top-bar button require" id="tag-mode-require">require</span>
+			<span class="top-bar button emphasize" id="tag-mode-emphasize">emphasize</span>
+			<span class="top-bar button allow" id="tag-mode-allow">allow</span>
 		</div>
+	</div>
+
+	<div class="fixed-bottom-buttons">
+		<div class="fixed-bottom-button" id="undo">↺<br>undo</div>
+		<a href="#read-start"><div class="fixed-bottom-button" id="read">▼<br>let's<br>read</div></a>
+		<a href="#tag1-start"><div class="fixed-bottom-button" id="tags">▲<br>edit<br>tags</div></a>
+		<a href="#tag1-start"><div class="fixed-bottom-button" id="tag1">▲<br>edit<br>1</div></a>
+		<a href="#tag2-start"><div class="fixed-bottom-button" id="tag2">▲<br>edit<br>2</div></a>
+		<a href="#tag3-start"><div class="fixed-bottom-button" id="tag3">▲<br>edit<br>3</div></a>
 	</div>
 
 	<div class="content" style="position: relative; z-index: 1; top: 60px">
 		<h1>Katakana Reader</h1>
 		<p>© 2025 Trevor Kafka</p>
-		<p>Welcome to Katakana Reader, a tool that will allow you to practice and improve your katakana reading abilities. Tag the katakana in the charts below based on your level of mastery of each by clicking on each katakana. The katakana tagging mode can be switched using the toolbar at the top of the page. Modify your tags as you master reading each katakana. A description of each tag is below.</p>
+		<p>Welcome to <strong>Katakana Reader</strong>, a tool that will allow you to practice and improve your katakana reading abilities.</p>
+		<p>Tag the katakana in the charts below based on your level of mastery of each by clicking on each katakana. The katakana tagging mode can be switched using the toolbar at the top of the page. Modify your tags as you master reading each katakana. A description of each tag is below.</p>
 
-			<table class="vertical-align-top" style="border: solid 2px black; border-radius: 10px;">
-				<tr style="font-weight: bold; border-bottom: solid 1px black">
+			<table class="vertical-align-top table" style="border: solid 1px #00000020; border-radius: 10px; display: block;">
+				<tr style="font-weight: bold; border-bottom: solid 1px black; font-size: 120%">
 					<td>Tag</td>
 					<td>Description</td>
 					<td>Use Case</td>
 				</tr>
 				<tr>
-					<td><span class="require inline-box eight-px-up">require</span></td>
+					<td><em>(none)</em></td>
+					<td>These katakana won't appear in words.</td>
+					<td>not-yet-studied katakana</td>
+				</tr>
+				<tr>
+					<td><span class="require inline-box nudge-up">require</span></td>
 					<td><em>All</em> tagged katakana appear in <em>each word</em>. Use sparingly.</td>
 					<td>brand-new katakana</td>
 				</tr>
 				<tr>
-					<td><span class="emphasize inline-box eight-px-up">emphasize</span></td>
+					<td><span class="emphasize inline-box nudge-up">emphasize</span></td>
 					<td><em>At least one</em> tagged katakana appears in <em>each word</em>.</td>
 					<td>katakana still being learned</td>
 				</tr>
 				<tr>
-					<td><span class="allow inline-box eight-px-up">allow</span></td>
+					<td><span class="allow inline-box nudge-up">allow</span></td>
 					<td>Other katakana that may be used in any word. Use liberally.</td>
 					<td>well-mastered katakana</td>
 				</tr>
@@ -184,6 +319,8 @@
 		<br/>
 
 		<p>After setting your tags, begin to read the words in the word list, which are displayed at random. Click each word to reveal the pronunciation and meaning. The more words you read, the more your reading skills will improve.</p>
+
+		<p>Master the katakana from each section before proceeding to the next.</p>
 
 		<details>
 			<summary>More information</summary>
@@ -219,815 +356,855 @@
 			</ul>
 		</details>
 
-		<h3>Basic Katakana (Learn These First)</h3>
-
-		<details>
-			<summary>Information</summary>
-			<ul>
-				<li>The katakana below are displayed in traditional alphabetical order, which reflect their phonological categorizations with some exceptions.</li>
-				<li>The katakana <strong>ヰ wi</strong>, <strong>ヱ we</strong>, and <strong>ヲ wo</strong> have been omitted because in modern Japanese the combinations <strong>ウィ wi</strong>, <strong>ウェ we</strong>, and <strong>ウォ wo</strong> are used instead (see <em>Katakana with Vowel Modifiers</em> section for the bigger picture).</li>
-			</ul>
-		</details>
 		<br/>
 
-		<table class="kana-table">
-			<tr>
-				<td></td>
-				<td colspan="5" class="all button">all ▼</td>
-			</tr>
-			<tr>
-				<td class="all button">
-					all <br> ▶
-				</td>
-				<td class="kana button" id="ア">
-					<span class="japanese">ア</span><br/>
-					<span class="romaji">a</span>
-				</td>
-				<td class="kana button" id="イ">
-					<span class="japanese">イ</span><br/>
-					<span class="romaji">i</span>
-				</td>
-				<td class="kana button" id="ウ">
-					<span class="japanese">ウ</span><br/>
-					<span class="romaji">u</span>
-				</td>
-				<td class="kana button" id="エ">
-					<span class="japanese">エ</span><br/>
-					<span class="romaji">e</span>
-				</td>
-				<td class="kana button" id="オ">
-					<span class="japanese">オ</span><br/>
-					<span class="romaji">o</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="all button">
-					all <br> ▶
-				</td>
-				<td class="kana button" id="カ">
-					<span class="japanese">カ</span><br/>
-					<span class="romaji">ka</span>
-				</td>
-				<td class="kana button" id="キ">
-					<span class="japanese">キ</span><br/>
-					<span class="romaji">ki</span>
-				</td>
-				<td class="kana button" id="ク">
-					<span class="japanese">ク</span><br/>
-					<span class="romaji">ku</span>
-				</td>
-				<td class="kana button" id="ケ">
-					<span class="japanese">ケ</span><br/>
-					<span class="romaji">ke</span>
-				</td>
-				<td class="kana button" id="コ">
-					<span class="japanese">コ</span><br/>
-					<span class="romaji">ko</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="all button">
-					all <br> ▶
-				</td>
-				<td class="kana button" id="サ">
-					<span class="japanese">サ</span><br/>
-					<span class="romaji">sa</span>
-				</td>
-				<td class="kana button" id="シ">
-					<span class="japanese">シ</span><br/>
-					<span class="romaji">shi</span>
-				</td>
-				<td class="kana button" id="ス">
-					<span class="japanese">ス</span><br/>
-					<span class="romaji">su</span>
-				</td>
-				<td class="kana button" id="セ">
-					<span class="japanese">セ</span><br/>
-					<span class="romaji">se</span>
-				</td>
-				<td class="kana button" id="ソ">
-					<span class="japanese">ソ</span><br/>
-					<span class="romaji">so</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="all button">
-					all <br> ▶
-				</td>
-				<td class="kana button" id="タ">
-					<span class="japanese">タ</span><br/>
-					<span class="romaji">ta</span>
-				</td>
-				<td class="kana button" id="チ">
-					<span class="japanese">チ</span><br/>
-					<span class="romaji">chi</span>
-				</td>
-				<td class="kana button" id="ツ">
-					<span class="japanese">ツ</span><br/>
-					<span class="romaji">tsu</span>
-				</td>
-				<td class="kana button" id="テ">
-					<span class="japanese">テ</span><br/>
-					<span class="romaji">te</span>
-				</td>
-				<td class="kana button" id="ト">
-					<span class="japanese">ト</span><br/>
-					<span class="romaji">to</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="all button">
-					all <br> ▶
-				</td>
-				<td class="kana button" id="ナ">
-					<span class="japanese">ナ</span><br/>
-					<span class="romaji">na</span>
-				</td>
-				<td class="kana button" id="ニ">
-					<span class="japanese">ニ</span><br/>
-					<span class="romaji">ni</span>
-				</td>
-				<td class="kana button" id="ヌ">
-					<span class="japanese">ヌ</span><br/>
-					<span class="romaji">nu</span>
-				</td>
-				<td class="kana button" id="ネ">
-					<span class="japanese">ネ</span><br/>
-					<span class="romaji">ne</span>
-				</td>
-				<td class="kana button" id="ノ">
-					<span class="japanese">ノ</span><br/>
-					<span class="romaji">no</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="all button">
-					all <br> ▶
-				</td>
-				<td class="kana button" id="ハ">
-					<span class="japanese">ハ</span><br/>
-					<span class="romaji">ha</span>
-				</td>
-				<td class="kana button" id="ヒ">
-					<span class="japanese">ヒ</span><br/>
-					<span class="romaji">hi</span>
-				</td>
-				<td class="kana button" id="フ">
-					<span class="japanese">フ</span><br/>
-					<span class="romaji">fu</span>
-				</td>
-				<td class="kana button" id="ヘ">
-					<span class="japanese">ヘ</span><br/>
-					<span class="romaji">he</span>
-				</td>
-				<td class="kana button" id="ホ">
-					<span class="japanese">ホ</span><br/>
-					<span class="romaji">ho</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="all button">
-					all <br> ▶
-				</td>
-				<td class="kana button" id="マ">
-					<span class="japanese">マ</span><br/>
-					<span class="romaji">ma</span>
-				</td>
-				<td class="kana button" id="ミ">
-					<span class="japanese">ミ</span><br/>
-					<span class="romaji">mi</span>
-				</td>
-				<td class="kana button" id="ム">
-					<span class="japanese">ム</span><br/>
-					<span class="romaji">mu</span>
-				</td>
-				<td class="kana button" id="メ">
-					<span class="japanese">メ</span><br/>
-					<span class="romaji">me</span>
-				</td>
-				<td class="kana button" id="モ">
-					<span class="japanese">モ</span><br/>
-					<span class="romaji">mo</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="all button">
-					all <br> ▶
-				</td>
-				<td class="kana button" id="ヤ">
-					<span class="japanese">ヤ</span><br/>
-					<span class="romaji">ya</span>
-				</td>
-				<td></td>
-				<td class="kana button" id="ユ">
-					<span class="japanese">ユ</span><br/>
-					<span class="romaji">yu</span>
-				</td>
-				<td></td>
-				<td class="kana button" id="ヨ">
-					<span class="japanese">ヨ</span><br/>
-					<span class="romaji">yo</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="all button">
-					all <br> ▶
-				</td>
-				<td class="kana button" id="ラ">
-					<span class="japanese">ラ</span><br/>
-					<span class="romaji">ra</span>
-				</td>
-				<td class="kana button" id="リ">
-					<span class="japanese">リ</span><br/>
-					<span class="romaji">ri</span>
-				</td>
-				<td class="kana button" id="ル">
-					<span class="japanese">ル</span><br/>
-					<span class="romaji">ru</span>
-				</td>
-				<td class="kana button" id="レ">
-					<span class="japanese">レ</span><br/>
-					<span class="romaji">re</span>
-				</td>
-				<td class="kana button" id="ロ">
-					<span class="japanese">ロ</span><br/>
-					<span class="romaji">ro</span>
-				</td>
-			</tr>
-			<tr>
-				<td></td>
-				<td class="kana button" id="ワ">
-					<span class="japanese">ワ</span><br/>
-					<span class="romaji">wa</span>
-				</td>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td></td>
-			</tr>
-		</table>
-		<br/>
-		<table class="kana-table">
-			<tr>
-				<td colspan="3" class="all button">all ▼</td>
-			</tr>
-			<tr>
-				<td class="kana button" id="ン" style="width: 33.33%">
-					<span class="japanese">ン</span><br/>
-					<span class="romaji">n</span>
-				</td>
-				<td class="kana button" id="ー" style="width: 33.33%">
-					<span class="japanese">ー</span><br/>
-					<span class="romaji">(long vowel)</span>
-				</td>
-				<td class="kana button" id="ッ" style="width: 33.33%">
-					<span class="japanese">ッ</span><br/>
-					<span class="romaji">(glottal stop)</span>
-				</td>
-			</tr>
-		</table>
-		<br/>
-		<p>Note: The katakana <strong>ツ tsu</strong> and <strong>ッ (glottal stop)</strong> are distinguished by their size.</p>
-		
-		<h3>Katakana with Consonant Modifiers</h3>
-		
-		<table class="kana-table">
-			<tr>
-				<td></td>
-				<td colspan="5" class="all button">all ▼</td>
-			</tr>
-			<tr>
-				<td></td>
-				<td></td>
-				<td></td>
-				<td class="kana button" id="ヴ">
-					<span class="japanese">ヴ</span><br/>
-					<span class="romaji">vu</span>
-				</td>
-				<td></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td class="all button">
-					all <br> ▶
-				</td>
-				<td class="kana button" id="ガ">
-					<span class="japanese">ガ</span><br/>
-					<span class="romaji">ga</span>
-				</td>
-				<td class="kana button" id="ギ">
-					<span class="japanese">ギ</span><br/>
-					<span class="romaji">gi</span>
-				</td>
-				<td class="kana button" id="グ">
-					<span class="japanese">グ</span><br/>
-					<span class="romaji">gu</span>
-				</td>
-				<td class="kana button" id="ゲ">
-					<span class="japanese">ゲ</span><br/>
-					<span class="romaji">ge</span>
-				</td>
-				<td class="kana button" id="ゴ">
-					<span class="japanese">ゴ</span><br/>
-					<span class="romaji">go</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="all button">
-					all <br> ▶
-				</td>
-				<td class="kana button" id="ザ">
-					<span class="japanese">ザ</span><br/>
-					<span class="romaji">za</span>
-				</td>
-				<td class="kana button" id="ジ">
-					<span class="japanese">ジ</span><br/>
-					<span class="romaji">ji</span>
-				</td>
-				<td class="kana button" id="ズ">
-					<span class="japanese">ズ</span><br/>
-					<span class="romaji">zu</span>
-				</td>
-				<td class="kana button" id="ゼ">
-					<span class="japanese">ゼ</span><br/>
-					<span class="romaji">ze</span>
-				</td>
-				<td class="kana button" id="ゾ">
-					<span class="japanese">ゾ</span><br/>
-					<span class="romaji">zo</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="all button">
-					all <br> ▶
-				</td>
-				<td class="kana button" id="ダ">
-					<span class="japanese">ダ</span><br/>
-					<span class="romaji">da</span>
-				</td>
-				<td class="kana button" id="ヂ">
-					<span class="japanese">ヂ</span><br/>
-					<span class="romaji">ji</span>
-				</td>
-				<td class="kana button" id="ヅ">
-					<span class="japanese">ヅ</span><br/>
-					<span class="romaji">zu</span>
-				</td>
-				<td class="kana button" id="デ">
-					<span class="japanese">デ</span><br/>
-					<span class="romaji">de</span>
-				</td>
-				<td class="kana button" id="ド">
-					<span class="japanese">ド</span><br/>
-					<span class="romaji">do</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="all button">
-					all <br> ▶
-				</td>
-				<td class="kana button" id="バ">
-					<span class="japanese">バ</span><br/>
-					<span class="romaji">ba</span>
-				</td>
-				<td class="kana button" id="ビ">
-					<span class="japanese">ビ</span><br/>
-					<span class="romaji">bi</span>
-				</td>
-				<td class="kana button" id="ブ">
-					<span class="japanese">ブ</span><br/>
-					<span class="romaji">bu</span>
-				</td>
-				<td class="kana button" id="ベ">
-					<span class="japanese">ベ</span><br/>
-					<span class="romaji">be</span>
-				</td>
-				<td class="kana button" id="ボ">
-					<span class="japanese">ボ</span><br/>
-					<span class="romaji">bo</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="all button">
-					all <br> ▶
-				</td>
-				<td class="kana button" id="パ">
-					<span class="japanese">パ</span><br/>
-					<span class="romaji">pa</span>
-				</td>
-				<td class="kana button" id="ピ">
-					<span class="japanese">ピ</span><br/>
-					<span class="romaji">pi</span>
-				</td>
-				<td class="kana button" id="プ">
-					<span class="japanese">プ</span><br/>
-					<span class="romaji">pu</span>
-				</td>
-				<td class="kana button" id="ペ">
-					<span class="japanese">ペ</span><br/>
-					<span class="romaji">pe</span>
-				</td>
-				<td class="kana button" id="ポ">
-					<span class="japanese">ポ</span><br/>
-					<span class="romaji">po</span>
-				</td>
-			</tr>
-		</table>
-		<h3>Katakana with Vowel Modifiers</h3>
+	</div>
 
-		<details>
-			<summary>Information</summary>
+	<div class="flex-container">
+
+		<div class="flex-element">
+
+			<h2 id="tag1-start">① Basic Katakana</h2>
+
+			<details>
+				<summary>Information</summary>
+				<ul>
+					<li>The katakana below are displayed in traditional alphabetical order, which reflect their phonological categorizations with some exceptions: <strong>チ chi</strong>, <strong>ツ tsu</strong>, <strong>シ shi</strong>, and <strong>フ fu</strong>.</li>
+					<li>The katakana <strong>ヰ wi</strong>, <strong>ヱ we</strong>, and <strong>ヲ wo</strong> have been omitted because in modern Japanese the combinations <strong>ウィ wi</strong>, <strong>ウェ we</strong>, and <strong>ウォ wo</strong> are used instead (see <em>③ Vowel Modifiers</em>).</li>
+				</ul>
+			</details>
 			<br/>
-			<p>The small katakana ャ, ュ, ョ, ァ, ィ, ゥ, ェ, and ォ are used in <em>somewhat</em> consistent ways to modify vowels of existing katakana symbols. These small katakana symbols never appear without a full-size katakana preceeding them and do not have sounds on their own. These symbols can be thought of as modifiers on the preceeding full-size katakana.</p>
-		</details>
 
-		<br/>
+			<table class="kana-table">
+				<tr>
+					<td></td>
+					<td colspan="5" class="all-col button">all ▼</td>
+				</tr>
+				<tr>
+					<td class="all button">
+						all <br> ▶
+					</td>
+					<td class="kana button" id="ア">
+						<span class="japanese">ア</span><br/>
+						<span class="romaji">a</span>
+					</td>
+					<td class="kana button" id="イ">
+						<span class="japanese">イ</span><br/>
+						<span class="romaji">i</span>
+					</td>
+					<td class="kana button" id="ウ">
+						<span class="japanese">ウ</span><br/>
+						<span class="romaji">u</span>
+					</td>
+					<td class="kana button" id="エ">
+						<span class="japanese">エ</span><br/>
+						<span class="romaji">e</span>
+					</td>
+					<td class="kana button" id="オ">
+						<span class="japanese">オ</span><br/>
+						<span class="romaji">o</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="all button">
+						all <br> ▶
+					</td>
+					<td class="kana button" id="カ">
+						<span class="japanese">カ</span><br/>
+						<span class="romaji">ka</span>
+					</td>
+					<td class="kana button" id="キ">
+						<span class="japanese">キ</span><br/>
+						<span class="romaji">ki</span>
+					</td>
+					<td class="kana button" id="ク">
+						<span class="japanese">ク</span><br/>
+						<span class="romaji">ku</span>
+					</td>
+					<td class="kana button" id="ケ">
+						<span class="japanese">ケ</span><br/>
+						<span class="romaji">ke</span>
+					</td>
+					<td class="kana button" id="コ">
+						<span class="japanese">コ</span><br/>
+						<span class="romaji">ko</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="all button">
+						all <br> ▶
+					</td>
+					<td class="kana button" id="サ">
+						<span class="japanese">サ</span><br/>
+						<span class="romaji">sa</span>
+					</td>
+					<td class="kana button" id="シ">
+						<span class="japanese">シ</span><br/>
+						<span class="romaji">shi</span>
+					</td>
+					<td class="kana button" id="ス">
+						<span class="japanese">ス</span><br/>
+						<span class="romaji">su</span>
+					</td>
+					<td class="kana button" id="セ">
+						<span class="japanese">セ</span><br/>
+						<span class="romaji">se</span>
+					</td>
+					<td class="kana button" id="ソ">
+						<span class="japanese">ソ</span><br/>
+						<span class="romaji">so</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="all button">
+						all <br> ▶
+					</td>
+					<td class="kana button" id="タ">
+						<span class="japanese">タ</span><br/>
+						<span class="romaji">ta</span>
+					</td>
+					<td class="kana button" id="チ">
+						<span class="japanese">チ</span><br/>
+						<span class="romaji">chi</span>
+					</td>
+					<td class="kana button" id="ツ">
+						<span class="japanese">ツ</span><br/>
+						<span class="romaji">tsu</span>
+					</td>
+					<td class="kana button" id="テ">
+						<span class="japanese">テ</span><br/>
+						<span class="romaji">te</span>
+					</td>
+					<td class="kana button" id="ト">
+						<span class="japanese">ト</span><br/>
+						<span class="romaji">to</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="all button">
+						all <br> ▶
+					</td>
+					<td class="kana button" id="ナ">
+						<span class="japanese">ナ</span><br/>
+						<span class="romaji">na</span>
+					</td>
+					<td class="kana button" id="ニ">
+						<span class="japanese">ニ</span><br/>
+						<span class="romaji">ni</span>
+					</td>
+					<td class="kana button" id="ヌ">
+						<span class="japanese">ヌ</span><br/>
+						<span class="romaji">nu</span>
+					</td>
+					<td class="kana button" id="ネ">
+						<span class="japanese">ネ</span><br/>
+						<span class="romaji">ne</span>
+					</td>
+					<td class="kana button" id="ノ">
+						<span class="japanese">ノ</span><br/>
+						<span class="romaji">no</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="all button">
+						all <br> ▶
+					</td>
+					<td class="kana button" id="ハ">
+						<span class="japanese">ハ</span><br/>
+						<span class="romaji">ha</span>
+					</td>
+					<td class="kana button" id="ヒ">
+						<span class="japanese">ヒ</span><br/>
+						<span class="romaji">hi</span>
+					</td>
+					<td class="kana button" id="フ">
+						<span class="japanese">フ</span><br/>
+						<span class="romaji">fu</span>
+					</td>
+					<td class="kana button" id="ヘ">
+						<span class="japanese">ヘ</span><br/>
+						<span class="romaji">he</span>
+					</td>
+					<td class="kana button" id="ホ">
+						<span class="japanese">ホ</span><br/>
+						<span class="romaji">ho</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="all button">
+						all <br> ▶
+					</td>
+					<td class="kana button" id="マ">
+						<span class="japanese">マ</span><br/>
+						<span class="romaji">ma</span>
+					</td>
+					<td class="kana button" id="ミ">
+						<span class="japanese">ミ</span><br/>
+						<span class="romaji">mi</span>
+					</td>
+					<td class="kana button" id="ム">
+						<span class="japanese">ム</span><br/>
+						<span class="romaji">mu</span>
+					</td>
+					<td class="kana button" id="メ">
+						<span class="japanese">メ</span><br/>
+						<span class="romaji">me</span>
+					</td>
+					<td class="kana button" id="モ">
+						<span class="japanese">モ</span><br/>
+						<span class="romaji">mo</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="all button">
+						all <br> ▶
+					</td>
+					<td class="kana button" id="ヤ">
+						<span class="japanese">ヤ</span><br/>
+						<span class="romaji">ya</span>
+					</td>
+					<td></td>
+					<td class="kana button" id="ユ">
+						<span class="japanese">ユ</span><br/>
+						<span class="romaji">yu</span>
+					</td>
+					<td></td>
+					<td class="kana button" id="ヨ">
+						<span class="japanese">ヨ</span><br/>
+						<span class="romaji">yo</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="all button">
+						all <br> ▶
+					</td>
+					<td class="kana button" id="ラ">
+						<span class="japanese">ラ</span><br/>
+						<span class="romaji">ra</span>
+					</td>
+					<td class="kana button" id="リ">
+						<span class="japanese">リ</span><br/>
+						<span class="romaji">ri</span>
+					</td>
+					<td class="kana button" id="ル">
+						<span class="japanese">ル</span><br/>
+						<span class="romaji">ru</span>
+					</td>
+					<td class="kana button" id="レ">
+						<span class="japanese">レ</span><br/>
+						<span class="romaji">re</span>
+					</td>
+					<td class="kana button" id="ロ">
+						<span class="japanese">ロ</span><br/>
+						<span class="romaji">ro</span>
+					</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td class="kana button" id="ワ">
+						<span class="japanese">ワ</span><br/>
+						<span class="romaji">wa</span>
+					</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+			</table>
+			<br/>
+			<table class="kana-table">
+				<tr>
+					<td colspan="3" class="all-col button">all ▼</td>
+				</tr>
+				<tr>
+					<td class="kana button" id="ン" style="width: 33.33%">
+						<span class="japanese">ン</span><br/>
+						<span class="romaji">n</span>
+					</td>
+					<td class="kana button" id="ー" style="width: 33.33%">
+						<span class="japanese">ー</span><br/>
+						<span class="romaji">(long vowel)</span>
+					</td>
+					<td class="kana button" id="ッ" style="width: 33.33%">
+						<span class="japanese">ッ</span><br/>
+						<span class="romaji">(glottal stop)</span>
+					</td>
+				</tr>
+			</table>
+			<br/>
+			<p>Note: The katakana <strong>ツ tsu</strong> and <strong>ッ (glottal stop)</strong> are distinguished by their size.</p>
+			
+		</div>
 
-		<div class="all button" id="show-duplicates" style="width: 250px;">toggle duplicates</div>
+		<div class="flex-element">
 
-		<br/>
+			<h2 id="tag2-start">② Consonant Modifiers</h2>
 
-		<table class="kana-table">
-			<tr>
-				<td></td>
-				<td colspan="5" class="all button">all ▼</td>
-			</tr>
-			<tr>
-				<td class="all button">
-					all <br> ▶
-				</td>
-				<td class="duplicate kana button" id="ワ">
-					<span class="japanese">ワ</span><br/>
-					<span class="romaji">wa</span>
-				</td>
-				<td class="kana button" id="ウィ">
-					<span class="japanese">ウィ</span><br/>
-					<span class="romaji">wi</span>
-				</td>
-				<td></td>
-				<td class="kana button" id="ウェ">
-					<span class="japanese">ウェ</span><br/>
-					<span class="romaji">we</span>
-				</td>
-				<td class="kana button" id="ウォ">
-					<span class="japanese">ウォ</span><br/>
-					<span class="romaji">wo</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="all button">
-					all <br> ▶
-				</td>
-				<td class="kana button" id="ヴァ">
-					<span class="japanese">ヴァ</span><br/>
-					<span class="romaji">va</span>
-				</td>
-				<td class="kana button" id="ヴィ">
-					<span class="japanese">ヴィ</span><br/>
-					<span class="romaji">vi</span>
-				</td>
-				<td class="duplicate kana button" id="ヴ">
-					<span class="japanese">ヴ</span><br/>
-					<span class="romaji">vu</span>
-				</td>
-				<td class="kana button" id="ヴェ">
-					<span class="japanese">ヴェ</span><br/>
-					<span class="romaji">ve</span>
-				</td>
-				<td class="kana button" id="ヴォ">
-					<span class="japanese">ヴォ</span><br/>
-					<span class="romaji">vo</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="all button">
-					all <br> ▶
-				</td>
-				<td class="kana button" id="キャ">
-					<span class="japanese">キャ</span><br/>
-					<span class="romaji">kya</span>
-				</td>
-				<td></td>
-				<td class="kana button" id="キュ">
-					<span class="japanese">キュ</span><br/>
-					<span class="romaji">kyu</span>
-				</td>
-				<td></td>
-				<td class="kana button" id="キョ">
-					<span class="japanese">キョ</span><br/>
-					<span class="romaji">kyo</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="all button">
-					all <br> ▶
-				</td>
-				<td class="kana button" id="ギャ">
-					<span class="japanese">ギャ</span><br/>
-					<span class="romaji">gya</span>
-				</td>
-				<td></td>
-				<td class="kana button" id="ギュ">
-					<span class="japanese">ギュ</span><br/>
-					<span class="romaji">gyu</span>
-				</td>
-				<td></td>
-				<td class="kana button" id="ギョ">
-					<span class="japanese">ギョ</span><br/>
-					<span class="romaji">gyo</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="all button">
-					all <br> ▶
-				</td>
-				<td class="kana button" id="シャ">
-					<span class="japanese">シャ</span><br/>
-					<span class="romaji">sha</span>
-				</td>
-				<td class="duplicate kana button" id="シ">
-					<span class="japanese">シ</span><br/>
-					<span class="romaji">shi</span>
-				</td>
-				<td class="kana button" id="シュ">
-					<span class="japanese">シュ</span><br/>
-					<span class="romaji">shu</span>
-				</td>
-				<td class="kana button" id="シェ">
-					<span class="japanese">シェ</span><br/>
-					<span class="romaji">she</span>
-				</td>
-				<td class="kana button" id="ショ">
-					<span class="japanese">ショ</span><br/>
-					<span class="romaji">sho</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="all button">
-					all <br> ▶
-				</td>
-				<td class="kana button" id="ジャ">
-					<span class="japanese">ジャ</span><br/>
-					<span class="romaji">ja</span>
-				</td>
-				<td class="duplicate kana button" id="ジ">
-					<span class="japanese">ジ</span><br/>
-					<span class="romaji">ji</span>
-				</td>
-				<td class="kana button" id="ジュ">
-					<span class="japanese">ジュ</span><br/>
-					<span class="romaji">ju</span>
-				</td>
-				<td class="kana button" id="ジェ">
-					<span class="japanese">ジェ</span><br/>
-					<span class="romaji">je</span>
-				</td>
-				<td class="kana button" id="ジョ">
-					<span class="japanese">ジョ</span><br/>
-					<span class="romaji">jo</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="all button">
-					all <br> ▶
-				</td>
-				<td class="duplicate kana button" id="タ">
-					<span class="japanese">タ</span><br/>
-					<span class="romaji">ta</span>
-				</td>
-				<td class="kana button" id="ティ">
-					<span class="japanese">ティ</span><br/>
-					<span class="romaji">ti</span>
-				</td>
-				<td class="kana button" id="トゥ">
-					<span class="japanese">トゥ</span><br/>
-					<span class="romaji">tu</span>
-				</td>
-				<td class="duplicate kana button" id="テ">
-					<span class="japanese">テ</span><br/>
-					<span class="romaji">te</span>
-				</td>
-				<td class="duplicate kana button" id="ト">
-					<span class="japanese">ト</span><br/>
-					<span class="romaji">to</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="all button">
-					all <br> ▶
-				</td>
-				<td class="duplicate kana button" id="ダ">
-					<span class="japanese">ダ</span><br/>
-					<span class="romaji">da</span>
-				</td>
-				<td class="kana button" id="ディ">
-					<span class="japanese">ディ</span><br/>
-					<span class="romaji">di</span>
-				</td>
-				<td class="kana button" id="デュ">
-					<span class="japanese">デュ</span><br/>
-					<span class="romaji">dyu</span>
-				</td>
-				<td class="duplicate kana button" id="デ">
-					<span class="japanese">デ</span><br/>
-					<span class="romaji">de</span>
-				</td>
-				<td class="duplicate kana button" id="ド">
-					<span class="japanese">ド</span><br/>
-					<span class="romaji">do</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="all button">
-					all <br> ▶
-				</td>
-				<td class="kana button" id="チャ">
-					<span class="japanese">チャ</span><br/>
-					<span class="romaji">cha</span>
-				</td>
-				<td class="duplicate kana button" id="チ">
-					<span class="japanese">チ</span><br/>
-					<span class="romaji">chi</span>
-				</td>
-				<td class="kana button" id="チュ">
-					<span class="japanese">チュ</span><br/>
-					<span class="romaji">chu</span>
-				</td>
-				<td class="kana button" id="チェ">
-					<span class="japanese">チェ</span><br/>
-					<span class="romaji">che</span>
-				</td>
-				<td class="kana button" id="チョ">
-					<span class="japanese">チョ</span><br/>
-					<span class="romaji">cho</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="all button">
-					all <br> ▶
-				</td>
-				<td class="kana button" id="ツァ">
-					<span class="japanese">ツァ</span><br/>
-					<span class="romaji">tsa</span>
-				</td>
-				<td></td>
-				<td class="duplicate kana button" id="ツ">
-					<span class="japanese">ツ</span><br/>
-					<span class="romaji">tsu</span>
-				</td>
-				<td class="kana button" id="ツェ">
-					<span class="japanese">ツェ</span><br/>
-					<span class="romaji">tse</span>
-				</td>
-				<td class="kana button" id="ツォ">
-					<span class="japanese">ツォ</span><br/>
-					<span class="romaji">tso</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="all button">
-					all <br> ▶
-				</td>
-				<td class="kana button" id="ニャ">
-					<span class="japanese">ニャ</span><br/>
-					<span class="romaji">nya</span>
-				</td>
-				<td></td>
-				<td class="kana button" id="ニュ">
-					<span class="japanese">ニュ</span><br/>
-					<span class="romaji">nyu</span>
-				</td>
-				<td></td>
-				<td class="kana button" id="ニョ">
-					<span class="japanese">ニョ</span><br/>
-					<span class="romaji">nyo</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="all button">
-					all <br> ▶
-				</td>
-				<td class="kana button" id="ヒャ">
-					<span class="japanese">ヒャ</span><br/>
-					<span class="romaji">hya</span>
-				</td>
-				<td></td>
-				<td class="kana button" id="ヒュ">
-					<span class="japanese">ヒュ</span><br/>
-					<span class="romaji">hyu</span>
-				</td>
-				<td></td>
-				<td class="kana button" id="ヒョ">
-					<span class="japanese">ヒョ</span><br/>
-					<span class="romaji">hyo</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="all button">
-					all <br> ▶
-				</td>
-				<td class="kana button" id="ビャ">
-					<span class="japanese">ビャ</span><br/>
-					<span class="romaji">bya</span>
-				</td>
-				<td></td>
-				<td class="kana button" id="ビュ">
-					<span class="japanese">ビュ</span><br/>
-					<span class="romaji">byu</span>
-				</td>
-				<td></td>
-				<td class="kana button" id="ビョ">
-					<span class="japanese">ビョ</span><br/>
-					<span class="romaji">byo</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="all button">
-					all <br> ▶
-				</td>
-				<td class="kana button" id="ピャ">
-					<span class="japanese">ピャ</span><br/>
-					<span class="romaji">pya</span>
-				</td>
-				<td></td>
-				<td class="kana button" id="ピュ">
-					<span class="japanese">ピュ</span><br/>
-					<span class="romaji">pyu</span>
-				</td>
-				<td></td>
-				<td class="kana button" id="ピョ">
-					<span class="japanese">ピョ</span><br/>
-					<span class="romaji">pyo</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="all button">
-					all <br> ▶
-				</td>
-				<td class="kana button" id="ファ">
-					<span class="japanese">ファ</span><br/>
-					<span class="romaji">fa</span>
-				</td>
-				<td class="kana button" id="フィ">
-					<span class="japanese">フィ</span><br/>
-					<span class="romaji">fi</span>
-				</td>
-				<td class="duplicate kana button" id="フ">
-					<span class="japanese">フ</span><br/>
-					<span class="romaji">fu</span>
-				</td>
-				<td class="kana button" id="フェ">
-					<span class="japanese">フェ</span><br/>
-					<span class="romaji">fe</span>
-				</td>
-				<td class="kana button" id="フォ">
-					<span class="japanese">フォ</span><br/>
-					<span class="romaji">fo</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="all button">
-					all <br> ▶
-				</td>
-				<td class="kana button" id="ミャ">
-					<span class="japanese">ミャ</span><br/>
-					<span class="romaji">mya</span>
-				</td>
-				<td></td>
-				<td class="kana button" id="ミュ">
-					<span class="japanese">ミュ</span><br/>
-					<span class="romaji">myu</span>
-				</td>
-				<td></td>
-				<td class="kana button" id="ミョ">
-					<span class="japanese">ミョ</span><br/>
-					<span class="romaji">myo</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="all button">
-					all <br> ▶
-				</td>
-				<td class="kana button" id="リャ">
-					<span class="japanese">リャ</span><br/>
-					<span class="romaji">rya</span>
-				</td>
-				<td></td>
-				<td class="kana button" id="リュ">
-					<span class="japanese">リュ</span><br/>
-					<span class="romaji">ryu</span>
-				</td>
-				<td></td>
-				<td class="kana button" id="リョ">
-					<span class="japanese">リョ</span><br/>
-					<span class="romaji">ryo</span>
-				</td>
-			</tr>
-		</table>
+			<details>
+				<summary>Information</summary>
+				<br/>
+				<ul>
+					<li>The <strong>゛ dakuten</strong> and <strong>゜ handakuten</strong> symbols are used in combination with some basic katakana to modify initial consonant sounds mostly according to some regular patterns (k→g, s→z, t→d, h→b→p).</li>
+					<li>The <strong>゜ handakuten</strong> symbol is only used in the last row of this table.</li>
+				</ul>
+			</details>
+			<br/>
+			
+			<table class="kana-table">
+				<tr>
+					<td></td>
+					<td colspan="5" class="all-col button">all ▼</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td class="kana button" id="ヴ">
+						<span class="japanese">ヴ</span><br/>
+						<span class="romaji">vu</span>
+					</td>
+					<td></td>
+					<td></td>
+				</tr>
+				<tr>
+					<td class="all button">
+						all <br> ▶
+					</td>
+					<td class="kana button" id="ガ">
+						<span class="japanese">ガ</span><br/>
+						<span class="romaji">ga</span>
+					</td>
+					<td class="kana button" id="ギ">
+						<span class="japanese">ギ</span><br/>
+						<span class="romaji">gi</span>
+					</td>
+					<td class="kana button" id="グ">
+						<span class="japanese">グ</span><br/>
+						<span class="romaji">gu</span>
+					</td>
+					<td class="kana button" id="ゲ">
+						<span class="japanese">ゲ</span><br/>
+						<span class="romaji">ge</span>
+					</td>
+					<td class="kana button" id="ゴ">
+						<span class="japanese">ゴ</span><br/>
+						<span class="romaji">go</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="all button">
+						all <br> ▶
+					</td>
+					<td class="kana button" id="ザ">
+						<span class="japanese">ザ</span><br/>
+						<span class="romaji">za</span>
+					</td>
+					<td class="kana button" id="ジ">
+						<span class="japanese">ジ</span><br/>
+						<span class="romaji">ji</span>
+					</td>
+					<td class="kana button" id="ズ">
+						<span class="japanese">ズ</span><br/>
+						<span class="romaji">zu</span>
+					</td>
+					<td class="kana button" id="ゼ">
+						<span class="japanese">ゼ</span><br/>
+						<span class="romaji">ze</span>
+					</td>
+					<td class="kana button" id="ゾ">
+						<span class="japanese">ゾ</span><br/>
+						<span class="romaji">zo</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="all button">
+						all <br> ▶
+					</td>
+					<td class="kana button" id="ダ">
+						<span class="japanese">ダ</span><br/>
+						<span class="romaji">da</span>
+					</td>
+					<td class="kana button" id="ヂ">
+						<span class="japanese">ヂ</span><br/>
+						<span class="romaji">ji</span>
+					</td>
+					<td class="kana button" id="ヅ">
+						<span class="japanese">ヅ</span><br/>
+						<span class="romaji">zu</span>
+					</td>
+					<td class="kana button" id="デ">
+						<span class="japanese">デ</span><br/>
+						<span class="romaji">de</span>
+					</td>
+					<td class="kana button" id="ド">
+						<span class="japanese">ド</span><br/>
+						<span class="romaji">do</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="all button">
+						all <br> ▶
+					</td>
+					<td class="kana button" id="バ">
+						<span class="japanese">バ</span><br/>
+						<span class="romaji">ba</span>
+					</td>
+					<td class="kana button" id="ビ">
+						<span class="japanese">ビ</span><br/>
+						<span class="romaji">bi</span>
+					</td>
+					<td class="kana button" id="ブ">
+						<span class="japanese">ブ</span><br/>
+						<span class="romaji">bu</span>
+					</td>
+					<td class="kana button" id="ベ">
+						<span class="japanese">ベ</span><br/>
+						<span class="romaji">be</span>
+					</td>
+					<td class="kana button" id="ボ">
+						<span class="japanese">ボ</span><br/>
+						<span class="romaji">bo</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="all button">
+						all <br> ▶
+					</td>
+					<td class="kana button" id="パ">
+						<span class="japanese">パ</span><br/>
+						<span class="romaji">pa</span>
+					</td>
+					<td class="kana button" id="ピ">
+						<span class="japanese">ピ</span><br/>
+						<span class="romaji">pi</span>
+					</td>
+					<td class="kana button" id="プ">
+						<span class="japanese">プ</span><br/>
+						<span class="romaji">pu</span>
+					</td>
+					<td class="kana button" id="ペ">
+						<span class="japanese">ペ</span><br/>
+						<span class="romaji">pe</span>
+					</td>
+					<td class="kana button" id="ポ">
+						<span class="japanese">ポ</span><br/>
+						<span class="romaji">po</span>
+					</td>
+				</tr>
+			</table>
 
-		<h2 id="read">Let's Get Reading!</h2>
+		</div>
+
+		<div class="flex-element">
+
+			<h2 id="tag3-start">③ Vowel Modifiers</h2>
+
+			<details>
+				<summary>Information</summary>
+				<br/>
+				<ul>
+					<li>The small katakana <strong>ャ</strong>, <strong>ュ</strong>, <strong>ョ</strong>, <strong>ァ</strong>, <strong>ィ</strong>, <strong>ゥ</strong>, <strong>ェ</strong>, and <strong>ォ</strong> are used in <em>somewhat</em> consistent ways to modify vowels of existing katakana symbols. </li>
+					<li>These small katakana symbols never appear without a full-size katakana preceeding them and hence do not have sounds on their own. These symbols can be thought of as modifiers on the preceeding full-size katakana.</li>
+				</ul>
+
+				<p>Use the "toggle duplicates" button in order to fill blank spaces in the table with katakana already mentioned earlier.</p>
+			</details>
+
+			<br/>
+
+			<table class="kana-table">
+				<tr>
+					<td></td>
+					<td colspan="5" class="all button" id="show-duplicates" style="background-color: chocolate">toggle duplicates</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td colspan="5" class="all-col button">all ▼</td>
+				</tr>
+				<tr>
+					<td class="all button">
+						all <br> ▶
+					</td>
+					<td class="duplicate kana button" id="ワ">
+						<span class="japanese">ワ</span><br/>
+						<span class="romaji">wa</span>
+					</td>
+					<td class="kana button" id="ウィ">
+						<span class="japanese">ウィ</span><br/>
+						<span class="romaji">wi</span>
+					</td>
+					<td></td>
+					<td class="kana button" id="ウェ">
+						<span class="japanese">ウェ</span><br/>
+						<span class="romaji">we</span>
+					</td>
+					<td class="kana button" id="ウォ">
+						<span class="japanese">ウォ</span><br/>
+						<span class="romaji">wo</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="all button">
+						all <br> ▶
+					</td>
+					<td class="kana button" id="ヴァ">
+						<span class="japanese">ヴァ</span><br/>
+						<span class="romaji">va</span>
+					</td>
+					<td class="kana button" id="ヴィ">
+						<span class="japanese">ヴィ</span><br/>
+						<span class="romaji">vi</span>
+					</td>
+					<td class="duplicate kana button" id="ヴ">
+						<span class="japanese">ヴ</span><br/>
+						<span class="romaji">vu</span>
+					</td>
+					<td class="kana button" id="ヴェ">
+						<span class="japanese">ヴェ</span><br/>
+						<span class="romaji">ve</span>
+					</td>
+					<td class="kana button" id="ヴォ">
+						<span class="japanese">ヴォ</span><br/>
+						<span class="romaji">vo</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="all button">
+						all <br> ▶
+					</td>
+					<td class="kana button" id="キャ">
+						<span class="japanese">キャ</span><br/>
+						<span class="romaji">kya</span>
+					</td>
+					<td></td>
+					<td class="kana button" id="キュ">
+						<span class="japanese">キュ</span><br/>
+						<span class="romaji">kyu</span>
+					</td>
+					<td></td>
+					<td class="kana button" id="キョ">
+						<span class="japanese">キョ</span><br/>
+						<span class="romaji">kyo</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="all button">
+						all <br> ▶
+					</td>
+					<td class="kana button" id="ギャ">
+						<span class="japanese">ギャ</span><br/>
+						<span class="romaji">gya</span>
+					</td>
+					<td></td>
+					<td class="kana button" id="ギュ">
+						<span class="japanese">ギュ</span><br/>
+						<span class="romaji">gyu</span>
+					</td>
+					<td></td>
+					<td class="kana button" id="ギョ">
+						<span class="japanese">ギョ</span><br/>
+						<span class="romaji">gyo</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="all button">
+						all <br> ▶
+					</td>
+					<td class="kana button" id="シャ">
+						<span class="japanese">シャ</span><br/>
+						<span class="romaji">sha</span>
+					</td>
+					<td class="duplicate kana button" id="シ">
+						<span class="japanese">シ</span><br/>
+						<span class="romaji">shi</span>
+					</td>
+					<td class="kana button" id="シュ">
+						<span class="japanese">シュ</span><br/>
+						<span class="romaji">shu</span>
+					</td>
+					<td class="kana button" id="シェ">
+						<span class="japanese">シェ</span><br/>
+						<span class="romaji">she</span>
+					</td>
+					<td class="kana button" id="ショ">
+						<span class="japanese">ショ</span><br/>
+						<span class="romaji">sho</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="all button">
+						all <br> ▶
+					</td>
+					<td class="kana button" id="ジャ">
+						<span class="japanese">ジャ</span><br/>
+						<span class="romaji">ja</span>
+					</td>
+					<td class="duplicate kana button" id="ジ">
+						<span class="japanese">ジ</span><br/>
+						<span class="romaji">ji</span>
+					</td>
+					<td class="kana button" id="ジュ">
+						<span class="japanese">ジュ</span><br/>
+						<span class="romaji">ju</span>
+					</td>
+					<td class="kana button" id="ジェ">
+						<span class="japanese">ジェ</span><br/>
+						<span class="romaji">je</span>
+					</td>
+					<td class="kana button" id="ジョ">
+						<span class="japanese">ジョ</span><br/>
+						<span class="romaji">jo</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="all button">
+						all <br> ▶
+					</td>
+					<td class="duplicate kana button" id="タ">
+						<span class="japanese">タ</span><br/>
+						<span class="romaji">ta</span>
+					</td>
+					<td class="kana button" id="ティ">
+						<span class="japanese">ティ</span><br/>
+						<span class="romaji">ti</span>
+					</td>
+					<td class="kana button" id="トゥ">
+						<span class="japanese">トゥ</span><br/>
+						<span class="romaji">tu</span>
+					</td>
+					<td class="duplicate kana button" id="テ">
+						<span class="japanese">テ</span><br/>
+						<span class="romaji">te</span>
+					</td>
+					<td class="duplicate kana button" id="ト">
+						<span class="japanese">ト</span><br/>
+						<span class="romaji">to</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="all button">
+						all <br> ▶
+					</td>
+					<td class="duplicate kana button" id="ダ">
+						<span class="japanese">ダ</span><br/>
+						<span class="romaji">da</span>
+					</td>
+					<td class="kana button" id="ディ">
+						<span class="japanese">ディ</span><br/>
+						<span class="romaji">di</span>
+					</td>
+					<td class="kana button" id="デュ">
+						<span class="japanese">デュ</span><br/>
+						<span class="romaji">dyu</span>
+					</td>
+					<td class="duplicate kana button" id="デ">
+						<span class="japanese">デ</span><br/>
+						<span class="romaji">de</span>
+					</td>
+					<td class="duplicate kana button" id="ド">
+						<span class="japanese">ド</span><br/>
+						<span class="romaji">do</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="all button">
+						all <br> ▶
+					</td>
+					<td class="kana button" id="チャ">
+						<span class="japanese">チャ</span><br/>
+						<span class="romaji">cha</span>
+					</td>
+					<td class="duplicate kana button" id="チ">
+						<span class="japanese">チ</span><br/>
+						<span class="romaji">chi</span>
+					</td>
+					<td class="kana button" id="チュ">
+						<span class="japanese">チュ</span><br/>
+						<span class="romaji">chu</span>
+					</td>
+					<td class="kana button" id="チェ">
+						<span class="japanese">チェ</span><br/>
+						<span class="romaji">che</span>
+					</td>
+					<td class="kana button" id="チョ">
+						<span class="japanese">チョ</span><br/>
+						<span class="romaji">cho</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="all button">
+						all <br> ▶
+					</td>
+					<td class="kana button" id="ツァ">
+						<span class="japanese">ツァ</span><br/>
+						<span class="romaji">tsa</span>
+					</td>
+					<td></td>
+					<td class="duplicate kana button" id="ツ">
+						<span class="japanese">ツ</span><br/>
+						<span class="romaji">tsu</span>
+					</td>
+					<td class="kana button" id="ツェ">
+						<span class="japanese">ツェ</span><br/>
+						<span class="romaji">tse</span>
+					</td>
+					<td class="kana button" id="ツォ">
+						<span class="japanese">ツォ</span><br/>
+						<span class="romaji">tso</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="all button">
+						all <br> ▶
+					</td>
+					<td class="kana button" id="ニャ">
+						<span class="japanese">ニャ</span><br/>
+						<span class="romaji">nya</span>
+					</td>
+					<td></td>
+					<td class="kana button" id="ニュ">
+						<span class="japanese">ニュ</span><br/>
+						<span class="romaji">nyu</span>
+					</td>
+					<td></td>
+					<td class="kana button" id="ニョ">
+						<span class="japanese">ニョ</span><br/>
+						<span class="romaji">nyo</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="all button">
+						all <br> ▶
+					</td>
+					<td class="kana button" id="ヒャ">
+						<span class="japanese">ヒャ</span><br/>
+						<span class="romaji">hya</span>
+					</td>
+					<td></td>
+					<td class="kana button" id="ヒュ">
+						<span class="japanese">ヒュ</span><br/>
+						<span class="romaji">hyu</span>
+					</td>
+					<td></td>
+					<td class="kana button" id="ヒョ">
+						<span class="japanese">ヒョ</span><br/>
+						<span class="romaji">hyo</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="all button">
+						all <br> ▶
+					</td>
+					<td class="kana button" id="ビャ">
+						<span class="japanese">ビャ</span><br/>
+						<span class="romaji">bya</span>
+					</td>
+					<td></td>
+					<td class="kana button" id="ビュ">
+						<span class="japanese">ビュ</span><br/>
+						<span class="romaji">byu</span>
+					</td>
+					<td></td>
+					<td class="kana button" id="ビョ">
+						<span class="japanese">ビョ</span><br/>
+						<span class="romaji">byo</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="all button">
+						all <br> ▶
+					</td>
+					<td class="kana button" id="ピャ">
+						<span class="japanese">ピャ</span><br/>
+						<span class="romaji">pya</span>
+					</td>
+					<td></td>
+					<td class="kana button" id="ピュ">
+						<span class="japanese">ピュ</span><br/>
+						<span class="romaji">pyu</span>
+					</td>
+					<td></td>
+					<td class="kana button" id="ピョ">
+						<span class="japanese">ピョ</span><br/>
+						<span class="romaji">pyo</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="all button">
+						all <br> ▶
+					</td>
+					<td class="kana button" id="ファ">
+						<span class="japanese">ファ</span><br/>
+						<span class="romaji">fa</span>
+					</td>
+					<td class="kana button" id="フィ">
+						<span class="japanese">フィ</span><br/>
+						<span class="romaji">fi</span>
+					</td>
+					<td class="duplicate kana button" id="フ">
+						<span class="japanese">フ</span><br/>
+						<span class="romaji">fu</span>
+					</td>
+					<td class="kana button" id="フェ">
+						<span class="japanese">フェ</span><br/>
+						<span class="romaji">fe</span>
+					</td>
+					<td class="kana button" id="フォ">
+						<span class="japanese">フォ</span><br/>
+						<span class="romaji">fo</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="all button">
+						all <br> ▶
+					</td>
+					<td class="kana button" id="ミャ">
+						<span class="japanese">ミャ</span><br/>
+						<span class="romaji">mya</span>
+					</td>
+					<td></td>
+					<td class="kana button" id="ミュ">
+						<span class="japanese">ミュ</span><br/>
+						<span class="romaji">myu</span>
+					</td>
+					<td></td>
+					<td class="kana button" id="ミョ">
+						<span class="japanese">ミョ</span><br/>
+						<span class="romaji">myo</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="all button">
+						all <br> ▶
+					</td>
+					<td class="kana button" id="リャ">
+						<span class="japanese">リャ</span><br/>
+						<span class="romaji">rya</span>
+					</td>
+					<td></td>
+					<td class="kana button" id="リュ">
+						<span class="japanese">リュ</span><br/>
+						<span class="romaji">ryu</span>
+					</td>
+					<td></td>
+					<td class="kana button" id="リョ">
+						<span class="japanese">リョ</span><br/>
+						<span class="romaji">ryo</span>
+					</td>
+				</tr>
+			</table>
+
+		</div>
+
+	</div>
+
+	<div class="content">
+
+		<h2 id="read-start">Let's Get Reading!</h2>
 
 		<p>Below, you can find words that use the katakana as you indicated above. Click each word to hear it pronounced out loud and see the English meaning.</p>
+
+		<p>If no tags are set, words from the entire database will be displayed.</p>
 
 		<div id="word-container">
 		</div>
