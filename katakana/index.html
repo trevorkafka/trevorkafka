@@ -41,6 +41,11 @@
 		margin: 10px;
 		padding: 10px;
 		border-radius: 10px;
+		transition: background-color 0.2s ease;
+	}
+
+	.japanese.word-box:hover {
+		background-color: #00000030;
 	}
 
 	.kana-table {
@@ -91,61 +96,70 @@
 		transition: background-color 0.3s ;
 	}
 
-	.top-bar.toolbar {
+	.toolbar {
 		width: 100%; 
-		height: 60px; z-index: 2; 
-		position: fixed; top: 0; 
+		height: 70px; z-index: 2; 
 		display: flex; 
 		align-items: center; 
 		box-shadow: 0px 0px 10px Grey;
 	}
 
-	.top-bar.toolbar.tag-mode-cycle {
+	.top-bar.toolbar {
+		position: fixed; 
+		top: 0; 
+	}
+
+	.bottom-bar.toolbar {
+		position: fixed; 
+		bottom: 0; 
+	}
+
+	.top-bar.toolbar[tag-mode="cycle"] {
 		background-color: White; 
 		transition: background-color 0.3s ease;
 	}
 
-	.top-bar.toolbar.tag-mode-cycle span.top-bar.title {
+	.top-bar.toolbar[tag-mode="cycle"] span.top-bar.title {
 		color: Black;
 		transition: color 0.3s ease;
 	}
 
-	.top-bar.toolbar.tag-mode-clear {
+	.top-bar.toolbar[tag-mode="none"] {
 		background-color: var(--color3); 
 		transition: background-color 0.3s ease;
 	}
 
-	.top-bar.toolbar.tag-mode-clear span.top-bar.title {
+	.top-bar.toolbar[tag-mode="none"] span.top-bar.title {
 		color: Black;
 		transition: color 0.3s ease;
 	}
 
-	.top-bar.toolbar.tag-mode-require {
+	.top-bar.toolbar[tag-mode="require"] {
 		background-color: var(--require-background-color); 
 		transition: background-color 0.3s ease;
 	}
 
-	.top-bar.toolbar.tag-mode-require span.top-bar.title {
+	.top-bar.toolbar[tag-mode="require"] span.top-bar.title {
 		color: var(--require-text-color);
 		transition: color 0.3s ease;
 	}
 
-	.top-bar.toolbar.tag-mode-emphasize {
+	.top-bar.toolbar[tag-mode="emphasize"] {
 		background-color: var(--emphasize-background-color); 
 		transition: background-color 0.3s ease;
 	}
 
-	.top-bar.toolbar.tag-mode-emphasize span.top-bar.title {
+	.top-bar.toolbar[tag-mode="emphasize"] span.top-bar.title {
 		color: var(--emphasize-text-color);
 		transition: color 0.3s ease;
 	}
 
-	.top-bar.toolbar.tag-mode-allow {
+	.top-bar.toolbar[tag-mode="allow"] {
 		background-color: var(--allow-background-color); 
 		transition: background-color 0.3s ease;
 	}
 
-	.top-bar.toolbar.tag-mode-allow span.top-bar.title {
+	.top-bar.toolbar[tag-mode="allow"] span.top-bar.title {
 		color: white;
 		transition: color 0.3s ease;
 	}
@@ -225,7 +239,7 @@
 
 	.fixed-bottom-buttons {
 		position: fixed;
-		bottom: 20px;  
+		bottom: 90px;  
 		right: 20px;   
 		display: flex;
 		z-index: 3;
@@ -237,18 +251,19 @@
 		background-color: DarkSalmon;
 		color: white;
 		font-weight: bold;
-		font-size: 120%;
+		/*font-size: 120%;*/
 		width: 80px;
 		height: 80px;
-		border-radius: 80px;
+		border-radius: 20px;
 		text-align: center;
 		justify-content: center;
 		align-items: center;
 		user-select: none;
 		cursor: pointer;
 		transition: background-color 0.2s ease;
-		border: solid 1px black;
-		box-shadow: 2px 2px 0px black;
+		/*border: solid 1px black;*/
+		/*box-shadow: 2px 2px 0px black;*/
+		box-shadow: 0px 0px 10px lightGrey;
 	}
 
 	.fixed-bottom-button:hover {
@@ -262,24 +277,33 @@
 		カタカナ<br/>リーダー
 	</div>
 
-	<div class="top-bar toolbar tag-mode-allow" id="top-toolbar">
+	<div class="top-bar toolbar" tag-mode="allow" id="top-toolbar">
 		<div class="content" style="display: flex; align-items: center">
 			<span class="top-bar title" style="font-family: Freeman; font-size: 150%;">Tag Mode:</span>
-			<span class="top-bar button" style="background-color: white;" id="tag-mode-cycle">cycle</span>
-			<span class="top-bar button" style="background-color: var(--color3);" id="tag-mode-clear">clear</span>
-			<span class="top-bar button require" id="tag-mode-require">require</span>
-			<span class="top-bar button emphasize" id="tag-mode-emphasize">emphasize</span>
-			<span class="top-bar button allow" id="tag-mode-allow">allow</span>
+			<span class="top-bar button" data-state="cycle" style="background-color: white;" id="cycle">cycle</span>
+			<span class="top-bar button" data-state="none" style="background-color: var(--color3);" id="none">clear</span>
+			<span class="top-bar button require" data-state="require" id="require">require</span>
+			<span class="top-bar button emphasize" data-state="emphasize" id="emphasize">emphasize</span>
+			<span class="top-bar button allow" data-state="allow" id="allow">allow</span>
 		</div>
 	</div>
 
 	<div class="fixed-bottom-buttons">
-		<div class="fixed-bottom-button" id="undo">↺<br>undo</div>
-		<a href="#read-start"><div class="fixed-bottom-button" id="read">▼<br>let's<br>read</div></a>
-		<a href="#tag1-start"><div class="fixed-bottom-button" id="tags">▲<br>edit<br>tags</div></a>
-		<a href="#tag1-start"><div class="fixed-bottom-button" id="tag1">▲<br>edit<br>1</div></a>
-		<a href="#tag2-start"><div class="fixed-bottom-button" id="tag2">▲<br>edit<br>2</div></a>
-		<a href="#tag3-start"><div class="fixed-bottom-button" id="tag3">▲<br>edit<br>3</div></a>
+		<!-- <div class="fixed-bottom-button" id="undo">↺<br>undo</div> -->
+		<a href="#tag1-start"><div class="fixed-bottom-button" id="tags">edit<br>tags</div></a>
+		<a href="#tag1-start"><div class="fixed-bottom-button" id="tag1">edit<br>basic<br>katkana</div></a>
+		<a href="#tag2-start"><div class="fixed-bottom-button" id="tag2">edit<br>conson.<br>modifiers</span></div></a>
+		<a href="#tag3-start"><div class="fixed-bottom-button" id="tag3">edit<br>vowel<br>modifiers</div></a>
+		<a href="#read-start"><div class="fixed-bottom-button" id="read"><div id="word-count" style="display: block"></div></div></a>
+	</div>
+
+	<div class="bottom-bar toolbar" id="bottom-toolbar" style="background-color: white; display: flex; align-items: center">
+		<div class="content">
+			<p style="margin-bottom: 0px">
+				<strong>Pronunciation:</strong> <span id="pronunciation" style="padding-right: 10px"><em>(click a word for pronunciation)</em></span>
+				<strong>Meaning:</strong> <span id="meaning"><em>(click a word for meaning)</em></span>
+			</p>
+		</div>
 	</div>
 
 	<div class="content" style="position: relative; z-index: 1; top: 60px">
@@ -364,13 +388,21 @@
 
 		<div class="flex-element">
 
-			<h2 id="tag1-start">① Basic Katakana</h2>
+			<h2 id="tag1-start">Basic Katakana</h2>
 
 			<details>
 				<summary>Information</summary>
 				<ul>
 					<li>The katakana below are displayed in traditional alphabetical order, which reflect their phonological categorizations with some exceptions: <strong>チ chi</strong>, <strong>ツ tsu</strong>, <strong>シ shi</strong>, and <strong>フ fu</strong>.</li>
-					<li>The katakana <strong>ヰ wi</strong>, <strong>ヱ we</strong>, and <strong>ヲ wo</strong> have been omitted because in modern Japanese the combinations <strong>ウィ wi</strong>, <strong>ウェ we</strong>, and <strong>ウォ wo</strong> are used instead (see <em>③ Vowel Modifiers</em>).</li>
+					<li>The katakana <strong>ヰ wi</strong>, <strong>ヱ we</strong>, and <strong>ヲ wo</strong> have been omitted because in modern Japanese the combinations <strong>ウィ wi</strong>, <strong>ウェ we</strong>, and <strong>ウォ wo</strong> are used instead (see <em>Vowel Modifiers</em>).</li>
+					<li>In addition to the katakana presented in the main table are three other basic symbols that are common in usage and are recommended to learn sooner rather than later:
+						<ul>
+							<li><strong>ン n</strong>, which provides solely a nasal consonant sound without a vowel sound, </li>
+							<li><strong>ー (long vowel)</strong>, which lengthens the sound of the preceeding vowel so that it is pronounced for twice as much time as it would ordinarily, and</li>
+							<li><strong>ッ (glottal stop)</strong>, which signifies a momentary pause in pronunciation within a word.</li>
+							<li>Note: The katakana <strong>ツ tsu</strong> and <strong>ッ (glottal stop)</strong> are distinguished in writing only by their size.</li>
+						</ul>
+					</li>
 				</ul>
 			</details>
 			<br/>
@@ -631,14 +663,11 @@
 					</td>
 				</tr>
 			</table>
-			<br/>
-			<p>Note: The katakana <strong>ツ tsu</strong> and <strong>ッ (glottal stop)</strong> are distinguished by their size.</p>
-			
 		</div>
 
 		<div class="flex-element">
 
-			<h2 id="tag2-start">② Consonant Modifiers</h2>
+			<h2 id="tag2-start">Consonant Modifiers</h2>
 
 			<details>
 				<summary>Information</summary>
@@ -797,7 +826,7 @@
 
 		<div class="flex-element">
 
-			<h2 id="tag3-start">③ Vowel Modifiers</h2>
+			<h2 id="tag3-start">Vowel Modifiers</h2>
 
 			<details>
 				<summary>Information</summary>
@@ -1198,13 +1227,19 @@
 
 	</div>
 
-	<div class="content">
+	<div class="content" style="padding-bottom: 200px">
 
 		<h2 id="read-start">Let's Get Reading!</h2>
 
 		<p>Below, you can find words that use the katakana as you indicated above. Click each word to hear it pronounced out loud and see the English meaning.</p>
 
-		<p>If no tags are set, words from the entire database will be displayed.</p>
+		<div id="no-words-message" style="border: dashed 1px black; border-radius: 30px">
+
+			<p style="margin-top: 100px; margin-bottom: 100px; text-align: center;">
+				<em>Your current katakana tags yield no words to read.</em>
+			</p>
+
+		</div>
 
 		<div id="word-container">
 		</div>
