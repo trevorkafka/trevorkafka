@@ -238,21 +238,21 @@ window.addEventListener("scroll", () => {
   //   topToolbar.style.display = "flex";
   // }
 
-if (window.innerWidth < 1459) {
+// if (window.innerWidth < 1459) {
 
-    tagsButton.style.display = "none";
-    tag1Button.style.display = "flex";
-    tag2Button.style.display = "flex";
-    tag3Button.style.display = "flex";
+//     tagsButton.style.display = "none";
+//     tag1Button.style.display = "flex";
+//     tag2Button.style.display = "flex";
+//     tag3Button.style.display = "flex";
 
-  } else {
+//   } else {
 
-    tagsButton.style.display = "flex";
-    tag1Button.style.display = "none";
-    tag2Button.style.display = "none";
-    tag3Button.style.display = "none";
+//     tagsButton.style.display = "flex";
+//     tag1Button.style.display = "none";
+//     tag2Button.style.display = "none";
+//     tag3Button.style.display = "none";
     
-  };
+//   };
 
 });
 
