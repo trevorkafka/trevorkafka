@@ -18,6 +18,83 @@ let firstDuplicateStyle = window.getComputedStyle(duplicates[0])
 	};
 });
 
+// ============================================================
+// JAPANESE TTS CODE, PRONUNCIATION, AND MEANING
+// ============================================================
+
+// Keep a cached list of voices (browsers populate this async)
+let voices = [];
+
+function loadVoices() {
+  voices = window.speechSynthesis.getVoices();
+}
+
+// Some browsers fire this after voices are ready
+window.speechSynthesis.onvoiceschanged = loadVoices;
+// Also try immediately (Chrome sometimes has them already)
+loadVoices();
+
+function pickJapaneseVoice() {
+  if (!voices || voices.length === 0) return null;
+  // Strong preference: locale starts with ja (e.g., ja-JP)
+  const jaExact = voices.find(v => /^ja(-|_)?/i.test(v.lang));
+  if (jaExact) return jaExact;
+  // Next: anything that declares Japanese in the name (rare, but just in case)
+  const nameJa = voices.find(v => /japanese/i.test(v.name));
+  return nameJa || null;
+}
+
+function speakJA(text) {
+  if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) {
+    console.warn("Web Speech API not supported in this browser.");
+    return;
+  }
+  // If speaking already, cancel to avoid queue spam
+  if (speechSynthesis.speaking) {
+    speechSynthesis.cancel();
+  }
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang = "ja-JP";
+  // Optional tweaks: slower rate helps clarity for learners
+  utt.rate = 0.7;   // 0.1–10 (1.0 is default)
+  utt.pitch = 1;  // 0–2
+  const v = pickJapaneseVoice();
+  if (v) utt.voice = v;
+  speechSynthesis.speak(utt);
+}
+
+// Attach to any .speak-ja element; reads data-say or its textContent
+function attachHandlers() {
+  document.querySelectorAll(".speak-ja").forEach(el => {
+    el.style.cursor = "pointer";
+    el.setAttribute("role", "button");
+    el.setAttribute("tabindex", "0");
+    el.addEventListener("click", () => {
+      const text = el.dataset.say?.trim() || el.textContent.trim();
+      if (text) speakJA(text);
+      document.getElementById("pronunciation").innerHTML = el.getAttribute("romaji");
+	    document.getElementById("meaning").innerHTML = el.getAttribute("english");
+    });
+    el.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        el.click();
+      }
+    });
+  });
+}
+
+// // In case voices arrive late, re-run a couple times
+// document.addEventListener("DOMContentLoaded", () => {
+//   attachHandlers();
+//   // Nudge voice loading on some platforms
+//   const tick = setInterval(() => {
+//     if (voices.length === 0) loadVoices();
+//     else clearInterval(tick);
+//   }, 300);
+//   setTimeout(() => clearInterval(tick), 4000);
+// });
+
 // DEFINE FISHER-YATES SHUFFLE //
 
 function shuffle(array) {
@@ -64,9 +141,7 @@ function filterWordList() {
 
 	loadWordList().then(text =>{
 		
-		const filtered = (idUnion.size === 0)
-			? text
-			: text.filter(([, , , components]) => {
+		const filtered = text.filter(([, , , components]) => {
 				const componentSet = new Set(components);
 				const satisfiesRequire = isSuperset(componentSet, idGroups.require);
 				const satisfiesEmphasize = idGroups.emphasize.size === 0 || nonEmptyIntersection(componentSet, idGroups.emphasize);
@@ -74,17 +149,30 @@ function filterWordList() {
 				return satisfiesRequire && satisfiesEmphasize && satisfiesAllow;
 			});
 
+    document.getElementById("word-count").innerHTML = "read <br>" + filtered.length + "<br> words";
+
 		word_container.innerHTML = "";
+
+    if (filtered.length !== 0) {
+      document.getElementById("no-words-message").style.display = "none";
+    } else {
+      document.getElementById("no-words-message").style.display = "block"
+    }
 
 		shuffle(filtered).forEach(word => {
 
 			const [katakana, romaji, english, components] = word;
 			const div = document.createElement("div");
 			div.textContent = katakana;
-			div.classList.add("word-box", "japanese");
+			div.classList.add("word-box", "japanese", "speak-ja");
+			div.setAttribute("romaji", romaji);
+			div.setAttribute("english", english)
 			word_container.appendChild(div);
 
 		});
+	
+	attachHandlers();
+
 	});
 };
 
@@ -110,47 +198,63 @@ window.addEventListener("scroll", () => {
   const tag2MarkerTop = tag2Start.getBoundingClientRect().top + window.scrollY;
   const tag3MarkerTop = tag3Start.getBoundingClientRect().top + window.scrollY;
 
-  if (window.innerWidth < 1459) {
-  	tagsButton.style.display = "none";
+  // if (window.innerWidth < 1459) {
+  // 	tagsButton.style.display = "none";
 
-  	if (window.scrollY > tag1MarkerTop) {
-  		tag1Button.style.display = "flex";
-  	} else {
-  		tag1Button.style.display = "none";
-  	}
+  // 	if (window.scrollY > tag1MarkerTop) {
+  // 		tag1Button.style.display = "flex";
+  // 	} else {
+  // 		tag1Button.style.display = "none";
+  // 	}
 
-  	if (window.scrollY > tag2MarkerTop) {
-  		tag2Button.style.display = "flex";
-  	} else {
-  		tag2Button.style.display = "none";
-  	}
+  // 	if (window.scrollY > tag2MarkerTop) {
+  // 		tag2Button.style.display = "flex";
+  // 	} else {
+  // 		tag2Button.style.display = "none";
+  // 	}
 
-  	if (window.scrollY > tag3MarkerTop) {
-  		tag3Button.style.display = "flex";
-  	} else {
-  		tag3Button.style.display = "none";
-  	}
+  // 	if (window.scrollY > tag3MarkerTop) {
+  // 		tag3Button.style.display = "flex";
+  // 	} else {
+  // 		tag3Button.style.display = "none";
+  // 	}
+
+  // } else {
+  // 	if (window.scrollY > tag1MarkerTop) {
+  // 		tagsButton.style.display = "flex";
+  // 	} else {
+  // 		tagsButton.style.display = "none";
+  // 	}
+  // 	tag1Button.style.display = "none";
+  // 	tag2Button.style.display = "none";
+  // 	tag3Button.style.display = "none";
+  // }
+
+  // if (window.scrollY > readMarkerTop - 81) {
+  //   readButton.style.display = "none"; 
+  //   topToolbar.style.display = "none";
+  // } else {
+  //   readButton.style.display = "flex"; 
+  //   topToolbar.style.display = "flex";
+  // }
+
+if (window.innerWidth < 1459) {
+
+    tagsButton.style.display = "none";
+    tag1Button.style.display = "flex";
+    tag2Button.style.display = "flex";
+    tag3Button.style.display = "flex";
 
   } else {
-  	if (window.scrollY > tag1MarkerTop) {
-  		tagsButton.style.display = "flex";
-  	} else {
-  		tagsButton.style.display = "none";
-  	}
-  	tag1Button.style.display = "none";
-  	tag2Button.style.display = "none";
-  	tag3Button.style.display = "none";
-  }
 
-  if (window.scrollY > readMarkerTop - 81) {
-    readButton.style.display = "none"; 
-    topToolbar.style.display = "none";
-  } else {
-    readButton.style.display = "flex"; 
-    topToolbar.style.display = "flex";
-  }
+    tagsButton.style.display = "flex";
+    tag1Button.style.display = "none";
+    tag2Button.style.display = "none";
+    tag3Button.style.display = "none";
+    
+  };
+
 });
-
 
 // ==========================
 // One-step Undo (DIV #undo)
@@ -253,24 +357,43 @@ if (undoBtn) {
 const topToolbar = document.getElementById("top-toolbar")
 
 const barButtonIds = [
-  "tag-mode-cycle",
-  "tag-mode-clear",
-  "tag-mode-require",
-  "tag-mode-emphasize",
-  "tag-mode-allow"
+  "cycle",
+  "none",
+  "require",
+  "emphasize",
+  "allow"
 ];
 
+function keepPressed(elem) {
+  const tagMode = topToolbar.getAttribute("tag-mode");
+      if (elem.getAttribute("data-state") === tagMode || (tagMode === "none" && !elem.getAttribute("data-state"))) {
+        elem.style.cursor = "auto";
+        elem.style.boxShadow = "none";
+        elem.style.transform = "translate(2px, 2px)"
+      } else {
+        elem.style.cursor = "";
+        elem.style.boxShadow = "";
+        elem.style.transform = ""
+      }
+}
 
-for (const id of barButtonIds) {
-  document.getElementById(id).addEventListener("click", () => {
-  	for (const id of barButtonIds) {
-  		topToolbar.classList.remove(id)
-  	}
-  	topToolbar.classList.add(id)
+function checkTopToolbarButtons(elem) {
+  document.querySelectorAll(".top-bar.button").forEach(elem => {
+    keepPressed(elem);
   });
 }
 
+checkTopToolbarButtons();
 
+for (const id of barButtonIds) {
+  document.getElementById(id).addEventListener("click", () => {
+  	topToolbar.setAttribute("tag-mode", id);
+    document.querySelectorAll(".kana.button").forEach(elem => {
+      keepPressed(elem);
+    });
+    checkTopToolbarButtons();
+  });
+}
 
 // ============================================================
 // TOGGLE UPDATE OF STATE ATTRIBUTES FOR KANA BUTTONS AND UPDATE
@@ -284,12 +407,39 @@ const STATES = ["none", "require", "emphasize", "allow"];
 const nextState = s => STATES[(STATES.indexOf(s) + 1) % STATES.length];
 
 function toggle(el) {
+
   const current  = el.dataset.state || "none";
-  const newState = nextState(current);
+
+  const tagMode = topToolbar.getAttribute("tag-mode");
+
+  let newState = ""
+
+  if (tagMode === "cycle") {
+
+    newState = nextState(current);
+
+  } else if (tagMode === "none") {
+
+    newState = "none";
+
+  } else if (tagMode === "require") {
+
+    newState = "require";
+
+  } else if (tagMode === "emphasize") {
+
+    newState = "emphasize";
+
+  } else if (tagMode === "allow") {
+
+    newState = "allow";
+
+  };
 
   document.querySelectorAll(`#${CSS.escape(el.id)}`).forEach(elem => {
     elem.dataset.state = newState;
-  });
+    keepPressed(elem);
+  }); // this stategy of selecting elements takes care of the fact that there are some duplicate kana buttons
 
   if (idGroups[current])  idGroups[current].delete(el.id);
   if (idGroups[newState]) idGroups[newState].add(el.id);
