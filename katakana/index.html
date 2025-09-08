@@ -172,14 +172,22 @@
 			font-size: 80%;
 		}
 
-		.top-bar.title {
+		.top-bar.title, .table, .bottom-bar.toolbar {
 			font-size: 80% !important;
 		}
 
-		.table {
-			font-size: 80%;
-		}
+	}
 
+	@media(max-width: 1459px) {
+		#tags {
+			display: none;
+		}
+	}
+
+	@media(min-width: 1458px) {
+		#tag1, #tag2, #tag3 {
+			display: none;
+		}
 	}
 
 	td:empty {
@@ -300,8 +308,8 @@
 	<div class="bottom-bar toolbar" id="bottom-toolbar" style="background-color: white; display: flex; align-items: center">
 		<div class="content">
 			<p style="margin-bottom: 0px">
-				<strong>Pronunciation:</strong> <span id="pronunciation" style="padding-right: 10px"><em>(click a word for pronunciation)</em></span>
-				<strong>Meaning:</strong> <span id="meaning"><em>(click a word for meaning)</em></span>
+				<strong>Pronunciation:</strong> <span id="pronunciation" style="padding-right: 10px"><em>(click a word)</em></span><br>
+				<strong>Meaning:</strong> <span id="meaning"><em>(click a word)</em></span>
 			</p>
 		</div>
 	</div>
