@@ -69,6 +69,7 @@
 		cursor: pointer;
 		box-shadow: 2px 2px 0px black;
 		transition: background-color 0.3s ease;
+		transition: box-shadow 0.1s ease;
 		user-select: none;
 	}
 
@@ -256,7 +257,7 @@
 	.fixed-bottom-button {
 		margin-left: 10px;
 		display: flex;
-		background-color: DarkSalmon;
+		background-color: black;
 		color: white;
 		font-weight: bold;
 		/*font-size: 120%;*/
@@ -271,7 +272,7 @@
 		transition: background-color 0.2s ease;
 		/*border: solid 1px black;*/
 		/*box-shadow: 2px 2px 0px black;*/
-		box-shadow: 0px 0px 10px lightGrey;
+		box-shadow: 0px 0px 10px Grey;
 	}
 
 	.fixed-bottom-button:hover {
@@ -308,8 +309,8 @@
 	<div class="bottom-bar toolbar" id="bottom-toolbar" style="background-color: white; display: flex; align-items: center">
 		<div class="content">
 			<p style="margin-bottom: 0px">
-				<strong>Pronunciation:</strong> <span id="pronunciation" style="padding-right: 10px"><em>(click a word)</em></span><br>
-				<strong>Meaning:</strong> <span id="meaning"><em>(click a word)</em></span>
+				<strong>Pronunciation:</strong> <span id="pronunciation" style="padding-right: 10px"><em>(click a word from the reading list to see details)</em></span><br>
+				<strong>Meaning:</strong> <span id="meaning"><em>(click a word from the reading list to see details)</em></span>
 			</p>
 		</div>
 	</div>
@@ -359,7 +360,7 @@
 			<ul>
 				<li><a href="https://en.wikipedia.org/wiki/Hepburn_romanization">Hepburn romanization</a> is used to represent the pronunciation of Japanese words using Latin letters throughout this website, though long vowels are indicated with doubled letters instead of macrons (e.g. - aa instead of ā) to emphasize to learners the function of the vowel extending symbol <strong>ー</strong>.</li>
 
-				<li>The list of katakana words, spelling of katakana words, and their English translations are sourced from and August 2025 version of <a href="https://www.edrdg.org/jmdict/j_jmdict.html">JMdict</a>.</li>
+				<li>The list of katakana words, spelling of katakana words, and their English translations are sourced from an August 2025 version of <a href="https://www.edrdg.org/jmdict/j_jmdict.html">JMdict</a>.</li>
 
 				<li>Katakana Reader was created as a free tool and passion project by Trevor Kafka. Do you have questions about or suggestions for Katakana Reader? Send an email to 
 					<script>
@@ -398,6 +399,8 @@
 
 			<h2 id="tag1-start">Basic Katakana</h2>
 
+			<p>By default, the first four rows are tagged as <span class="allow inline-box nudge-up">allow</span> to start you off with a simple reading list.</p>
+
 			<details>
 				<summary>Information</summary>
 				<ul>
@@ -424,23 +427,23 @@
 					<td class="all button">
 						all <br> ▶
 					</td>
-					<td class="kana button" id="ア">
+					<td class="kana button" id="ア" data-state="allow">
 						<span class="japanese">ア</span><br/>
 						<span class="romaji">a</span>
 					</td>
-					<td class="kana button" id="イ">
+					<td class="kana button" id="イ" data-state="allow">
 						<span class="japanese">イ</span><br/>
 						<span class="romaji">i</span>
 					</td>
-					<td class="kana button" id="ウ">
+					<td class="kana button" id="ウ" data-state="allow">
 						<span class="japanese">ウ</span><br/>
 						<span class="romaji">u</span>
 					</td>
-					<td class="kana button" id="エ">
+					<td class="kana button" id="エ" data-state="allow">
 						<span class="japanese">エ</span><br/>
 						<span class="romaji">e</span>
 					</td>
-					<td class="kana button" id="オ">
+					<td class="kana button" id="オ" data-state="allow">
 						<span class="japanese">オ</span><br/>
 						<span class="romaji">o</span>
 					</td>
@@ -449,23 +452,23 @@
 					<td class="all button">
 						all <br> ▶
 					</td>
-					<td class="kana button" id="カ">
+					<td class="kana button" id="カ" data-state="allow">
 						<span class="japanese">カ</span><br/>
 						<span class="romaji">ka</span>
 					</td>
-					<td class="kana button" id="キ">
+					<td class="kana button" id="キ" data-state="allow">
 						<span class="japanese">キ</span><br/>
 						<span class="romaji">ki</span>
 					</td>
-					<td class="kana button" id="ク">
+					<td class="kana button" id="ク" data-state="allow">
 						<span class="japanese">ク</span><br/>
 						<span class="romaji">ku</span>
 					</td>
-					<td class="kana button" id="ケ">
+					<td class="kana button" id="ケ" data-state="allow">
 						<span class="japanese">ケ</span><br/>
 						<span class="romaji">ke</span>
 					</td>
-					<td class="kana button" id="コ">
+					<td class="kana button" id="コ" data-state="allow">
 						<span class="japanese">コ</span><br/>
 						<span class="romaji">ko</span>
 					</td>
@@ -474,23 +477,23 @@
 					<td class="all button">
 						all <br> ▶
 					</td>
-					<td class="kana button" id="サ">
+					<td class="kana button" id="サ" data-state="allow">
 						<span class="japanese">サ</span><br/>
 						<span class="romaji">sa</span>
 					</td>
-					<td class="kana button" id="シ">
+					<td class="kana button" id="シ" data-state="allow">
 						<span class="japanese">シ</span><br/>
 						<span class="romaji">shi</span>
 					</td>
-					<td class="kana button" id="ス">
+					<td class="kana button" id="ス" data-state="allow">
 						<span class="japanese">ス</span><br/>
 						<span class="romaji">su</span>
 					</td>
-					<td class="kana button" id="セ">
+					<td class="kana button" id="セ" data-state="allow">
 						<span class="japanese">セ</span><br/>
 						<span class="romaji">se</span>
 					</td>
-					<td class="kana button" id="ソ">
+					<td class="kana button" id="ソ" data-state="allow">
 						<span class="japanese">ソ</span><br/>
 						<span class="romaji">so</span>
 					</td>
@@ -499,23 +502,23 @@
 					<td class="all button">
 						all <br> ▶
 					</td>
-					<td class="kana button" id="タ">
+					<td class="kana button" id="タ" data-state="allow">
 						<span class="japanese">タ</span><br/>
 						<span class="romaji">ta</span>
 					</td>
-					<td class="kana button" id="チ">
+					<td class="kana button" id="チ" data-state="allow">
 						<span class="japanese">チ</span><br/>
 						<span class="romaji">chi</span>
 					</td>
-					<td class="kana button" id="ツ">
+					<td class="kana button" id="ツ" data-state="allow">
 						<span class="japanese">ツ</span><br/>
 						<span class="romaji">tsu</span>
 					</td>
-					<td class="kana button" id="テ">
+					<td class="kana button" id="テ" data-state="allow">
 						<span class="japanese">テ</span><br/>
 						<span class="romaji">te</span>
 					</td>
-					<td class="kana button" id="ト">
+					<td class="kana button" id="ト" data-state="allow">
 						<span class="japanese">ト</span><br/>
 						<span class="romaji">to</span>
 					</td>
@@ -1239,7 +1242,7 @@
 
 		<h2 id="read-start">Let's Get Reading!</h2>
 
-		<p>Below, you can find words that use the katakana as you indicated above. Click each word to hear it pronounced out loud and see the English meaning.</p>
+		<p>Below, you can find words that use the katakana as you indicated above. Click each word to hear it pronounced out loud and see the English meaning. Words appear in a random order.</p>
 
 		<div id="no-words-message" style="border: dashed 1px black; border-radius: 30px">
 
