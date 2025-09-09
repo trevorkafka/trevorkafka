@@ -23,6 +23,7 @@
 		--emphasize-text-color: DarkRed;
 		--allow-background-color: #009E73; /* green */
 		--allow-text-color: HoneyDew;
+		--cycle-gradient: linear-gradient(to right, var(--color3),var(--require-background-color),var(--emphasize-background-color),var(--allow-background-color));
 	}
 
 	html {
@@ -68,8 +69,7 @@
 		padding: 10px 5px;
 		cursor: pointer;
 		box-shadow: 2px 2px 0px black;
-		transition: background-color 0.3s ease;
-		transition: box-shadow 0.1s ease;
+		transition: background-color 0.1s ease, box-shadow 0.3s ease;
 		user-select: none;
 	}
 
@@ -97,9 +97,18 @@
 		transition: background-color 0.3s ;
 	}
 
+	.topbar-gradient {
+		position: fixed;
+		top: 0; left: 0; right: 0;
+		z-index: 2;
+		height: 70px;
+		width: 100%;
+		background: var(--cycle-gradient);
+	}
+
 	.toolbar {
-		width: 100%; 
-		height: 70px; z-index: 2; 
+		width: 100%;
+		height: 70px;
 		display: flex; 
 		align-items: center; 
 		box-shadow: 0px 0px 10px Grey;
@@ -107,16 +116,18 @@
 
 	.top-bar.toolbar {
 		position: fixed; 
-		top: 0; 
+		top: 0;
+		z-index: 3;
 	}
 
 	.bottom-bar.toolbar {
 		position: fixed; 
 		bottom: 0; 
+		z-index: 3;
 	}
 
 	.top-bar.toolbar[tag-mode="cycle"] {
-		background-color: White; 
+		background-color: none;
 		transition: background-color 0.3s ease;
 	}
 
@@ -299,14 +310,16 @@
 		カタカナ<br/>リーダー
 	</div>
 
-	<div class="top-bar toolbar" tag-mode="allow" id="top-toolbar">
-		<div class="top content" style="display: flex; align-items: center">
-			<span class="top-bar title" style="font-family: Freeman; font-size: 150%;">Tag Mode:</span>
-			<span class="top-bar button" data-state="cycle" style="background-color: white;" id="cycle">cycle</span>
-			<span class="top-bar button" data-state="none" style="background-color: var(--color3);" id="none">clear</span>
-			<span class="top-bar button require" data-state="require" id="require">require</span>
-			<span class="top-bar button emphasize" data-state="emphasize" id="emphasize">emphasize</span>
-			<span class="top-bar button allow" data-state="allow" id="allow">allow</span>
+	<div class="topbar-gradient" style="background: var(--cycle-gradient);">
+		<div class="top-bar toolbar" tag-mode="allow" id="top-toolbar">
+			<div class="top content" style="display: flex; align-items: center">
+				<span class="top-bar title" style="font-family: Freeman; font-size: 150%;">Tag Mode:</span>
+				<span class="top-bar button" data-state="none" style="background-color: var(--color3);" id="none">clear</span>
+				<span class="top-bar button require" data-state="require" id="require">require</span>
+				<span class="top-bar button emphasize" data-state="emphasize" id="emphasize">emphasize</span>
+				<span class="top-bar button allow" data-state="allow" id="allow">allow</span>
+				<span class="top-bar button" data-state="cycle" style="background: var(--cycle-gradient)" id="cycle">cycle</span>
+			</div>
 		</div>
 	</div>
 
