@@ -164,7 +164,8 @@ function filterWordList() {
 				return satisfiesRequire && satisfiesEmphasize && satisfiesAllow;
 			});
 
-    document.getElementById("word-count").innerHTML = "read <br>" + filtered.length + "<br> words";
+    document.querySelectorAll(".word-count").forEach(el => {el.innerHTML = filtered.length;
+    });
 
 		word_container.innerHTML = "";
 
@@ -356,7 +357,7 @@ function undoLast() {
 
 // Click + keyboard handlers for the DIV#undo
 document.addEventListener("click", (e) => {
-  if (e.target.closest("#undo")) undoLast();
+  if (e.target.closest("#undo")) undoLast(); checkKanaButtonsForPress();
 });
 if (undoBtn) {
   undoBtn.setAttribute("role", "button");
@@ -530,3 +531,14 @@ function clickAction (e) {
 }
 
 document.addEventListener("click", clickAction);
+
+// ============================================================
+// SET DEFAULT BUTTON CONFIGURATION WHEN USER LOADS PAGE
+// ============================================================
+
+for (const id of ["ア","イ","ウ","エ","オ","カ","キ","ク","ケ","コ","サ","シ","ス","セ","ソ","ン","ー","ッ"]){
+  document.querySelectorAll(`#${CSS.escape(id)}`).forEach(elem => {
+    elem.dataset.state = "allow";
+    keepPressed(elem);
+  });
+};
