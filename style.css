@@ -95,8 +95,8 @@
 	.navbar-elements {
 		width: min(1100px, calc(var(--widthmax) + 7vw));
 		margin: auto;
-		padding-top: 14px;
-		padding-bottom: 14px;
+		padding: 14px;
+
 	}
 
 	.navbar a {
