@@ -18,7 +18,7 @@
 <style>
 	:root {
 		--require-background-color: #56B4E9; /* blue */
-		--require-text-color: Black;
+		--require-text-color: DarkBlue;
 		--emphasize-background-color: #F0E442; /* orange */
 		--emphasize-text-color: DarkRed;
 		--allow-background-color: #009E73; /* green */
@@ -177,15 +177,23 @@
 			font-size: 80% !important;
 		}
 
+		.kana.button, .all.button {
+			padding: 5px 3px !important;
+		}
+
+		.top.content {
+			min-width: min(1000px, 95vw)
+		}
+
 	}
 
-	@media(max-width: 1459px) {
+	@media (max-width: 1459px) and (min-width: 500px) {
 		#tags {
 			display: none;
 		}
 	}
 
-	@media(min-width: 1458px) {
+	@media (min-width: 1458px), (max-width: 500px) {
 		#tag1, #tag2, #tag3 {
 			display: none;
 		}
@@ -229,6 +237,10 @@
 		vertical-align: top;
 	}
 
+	.vertical-align-middle ts {
+		vertical-align: middle;
+	}
+
 	.nudge-up {
 		transform: translateY(-3px);
 	}
@@ -243,28 +255,29 @@
 
 	.flex-element {
 		flex: 1 1 400px;
-		min-width: 400px;
+		min-width: 300px;
 	}
 
 	.fixed-bottom-buttons {
 		position: fixed;
 		bottom: 90px;  
-		right: 20px;   
+		right: 10px;   
 		display: flex;
 		z-index: 3;
 	}
 
 	.fixed-bottom-button {
-		margin-left: 10px;
+		margin-left: 5px;
+		margin-right: 5px;
 		display: flex;
+		flex-wrap: wrap;
 		background-color: black;
 		color: white;
-		font-weight: bold;
-		/*font-size: 120%;*/
 		width: 80px;
 		height: 80px;
 		border-radius: 20px;
 		text-align: center;
+		font-size: 80%;
 		justify-content: center;
 		align-items: center;
 		user-select: none;
@@ -287,7 +300,7 @@
 	</div>
 
 	<div class="top-bar toolbar" tag-mode="allow" id="top-toolbar">
-		<div class="content" style="display: flex; align-items: center">
+		<div class="top content" style="display: flex; align-items: center">
 			<span class="top-bar title" style="font-family: Freeman; font-size: 150%;">Tag Mode:</span>
 			<span class="top-bar button" data-state="cycle" style="background-color: white;" id="cycle">cycle</span>
 			<span class="top-bar button" data-state="none" style="background-color: var(--color3);" id="none">clear</span>
@@ -298,19 +311,19 @@
 	</div>
 
 	<div class="fixed-bottom-buttons">
-		<!-- <div class="fixed-bottom-button" id="undo">↺<br>undo</div> -->
+		<div class="fixed-bottom-button" id="undo"><div style="display: block;"><span style="font-size: 200%">↺</span><br>undo</div></div>
 		<a href="#tag1-start"><div class="fixed-bottom-button" id="tags">edit<br>tags</div></a>
 		<a href="#tag1-start"><div class="fixed-bottom-button" id="tag1">edit<br>basic<br>katkana</div></a>
-		<a href="#tag2-start"><div class="fixed-bottom-button" id="tag2">edit<br>conson.<br>modifiers</span></div></a>
+		<a href="#tag2-start"><div class="fixed-bottom-button" id="tag2">edit<br>consonant<br>modifiers</span></div></a>
 		<a href="#tag3-start"><div class="fixed-bottom-button" id="tag3">edit<br>vowel<br>modifiers</div></a>
-		<a href="#read-start"><div class="fixed-bottom-button" id="read"><div id="word-count" style="display: block"></div></div></a>
+		<a href="#read-start"><div class="fixed-bottom-button" id="read"><div style="display: block">read<br><span class="word-count" style="font-size: 150%; font-family: Freeman"></span><br>words</div></div></a>
 	</div>
 
 	<div class="bottom-bar toolbar" id="bottom-toolbar" style="background-color: white; display: flex; align-items: center">
 		<div class="content">
 			<p style="margin-bottom: 0px">
-				<strong>Pronunciation:</strong> <span id="pronunciation" style="padding-right: 10px"><em>(click a word from the reading list to see details)</em></span><br>
-				<strong>Meaning:</strong> <span id="meaning"><em>(click a word from the reading list to see details)</em></span>
+				<strong>Pronunciation:</strong> <span id="pronunciation" style="padding-right: 10px"><em>(click a word from the reading list)</em></span><br>
+				<strong>Meaning:</strong> <span id="meaning"><em>(click a word from the reading list)</em></span>
 			</p>
 		</div>
 	</div>
@@ -321,7 +334,7 @@
 		<p>Welcome to <strong>Katakana Reader</strong>, a tool that will allow you to practice and improve your katakana reading abilities.</p>
 		<p>Tag the katakana in the charts below based on your level of mastery of each by clicking on each katakana. The katakana tagging mode can be switched using the toolbar at the top of the page. Modify your tags as you master reading each katakana. A description of each tag is below.</p>
 
-			<table class="vertical-align-top table" style="border: solid 1px #00000020; border-radius: 10px; display: block;">
+			<table class="vertical-align-middle table" style="border: solid 1px #00000020; border-radius: 10px; display: block;">
 				<tr style="font-weight: bold; border-bottom: solid 1px black; font-size: 120%">
 					<td>Tag</td>
 					<td>Description</td>
@@ -399,7 +412,7 @@
 
 			<h2 id="tag1-start">Basic Katakana</h2>
 
-			<p>By default, the first four rows are tagged as <span class="allow inline-box nudge-up">allow</span> to start you off with a simple reading list.</p>
+			<p>By default, the first few rows are tagged as <span class="allow inline-box" style="padding-top: 0px; padding-bottom: 0px">allow</span> to start you off with a simple reading list with some of the most frequently-studied katakana.</p>
 
 			<details>
 				<summary>Information</summary>
@@ -417,7 +430,26 @@
 				</ul>
 			</details>
 			<br/>
-
+			<table class="kana-table">
+				<tr>
+					<td colspan="3" class="all-col button">all ▼</td>
+				</tr>
+				<tr>
+					<td class="kana button" id="ン" style="width: 33.33%">
+						<span class="japanese">ン</span><br/>
+						<span class="romaji">n</span>
+					</td>
+					<td class="kana button" id="ー" style="width: 33.33%">
+						<span class="japanese">ー</span><br/>
+						<span class="romaji">(long vowel)</span>
+					</td>
+					<td class="kana button" id="ッ" style="width: 33.33%">
+						<span class="japanese">ッ</span><br/>
+						<span class="romaji">(glottal stop)</span>
+					</td>
+				</tr>
+			</table>
+			<br/>
 			<table class="kana-table">
 				<tr>
 					<td></td>
@@ -427,23 +459,23 @@
 					<td class="all button">
 						all <br> ▶
 					</td>
-					<td class="kana button" id="ア" data-state="allow">
+					<td class="kana button" id="ア">
 						<span class="japanese">ア</span><br/>
 						<span class="romaji">a</span>
 					</td>
-					<td class="kana button" id="イ" data-state="allow">
+					<td class="kana button" id="イ">
 						<span class="japanese">イ</span><br/>
 						<span class="romaji">i</span>
 					</td>
-					<td class="kana button" id="ウ" data-state="allow">
+					<td class="kana button" id="ウ">
 						<span class="japanese">ウ</span><br/>
 						<span class="romaji">u</span>
 					</td>
-					<td class="kana button" id="エ" data-state="allow">
+					<td class="kana button" id="エ">
 						<span class="japanese">エ</span><br/>
 						<span class="romaji">e</span>
 					</td>
-					<td class="kana button" id="オ" data-state="allow">
+					<td class="kana button" id="オ">
 						<span class="japanese">オ</span><br/>
 						<span class="romaji">o</span>
 					</td>
@@ -452,23 +484,23 @@
 					<td class="all button">
 						all <br> ▶
 					</td>
-					<td class="kana button" id="カ" data-state="allow">
+					<td class="kana button" id="カ">
 						<span class="japanese">カ</span><br/>
 						<span class="romaji">ka</span>
 					</td>
-					<td class="kana button" id="キ" data-state="allow">
+					<td class="kana button" id="キ">
 						<span class="japanese">キ</span><br/>
 						<span class="romaji">ki</span>
 					</td>
-					<td class="kana button" id="ク" data-state="allow">
+					<td class="kana button" id="ク">
 						<span class="japanese">ク</span><br/>
 						<span class="romaji">ku</span>
 					</td>
-					<td class="kana button" id="ケ" data-state="allow">
+					<td class="kana button" id="ケ">
 						<span class="japanese">ケ</span><br/>
 						<span class="romaji">ke</span>
 					</td>
-					<td class="kana button" id="コ" data-state="allow">
+					<td class="kana button" id="コ">
 						<span class="japanese">コ</span><br/>
 						<span class="romaji">ko</span>
 					</td>
@@ -477,23 +509,23 @@
 					<td class="all button">
 						all <br> ▶
 					</td>
-					<td class="kana button" id="サ" data-state="allow">
+					<td class="kana button" id="サ">
 						<span class="japanese">サ</span><br/>
 						<span class="romaji">sa</span>
 					</td>
-					<td class="kana button" id="シ" data-state="allow">
+					<td class="kana button" id="シ">
 						<span class="japanese">シ</span><br/>
 						<span class="romaji">shi</span>
 					</td>
-					<td class="kana button" id="ス" data-state="allow">
+					<td class="kana button" id="ス">
 						<span class="japanese">ス</span><br/>
 						<span class="romaji">su</span>
 					</td>
-					<td class="kana button" id="セ" data-state="allow">
+					<td class="kana button" id="セ">
 						<span class="japanese">セ</span><br/>
 						<span class="romaji">se</span>
 					</td>
-					<td class="kana button" id="ソ" data-state="allow">
+					<td class="kana button" id="ソ">
 						<span class="japanese">ソ</span><br/>
 						<span class="romaji">so</span>
 					</td>
@@ -502,23 +534,23 @@
 					<td class="all button">
 						all <br> ▶
 					</td>
-					<td class="kana button" id="タ" data-state="allow">
+					<td class="kana button" id="タ">
 						<span class="japanese">タ</span><br/>
 						<span class="romaji">ta</span>
 					</td>
-					<td class="kana button" id="チ" data-state="allow">
+					<td class="kana button" id="チ">
 						<span class="japanese">チ</span><br/>
 						<span class="romaji">chi</span>
 					</td>
-					<td class="kana button" id="ツ" data-state="allow">
+					<td class="kana button" id="ツ">
 						<span class="japanese">ツ</span><br/>
 						<span class="romaji">tsu</span>
 					</td>
-					<td class="kana button" id="テ" data-state="allow">
+					<td class="kana button" id="テ">
 						<span class="japanese">テ</span><br/>
 						<span class="romaji">te</span>
 					</td>
-					<td class="kana button" id="ト" data-state="allow">
+					<td class="kana button" id="ト">
 						<span class="japanese">ト</span><br/>
 						<span class="romaji">to</span>
 					</td>
@@ -652,26 +684,6 @@
 					<td></td>
 					<td></td>
 					<td></td>
-				</tr>
-			</table>
-			<br/>
-			<table class="kana-table">
-				<tr>
-					<td colspan="3" class="all-col button">all ▼</td>
-				</tr>
-				<tr>
-					<td class="kana button" id="ン" style="width: 33.33%">
-						<span class="japanese">ン</span><br/>
-						<span class="romaji">n</span>
-					</td>
-					<td class="kana button" id="ー" style="width: 33.33%">
-						<span class="japanese">ー</span><br/>
-						<span class="romaji">(long vowel)</span>
-					</td>
-					<td class="kana button" id="ッ" style="width: 33.33%">
-						<span class="japanese">ッ</span><br/>
-						<span class="romaji">(glottal stop)</span>
-					</td>
 				</tr>
 			</table>
 		</div>
@@ -1242,7 +1254,7 @@
 
 		<h2 id="read-start">Let's Get Reading!</h2>
 
-		<p>Below, you can find words that use the katakana as you indicated above. Click each word to hear it pronounced out loud and see the English meaning. Words appear in a random order.</p>
+		<p>Below, you can find words that use the katakana as you indicated above (<span class="word-count"></span> in total). Click each word to hear it pronounced out loud and see the English meaning. Words appear in a random order.</p>
 
 		<div id="no-words-message" style="border: dashed 1px black; border-radius: 30px">
 
