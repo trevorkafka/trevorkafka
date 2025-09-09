@@ -115,6 +115,21 @@ async function loadWordList() {
 	return text;
 };
 
+//do a sweep to see which kana buttons are already pressed as specified by the HTML
+function buildGroupsFromDOM() {
+  document.querySelectorAll(".kana.button").forEach(btn => {
+    const state = btn.dataset.state || "none";
+    if (idGroups[state]) idGroups[state].add(btn.id);
+    keepPressed(btn); // optional: keeps the visual state consistent
+  });
+}
+
+// If your script is `defer`, DOM is parsed by now, but this is safe either way.
+document.addEventListener("DOMContentLoaded", () => {
+  buildGroupsFromDOM();
+  filterWordList();
+});
+
 const idGroups = {
 	  require: new Set(),
 	  emphasize: new Set(),
@@ -180,63 +195,63 @@ filterWordList();
 
 // HIDE UNNEEDED BUTTONS //
 
-window.addEventListener("scroll", () => {
-  const readStart = document.getElementById("read-start");
-  const tag1Start = document.getElementById("tag1-start");
-  const tag2Start = document.getElementById("tag2-start");
-  const tag3Start = document.getElementById("tag3-start");
-  const topToolbar = document.getElementById("top-toolbar");
-  const readButton = document.getElementById("read");
-  const tagsButton = document.getElementById("tags");
-  const tag1Button = document.getElementById("tag1");
-  const tag2Button = document.getElementById("tag2");
-  const tag3Button = document.getElementById("tag3");
+// window.addEventListener("scroll", () => {
+//   const readStart = document.getElementById("read-start");
+//   const tag1Start = document.getElementById("tag1-start");
+//   const tag2Start = document.getElementById("tag2-start");
+//   const tag3Start = document.getElementById("tag3-start");
+//   const topToolbar = document.getElementById("top-toolbar");
+//   const readButton = document.getElementById("read");
+//   const tagsButton = document.getElementById("tags");
+//   const tag1Button = document.getElementById("tag1");
+//   const tag2Button = document.getElementById("tag2");
+//   const tag3Button = document.getElementById("tag3");
 
-  // Get the marker's distance from the top of the page
-  const readMarkerTop = readStart.getBoundingClientRect().top + window.scrollY;
-  const tag1MarkerTop = tag1Start.getBoundingClientRect().top + window.scrollY;
-  const tag2MarkerTop = tag2Start.getBoundingClientRect().top + window.scrollY;
-  const tag3MarkerTop = tag3Start.getBoundingClientRect().top + window.scrollY;
+//   // Get the marker's distance from the top of the page
+//   const readMarkerTop = readStart.getBoundingClientRect().top + window.scrollY;
+//   const tag1MarkerTop = tag1Start.getBoundingClientRect().top + window.scrollY;
+//   const tag2MarkerTop = tag2Start.getBoundingClientRect().top + window.scrollY;
+//   const tag3MarkerTop = tag3Start.getBoundingClientRect().top + window.scrollY;
 
-  // if (window.innerWidth < 1459) {
-  // 	tagsButton.style.display = "none";
+//   if (window.innerWidth < 1459) {
+//   	tagsButton.style.display = "none";
 
-  // 	if (window.scrollY > tag1MarkerTop) {
-  // 		tag1Button.style.display = "flex";
-  // 	} else {
-  // 		tag1Button.style.display = "none";
-  // 	}
+//   	if (window.scrollY > tag1MarkerTop) {
+//   		tag1Button.style.display = "flex";
+//   	} else {
+//   		tag1Button.style.display = "none";
+//   	}
 
-  // 	if (window.scrollY > tag2MarkerTop) {
-  // 		tag2Button.style.display = "flex";
-  // 	} else {
-  // 		tag2Button.style.display = "none";
-  // 	}
+//   	if (window.scrollY > tag2MarkerTop) {
+//   		tag2Button.style.display = "flex";
+//   	} else {
+//   		tag2Button.style.display = "none";
+//   	}
 
-  // 	if (window.scrollY > tag3MarkerTop) {
-  // 		tag3Button.style.display = "flex";
-  // 	} else {
-  // 		tag3Button.style.display = "none";
-  // 	}
+//   	if (window.scrollY > tag3MarkerTop) {
+//   		tag3Button.style.display = "flex";
+//   	} else {
+//   		tag3Button.style.display = "none";
+//   	}
 
-  // } else {
-  // 	if (window.scrollY > tag1MarkerTop) {
-  // 		tagsButton.style.display = "flex";
-  // 	} else {
-  // 		tagsButton.style.display = "none";
-  // 	}
-  // 	tag1Button.style.display = "none";
-  // 	tag2Button.style.display = "none";
-  // 	tag3Button.style.display = "none";
-  // }
+//   } else {
+//   	if (window.scrollY > tag1MarkerTop) {
+//   		tagsButton.style.display = "flex";
+//   	} else {
+//   		tagsButton.style.display = "none";
+//   	}
+//   	tag1Button.style.display = "none";
+//   	tag2Button.style.display = "none";
+//   	tag3Button.style.display = "none";
+//   }
 
-  // if (window.scrollY > readMarkerTop - 81) {
-  //   readButton.style.display = "none"; 
-  //   topToolbar.style.display = "none";
-  // } else {
-  //   readButton.style.display = "flex"; 
-  //   topToolbar.style.display = "flex";
-  // }
+//   if (window.scrollY > readMarkerTop - 81) {
+//     readButton.style.display = "none"; 
+//     topToolbar.style.display = "none";
+//   } else {
+//     readButton.style.display = "flex"; 
+//     topToolbar.style.display = "flex";
+//   }
 
 // if (window.innerWidth < 1459) {
 
@@ -254,7 +269,7 @@ window.addEventListener("scroll", () => {
     
 //   };
 
-});
+// });
 
 // ==========================
 // One-step Undo (DIV #undo)
@@ -377,6 +392,12 @@ function keepPressed(elem) {
       }
 }
 
+function checkKanaButtonsForPress() {
+  document.querySelectorAll(".kana.button").forEach(elem => {
+      keepPressed(elem);
+    });
+}
+
 function checkTopToolbarButtons(elem) {
   document.querySelectorAll(".top-bar.button").forEach(elem => {
     keepPressed(elem);
@@ -384,13 +405,12 @@ function checkTopToolbarButtons(elem) {
 }
 
 checkTopToolbarButtons();
+checkKanaButtonsForPress();
 
 for (const id of barButtonIds) {
   document.getElementById(id).addEventListener("click", () => {
   	topToolbar.setAttribute("tag-mode", id);
-    document.querySelectorAll(".kana.button").forEach(elem => {
-      keepPressed(elem);
-    });
+    checkKanaButtonsForPress();
     checkTopToolbarButtons();
   });
 }
