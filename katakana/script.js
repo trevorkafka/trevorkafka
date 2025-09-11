@@ -65,11 +65,14 @@ function speakJA(text) {
 
 // Attach to any .speak-ja element; reads data-say or its textContent
 function attachHandlers() {
-  document.querySelectorAll(".speak-ja").forEach(el => {
+  const boxes = document.querySelectorAll(".speak-ja");
+  boxes.forEach(el => {
     el.style.cursor = "pointer";
     el.setAttribute("role", "button");
     el.setAttribute("tabindex", "0");
-    el.addEventListener("click", () => {
+    el.addEventListener("click", (e) => {
+      boxes.forEach((b) => {b.classList.remove("selected")});
+      e.currentTarget.classList.add("selected");
       const text = el.dataset.say?.trim() || el.textContent.trim();
       if (text) speakJA(text);
       document.getElementById("pronunciation").innerHTML = el.getAttribute("romaji");
