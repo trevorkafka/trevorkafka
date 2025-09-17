@@ -12,10 +12,30 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Freeman&display=block" rel="stylesheet">
+
+	<!-- icon library -->
+	<script src="https://kit.fontawesome.com/157b2a3980.js" crossorigin="anonymous"></script>
 	
 </head>
 
 <style>
+
+	td {
+		min-width: 50px;
+	}
+
+	.direction-information {
+		font-size: 50%;
+	}
+
+	.walk-time {
+		font-size: 40%;
+	}
+
+	.mirrored {
+		transform: scaleX(-1);
+	}
+
 	.bus-number {
 			background-color: black; 
 			color: var(--color3); 
@@ -29,6 +49,25 @@
 <body>
 	<div class="content">
 		<table style="margin: 50px auto; width: 300px; font-family: freeman; font-size: 40px; text-align: center; border-collapse: separate; border-spacing: 20px">
+			<tr>
+				<td  colspan="2" class="direction-information">
+					<i class="fa-solid fa-arrow-left"></i> 🟠 east
+				</td>
+				<td>
+					<i class="fa-solid fa-person-walking mirrored"></i>
+					<br>
+					<span class="walk-time">3 min </span>
+						</td>
+				<td></td>
+				<td>
+					<i class="fa-solid fa-person-walking"></i>
+					<br>
+					<span class="walk-time">2 min </span>
+				</td>
+				<td colspan="2" class="direction-information">
+					west 🟢🔴 <i class="fa-solid fa-arrow-right"></i>
+				</td>
+			</tr>
 			<tr>
 				<td id="109-E3"></td>
 				<td id="109-E2"></td>
@@ -57,6 +96,7 @@
 				<td id="CT2-W3"></td>
 			</tr>
 		</table>
+		<p>Times shown in the table above represent the minutes remaining before departure on foot in order to make each bus, which take into account the walking distance to each bus plus 1 extra minute for comfort. Data last refreshed <span id="counter">0 seconds</span> ago.</p>
 	</div>
 </body>
 
@@ -65,19 +105,23 @@
 	const urlEast = "https://api-v3.mbta.com/predictions?filter[stop]=2778"
 	let timeTable = {};
 
-	function fetchTimes(url, direction) {
+	function fetchTimes(url, direction, walkTime) {
 		fetch(url)
 			.then(response => response.json())
 			.then(data => {
 				data.data.forEach(prediction => {
 					const depTime = new Date(prediction.attributes.departure_time); // extract the arrival time string from the API and turn it into a number via the built-in Date() function
 					const now = new Date();
-					let waitTime = Math.round((depTime - now) / 1000 / 60); // convert from miliseconds to minutes and round to the nearest whole number
+					let waitTime = Math.round(((depTime - now) / 1000 / 60) - walkTime); // convert from miliseconds to minutes and round to the nearest whole number
 					if (waitTime === -0) {
 						waitTime = 0;
 					};
 
-					const route = prediction.relationships.route.data.id;
+					let route = prediction.relationships.route.data.id;
+
+					if (route === "747") {
+						route = "CT2";
+					};
 
 					if(!timeTable[route]) {
 						timeTable[route] = {};
@@ -114,7 +158,24 @@
 		};
 	};
 
-	fetchTimes(urlWest, "W");
-	fetchTimes(urlEast, "E");
-	console.log(timeTable);
+	function refreshTimes() {
+		fetchTimes(urlWest, "W", 3);
+		fetchTimes(urlEast, "E", 4);
+		lastRefresh = new Date();
+	}
+
+	setInterval(refreshTimes, 15000);
+	let lastRefresh = new Date();
+	refreshTimes();
+
+	// update refresh timer //
+	setInterval(() => {
+	    const now = new Date();
+	    const diffSec = Math.floor((now - lastRefresh) / 1000);
+	    if (diffSec === 1) {
+	    	document.getElementById("counter").innerHTML = "1 second";
+	    } else {
+    		document.getElementById("counter").innerHTML = diffSec + " seconds";
+	    }
+	}, 100);
 </script>
