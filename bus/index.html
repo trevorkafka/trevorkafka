@@ -1,0 +1,116 @@
+<head>
+	<title>Bus Arrival Times</title>
+
+	<meta charset="utf-8"> <!--ensures that there aren't any issues with the display of emojis -->
+	<meta name="viewport" content="width=device-width"> <!-- essential for making sure that the ACTUAL screen width is interpreted by the CSS as opposed to some idealized number presented by smartphones (980px+) -->
+	<meta name="robots" content="noindex, nofollow"> <!-- excludes page from web browser search results -->
+
+	<link rel="stylesheet" href="../style.css">
+	<link rel="shortcut icon" href="../favicon.ico">
+
+	<!-- Google font stuff -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Freeman&display=block" rel="stylesheet">
+	
+</head>
+
+<style>
+	.bus-number {
+			background-color: black; 
+			color: var(--color3); 
+			height: 40px; 
+			border-radius: 40px; 
+			padding-left: 30px; 
+			padding-right: 30px;
+	}
+</style>
+
+<body>
+	<div class="content">
+		<table style="margin: 50px auto; width: 300px; font-family: freeman; font-size: 40px; text-align: center; border-collapse: separate; border-spacing: 20px">
+			<tr>
+				<td id="109-E3">-</td>
+				<td id="109-E2">-</td>
+				<td id="109-E1">-</td>
+				<td class="bus-number">109</td>
+				<td id="109-W1">-</td>
+				<td id="109-W2">-</td>
+				<td id="109-W3">-</td>
+			</tr>
+			<tr>
+				<td id="91-E3">-</td>
+				<td id="91-E2">-</td>
+				<td id="91-E1">-</td>
+				<td class="bus-number">91</td>
+				<td id="91-W1">-</td>
+				<td id="91-W2">-</td>
+				<td id="91-W3">-</td>
+			</tr>
+			<tr>
+				<td id="CT2-E3">-</td>
+				<td id="CT2-E2">-</td>
+				<td id="CT2-E1">-</td>
+				<td class="bus-number">CT2</td>
+				<td id="CT2-W1">-</td>
+				<td id="CT2-W2">-</td>
+				<td id="CT2-W3">-</td>
+			</tr>
+		</table>
+	</div>
+</body>
+
+<script type="text/javascript">
+	const urlWest = "https://api-v3.mbta.com/predictions?filter[stop]=12759"
+	const urlEast = "https://api-v3.mbta.com/predictions?filter[stop]=2778"
+	let timeTable = {};
+
+	function fetchTimes(url, direction) {
+		fetch(url)
+			.then(response => response.json())
+			.then(data => {
+				data.data.forEach(prediction => {
+					const depTime = new Date(prediction.attributes.departure_time); // extract the arrival time string from the API and turn it into a number via the built-in Date() function
+					const now = new Date();
+					let waitTime = Math.round((depTime - now) / 1000 / 60); // convert from miliseconds to minutes and round to the nearest whole number
+					if (waitTime === -0) {
+						waitTime = 0;
+					};
+
+					const route = prediction.relationships.route.data.id;
+
+					if(!timeTable[route]) {
+						timeTable[route] = {};
+					};
+
+					if (!("counter" in timeTable[route])) {
+						timeTable[route]["counter"] = 1;
+					};
+
+					if (timeTable[route]["counter"] <= 3) {
+						timeTable[route][route + "-" + direction + timeTable[route]["counter"]] = waitTime;
+					};
+					
+					timeTable[route]["counter"] += 1;
+				});
+			})
+			.then( () => {
+				for (const route in timeTable) {
+					delete timeTable[route]["counter"]; // clear the counter keys so they can restart for the other direction
+				};
+			})
+			.then(updateTable);
+	};
+
+	function updateTable() {
+		for (const route in timeTable) {
+			for (const prediction in timeTable[route]) {
+				document.getElementById(prediction).innerHTML = timeTable[route][prediction];
+			};
+		};
+	};
+
+	fetchTimes(urlWest, "W");
+	fetchTimes(urlEast, "E");
+	console.log(timeTable);
+</script>
