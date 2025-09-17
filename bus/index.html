@@ -86,12 +86,16 @@
 					if (!("counter" in timeTable[route])) {
 						timeTable[route]["counter"] = 1;
 					};
-
-					if (timeTable[route]["counter"] <= 3) {
-						timeTable[route][route + "-" + direction + timeTable[route]["counter"]] = waitTime;
-					};
 					
-					timeTable[route]["counter"] += 1;
+					if (waitTime >= 0) {
+
+						if (timeTable[route]["counter"] <= 3) {
+							timeTable[route][route + "-" + direction + timeTable[route]["counter"]] = waitTime;
+						};
+						
+						timeTable[route]["counter"] += 1;
+
+					};
 				});
 			})
 			.then( () => {
