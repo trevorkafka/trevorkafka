@@ -486,8 +486,8 @@
 		}
 
 		.navbar a {
-			font-size: calc(16 * 2 * (95vw/900));
-			/*16px is default size, 2 is desktop browser size zoom on that default value (200%), remainder of computations figures out the percentage of current viewport width compared to the cut off value; I used 95vw instead of 100vw to account for some lost space that was causing the navbar to break into two lines*/
+			font-size: calc(16 * 2 * (90vw/900));
+			/*16px is default size, 2 is desktop browser size zoom on that default value (200%), remainder of computations figures out the percentage of current viewport width compared to the cut off value; I used 905vw instead of 100vw to account for some lost space that was causing the navbar to break into two lines*/
 		}
 
 		.nav-spacer {
