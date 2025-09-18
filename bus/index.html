@@ -48,11 +48,18 @@
 	}
 
 	.bus-number {
-			background-color: black; 
-			color: var(--color3); 
-			border-radius: 6vw; 
-			padding-left: 3vw; 
-			padding-right: 3vw;
+		background-color: black; 
+		color: var(--color3); 
+		border-radius: 6vw; 
+		padding-left: 3vw; 
+		padding-right: 3vw;
+	}
+
+	.subway-line {
+		padding: 0.4vw 1.6vw;
+		font-weight: bold;
+		border-radius: 3vw;
+		display: inline;
 	}
 
 	@media (prefers-color-scheme: dark) {
@@ -73,7 +80,8 @@
 		<table style="margin: 0 auto 4vw auto; width: 90%; font-family: freeman; font-size: 6vw; text-align: center; border-collapse: separate; border-spacing: 2vw">
 			<tr>
 				<td  colspan="2" class="direction-information">
-					<i class="fa-solid fa-arrow-left"></i> 🟠 east
+					<i class="fa-solid fa-arrow-left"></i>
+					<div class="subway-line" style="background-color: orange">OL</div>
 				</td>
 				<td>
 					<i class="fa-solid fa-person-walking mirrored"></i>
@@ -87,7 +95,9 @@
 					<span class="walk-time"><span id="walk-time-west"></span> min </span>
 				</td>
 				<td colspan="2" class="direction-information">
-					west 🟢🔴 <i class="fa-solid fa-arrow-right"></i>
+					<div class="subway-line" style="background-color: green">GL</div>
+					<div class="subway-line" style="background-color: red">RL</div>
+					<i class="fa-solid fa-arrow-right"></i>
 				</td>
 			</tr>
 			<tr>
