@@ -20,16 +20,18 @@
 
 <style>
 
-	td {
-		min-width: 50px;
+	body {
+		display: flex;
+		justify-content: center;
+		align-items: center;
 	}
 
 	.direction-information {
-		font-size: 50%;
+		font-size: 40%;
 	}
 
 	.walk-time {
-		font-size: 40%;
+		font-size: 30%;
 	}
 
 	.mirrored {
@@ -40,15 +42,27 @@
 			background-color: black; 
 			color: var(--color3); 
 			height: 40px; 
-			border-radius: 40px; 
-			padding-left: 30px; 
-			padding-right: 30px;
+			border-radius: 6vw; 
+			padding-left: 3vw; 
+			padding-right: 3vw;
 	}
+
+	@media (prefers-color-scheme: dark) {
+		html {
+			background-color: black;
+			color: var(--color3);
+		}
+
+		.bus-number {
+			background-color: var(--color1);
+		}
+	}
+
 </style>
 
 <body>
-	<div class="content">
-		<table style="margin: 50px auto; width: 300px; font-family: freeman; font-size: 40px; text-align: center; border-collapse: separate; border-spacing: 20px">
+	<div> <!-- this div makes sure that the body's flexbox layout doesn't rearrange overall webpage content -->
+		<table style="margin: auto; width: 90%; font-family: freeman; font-size: 6vw; text-align: center; border-collapse: separate; border-spacing: 2vw">
 			<tr>
 				<td  colspan="2" class="direction-information">
 					<i class="fa-solid fa-arrow-left"></i> 🟠 east
@@ -56,13 +70,13 @@
 				<td>
 					<i class="fa-solid fa-person-walking mirrored"></i>
 					<br>
-					<span class="walk-time">3 min </span>
+					<span class="walk-time"><span id="walk-time-east"></span> min </span>
 						</td>
 				<td></td>
 				<td>
 					<i class="fa-solid fa-person-walking"></i>
 					<br>
-					<span class="walk-time">2 min </span>
+					<span class="walk-time"><span id="walk-time-west"></span> min </span>
 				</td>
 				<td colspan="2" class="direction-information">
 					west 🟢🔴 <i class="fa-solid fa-arrow-right"></i>
@@ -96,14 +110,25 @@
 				<td id="CT2-W3"></td>
 			</tr>
 		</table>
-		<p>Times shown in the table above represent the minutes remaining to step out the door in order to make each bus, which take into account the walking distance to each bus stop plus one extra minute for comfort. Data last refreshed <span id="counter">0 seconds</span> ago from MBTA.</p>
+		<div class="content">
+			<p>Times shown in the table above represent the minutes remaining to step out the door in order to make each bus, which take into account the walking distance to each bus stop plus one extra minute for comfort. </p>
+
+			<p>MBTA bus arrival predictions last refreshed <span id="counter">0 seconds</span> ago.</p>
+		</div>
 	</div>
 </body>
 
 <script type="text/javascript">
 	const urlWest = "https://api-v3.mbta.com/predictions?filter[stop]=12759"
 	const urlEast = "https://api-v3.mbta.com/predictions?filter[stop]=2778"
+	const walkTimeWest = 3
+	const walkTimeEast = 4
+	const gracePeriod = 1
 	let timeTable = {};
+
+	// display walk times
+	document.getElementById("walk-time-west").innerHTML = walkTimeWest;
+	document.getElementById("walk-time-east").innerHTML = walkTimeEast;
 
 	function fetchTimes(url, direction, walkTime) {
 		fetch(url)
@@ -112,7 +137,7 @@
 				data.data.forEach(prediction => {
 					const depTime = new Date(prediction.attributes.departure_time); // extract the arrival time string from the API and turn it into a number via the built-in Date() function
 					const now = new Date();
-					let waitTime = Math.round(((depTime - now) / 1000 / 60) - walkTime); // convert from miliseconds to minutes and round to the nearest whole number
+					let waitTime = Math.round(((depTime - now) / 1000 / 60) - walkTime - gracePeriod); // convert from miliseconds to minutes and round to the nearest whole number
 					if (waitTime === -0) {
 						waitTime = 0;
 					};
@@ -159,8 +184,8 @@
 	};
 
 	function refreshTimes() {
-		fetchTimes(urlWest, "W", 3);
-		fetchTimes(urlEast, "E", 4);
+		fetchTimes(urlWest, "W", walkTimeWest);
+		fetchTimes(urlEast, "E", walkTimeEast);
 		lastRefresh = new Date();
 	}
 
