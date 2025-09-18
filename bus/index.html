@@ -20,6 +20,13 @@
 
 <style>
 
+	:root {
+		/* MBTA Subway Line Colors */
+		--mbta-orange: #ED8B00;
+		--mbta-green:  #00843D;
+		--mbta-red:    #DA291C;
+  	}
+
 	html, body {
 		height: 100%;
 		margin: 0;
@@ -60,6 +67,7 @@
 		font-weight: bold;
 		border-radius: 3vw;
 		display: inline;
+		color: var(--color3);
 	}
 
 	@media (prefers-color-scheme: dark) {
@@ -81,7 +89,7 @@
 			<tr>
 				<td  colspan="2" class="direction-information">
 					<i class="fa-solid fa-arrow-left"></i>
-					<div class="subway-line" style="background-color: orange">OL</div>
+					<div class="subway-line" style="background-color: var(--mbta-orange)">OL</div>
 				</td>
 				<td>
 					<i class="fa-solid fa-person-walking mirrored"></i>
@@ -95,8 +103,8 @@
 					<span class="walk-time"><span id="walk-time-west"></span> min </span>
 				</td>
 				<td colspan="2" class="direction-information">
-					<div class="subway-line" style="background-color: green">GL</div>
-					<div class="subway-line" style="background-color: red">RL</div>
+					<div class="subway-line" style="background-color: var(--mbta-green)">GL</div>
+					<div class="subway-line" style="background-color: var(--mbta-red)">RL</div>
 					<i class="fa-solid fa-arrow-right"></i>
 				</td>
 			</tr>
