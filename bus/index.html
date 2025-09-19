@@ -42,10 +42,6 @@
 		font-size: 40%;
 	}
 
-	.countdown-time {
-		width: 9vw;
-	}
-
 	.walk-time {
 		font-size: 30%;
 	}
@@ -60,7 +56,6 @@
 		border-radius: 6vw; 
 		padding-left: 3vw; 
 		padding-right: 3vw;
-		width: 10vw;
 	}
 
 	.subway-line {
@@ -78,11 +73,33 @@
 		}
 	}
 
+	.col-time {
+		width: 10vw;
+	}
+
+	.col-route {
+		width: 10vw;
+	}
+
 </style>
 
 <body>
 	<div> <!-- this div makes sure that the body's flexbox layout doesn't rearrange overall webpage content -->
-		<table style="table-layout: fixed; margin: 0 auto 1vw auto; font-family: freeman; font-size: 6vw; text-align: center; padding: 0px; border-collapse: separate; border-spacing: 2vw">
+		<table style="
+			table-layout: fixed; 
+			margin: 0 auto 1vw auto; 
+			font-family: freeman; 
+			font-size: 6vw; 
+			text-align: center; 
+			padding: 0px; 
+			border-collapse: separate; 
+			border-spacing: 2vw
+		">
+			<colgroup>
+			    <col class="col-time" span="3">
+			    <col class="col-route">
+			    <col class="col-time" span="3">
+			  </colgroup>
 			<tr>
 				<td  colspan="2" class="direction-information">
 					<i class="fa-solid fa-arrow-left"></i>
