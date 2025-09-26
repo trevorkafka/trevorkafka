@@ -1,0 +1,228 @@
+<head>
+	<title>Teaching Samples | Trevor Kafka - Academic Tutoring</title>
+
+	<meta charset="utf-8"> <!--ensures that there aren't any issues with the display of emojis -->
+	<meta name="viewport" content="width=device-width"> <!-- essential for making sure that the ACTUAL screen width is interpreted by the CSS as opposed to some idealized number presented by smartphones (980px+) -->	
+
+	<link rel="stylesheet" href="style.css">
+	<link rel="shortcut icon" href="favicon.ico">
+
+	<!-- Google font stuff -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=block" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Freeman&display=block" rel="stylesheet">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> <!-- use JQuery -->
+	<script type="text/javascript" src="script.js" defer></script> <!-- defer means to wait to run the script until the whole page is ready -->
+
+</head>
+
+<style>
+
+	.video-shelf {
+		width: 100%;
+		white-space: nowrap;
+		overflow-x: auto;
+		padding-top: 10px;
+		padding-bottom: 10px;
+	}
+
+	.card-container {
+		border-radius: 20px;
+		background-color: #00000010;
+		margin: auto 10px;
+		width: 250px;
+		overflow: hidden;
+		border: solid 1px transparent;
+		transition: 
+			background-color 0.1s ease, 
+			box-shadow 0.1s ease,
+			border 0.1s ease;
+	}
+
+	.card-container img {
+		width: 100%;
+		transition: filter 0.1s ease;
+	}
+
+	.card-container:hover, .selected.card-container {
+		background-color: #00000020;
+		box-shadow: 0 0 10px lightGrey;
+		border: solid 1px lightGrey;
+		cursor: pointer;
+	}
+
+	.card-container:hover img, .selected.card-container img {
+		filter: brightness(0.8);
+	}
+
+	.video-image {
+		height: 150px;
+		overflow: hidden;
+		display: flex;          /* flex helps centering */
+		justify-content: center;/* center horizontally */
+		align-items: center;    /* center vertically */
+	}
+
+	.title-container {
+		padding: 10px 30px;
+	}
+
+	.video-title {
+		font-family: Freeman;
+		font-size: 120%;
+		color: var(--color1);
+	}
+
+	.video-subtitle {
+		color: SlateGrey;	
+	}
+
+	.video-container {
+		width: 110vw;
+		margin-left: calc(50% - 55vw);  /* full-bleed margin*/
+		margin-right: calc(50% - 55vw); /* full-bleed margin*/
+	}
+
+	.video-container-content {
+		margin-left: 5vw;
+		margin-right: 5vw;
+		display: block;
+	}
+
+	@media (width >= 900px) {
+		.video-container {
+			box-shadow: inset 0 0 20px grey;
+			border: solid 1px lightGrey; 
+		}
+
+		.video-container-content {
+			padding-top: 20px; padding-bottom: 20px;
+		}
+	}
+
+	.hidden {
+		display: none;
+	}
+
+</style>
+
+<body>
+
+	<trevorkafka-nav></trevorkafka-nav>
+
+	<div class="content" style="padding-bottom: 100px">
+
+		<trevorkafka-announcement></trevorkafka-announcement>
+
+		<h1>Teaching Samples</h1>
+		
+		<div style="border: solid 1px black; border-radius: 5px; line-height: 24px; padding: 10px; margin: 20px; background-color: #FFFFFF80; text-align: center">
+			This page is a work in progress. More teaching samples will be available soon.
+		</div>
+
+		<h2>High School Algebra</h2>
+			<div class="video-shelf" id="algebra"></div>
+			<div class="hidden video-container" id="algebra-video-container"></div>
+		
+		<h2>Physics</h2>
+			<div class="video-shelf" id="physics"></div>
+			<div class="hidden video-container" id="physics-video-container"></div>
+		
+		<h2>Geometry</h2>
+			<div class="video-shelf" id="geometry"></div>
+			<div class="hidden video-container" id="geometry-video-container"></div>
+
+		<h2>Calculus</h2>
+			<em>Teaching samples are coming soon.</em>
+			<div class="video-shelf" id="calculus"></div>
+			<div class="hidden video-container" id="calculus-video-container"></div>
+
+	</div>
+
+	<trevorkafka-footer></trevorkafka-footer>
+
+	<script>
+		const videoData = {
+			829473: {
+				shelf: "physics",
+				YouTubeID: "UAzBtMtzL0k",
+				thumbnailLocation: "media/teaching-samples/atwood.jpg",
+				title: "Atwood Machine",
+				subtitle: "Algebra-based, high school"
+			},
+			502510: {
+				shelf: "algebra",
+				YouTubeID: "SCB3yJzBlOA",
+				thumbnailLocation: "media/teaching-samples/factoring.jpg",
+				title: "Factoring When a≠1",
+				subtitle: "High school quadratics"
+			},
+			315670: {
+				shelf: "geometry",
+				YouTubeID: "LizyrA4JXEk",
+				thumbnailLocation: "media/teaching-samples/exterior-angle-theorem.jpg",
+				title: "Exterior Angle Theorem",
+				subtitle: "High school geometry"
+			}
+		}
+
+		for (const id in videoData) {
+			const video = videoData[id];
+			const shelfEl = document.getElementById(video.shelf);
+
+			if (!shelfEl) continue;
+
+			shelfEl.insertAdjacentHTML("beforeend", `
+				<div class="card-container" id="${id}">
+					<div class="video-image">
+						<img src="${video.thumbnailLocation}" style="height: 100%">
+					</div>
+					<div class="title-container">
+						<div class="video-title">${video.title}</div>
+						<div class="video-subtitle">${video.subtitle}</div>
+					</div>
+				</div>
+			`);
+
+			const videoContainer = document.getElementById(id);
+
+			videoContainer.addEventListener("click", (e) => {
+
+				const thisShelfVideoContainer = document.getElementById(video.shelf + "-video-container");
+				const iframes = thisShelfVideoContainer.querySelectorAll("iframe");
+				
+				videoContainer.classList.toggle("selected");
+
+				document.querySelectorAll(".video-container").forEach((el) =>{
+					if (el !== thisShelfVideoContainer) {
+						el.innerHTML = "";
+						el.classList.add("hidden");
+					};
+				});
+
+				document.querySelectorAll(".selected.card-container").forEach((el) => {
+					if (el !== videoContainer) {
+						el.classList.remove("selected");
+					}
+				});
+
+				if (thisShelfVideoContainer.classList.contains("hidden")) {
+					thisShelfVideoContainer.innerHTML = `
+						<div class="video-container-content">
+							<iframe class="full-width-media" style="overflow-y: hidden; aspect-ratio:1.7765; margin-bottom: 20px; display: flex; margin: auto" src="https://www.youtube.com/embed/${video.YouTubeID}?autoplay=1&mute=0&rel=0&modestbranding=1&hd=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+						</div>
+					`
+
+				} else {
+					thisShelfVideoContainer.innerHTML = ""
+				}
+
+				thisShelfVideoContainer.classList.toggle("hidden");
+
+			});
+		}
+	</script>
+
+</body>

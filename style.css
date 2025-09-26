@@ -207,6 +207,7 @@
 		font-weight: bold;
 		text-shadow: 1px 1px 2px black;
 		transition:background-color var(--transitiontime) ease-in-out; 
+		margin: 10px;
 	}
 
 	.big-button div {
