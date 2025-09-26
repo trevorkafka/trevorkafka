@@ -216,20 +216,30 @@
 
 	.require, .button[data-state="require"] {
 		background-color: var(--require-background-color);
-		border-color: var(--require-text-color);
+		border: solid 1px var(--require-text-color);
 		color: var(--require-text-color);
 	}
 
 	.emphasize, .button[data-state="emphasize"] {
 		background-color: var(--emphasize-background-color);
-		border-color: var(--emphasize-text-color);
+		border: solid 1px var(--emphasize-text-color);
 		color: var(--emphasize-text-color);
 	}
 
 	.allow, .button[data-state="allow"] {
 		background-color: var(--allow-background-color);
-		border-color: black;
+		border: solid 1px black;
 		color: var(--allow-text-color);
+	}
+
+	#cycle, .cycle {
+		background: var(--cycle-gradient);
+		border: solid 1px black;
+	}
+
+	.clear {
+		background-color: var(--color3);
+		border: solid 1px black;
 	}
 
 	.inline-box {
@@ -237,6 +247,7 @@
 		padding: 3px 6px;
 		border-radius: 5px;
 		font-weight: bold;
+		margin: 1px;
 	}
 
 	.duplicate {
@@ -303,6 +314,10 @@
 		background-color: chocolate;
 	}
 
+	.inline-title {
+		font-family: freeman;
+	}
+
 </style>
 
 <body>
@@ -312,13 +327,13 @@
 
 	<div class="topbar-gradient" style="background: var(--cycle-gradient);">
 		<div class="top-bar toolbar" tag-mode="allow" id="top-toolbar">
-			<div class="top content" style="display: flex; align-items: center">
+			<div class="top content" style="display: flex; align-items: center; justify-content: center;">
 				<span class="top-bar title" style="font-family: Freeman; font-size: 150%;">Tag Mode:</span>
 				<span class="top-bar button" data-state="none" style="background-color: var(--color3);" id="none">clear</span>
 				<span class="top-bar button require" data-state="require" id="require">require</span>
 				<span class="top-bar button emphasize" data-state="emphasize" id="emphasize">emphasize</span>
 				<span class="top-bar button allow" data-state="allow" id="allow">allow</span>
-				<span class="top-bar button" data-state="cycle" style="background: var(--cycle-gradient)" id="cycle">cycle</span>
+				<span class="top-bar button" data-state="cycle" id="cycle">cycle</span>
 			</div>
 		</div>
 	</div>
@@ -344,14 +359,30 @@
 	<div class="content" style="position: relative; z-index: 1; top: 60px">
 		<h1>Katakana Reader</h1>
 		<p>© 2025 Trevor Kafka</p>
-		<p>Welcome to <strong>Katakana Reader</strong>, a tool that will allow you to practice and improve your katakana reading abilities.</p>
-		<p>Tag the katakana in the charts below based on your level of mastery of each by clicking on each katakana. The katakana tagging mode can be switched using the toolbar at the top of the page. Modify your tags as you master reading each katakana. A description of each tag is below.</p>
+		<p>Welcome to <strong>Katakana Reader</strong>, a tool that will allow you to practice and improve your katakana reading abilities. This tool may take a little bit of time to get fully used to at first, but it is very powerful, and allows one to create extremely customized reading lists for personalized targeted practice of specific katakana.</p>
+		<p><strong>How do I use this tool?</strong></p>
+			<ul>
+				<li>Tag the katakana in the charts below based on your level of mastery of each by clicking on each katakana. From these tags, a reading list of words within your abilities will be generated and shown at the bottom of the page that you can use for reading practice.</li>
+				<li>Use the <strong>tag mode toolbar</strong> at the top of the screen to change the tagging mode, which affects what happens when you click each katakana in the katakana charts. Use the tagging modes of your choice to tag the katakana according to your knowledge, abilities, and desired course of practice.
+					<ul>
+						<li>The <span class="require inline-box" style="padding-top: 0px; padding-bottom: 0px">require</span>, <span class="emphasize inline-box" style="padding-top: 0px; padding-bottom: 0px">emphasize</span>, and <span class="allow inline-box" style="padding-top: 0px; padding-bottom: 0px">allow</span> modes will allow you to change any untagged katakana into a katakana with that tag. A description of each tag is in the table below.</li>
+						<li>The <span class="clear inline-box" style="padding-top: 0px; padding-bottom: 0px">clear</span> tagging mode will allow you to remove the tags from any tagged katakana.</li>
+						<li>The <span class="cycle inline-box" style="padding-top: 0px; padding-bottom: 0px">cycle</span> tagging mode will allow you to cycle between all possible tags on any katakana, including no tag at all.</li>
+					</ul>
+				</li>
+				<li>It is recommended to start by tagging all of the katakana you can read already as <span class="allow inline-box" style="padding-top: 0px; padding-bottom: 0px">allow</span> by using the allow tagging mode.</li>
+				<li>If you need to clear a tag from a katakana, select the <span class="clear inline-box" style="padding-top: 0px; padding-bottom: 0px">clear</span> tagging mode or <span class="cycle inline-box" style="padding-top: 0px; padding-bottom: 0px">cycle</span> tagging mode.</li>
+				<li>Use the black buttons at the bottom-right of the screen to navigate through the different sections of the page.</li>
+				<li>When reading, click on any katakana to hear the pronunciation and see the written pronunciation and meaning in the toolbar at the bottom of the screen. The more words you read, the more your reading skills will improve.</li>
+				<li><strong>Not seeing many words in your word list?</strong> Tag more katakana with <span class="allow inline-box" style="padding-top: 0px; padding-bottom: 0px">allow</span>, particularly <strong>ー (long vowel)</strong> and <strong>ッ (glottal stop)</strong> and reduce the number of <span class="require inline-box" style="padding-top: 0px; padding-bottom: 0px">require</span> and <span class="emphasize inline-box" style="padding-top: 0px; padding-bottom: 0px">emphasize</span> tags.</li>
+			</ul>
+		<p>Modify your tags as you improve your katakana reading abilities. A description of all of the tags is below.</p>
 
 			<table class="vertical-align-middle table" style="border: solid 1px #00000020; border-radius: 10px; display: block;">
 				<tr style="font-weight: bold; border-bottom: solid 1px black; font-size: 120%">
 					<td>Tag</td>
 					<td>Description</td>
-					<td>Use Case</td>
+					<td>Which katakana should receive this tag?</td>
 				</tr>
 				<tr>
 					<td><em>(none)</em></td>
@@ -376,10 +407,6 @@
 			</table>
 
 		<br/>
-
-		<p>After setting your tags, begin to read the words in the word list, which are displayed at random. Click each word to reveal the pronunciation and meaning. The more words you read, the more your reading skills will improve.</p>
-
-		<p>Master the katakana from each section before proceeding to the next.</p>
 
 		<details>
 			<summary>More information</summary>
@@ -425,7 +452,9 @@
 
 			<h2 id="tag1-start">Basic Katakana</h2>
 
-			<p>By default, the first few rows are tagged as <span class="allow inline-box" style="padding-top: 0px; padding-bottom: 0px">allow</span> to start you off with a simple reading list with some of the most frequently-studied katakana.</p>
+			<p>By default, the first few rows are tagged as <span class="allow inline-box" style="padding-top: 0px; padding-bottom: 0px">allow</span> to start you off with a simple reading list with some of the most frequently-studied katakana, but please adjust the tags to match your learning needs.</p>
+
+			<p>Master the content from this section before moving on to the <span class="inline-title">Consonant Modifiers</span> section.</p>
 
 			<details>
 				<summary>Information</summary>
@@ -704,6 +733,8 @@
 		<div class="flex-element">
 
 			<h2 id="tag2-start">Consonant Modifiers</h2>
+
+			<p>Master the content from this section before moving on to the <span class="inline-title">Vowel Modifiers</span> section.</p>
 
 			<details>
 				<summary>Information</summary>
