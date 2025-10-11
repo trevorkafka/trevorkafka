@@ -131,14 +131,15 @@
 			</p>
 		</div>
 
-		<h1 class="fade">My Availability</h1>
+		<a id="availability" style="position: relative; top: -60px"></a>
+		<h1 class="fade">My Availability & Scheduling Demand</h1>
 
 		<div class="fade">
-			<div>
-				<p>Classes are generally offered at the following times throughout the school year. Scheduling irregularities may occur due to holidays, personal conflicts, or school breaks.</p>
-				<!-- <span class="widescreen">Hover over</span><span class="narrowscreen">Tap</span> the table for color-blind accessibility. -->
-			</div>
 			<div class="hovertarget">
+				<div>
+					<p><strong>Classes are generally offered during all of the colored times slots below</strong> throughout the school year. Time slots are colored based on the relative historical amount of competition for each time slot: green <span style="display: inline-block; padding-left: 5px; padding-right: 5px;" class="available_easy"><span class="hoverdisplay-text">A</span></span> time slots have low competition, red <span style="display: inline-block; padding-left: 5px; padding-right: 5px;" class="available_hard"><span class="hoverdisplay-text">C</span></span> time slots have high competition, and yellow <span style="display: inline-block; padding-left: 5px; padding-right: 5px;" class="available_medium"><span class="hoverdisplay-text">B</span></span> time slots are somewhere in the middle. Times below listed in Boston time (US Eastern Time): UTC-4 or UTC-5 depending on time of year (<a href="https://www.timeanddate.com/worldclock/converter.html?p1=43" target="_blank">convert to your time zone</a>). </p>
+					<!-- <span class="widescreen">Hover over</span><span class="narrowscreen">Tap</span> the table for color-blind accessibility. -->
+				</div>
 				<div style="align: center;">
 					<table class="timetable tinytext" style="width: 100%; max-width: 500px; table-layout: fixed; margin: auto">
 						<tr>
@@ -171,181 +172,185 @@
 				<div align="center">
 					<table class="timetable tinytext">
 						<tr>
-							<td></td>
-							<td>Sun</td>
-							<td>Mon</td>
-							<td>Tue</td>
-							<td>Wed</td>
-							<td>Thu</td>
-							<td>Fri</td>
-							<td>Sat</td>
+							<td style="width: calc(100%/8); min-width: 30px;"></td>
+							<td style="width: calc(100%/8); min-width: 30px;">Sun</td>
+							<td style="width: calc(100%/8); min-width: 30px;">Mon</td>
+							<td style="width: calc(100%/8); min-width: 30px;">Tue</td>
+							<td style="width: calc(100%/8); min-width: 30px;">Wed</td>
+							<td style="width: calc(100%/8); min-width: 30px;">Thu</td>
+							<td style="width: calc(100%/8); min-width: 30px;">Fri</td>
+							<td style="width: calc(100%/8); min-width: 30px;">Sat</td>
 						</tr>
 						<tr>
-							<td>08:00a</td>
+							<td>8 am</td>
 							<td></td>
 							<td class="available_easy"><span class="hoverdisplay-text">A</span></td>
 							<td class="available_easy"><span class="hoverdisplay-text">A</span></td>
 							<td class="available_easy"><span class="hoverdisplay-text">A</span></td>
 							<td class="available_easy"><span class="hoverdisplay-text">A</span></td>
-							<td></td>
-							<td></td>
+							<td rowspan="14"><div style="display: inline-block; white-space: nowrap; writing-mode: vertical-rl; font-size: 200%; opacity: 10%; font-weight: bold;">no classes</div></td>
+							<td rowspan="14"><div style="display: inline-block; white-space: nowrap; writing-mode: vertical-rl; font-size: 200%; opacity: 10%; font-weight: bold;">no classes</div></td>
 						</tr>
 						<tr>
-							<td>09:00a</td>
+							<td>9 am</td>
 							<td class="available_medium"><span class="hoverdisplay-text">B</span></td>
 							<td class="available_easy"><span class="hoverdisplay-text">A</span></td>
 							<td class="available_easy"><span class="hoverdisplay-text">A</span></td>
 							<td class="available_easy"><span class="hoverdisplay-text">A</span></td>
 							<td class="available_easy"><span class="hoverdisplay-text">A</span></td>
-							<td></td>
-							<td></td>
 						</tr>
 						<tr>
-							<td>10:00a</td>
+							<td>10 am</td>
 							<td class="available_hard"><span class="hoverdisplay-text">C</span></td>
 							<td class="available_easy"><span class="hoverdisplay-text">A</span></td>
 							<td class="available_easy"><span class="hoverdisplay-text">A</span></td>
 							<td class="available_easy"><span class="hoverdisplay-text">A</span></td>
 							<td class="available_easy"><span class="hoverdisplay-text">A</span></td>
-							<td></td>
-							<td></td>
 						</tr>
 						<tr>
-							<td>11:00a</td>
+							<td>11 am</td>
 							<td class="available_hard"><span class="hoverdisplay-text">C</span></td>
 							<td></td>
 							<td></td>
 							<td class="available_easy"><span class="hoverdisplay-text">A</span></td>
 							<td></td>
-							<td></td>
-							<td></td>
 						</tr>
 						<tr>
-							<td>12:00p</td>
+							<td>12 pm</td>
 							<td class="available_hard"><span class="hoverdisplay-text">C</span></td>
 							<td></td>
 							<td></td>
 							<td class="available_easy"><span class="hoverdisplay-text">A</span></td>
 							<td></td>
-							<td></td>
-							<td></td>
 						</tr>
 						<tr>
-							<td>01:00p</td>
+							<td> 1 pm</td>
 							<td class="available_hard"><span class="hoverdisplay-text">C</span></td>
 							<td></td>
 							<td></td>
 							<td class="available_easy"><span class="hoverdisplay-text">A</span></td>
 							<td></td>
-							<td></td>
-							<td></td>
 						</tr>
 						<tr>
-							<td>02:00p</td>
+							<td>2 pm</td>
 							<td class="available_hard"><span class="hoverdisplay-text">C</span></td>
 							<td></td>
 							<td></td>
 							<td class="available_easy"><span class="hoverdisplay-text">A</span></td>
 							<td></td>
-							<td></td>
-							<td></td>
 						</tr>
 						<tr>
-							<td>03:00p</td>
+							<td>3 pm</td>
 							<td class="available_hard"><span class="hoverdisplay-text">C<span></td>
 							<td class="available_easy"><span class="hoverdisplay-text">A</span></td>
 							<td class="available_easy"><span class="hoverdisplay-text">A</span></td>
 							<td class="available_easy"><span class="hoverdisplay-text">A</span></td>
 							<td class="available_easy"><span class="hoverdisplay-text">A</span></td>
-							<td></td>
-							<td></td>
 						</tr>
 						<tr>
-							<td>04:00p</td>
+							<td>4 pm</td>
 							<td></td>
 							<td class="available_medium"><span class="hoverdisplay-text">B</span></td>
 							<td class="available_medium"><span class="hoverdisplay-text">B</span></td>
 							<td class="available_medium"><span class="hoverdisplay-text">B</span></td>
 							<td class="available_medium"><span class="hoverdisplay-text">B</span></td>
-							<td></td>
-							<td></td>
 						</tr>
 						<tr>
-							<td>05:00p</td>
+							<td>5 pm</td>
 							<td></td>
 							<td class="available_hard"><span class="hoverdisplay-text">C</span></td>
 							<td class="available_hard"><span class="hoverdisplay-text">C</span></td>
 							<td class="available_hard"><span class="hoverdisplay-text">C</span></td>
 							<td class="available_hard"><span class="hoverdisplay-text">C</span></td>
-							<td></td>
-							<td></td>
 						</tr>
 						<tr>
-							<td>06:00p</td>
+							<td>6 pm</td>
 							<td></td>
 							<td class="available_hard"><span class="hoverdisplay-text">C</span></td>
 							<td class="available_hard"><span class="hoverdisplay-text">C</span></td>
 							<td class="available_hard"><span class="hoverdisplay-text">C</span></td>
 							<td class="available_hard"><span class="hoverdisplay-text">C</span></td>
-							<td></td>
-							<td></td>
 						</tr>
 						<tr>
-							<td>07:00p</td>
+							<td>7 pm</td>
 							<td></td>
 							<td class="available_hard"><span class="hoverdisplay-text">C</span></td>
 							<td class="available_hard"><span class="hoverdisplay-text">C<span></td>
 							<td></td>
 							<td class="available_hard"><span class="hoverdisplay-text">C</span></td>
-							<td></td>
-							<td></td>
 						</tr>
 						<tr>
-							<td>08:00p</td>
+							<td>8 pm</td>
 							<td></td>
 							<td class="available_medium"><span class="hoverdisplay-text">B<span></td>
 							<td class="available_medium"><span class="hoverdisplay-text">B<span></td>
 							<td></td>
 							<td class="available_medium"><span class="hoverdisplay-text">B<span></td>
-							<td></td>
-							<td></td>
 						</tr>
 						<tr>
-							<td>09:00p</td>
+							<td>9 pm</td>
 							<td></td>
 							<td class="available_easy"><span class="hoverdisplay-text">A<span></td>
 							<td class="available_easy"><span class="hoverdisplay-text">A<span></td>
 							<td></td>
 							<td class="available_easy"><span class="hoverdisplay-text">A<span></td>
-							<td></td>
-							<td></td>
-						</tr>
-						<tr>
-							<td>&nbsp;</td>
-						</tr>
-						<tr>
-							<td>Key:</td>
-							<td class="available_easy"><span class="hoverdisplay-text">A</span></td>
-							<td colspan="6" style="text-align:left"> easy to book</td>
-						</tr>
-						<tr>
-							<td></td>
-							<td class="available_medium"><span class="hoverdisplay-text">B<span></td>
-							<td colspan="6" style="text-align:left">neither easy nor difficult to book</td>
-						</tr>
-						<tr>
-							<td></td>
-							<td class="available_hard"><span class="hoverdisplay-text">C</span></td>
-							<td colspan="6" style="text-align:left"> difficult to book</td>
 						</tr>
 					</table>
+				</div>
+			
+				<br>
+				<div style="display: flex; justify-content: space-evenly; align-items: center; flex-wrap: wrap; gap: 20px">
+					<div class="glow-shadow" style="display: inline-block; padding: 20px; border-radius: 20px; text-align: center; font-weight: bold;">
+						Register
+						<table>
+							<tr>
+								<td style="padding: 0px;"><span style="font-family: freeman;"><span style="font-size: 400%;">12</span></td>
+								<td style="padding: 0px; font-family: freeman; line-height: 0.7; vertical-align: middle; text-align: left;">
+									<span style="font-size: 250%">+</span><br><span style="font-size: 150%">hrs</span>
+								</td>
+							</tr>
+						</table>
+						in advance
+					</div>
+					<div class="glow-shadow" style="display: inline-block; padding: 20px; border-radius: 20px; text-align: center; font-weight: bold;">
+						Cancel
+						<table>
+							<tr>
+								<td style="padding: 0px;"><span style="font-family: freeman;"><span style="font-size: 400%;">24</span></td>
+								<td style="padding: 0px; font-family: freeman; line-height: 0.7; vertical-align: middle; text-align: left;">
+									<span style="font-size: 250%">+</span><br><span style="font-size: 150%">hrs</span>
+								</td>
+							</tr>
+						</table>
+						in advance
+					</div>
+					<div class="glow-shadow" style="padding: 10px; border-radius: 20px;">
+						<div style="font-family: freeman; text-align: center;">Demand Key</div>
+						<table class="timetable tinytext">
+							<colgroup>
+								<col style="min-width: 30px; max-width: 50px"></col>
+								<col></col>
+							</colgroup>
+							<tr>
+								<td class="available_easy"><span class="hoverdisplay-text">A</span></td>
+								<td colspan="6" style="text-align:left"> available, low demand, easier to book</td>
+							</tr>
+							<tr>
+								<td class="available_medium"><span class="hoverdisplay-text">B<span></td>
+								<td colspan="6" style="text-align:left">available, medium demand
+							</tr>
+							<tr>
+								<td class="available_hard"><span class="hoverdisplay-text">C</span></td>
+								<td colspan="6" style="text-align:left"> available, highest demand, harder to book</td>
+							</tr>
+						</table>
+					</div>
 				</div>
 			</div>
 			<div>
 				<ul style="margin-top: 16px">
-					<li>The above schedule is listed in Boston time / US Eastern Time: UTC-4 or UTC-5 depending on time of year (<a href="https://www.timeanddate.com/worldclock/converter.html?p1=43" target="_blank">convert to your time zone</a>).</li>
-					<li> High, medium, and low availability indications above are based on historical popularity of timeslots. More popular timeslots will be more difficult in general to schedule.</li>
-					<li>Classes must be scheduled at least 12h in advance of class time and may be cancelled or rescheduled up to 24h in advance of class time.
+					<li>Deviations from this schedule may occur due to holidays, personal conflicts, or school breaks.</li>
+					<li> Ease-of-booking indications above are estimates based on historical popularity of timeslots. More popular timeslots will be more difficult in general to schedule.</li>
 					<li>All class scheduling and cancellations are managed through the student portal, accessed by registered students by <a href="login.html">logging in</a>.</li>
 					<li>I generally do not teach classes on Fridays and Saturdays.</li>
 				</ul>
@@ -449,7 +454,7 @@
 			<details>
 				<summary>What platform do you use for your online classes?</summary>
 				<div style="overflow:auto;">
-					<p><a href="zoom.us">Zoom</a> is my preferred internet communication tool for my tutoring sessions. After <a href="login.html">logging in</a> and registering for a tutoring session with me, you will receive a class reminder email with a Zoom link for class 36 hours in advance of your appointment start time.</p>
+					<p><a href="http://zoom.us">Zoom</a> is my preferred internet communication tool for my tutoring sessions. After <a href="login.html">logging in</a> and registering for a tutoring session with me, you will receive a class reminder email with a Zoom link for class 36 hours in advance of your appointment start time.</p>
 				</div>
 			</details>
 
@@ -504,51 +509,23 @@
 				<div>
 					<p>As of <strong>August 2025</strong>, available payment methods for lessons are as follows.</p>
 
-					<table style="margin: auto; border-collapse: collapse" data-id="0">
-						<colgroup>
-							<col style="width: 30%;">
-						</colgroup> 
-						<colgroup>
-							<col style="width: 40%;">
-						</colgroup> 
-						<colgroup>
-							<col style="width: 30%;">
-						</colgroup>
-						<thead>
-							<tr style="text-align: left;" class="divider-row">
-								<th style="padding: 10px;">Payment method</th>
-								<th style="padding: 10px;">Send to... / How to send</th>
-								<th style="padding: 10px;">Processing fee</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td style="vertical-align: top; padding: 10px;">Zelle (preferred)</td>
-								<td style="vertical-align: top; padding: 10px;">tutor@trevorkafka.com</td>
-								<td style="vertical-align: top; padding: 10px;">none</td>
-							</tr>
-							<tr>
-								<td style="vertical-align: top; padding: 10px;">Online Payment (credit card, Venmo, auto pay, etc.)</td>
-								<td style="vertical-align: top; padding: 10px;">Click the link in your invoice or &quot;Account &amp; Invoices&quot; in the left sidebar after <a href="http://www.trevorkafka.com/login">logging in</a> followed by &quot;Make a Payment.&quot;</td>
-								<td style="vertical-align: top; padding: 10px;">2.89%</td>
-							</tr>
-							<tr>
-								<td style="vertical-align: top; padding: 10px;">Paper check via mail</td>
-								<td style="vertical-align: top; padding: 10px;">Mail to address listed on invoice.</td>
-								<td style="vertical-align: top; padding: 10px;">none</td>
-							</tr>
-						</tbody>
-					</table>
+					<ol>
+						<li>Zelle (preferred)</li>
+						<li>Online payment* (including credit card, Venmo, and auto pay)</li>
+						<li>Paper check by mail</li>
+					</ol>
 
-					<p style="padding-top: 16px">Bills are automatically generated at the end of each month for classes taken in that month and emailed out to clients. Bills are due within 7 days of receipt. For online payments, you can optionally sign up for automatic bill payments (auto pay).</p>
+					<p>*Online payments are subject to a 2.89% processing fee to at least partially cover credit card transaction fees.</p>
 
-					<p><strong>Class rates vary depending on time of year, my availability, instructional content, and the financial situation of each family and/or student. Under most circumstances, rates remain locked-in on a per-family basis. Please get in touch directly by scheduling an intro call or by email to discuss class rates.</strong></p>
+					<p>Payment instructions are included with each invoice. Bills are automatically generated at the end of each month for classes taken in that month and emailed out to clients. Bills are due within 7 days of receipt. For online payments, you can optionally sign up for automatic bill payments (auto pay).</p>
+
+					<p>Class rates may vary depending on time of year, my availability, student location, instructional content, and the financial situation of each family and/or student. Due to these varying factors, I do not post my rates on my website, but please do not hesitate get in touch directly by email (<trevorkafka-email></trevorkafka-email>) or by <a href="call.html">scheduling an intro call</a> to discuss class rates.</p>
 				</div>
 			</details>
 		</div>
 
 		<div class="fade" style="display: flex; justify-content: center; align-items: center; min-height: 400px;">
-			<div style="font-family: monospace; font-size: 250%; font-weight: bold; transform: rotate(-10deg); max-width: 500px; text-align: center; line-height: 1.5em;">
+			<div style="font-family: monospace; font-size: 250%; font-weight: bold; transform: rotate(-10deg); max-width: 500px; text-align: center; line-height: 1.5;">
 				no contracts, no commitments, no headaches, just real person-to-person help when you need it
 			</div>
 		</div>
