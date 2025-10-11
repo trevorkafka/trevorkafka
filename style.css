@@ -301,6 +301,10 @@
     border-radius: 5px;
 	}
 
+	tr.divider-row th {
+		border-bottom: solid 1px black
+	}
+
 
 /* */
 /* BLOCKQUOTES */
