@@ -276,6 +276,9 @@
 
 	table.timetable {
 			border-spacing: 3px;
+			min-width: 300px;
+			max-width: 500px;
+		  width: 50vw;
 	}
 
 	.available_easy {
