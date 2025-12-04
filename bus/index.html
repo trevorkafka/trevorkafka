@@ -85,6 +85,10 @@
 
 <body>
 	<div> <!-- this div makes sure that the body's flexbox layout doesn't rearrange overall webpage content -->
+		<h1 style="
+			color: white;
+			text-align: center
+		">When to Leave for the Bus</h1>
 		<table style="
 			table-layout: fixed; 
 			margin: 0 auto 1vw auto; 
@@ -195,7 +199,7 @@
 						timeTable[route]["counter"] = 1;
 					};
 
-					if (waitTime >= 0) {
+					if (waitTime >= -1) {
 
 						if (timeTable[route]["counter"] <= 3) {
 							timeTable[route][route + "-" + direction + timeTable[route]["counter"]] = waitTime;
