@@ -1,0 +1,251 @@
+<!DOCTYPE HTML>
+
+<head>
+	<title>2026-03 Thai Phrases</title>
+	<meta charset="utf-8"/> <!--ensures that there aren't any issues with the display of emojis -->
+	<meta content="width=device-width" name="viewport"/> <!-- essential for making sure that the ACTUAL screen width is interpreted by the CSS as opposed to some idealized number presented by smartphones (980px+) -->
+	<link href="../style.css" rel="stylesheet"/>
+	<link href="../favicon.ico" rel="shortcut icon"/>
+<!-- Google font stuff -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&amp;display=block" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Freeman&amp;display=block" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai+Looped:wght@100..900&display=swap" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> <!-- use JQuery -->
+<script type="text/javascript" src="script.js" defer></script> <!-- defer means to wait to run the script until the whole page is ready -->
+
+</head>
+<style>
+	:root {
+		--require-background-color: #56B4E9; /* blue */
+		--require-text-color: DarkBlue;
+		--emphasize-background-color: #F0E442; /* orange */
+		--emphasize-text-color: DarkRed;
+		--allow-background-color: #009E73; /* green */
+		--allow-text-color: HoneyDew;
+		--cycle-gradient: linear-gradient(to right, var(--color3),var(--require-background-color),var(--emphasize-background-color),var(--allow-background-color));
+	}
+
+	html {
+		scroll-padding-top: 80px; /* buffer for scrolling becuase of top bar */
+	}
+
+	.word-box {
+		display: inline-block;
+		background-color: #00000010;
+		margin: 10px;
+		padding: 10px;
+		border-radius: 10px;
+		transition: background-color 0.2s ease;
+		cursor: pointer;
+	}
+
+	.word-box:hover, .speak-ja.selected {
+		background-color: #00000030;
+	}
+
+	#word-container {
+		text-align: center;
+	}
+
+	.thai {
+		font-size: 200%;
+		font-family: "Noto Sans Thai Looped";
+		font-weight: bold;
+	}
+
+	.button {
+		border: solid 1px LightGrey;
+		border-radius: 10px;
+		text-align: center;
+		padding: 10px 5px;
+		cursor: pointer;
+		box-shadow: 2px 2px 0px black;
+		transition: background-color 0.1s ease, box-shadow 0.3s ease;
+		user-select: none;
+	}
+
+	.button {
+		background-color: var(--color3);
+	}
+
+	.all.button, .all-col.button {
+		border: solid 1px black;
+		background-color: DarkSalmon;
+		color: white;
+		font-weight: bold;
+	}
+
+	.button:active, .fixed-bottom-button:active {
+		transform: translate(2px, 2px);
+		box-shadow: 0px 0px 0px black;
+	}
+
+	 @media(width < 900px) {
+
+		.top-bar.button {
+			padding: 5px 5px;
+			margin: 3px;
+			font-size: 80%;
+		}
+
+		.top-bar.title, .table, .bottom-bar.toolbar {
+			font-size: 80% !important;
+		}
+
+		.kana.button, .all.button {
+			padding: 5px 3px !important;
+		}
+
+		.top.content {
+			min-width: min(1000px, 95vw)
+		}
+
+	}
+
+	@media (max-width: 1459px) and (min-width: 500px) {
+		#tags {
+			display: none;
+		}
+	}
+
+	@media (min-width: 1458px), (max-width: 500px) {
+		#tag1, #tag2, #tag3 {
+			display: none;
+		}
+	}
+
+	td:empty {
+		background-color: transparent;
+	}
+
+	.require, .button[data-state="require"] {
+		background-color: var(--require-background-color);
+		border: solid 1px var(--require-text-color);
+		color: var(--require-text-color);
+	}
+
+	.emphasize, .button[data-state="emphasize"] {
+		background-color: var(--emphasize-background-color);
+		border: solid 1px var(--emphasize-text-color);
+		color: var(--emphasize-text-color);
+	}
+
+	.allow, .button[data-state="allow"] {
+		background-color: var(--allow-background-color);
+		border: solid 1px black;
+		color: var(--allow-text-color);
+	}
+
+	#cycle, .cycle {
+		background: var(--cycle-gradient);
+		border: solid 1px black;
+	}
+
+	.clear {
+		background-color: var(--color3);
+		border: solid 1px black;
+	}
+
+	.inline-box {
+		display: inline-block;
+		padding: 3px 6px;
+		border-radius: 5px;
+		font-weight: bold;
+		margin: 1px;
+	}
+
+	.duplicate {
+		opacity: 0;
+		transition: opacity 0.3s ease, background-color 0.3s ease;
+	}
+
+	.vertical-align-top td {
+		vertical-align: top;
+	}
+
+	.vertical-align-middle ts {
+		vertical-align: middle;
+	}
+
+	.nudge-up {
+		transform: translateY(-3px);
+	}
+
+	.flex-container {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 20px;
+		width: min(1500px, var(--widthmax));
+		margin: auto;
+	}
+
+	.flex-element {
+		flex: 1 1 400px;
+		min-width: 300px;
+	}
+
+	.fixed-bottom-buttons {
+		position: fixed;
+		bottom: 90px;  
+		right: 10px;   
+		display: flex;
+		z-index: 3;
+	}
+
+	.fixed-bottom-button {
+		margin-left: 5px;
+		margin-right: 5px;
+		display: flex;
+		flex-wrap: wrap;
+		background-color: black;
+		color: white;
+		width: 80px;
+		height: 80px;
+		border-radius: 20px;
+		text-align: center;
+		font-size: 80%;
+		justify-content: center;
+		align-items: center;
+		user-select: none;
+		cursor: pointer;
+		transition: background-color 0.2s ease;
+		/*border: solid 1px black;*/
+		/*box-shadow: 2px 2px 0px black;*/
+		box-shadow: 0px 0px 10px Grey;
+	}
+
+	.fixed-bottom-button:hover {
+		background-color: chocolate;
+	}
+
+	.inline-title {
+		font-family: freeman;
+	}
+
+</style>
+
+<body>
+
+	<div class="content" id="word-container" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; align-content: center; height: 100vh">
+
+	</div>
+
+	<script>
+		fetch("vocabulary.json")
+		  .then(res => res.json())
+		  .then(words => {
+		    words.forEach(word => {
+		      const div = document.createElement("div");
+		      div.classList.add("word-box");
+		      div.innerHTML = `<span class="thai">${word.thai}</span><br><span class="english">${word.english}</span>`;
+		      document.getElementById("word-container").appendChild(div);
+		      div.addEventListener("click", () => {
+		        new Audio(`media/${word.thai}.m4a`).play();
+		      });
+		    });
+		  });
+	</script>
+
+</body>
