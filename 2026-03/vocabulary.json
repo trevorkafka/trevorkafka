@@ -1,18 +1,10 @@
 [
-	{
-		"thai": "หวานน้อย",
-		"english": "a little bit sweet"
-	},
-	{
-		"thai": "ไม่หวาน",
-		"english": "not sweet"
-	},
-	{
-		"thai": "เย็น",
-		"english": "cool (cold drink)"
-	},
-	{
-		"thai": "อเมริกาโน่",
-		"english": "Americano"
-	}
+	{"thai": "หวานน้อย", "english": "a little bit sweet"},
+	{"thai": "ไม่หวาน", "english": "not sweet"},
+	{"thai": "เย็น", "english": "cool (cold drink)"},
+	{"thai": "อเมริกาโน่", "english": "Americano"},
+	{"thai": "สวัสดีครับ", "english": "hello"},
+	{"thai": "ขอบคุณครับ", "english": "thank you"},
+	{"thai": "ไหม", "english": "(Y/N Q ending)"},
+	{"thai": "ไม่", "english": "no/not"}
 ]
