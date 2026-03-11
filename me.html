@@ -126,24 +126,10 @@
 
 		<script>
 			window.addEventListener('DOMContentLoaded', function () {
-			  document.getElementById('englishName').addEventListener('click', function () {
-			    new Audio('media/Trevor Kafka.m4a').play();
-			  });
-
-			  document.getElementById('chineseName').addEventListener('click', function () {
-			    new Audio('media/康明.m4a').play();
-			  });
-
-			  document.getElementById('japaneseName').addEventListener('click', function () {
-			    new Audio('media/トレバー・カフカ.m4a').play();
-			  });
-
-			  document.getElementById('thaiName').addEventListener('click', function () {
-			    new Audio('media/เทรเวอร์ คาฟคา.m4a').play();
-			  });
-
-			  document.getElementById('tokiPonaName').addEventListener('click', function () {
-			    new Audio('media/jan Toewa.m4a').play();
+			  document.querySelectorAll('[data-audio]').forEach(el => {
+			    el.addEventListener('click', function () {
+			      new Audio(this.dataset.audio).play();
+			    });
 			  });
 			});
 		</script>
@@ -151,14 +137,14 @@
 		<div class="widescreen">
 		<h1><span style="opacity:15%; padding-right: 20px; font-size: 80%">www.</span><span style="font-size: 120%"><span style="margin-right: 20px">Trevor</span>Kafka</span><span style="opacity:15%; padding-left: 20px; font-size: 80%">.com<span style="padding-left: 5px; padding-right: 5px">/</span>me</span></h1>
 		<h2 style="margin-top: 0px">
-			<span id="englishName" class="bigname" style="font-family: 'Noto Serif'" title="English (IPA)">/trɛˈvɜr kɑˈfkə/</span>
-			<span id="chineseName" class="bigname" style="font-family: 'Yuji Mai'" title="Chinese (Mandarin: kāng míng; Cantonese: hong1 ming4)">
+			<span data-audio="media/Trevor Kafka.m4a" class="bigname" style="font-family: 'Noto Serif'" title="English (IPA)">/trɛˈvɜr kɑˈfkə/</span>
+			<span data-audio="media/康明.m4a" class="bigname" style="font-family: 'Yuji Mai'" title="Chinese (Mandarin: kāng míng; Cantonese: hong1 ming4)">
 				<ruby>康<rt>ㄎㄤ</rt></ruby>
 				<ruby>明<rt>ㄇㄧㄥˊ</rt></ruby>
 			</span>
-			<span id="japaneseName" class="bigname" style="font-family: 'Kaisei Tokumin'" title="Japanese (torebā kafuka)"> トレバー・カフカ </span>
-			<span id="thaiName" class="bigname" style="font-family: Sriracha" title="Thai (treewə̂ə kâapkaa)"> เทรเวอร์ คาฟคา </span>
-			<!-- <span id="tokiPonaName" class="bigname" style="font-family: nasin-nanpa" title="Toki Pona (jan Toewa)"> jan[telo olin en waso ale] </span> -->
+			<span data-audio="media/トレバー・カフカ.m4a" class="bigname" style="font-family: 'Kaisei Tokumin'" title="Japanese (torebā kafuka)"> トレバー・カフカ </span>
+			<span data-audio="media/เทรเวอร์ คาฟคา.m4a" class="bigname" style="font-family: Sriracha" title="Thai (treewə̂ə kâapkaa)"> เทรเวอร์ คาฟคา </span>
+			<!-- <span data-audio="media/jan Toewa.m4a" class="bigname" style="font-family: nasin-nanpa" title="Toki Pona (jan Toewa)"> jan[telo olin en waso ale] </span> -->
 		</h2>
 
 		<p style="margin-bottom: 50px">Page last updated <strong><span class="last-updated"></span></strong>. Currently located in <strong><span class="location"></span></strong>, current time <strong><span class="time"></span></strong>.</p>
@@ -167,13 +153,13 @@
 		<center class="narrowscreen">
 		<h1><span style="font-size: 120%"><span style="margin-right: 20px">Trevor</span>Kafka</span></h1>
 		<h2 style="margin-top: 0px">
-			<span class="smallname" style="font-family: 'Noto Serif'" title="English (IPA)">/trɛˈvɜr/</span>
-			<span class="smallname" style="font-family: 'Yuji Mai'" title="Chinese">
+			<span data-audio="media/Trevor Kafka.m4a" class="smallname" style="font-family: 'Noto Serif'" title="English (IPA)">/trɛˈvɜr kɑˈfkə/</span>
+			<span data-audio="media/康明.m4a" class="smallname" style="font-family: 'Yuji Mai'" title="Chinese">
 				<ruby>康<rt>ㄎㄤ</rt></ruby>
 				<ruby>明<rt>ㄇㄧㄥˊ</rt></ruby>
 			</span>
-			<span class="smallname" style="font-family: 'Kaisei Tokumin'" title="Japanese"> トレバー </span>
-			<span class="smallname" style="font-family: Sriracha" title="Thai"> เทรเวอร์ </span>
+			<span data-audio="media/トレバー・カフカ.m4a" class="smallname" style="font-family: 'Kaisei Tokumin'" title="Japanese"> トレバー・カフカ </span>
+			<span data-audio="media/เทรเวอร์ คาฟคา.m4a" class="smallname" style="font-family: Sriracha" title="Thai"> เทรเวอร์ คาฟคา </span>
 			<!-- <span class="bigname" style="font-family: nasin-nanpa; font-size: 70%" title="Toki Pona (jan Toewa)"> jan[telo olin en waso ale] </span> -->
 		</h2>
 
