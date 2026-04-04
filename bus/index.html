@@ -146,13 +146,13 @@
 				<td class="countdown-time" id="91-W3"></td>
 			</tr>
 			<tr>
-				<td class="countdown-time" id="CT2-E3"></td>
-				<td class="countdown-time" id="CT2-E2"></td>
-				<td class="countdown-time" id="CT2-E1"></td>
-				<td><div class="bus-number">CT2</div></td>
-				<td class="countdown-time" id="CT2-W1"></td>
-				<td class="countdown-time" id="CT2-W2"></td>
-				<td class="countdown-time" id="CT2-W3"></td>
+				<td class="countdown-time" id="85-E3"></td>
+				<td class="countdown-time" id="85-E2"></td>
+				<td class="countdown-time" id="85-E1"></td>
+				<td><div class="bus-number">85</div></td>
+				<td class="countdown-time" id="85-W1"></td>
+				<td class="countdown-time" id="85-W2"></td>
+				<td class="countdown-time" id="85-W3"></td>
 			</tr>
 		</table>
 		<div class="content" style="display: none">
@@ -188,10 +188,6 @@
 					};
 
 					let route = prediction.relationships.route.data.id;
-
-					if (route === "747") {
-						route = "CT2";
-					};
 
 					if(!timeTable[route]) {
 						timeTable[route] = {};
