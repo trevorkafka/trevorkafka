@@ -1,0 +1,124 @@
+<!DOCTYPE HTML>
+
+<head>
+	<title>William S | Pronunciation List</title>
+	<meta charset="utf-8"/> <!--ensures that there aren't any issues with the display of emojis -->
+	<meta content="width=device-width" name="viewport"/> <!-- essential for making sure that the ACTUAL screen width is interpreted by the CSS as opposed to some idealized number presented by smartphones (980px+) -->
+	<link href="/style.css" rel="stylesheet"/>
+	<link href="/favicon.ico" rel="shortcut icon"/>
+<!-- Google font stuff -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&amp;display=block" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Freeman&amp;display=block" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai+Looped:wght@100..900&display=swap" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> <!-- use JQuery -->
+<script type="text/javascript" src="script.js" defer></script> <!-- defer means to wait to run the script until the whole page is ready -->
+
+</head>
+<style>
+	.word-box {
+		display: inline-block;
+		background-color: #00000010;
+		margin: 10px;
+		padding: 10px;
+		border-radius: 10px;
+		transition: background-color 0.2s ease;
+	}
+
+	h2.has-audio {
+		cursor: pointer;
+		padding: 5px 10px;
+		border-radius: 10px;
+		transition: background-color 0.2s ease;
+	}
+
+	h2.has-audio:hover {
+		background-color: #00000030;
+	}
+
+	.word-box.has-audio {
+		cursor: pointer;
+		box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+	}
+
+	.word-box.has-audio:hover {
+		background-color: #00000030;
+	}
+
+	#word-container {
+		text-align: center;
+	}
+
+	.chinese {
+		font-weight: bold;
+		font-size: 150%;
+	}
+
+	.pinyin {
+		opacity: 70%;
+	}
+
+	.button {
+		border: solid 1px LightGrey;
+		border-radius: 10px;
+		text-align: center;
+		padding: 10px 5px;
+		cursor: pointer;
+		box-shadow: 2px 2px 0px black;
+		transition: background-color 0.1s ease, box-shadow 0.3s ease;
+		user-select: none;
+	}
+</style>
+
+<body>
+
+	<div class="content" id="word-container" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; align-content: center; min-height: 100vh; padding-bottom: 50px">
+
+	</div>
+
+	<script>
+	  fetch("vocabulary.json")
+	    .then(res => res.json())
+	    .then(data => {
+	      data.forEach(entry => {
+	        const h2 = document.createElement("h2");
+	        h2.textContent = entry.date;
+	        document.getElementById("word-container").appendChild(h2);
+	        fetch(`../Mandarin audio/${entry.date}.m4a`, { method: "HEAD" })
+	          .then(res => {
+	            if (res.ok) {
+	              h2.classList.add("has-audio");
+	              h2.addEventListener("click", () => {
+	                new Audio(`../Mandarin audio/${entry.date}.m4a`).play();
+	              });
+	            }
+	          });
+	        const subContainer = document.createElement("div");
+	        document.getElementById("word-container").appendChild(subContainer);
+	        entry.vocabulary.forEach(item => {
+	          const chinese = typeof item === "string" ? item : item.chinese;
+	          const pinyin = typeof item === "string" ? item : item.pinyin;
+	          const audioFile = typeof item === "string" ? item : item.pinyin;
+
+	          const div = document.createElement("div");
+	          div.classList.add("word-box");
+	          div.innerHTML = `<span class="chinese">${chinese}</span><br><span class="pinyin">${pinyin}</span>`;
+	          subContainer.appendChild(div);
+	          fetch(`../Mandarin audio/${audioFile}.m4a`, { method: "HEAD" })
+	            .then(res => {
+	              if (res.ok) {
+	                div.classList.add("has-audio");
+	                div.addEventListener("click", () => {
+	                  new Audio(`../Mandarin audio/${audioFile}.m4a`).play();
+	                });
+	              } else {
+	                div.classList.add("no-audio");
+	              }
+	            });
+	        });
+	      });
+	    });
+	</script>
+
+</body>
