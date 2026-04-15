@@ -40,6 +40,17 @@
 		transition: background-color 0.2s ease;
 	}
 
+	h2.has-audio {
+		cursor: pointer;
+		padding: 5px 10px;
+		border-radius: 10px;
+		transition: background-color 0.2s ease;
+	}
+
+	h2.has-audio:hover {
+		background-color: #00000030;
+	}
+
 	.word-box.has-audio {
 		cursor: pointer;
 		box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
@@ -230,7 +241,7 @@
 
 <body>
 
-	<div class="content" id="word-container" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; align-content: center; height: 100vh">
+	<div class="content" id="word-container" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; align-content: center; min-height: 100vh; padding-bottom: 50px">
 
 	</div>
 
@@ -238,31 +249,40 @@
 	  fetch("vocabulary.json")
 	    .then(res => res.json())
 	    .then(data => {
-	      const entry = data[0];
+	      data.forEach(entry => {
+	        const h2 = document.createElement("h2");
+	        h2.textContent = entry.date;
+	        document.getElementById("word-container").appendChild(h2);
+	        fetch(`../English audio/${entry.date}.m4a`, { method: "HEAD" })
+	          .then(res => {
+	            if (res.ok) {
+	              h2.classList.add("has-audio");
+	              h2.addEventListener("click", () => {
+	                new Audio(`../English audio/${entry.date}.m4a`).play();
+	              });
+	            }
+	          });
+	        const subContainer = document.createElement("div");
+	        document.getElementById("word-container").appendChild(subContainer);
+	        entry.vocabulary.forEach(item => {
+	          const word = typeof item === "string" ? item : item.word;
+	          const audioFile = typeof item === "string" ? item : item.audio;
 
-	      const h2 = document.createElement("h2");
-	      h2.textContent = entry.date;
-	      document.getElementById("word-container").appendChild(h2);
-
-	      const subContainer = document.createElement("div");
-	      document.getElementById("word-container").appendChild(subContainer);
-
-	      entry.vocabulary.forEach(word => {
-	        const div = document.createElement("div");
-	        div.classList.add("word-box");
-	        div.innerHTML = `<span class="english">${word}</span>`;
-	        subContainer.appendChild(div);
-
-	      fetch(`media/${word}.m4a`, { method: "HEAD" })
-	        .then(res => {
-	          if (res.ok) {
-	            div.classList.add("has-audio");
-	            div.addEventListener("click", () => {
-	              new Audio(`media/${word}.m4a`).play();
+	          const div = document.createElement("div");
+	          div.classList.add("word-box");
+	          div.innerHTML = `<span class="english">${word}</span>`;
+	          subContainer.appendChild(div);
+	          fetch(`../English audio/${audioFile}.m4a`, { method: "HEAD" })
+	            .then(res => {
+	              if (res.ok) {
+	                div.classList.add("has-audio");
+	                div.addEventListener("click", () => {
+	                  new Audio(`../English audio/${audioFile}.m4a`).play();
+	                });
+	              } else {
+	                div.classList.add("no-audio");
+	              }
 	            });
-	          } else {
-	            div.classList.add("no-audio");
-	          }
 	        });
 	      });
 	    });
