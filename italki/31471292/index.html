@@ -54,6 +54,11 @@
 		font-weight: bold;
 	}
 
+	.IPA {
+		color: grey;
+		font-size: 90%;
+	}
+
 	.button {
 		border: solid 1px LightGrey;
 		border-radius: 10px;
@@ -68,7 +73,17 @@
 
 <body>
 
-	<div class="content" id="word-container" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; align-content: center; min-height: 100vh; padding-bottom: 50px">
+	<div style="padding-bottom: 50px; padding-top: 50px">
+
+		<div class="content">
+			<p>Before clicking on a word, try to recall the pronunciation on your own. Then, listen click the word to listen to the audio to hear my pronunciation. After that, repeat the word aloud and try to imitate my pronunciation as best as possible.</p>
+			<p>在点击单词之前，先试着自己回忆它的发音。然后，点击单词聆听音频，听我的发音。之后，大声重复这个单词，尽量模仿我的发音。</p>
+			<label><input type="checkbox" id="ipa-toggle" checked style="width: auto"> Show IPA 表示国际音标</label>
+		</div>
+
+		<div class="content" id="word-container" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; align-content: center; min-height: 100vh;">
+
+		</div>
 
 	</div>
 
@@ -93,11 +108,11 @@
 	        document.getElementById("word-container").appendChild(subContainer);
 	        entry.vocabulary.forEach(item => {
 	          const word = typeof item === "string" ? item : item.word;
-	          const audioFile = typeof item === "string" ? item : item.audio;
+	          const audioFile = item.audio ?? item.word;
 
 	          const div = document.createElement("div");
 	          div.classList.add("word-box");
-	          div.innerHTML = `<span class="english">${word}</span>`;
+	          div.innerHTML = `<span class="english">${word}</span><br><span class="IPA">${item.IPA}</span>`;
 	          subContainer.appendChild(div);
 	          fetch(`../English audio/${audioFile}.m4a`, { method: "HEAD" })
 	            .then(res => {
@@ -113,6 +128,13 @@
 	        });
 	      });
 	    });
+
+	    // toggle IPA
+	    document.getElementById("ipa-toggle").addEventListener("change", function() {
+	        document.querySelectorAll(".IPA").forEach(el => {
+	          el.style.display = this.checked ? "" : "none";
+	        });
+	      });
 	</script>
 
 </body>
