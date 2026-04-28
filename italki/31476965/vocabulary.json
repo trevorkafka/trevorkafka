@@ -1,0 +1,20 @@
+[
+	{"date": "Tuesday April 28, 2026",
+	"vocabulary": [
+		{"word": "I don't understand what you said", "IPA": "/aɪ doʊnt ˌʌndərˈstænd wʌt ju sɛd/"},
+		{"word": "please repeat that again", "IPA": "/pliz rɪˈpit ðæt əˈɡɛn/"},
+		{"word": "fluently", "IPA": "/ˈfluəntli/"},
+		{"word": "Italy", "IPA": "/ˈɪtəli/"},
+		{"word": "What's today's date?", "audio": "What's today's date", "IPA": "/wʌts təˈdeɪz deɪt/"},
+		{"word": "What's the day of the week?", "audio": "What's the day of the week", "IPA": "/wʌts ðə deɪ əv ðə wik/"},
+		{"word": "assistant teacher", "IPA": "/əˈsɪstənt ˈtitʃər/"},
+		{"word": "boring", "IPA": "/ˈbɔrɪŋ/"},
+		{"word": "master's student", "IPA": "/ˈmæstərz ˈstudənt/"},
+		{"word": "master's degree", "IPA": "/ˈmæstərz dɪˈɡri/"},
+		{"word": "grow/grew/grown", "audio": "grow grew grown", "IPA": "/ɡroʊ ɡru ɡroʊn/"},
+		{"word": "new year's day", "IPA": "/nu jirz deɪ/"},
+		{"word": "the new year holiday", "IPA": "/ðə nu jir ˈhɑləˌdeɪ/"},
+		{"word": "birth", "IPA": "/bɜrθ/"},
+		{"word": "salary", "IPA": "/ˈsæləri/"}
+	]}
+]
