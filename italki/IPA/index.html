@@ -1,0 +1,399 @@
+<!DOCTYPE HTML>
+
+<head>
+	<title>Pronunciation Reference | Vowels</title>
+	<meta charset="utf-8"/>
+	<meta content="width=device-width" name="viewport"/>
+	<link href="/style.css" rel="stylesheet"/>
+	<link href="/favicon.ico" rel="shortcut icon"/>
+<!-- Google font stuff -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&amp;display=block" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Freeman&amp;display=block" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai+Looped:wght@100..900&display=swap" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script type="text/javascript" src="script.js" defer></script>
+
+</head>
+<style>
+	.word-box {
+		display: inline-block;
+		background-color: #00000010;
+		margin: 5px;
+		padding: 8px 10px;
+		border-radius: 10px;
+		transition: background-color 0.2s ease;
+	}
+
+	.word-box.has-audio {
+		cursor: pointer;
+		box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+	}
+
+	.word-box.has-audio:hover {
+		background-color: #00000030;
+	}
+
+	.english {
+		font-weight: bold;
+	}
+
+	.IPA {
+		color: grey;
+		font-size: 90%;
+	}
+
+	.clickable-symbol, .clickable-name {
+		display: inline-block;
+		padding: 4px 10px;
+		border-radius: 10px;
+		transition: background-color 0.2s ease;
+	}
+
+	.clickable-symbol.has-audio, .clickable-name.has-audio {
+		cursor: pointer;
+	}
+
+	.clickable-symbol.has-audio:hover, .clickable-name.has-audio:hover {
+		background-color: #00000030;
+	}
+
+	#vowel-grid {
+		margin: 0 auto 30px;
+		border-collapse: collapse;
+	}
+
+	#vowel-grid td {
+		padding: 10px 20px;
+		text-align: center;
+		font-size: 32px;
+		font-weight: bold;
+		border: none;
+		border-radius: 10px;
+		transition: background-color 0.2s ease;
+	}
+
+	#vowel-grid td.has-audio {
+		cursor: pointer;
+	}
+
+	#vowel-grid td.has-audio:hover {
+		background-color: #00000030;
+	}
+
+	#vowel-table {
+		width: 100%;
+		max-width: 1100px;
+		margin: 0 auto;
+		border-collapse: collapse;
+	}
+
+	#vowel-table th, #vowel-table td {
+		padding: 12px 8px;
+		text-align: left;
+		vertical-align: middle;
+		border-bottom: 1px solid #00000020;
+	}
+
+	#vowel-table th {
+		border-bottom: none;
+		font-weight: bold;
+	}
+
+	#vowel-table thead th {
+		position: sticky;
+		top: 0;
+		background-color: var(--color3);
+		z-index: 10;
+		transition: box-shadow 0.2s ease, border-bottom-color 0.2s ease;
+	}
+
+	#vowel-table thead.scrolled th {
+		border-bottom: 1px solid #00000020;
+		box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.05);
+	}
+
+	#vowel-table td:not(.examples-cell) {
+		white-space: nowrap;
+	}
+
+	#vowel-table th:nth-child(1),
+	#vowel-table th:nth-child(2) {
+		text-align: center;
+	}
+
+	#vowel-table td.symbol-cell {
+		font-size: 28px;
+		font-weight: bold;
+		text-align: center;
+		min-width: 60px;
+	}
+
+	#vowel-table td.number-cell {
+		text-align: center;
+		color: #888;
+		min-width: 30px;
+	}
+
+	#vowel-table td.examples-cell {
+		text-align: left;
+	}
+
+	/* Narrow screen: stacked cards */
+	@media (max-width: 850px) {
+		#vowel-table, #vowel-table tbody, #vowel-table tr, #vowel-table td {
+			display: block;
+			width: auto;
+		}
+
+		#vowel-table thead {
+			display: none;
+		}
+
+		#vowel-table tr {
+			margin: 20px auto;
+			max-width: 600px;
+			padding: 15px 20px;
+			border: 1px solid #00000020;
+			border-radius: 12px;
+			box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.05);
+			background-color: var(--color3);
+		}
+
+		#vowel-table td {
+			border: none;
+			padding: 6px 0;
+		}
+
+		#vowel-table td.empty {
+			display: none;
+		}
+
+		#vowel-table td::before {
+			content: attr(data-label);
+			display: block;
+			font-weight: bold;
+			color: #555;
+			font-size: 85%;
+			margin-bottom: 4px;
+		}
+
+		#vowel-table td.symbol-cell::before,
+		#vowel-table td.number-cell::before,
+		#vowel-table td.examples-cell::before {
+			display: none;
+		}
+
+		#vowel-table td.symbol-cell {
+			font-size: 42px;
+			text-align: center;
+			padding: 5px 0 10px;
+		}
+
+		#vowel-table td.number-cell {
+			text-align: center;
+			font-size: 14px;
+			color: #888;
+			padding-bottom: 0;
+		}
+
+		#vowel-table td.examples-cell {
+			text-align: center;
+			padding-top: 10px;
+		}
+
+		/* Our Name + Common Name on one shared line */
+		#vowel-table td.our-name-cell:not(.empty),
+		#vowel-table td.name-cell:not(.empty) {
+			display: inline-block;
+			vertical-align: top;
+		}
+
+		#vowel-table td.our-name-cell:not(.empty) {
+			margin-right: 20px;
+		}
+
+		#vowel-table td.our-name-cell::before,
+		#vowel-table td.name-cell::before {
+			display: inline;
+			margin-right: 5px;
+			margin-bottom: 0;
+		}
+	}
+</style>
+
+<body>
+
+	<div style="padding-bottom: 50px; padding-top: 50px">
+
+		<div class="content">
+
+			<h1>IPA Vowels 国际音标元音</h1>
+
+			<table id="vowel-grid">
+				<tr>
+					<td>æ</td>
+					<td>eɪ</td>
+					<td>ɛ</td>
+					<td>i</td>
+					<td>ɪ</td>
+				</tr>
+				<tr>
+					<td>aɪ</td>
+					<td>ɑ</td>
+					<td>oʊ</td>
+					<td>ʌ</td>
+					<td>u</td>
+				</tr>
+				<tr>
+					<td>ɔ</td>
+					<td>ɜr</td>
+					<td>aʊ</td>
+					<td>ʊ</td>
+					<td>ə</td>
+				</tr>
+			</table>
+		</div>
+
+		<div class="content">
+			<label><input type="checkbox" id="ipa-toggle" checked style="width: auto"> Show IPA 表示国际音标</label>
+		</div>
+
+		<div class="content">
+			<table id="vowel-table">
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>Symbol</th>
+						<th>Our Name</th>
+						<th>Common Name</th>
+						<th>Examples</th>
+					</tr>
+				</thead>
+				<tbody></tbody>
+			</table>
+		</div>
+
+	</div>
+
+	<script>
+	  function tryAttachAudio(element, audioName) {
+	    fetch(`../English audio/${audioName}.m4a`, { method: "HEAD" })
+	      .then(res => {
+	        if (res.ok) {
+	          element.classList.add("has-audio");
+	          element.addEventListener("click", () => {
+	            new Audio(`../English audio/${audioName}.m4a`).play();
+	          });
+	        }
+	      });
+	  }
+
+	  // Attach audio to top vowel grid (entire cell is click target)
+	  document.querySelectorAll("#vowel-grid td").forEach(td => {
+	    tryAttachAudio(td, td.textContent.trim());
+	  });
+
+	  fetch("vowels.json")
+	    .then(res => res.json())
+	    .then(data => {
+	      const tbody = document.querySelector("#vowel-table tbody");
+
+	      data.forEach(entry => {
+	        const tr = document.createElement("tr");
+
+	        // Number
+	        const numTd = document.createElement("td");
+	        numTd.classList.add("number-cell");
+	        numTd.setAttribute("data-label", "#");
+	        numTd.textContent = entry.number;
+	        tr.appendChild(numTd);
+
+	        // Symbol (clickable)
+	        const symTd = document.createElement("td");
+	        symTd.classList.add("symbol-cell");
+	        symTd.setAttribute("data-label", "Symbol");
+	        const symSpan = document.createElement("span");
+	        symSpan.classList.add("clickable-symbol");
+	        symSpan.textContent = entry.symbol;
+	        symTd.appendChild(symSpan);
+	        tryAttachAudio(symSpan, entry.symbol);
+	        tr.appendChild(symTd);
+
+	        // Our Name (clickable)
+	        const ourTd = document.createElement("td");
+	        ourTd.classList.add("our-name-cell");
+	        ourTd.setAttribute("data-label", "Our Name");
+	        if (entry.ourName) {
+	          const ourSpan = document.createElement("span");
+	          ourSpan.classList.add("clickable-name");
+	          ourSpan.textContent = entry.ourName;
+	          ourTd.appendChild(ourSpan);
+	          tryAttachAudio(ourSpan, entry.ourName);
+	        } else {
+	          ourTd.classList.add("empty");
+	        }
+	        tr.appendChild(ourTd);
+
+	        // Common Name
+	        const nameTd = document.createElement("td");
+	        nameTd.classList.add("name-cell");
+	        nameTd.setAttribute("data-label", "Common Name");
+	        if (entry.name) {
+	          nameTd.textContent = entry.name;
+	        } else {
+	          nameTd.classList.add("empty");
+	        }
+	        tr.appendChild(nameTd);
+
+	        // Examples
+	        const exTd = document.createElement("td");
+	        exTd.classList.add("examples-cell");
+	        exTd.setAttribute("data-label", "Examples");
+	        entry.examples.forEach(item => {
+	          const word = typeof item === "string" ? item : item.word;
+	          const audioFile = item.audio ?? item.word;
+
+	          const div = document.createElement("div");
+	          div.classList.add("word-box");
+	          div.innerHTML = `<span class="english">${word}</span><br><span class="IPA">${item.IPA}</span>`;
+	          exTd.appendChild(div);
+	          fetch(`../English audio/${audioFile}.m4a`, { method: "HEAD" })
+	            .then(res => {
+	              if (res.ok) {
+	                div.classList.add("has-audio");
+	                div.addEventListener("click", () => {
+	                  new Audio(`../English audio/${audioFile}.m4a`).play();
+	                });
+	              } else {
+	                div.classList.add("no-audio");
+	              }
+	            });
+	        });
+	        tr.appendChild(exTd);
+
+	        tbody.appendChild(tr);
+	      });
+	    });
+
+	  // toggle IPA
+	  document.getElementById("ipa-toggle").addEventListener("change", function() {
+	    document.querySelectorAll(".IPA").forEach(el => {
+	      el.style.display = this.checked ? "" : "none";
+	    });
+	  });
+
+	  // sticky header shadow on scroll
+	  window.addEventListener("scroll", () => {
+	    const thead = document.querySelector("#vowel-table thead");
+	    if (!thead) return;
+	    if (window.scrollY > 0) {
+	      thead.classList.add("scrolled");
+	    } else {
+	      thead.classList.remove("scrolled");
+	    }
+	  });
+	</script>
+
+</body>
