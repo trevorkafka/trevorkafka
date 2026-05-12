@@ -1,4 +1,14 @@
 [
+	{"date": "Tuesday May 12, 2026",
+	"vocabulary": [
+		{"word": "usually", "IPA": "/ˈjuʒuəli/"},
+		{"word": "song", "IPA": "/sɑŋ/"},
+		{"word": "comfortable", "IPA": "/ˈkʌmftərbəl/"},
+		{"word": "comfortably", "IPA": "/ˈkʌmftərbli/"},
+		{"word": "economic", "IPA": "/ˌɛkəˈnɑmɪk/"},
+		{"word": "use (n.)", "audio": "use (n)", "IPA": "/jus/"},
+		{"word": "use (v.)", "audio": "use (v)", "IPA": "/juz/"}
+	]},
 	{"date": "Sunday May 03, 2026",
 	"vocabulary": [
 		{"word": "modern", "IPA": "/ˈmɑdərn/"},
