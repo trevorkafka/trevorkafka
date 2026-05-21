@@ -453,6 +453,19 @@
     const weekdayFmt = new Intl.DateTimeFormat(undefined, { weekday: 'short' });
     const timeFmt = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' });
 
+    // Find earliest slot containing available or booked time across all 7 days.
+    let earliest = SLOTS_PER_DAY;
+    for (let di = 0; di < days.length; di++) {
+      for (let si = 0; si < earliest; si++) {
+        const s = grid[di][si];
+        if (s === 1 || s === 3) { earliest = si; break; }
+      }
+    }
+    // Round down to nearest hour (4 slots per hour). Default to 0 if nothing.
+    const startSlot = earliest === SLOTS_PER_DAY ? 0 : Math.floor(earliest / 4) * 4;
+    const startHour = startSlot / 4;
+    const startContainer = startSlot / 2;
+
     const headCells = days.map(d => {
       const today = d.toDateString() === todayKey;
       return `<div class="calendar-head-cell${today ? ' calendar-head-cell-today' : ''}">
@@ -464,7 +477,7 @@
     const timeCells = [];
     const baseDate = new Date();
     baseDate.setMinutes(0, 0, 0);
-    for (let i = 0; i < 24; i++) {
+    for (let i = startHour; i < 24; i++) {
       const d = new Date(baseDate);
       d.setHours(i);
       timeCells.push(`<div class="calendar-time-cell">${timeFmt.format(d)}</div>`);
@@ -472,7 +485,7 @@
 
     const dayCols = days.map((_, di) => {
       const containers = [];
-      for (let ci = 0; ci < 48; ci++) {
+      for (let ci = startContainer; ci < 48; ci++) {
         const top = stateClass(grid[di][ci * 2]);
         const bot = stateClass(grid[di][ci * 2 + 1]);
         containers.push(`<div class="calendar-cell-container">
@@ -499,14 +512,17 @@
       </div>
     </div>`;
 
-    if (!loading) attachHover(root, grid);
+    if (!loading) attachHover(root, grid, startSlot);
   }
 
-  function attachHover(root, grid) {
+  function attachHover(root, grid, startSlot) {
     const wrap = root.querySelector('.calendar-body-wrap');
     const body = root.querySelector('.calendar-body');
     if (!wrap || !body) return;
     const cols = body.querySelectorAll('.calendar-week-day');
+    const tipFmt = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' });
+    const tipDate = new Date();
+    const visibleSlots = SLOTS_PER_DAY - startSlot;
 
     const bar = document.createElement('div');
     bar.className = 'hover-bar';
@@ -528,16 +544,18 @@
 
       const colRect = col.getBoundingClientRect();
       const yInCol = e.clientY - colRect.top;
-      const slotHeight = colRect.height / SLOTS_PER_DAY;
-      const slotIdx = Math.floor(yInCol / slotHeight);
-      if (slotIdx < 0 || slotIdx >= SLOTS_PER_DAY) { hide(); return; }
+      const slotHeight = colRect.height / visibleSlots;
+      const renderedSlotIdx = Math.floor(yInCol / slotHeight);
+      if (renderedSlotIdx < 0 || renderedSlotIdx >= visibleSlots) { hide(); return; }
+      const slotIdx = startSlot + renderedSlotIdx;
       if (grid[colIdx][slotIdx] !== 1) { hide(); return; }
 
-      const fracInSlot = (yInCol / slotHeight) - slotIdx;
-      const boundaryIdx = fracInSlot < 0.5 ? slotIdx : slotIdx + 1;
+      const fracInSlot = (yInCol / slotHeight) - renderedSlotIdx;
+      const renderedBoundary = fracInSlot < 0.5 ? renderedSlotIdx : renderedSlotIdx + 1;
+      const boundaryIdx = startSlot + renderedBoundary;
 
       const wrapRect = wrap.getBoundingClientRect();
-      const barY = boundaryIdx * slotHeight;
+      const barY = renderedBoundary * slotHeight;
       const barLeft = colRect.left - wrapRect.left;
       const barTop = colRect.top - wrapRect.top + barY;
 
@@ -546,7 +564,8 @@
       bar.style.top = (barTop - 1) + 'px';
 
       const totalMinutes = (boundaryIdx * 15) % 1440;
-      tooltip.textContent = pad2(Math.floor(totalMinutes / 60)) + ':' + pad2(totalMinutes % 60);
+      tipDate.setHours(Math.floor(totalMinutes / 60), totalMinutes % 60, 0, 0);
+      tooltip.textContent = tipFmt.format(tipDate);
 
       const tipX = barLeft + colRect.width / 2;
       tooltip.style.left = tipX + 'px';
