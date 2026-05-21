@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Availability</title>
+<style>
+  :root {
+    --gray2: #515164;
+    --gray3: #9c9cac;
+    --gray5: #e5e8ed;
+    --gray6: #f5f6f9;
+    --teal:  #00bfbd;
+    --sidebar-width: clamp(60px, 12vw, 116px);
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 16px 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--gray2);
+    background: #fff;
+    font-weight: 300;
+  }
+  .legend {
+    max-width: 1000px;
+    margin: 0 auto 16px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    font-size: 14px;
+    flex-wrap: wrap;
+  }
+  .legend-swatch {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  .legend-swatch.available   { background: #98D45F; }
+  .legend-swatch.unavailable { background: #fff; border: 1px solid var(--gray5); }
+  .legend-swatch.busy {
+    background-color: #ccc;
+    background-image: repeating-linear-gradient(45deg, transparent, transparent 1px, #ccc 1px, #eee 3px);
+  }
+  .tz-info {
+    color: var(--gray3);
+    font-size: 13px;
+  }
+  .book-cta {
+    position: relative;
+    margin-left: auto;
+  }
+  .book-button {
+    background: var(--teal);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .book-button:hover { background: #00a8a6; }
+  .book-button .chevron {
+    font-size: 10px;
+    transition: transform 0.15s ease;
+  }
+  .book-button[aria-expanded="true"] .chevron {
+    transform: rotate(180deg);
+  }
+  .book-menu {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 4px);
+    background: #fff;
+    border: 1px solid var(--gray5);
+    border-radius: 6px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    min-width: 170px;
+    z-index: 10;
+    display: none;
+  }
+  .book-menu.open { display: block; }
+  .book-menu a {
+    display: block;
+    padding: 9px 14px;
+    color: var(--gray2);
+    text-decoration: none;
+    font-size: 14px;
+  }
+  .book-menu a:hover { background: var(--gray6); }
+  .status {
+    max-width: 1000px;
+    margin: 8px auto;
+    padding: 0 16px;
+    color: var(--gray3);
+    font-size: 12px;
+    text-align: right;
+  }
+  .calendar {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 16px;
+    text-align: center;
+  }
+  .calendar-head-date {
+    display: flex;
+    height: 48px;
+    align-items: stretch;
+    border: 1px solid var(--gray5);
+    border-bottom: none;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    overflow: hidden;
+  }
+  .calendar-head-cell {
+    flex: 1;
+    border-left: 1px solid var(--gray5);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .calendar-head-cell-blank {
+    border-left: none;
+    flex: 0 0 var(--sidebar-width);
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    color: var(--gray3);
+    font-size: 12px;
+    overflow: hidden;
+  }
+  .calendar-head-cell-today {
+    background: #E7FCF5;
+    position: relative;
+  }
+  .calendar-head-cell-today::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-top: 8px solid #0DE298;
+  }
+  .calendar-head-cell-weekday {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--gray3);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  .calendar-head-cell-date {
+    font-size: 12px;
+    color: var(--gray2);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  .calendar-body-wrap {
+    border: 1px solid var(--gray5);
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    overflow: hidden;
+    position: relative;
+  }
+  .loading-spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 32px;
+    height: 32px;
+    margin: -16px 0 0 -16px;
+    border: 3px solid var(--gray5);
+    border-top-color: var(--teal);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    z-index: 1;
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  @media (max-width: 600px) {
+    .calendar-head-cell-blank-right,
+    .calendar-time-right {
+      display: none;
+    }
+  }
+  @media (max-width: 480px) {
+    .calendar-head-cell-blank span {
+      display: none;
+    }
+  }
+  .calendar-body {
+    display: flex;
+    overflow: hidden;
+  }
+  .calendar-time {
+    flex: 0 0 var(--sidebar-width);
+  }
+  .calendar-time-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 32px;
+    transform: translateY(-50%);
+    font-size: 12px;
+    color: var(--gray3);
+  }
+  .calendar-time-cell:first-child { visibility: hidden; }
+  .calendar-week-day {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    background-color: #ccc;
+    background-image: repeating-linear-gradient(60deg, transparent, transparent 2px, #eee 2px, #eee 7px);
+  }
+  .calendar-cell-container {
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid var(--gray5);
+    border-top: 1px solid var(--gray5);
+    height: 16px;
+  }
+  .calendar-week-day .calendar-cell-container:first-child { border-top: none; }
+  .calendar-week-day .calendar-cell-container:nth-child(even) {
+    border-top: none;
+  }
+  .calendar-head-cell-blank-right {
+    border-left: 1px solid var(--gray5);
+  }
+  .calendar-time-right {
+    border-left: 1px solid var(--gray5);
+  }
+  .calendar-cell { flex: 1; background: #fff; }
+  .calendar-cell-actived { background: #98D45F; }
+  .calendar-cell-booked { background: transparent; }
+  .hover-bar {
+    position: absolute;
+    height: 2px;
+    background: #b00020;
+    pointer-events: none;
+    z-index: 2;
+    opacity: 0;
+    transition: opacity 0.12s ease;
+  }
+  .hover-bar.visible { opacity: 1; }
+  .hover-tooltip {
+    position: absolute;
+    background: rgba(0, 0, 0, 0.75);
+    color: #fff;
+    font-size: 12px;
+    padding: 3px 7px;
+    border-radius: 4px;
+    pointer-events: none;
+    z-index: 3;
+    opacity: 0;
+    transition: opacity 0.12s ease;
+    white-space: nowrap;
+  }
+  .hover-tooltip.visible { opacity: 1; }
+  .error {
+    max-width: 1000px;
+    margin: 16px auto;
+    padding: 16px;
+    background: #fff5f5;
+    border: 1px solid #fdd;
+    border-radius: 8px;
+    color: #c00;
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+  <div class="legend">
+    <span><span class="legend-swatch available"></span>Available</span>
+    <span><span class="legend-swatch unavailable"></span>Not available</span>
+    <span><span class="legend-swatch busy"></span>Booked</span>
+    <span class="tz-info" id="tz-info"></span>
+    <div class="book-cta">
+      <button class="book-button" id="book-button" type="button" aria-haspopup="true" aria-expanded="false">
+        Book a lesson <span class="chevron">▾</span>
+      </button>
+      <div class="book-menu" id="book-menu" role="menu">
+        <a href="https://www.trevorkafka.com/call" role="menuitem">New students</a>
+        <a href="https://www.trevorkafka.com/login" role="menuitem">Current students</a>
+      </div>
+    </div>
+  </div>
+  <div id="root"></div>
+  <div id="status" class="status"></div>
+
+<script>
+  // ====== CONFIG ======
+  const API_URL = 'https://script.google.com/macros/s/AKfycbz4gutA0-2Z5Ilg4AJZnXIivAMgCzcA1NURvKle-KGCmK0peSORGyrkcxBforiRokJN/exec';
+  const REFRESH_INTERVAL_MS = 5 * 60 * 1000;
+
+  const FIFTEEN_MIN = 15 * 60 * 1000;
+  const SLOTS_PER_DAY = 96;
+
+  async function loadAndRender() {
+    const root = document.getElementById('root');
+    const status = document.getElementById('status');
+    const days = buildWeek(new Date());
+
+    // Render empty grid immediately so the structure is visible while loading.
+    if (!root.querySelector('.calendar')) {
+      const emptyGrid = days.map(() => new Array(SLOTS_PER_DAY).fill(0));
+      render(root, days, emptyGrid, true);
+      status.textContent = '';
+    }
+
+    try {
+      let events;
+      if (!API_URL || API_URL.startsWith('PASTE_')) {
+        events = makeDemoEvents();
+        status.textContent = 'Demo data — set API_URL in the source.';
+      } else {
+        const res = await fetch(API_URL);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        events = data.events.map(e => ({
+          start: new Date(e.start),
+          end:   new Date(e.end),
+          title: e.title,
+        }));
+        status.textContent = 'Updated ' + new Date().toLocaleString();
+      }
+      const grid = classify(events, days);
+      render(root, days, grid);
+    } catch (err) {
+      root.innerHTML = '<div class="error">Could not load availability: ' + escapeHTML(err.message) + '</div>';
+      status.textContent = '';
+    }
+  }
+
+  function buildWeek(today) {
+    const start = new Date(today);
+    start.setHours(0, 0, 0, 0);
+    const days = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(start);
+      d.setDate(start.getDate() + i);
+      days.push(d);
+    }
+    return days;
+  }
+
+  // States: 0 default, 1 available, 2 unavailable, 3 busy.
+  // Higher wins. After event passes, every neighbor of a 3 is bumped to >=2.
+  function classify(events, days) {
+    const grid = days.map(() => new Array(SLOTS_PER_DAY).fill(0));
+    const dayStarts = days.map(d => d.getTime());
+    const dayEnds = days.map(d => d.getTime() + 24 * 60 * 60 * 1000);
+
+    for (const ev of events) {
+      const title = (ev.title || '').toLowerCase().trim();
+      let state;
+      if      (title === 'busy')        state = 3;
+      else if (title === 'unavailable') state = 2;
+      else if (title === 'available')   state = 1;
+      else continue;
+
+      for (let di = 0; di < days.length; di++) {
+        if (ev.end.getTime() <= dayStarts[di] || ev.start.getTime() >= dayEnds[di]) continue;
+        const ovStart = Math.max(ev.start.getTime(), dayStarts[di]);
+        const ovEnd   = Math.min(ev.end.getTime(),   dayEnds[di]);
+        const sSlot = Math.floor((ovStart - dayStarts[di]) / FIFTEEN_MIN);
+        const eSlot = Math.ceil ((ovEnd   - dayStarts[di]) / FIFTEEN_MIN);
+        for (let i = Math.max(0, sSlot); i < Math.min(SLOTS_PER_DAY, eSlot); i++) {
+          if (state > grid[di][i]) grid[di][i] = state;
+        }
+      }
+    }
+
+    // Adjacency, including across day boundaries.
+    const flat = grid.flat();
+    const bump = new Set();
+    for (let i = 0; i < flat.length; i++) {
+      if (flat[i] === 3) {
+        if (i > 0)               bump.add(i - 1);
+        if (i < flat.length - 1) bump.add(i + 1);
+      }
+    }
+    for (const i of bump) if (flat[i] < 2) flat[i] = 2;
+    for (let di = 0; di < days.length; di++) {
+      for (let si = 0; si < SLOTS_PER_DAY; si++) {
+        grid[di][si] = flat[di * SLOTS_PER_DAY + si];
+      }
+    }
+
+    // Hide availability that's less than 12 hours out (too close to book).
+    const cutoff = Date.now() + 12 * 60 * 60 * 1000;
+    for (let di = 0; di < days.length; di++) {
+      for (let si = 0; si < SLOTS_PER_DAY; si++) {
+        if (grid[di][si] === 1 && dayStarts[di] + si * FIFTEEN_MIN < cutoff) {
+          grid[di][si] = 0;
+        }
+      }
+    }
+
+    // Drop visible "available" runs shorter than 45 min (3 contiguous slots).
+    // Runs are measured across day boundaries.
+    const MIN_RUN = 3;
+    const flat2 = grid.flat();
+    let i = 0;
+    while (i < flat2.length) {
+      if (flat2[i] === 1) {
+        let j = i;
+        while (j < flat2.length && flat2[j] === 1) j++;
+        if (j - i < MIN_RUN) {
+          for (let k = i; k < j; k++) flat2[k] = 0;
+        }
+        i = j;
+      } else {
+        i++;
+      }
+    }
+    for (let di = 0; di < days.length; di++) {
+      for (let si = 0; si < SLOTS_PER_DAY; si++) {
+        grid[di][si] = flat2[di * SLOTS_PER_DAY + si];
+      }
+    }
+    return grid;
+  }
+
+  function render(root, days, grid, loading) {
+    const todayKey = new Date().toDateString();
+    const weekdayFmt = new Intl.DateTimeFormat(undefined, { weekday: 'short' });
+    const timeFmt = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' });
+
+    const headCells = days.map(d => {
+      const today = d.toDateString() === todayKey;
+      return `<div class="calendar-head-cell${today ? ' calendar-head-cell-today' : ''}">
+        <div class="calendar-head-cell-weekday">${weekdayFmt.format(d)}</div>
+        <div class="calendar-head-cell-date">${d.getDate()}</div>
+      </div>`;
+    }).join('');
+
+    const timeCells = [];
+    const baseDate = new Date();
+    baseDate.setMinutes(0, 0, 0);
+    for (let i = 0; i < 24; i++) {
+      const d = new Date(baseDate);
+      d.setHours(i);
+      timeCells.push(`<div class="calendar-time-cell">${timeFmt.format(d)}</div>`);
+    }
+
+    const dayCols = days.map((_, di) => {
+      const containers = [];
+      for (let ci = 0; ci < 48; ci++) {
+        const top = stateClass(grid[di][ci * 2]);
+        const bot = stateClass(grid[di][ci * 2 + 1]);
+        containers.push(`<div class="calendar-cell-container">
+          <div class="calendar-cell${top}"></div>
+          <div class="calendar-cell${bot}"></div>
+        </div>`);
+      }
+      return `<div class="calendar-week-day">${containers.join('')}</div>`;
+    }).join('');
+
+    root.innerHTML = `<div class="calendar">
+      <div class="calendar-head-date">
+        <div class="calendar-head-cell calendar-head-cell-blank"></div>
+        ${headCells}
+        <div class="calendar-head-cell calendar-head-cell-blank calendar-head-cell-blank-right"></div>
+      </div>
+      <div class="calendar-body-wrap">
+        ${loading ? '<div class="loading-spinner"></div>' : ''}
+        <div class="calendar-body">
+          <div class="calendar-time">${timeCells.join('')}</div>
+          ${dayCols}
+          <div class="calendar-time calendar-time-right">${timeCells.join('')}</div>
+        </div>
+      </div>
+    </div>`;
+
+    if (!loading) attachHover(root, grid);
+  }
+
+  function attachHover(root, grid) {
+    const wrap = root.querySelector('.calendar-body-wrap');
+    const body = root.querySelector('.calendar-body');
+    if (!wrap || !body) return;
+    const cols = body.querySelectorAll('.calendar-week-day');
+
+    const bar = document.createElement('div');
+    bar.className = 'hover-bar';
+    const tooltip = document.createElement('div');
+    tooltip.className = 'hover-tooltip';
+    wrap.appendChild(bar);
+    wrap.appendChild(tooltip);
+
+    function hide() {
+      bar.classList.remove('visible');
+      tooltip.classList.remove('visible');
+    }
+
+    function onMove(e) {
+      const col = e.target.closest('.calendar-week-day');
+      if (!col) { hide(); return; }
+      const colIdx = Array.prototype.indexOf.call(cols, col);
+      if (colIdx < 0) { hide(); return; }
+
+      const colRect = col.getBoundingClientRect();
+      const yInCol = e.clientY - colRect.top;
+      const slotHeight = colRect.height / SLOTS_PER_DAY;
+      const slotIdx = Math.floor(yInCol / slotHeight);
+      if (slotIdx < 0 || slotIdx >= SLOTS_PER_DAY) { hide(); return; }
+      if (grid[colIdx][slotIdx] !== 1) { hide(); return; }
+
+      const fracInSlot = (yInCol / slotHeight) - slotIdx;
+      const boundaryIdx = fracInSlot < 0.5 ? slotIdx : slotIdx + 1;
+
+      const wrapRect = wrap.getBoundingClientRect();
+      const barY = boundaryIdx * slotHeight;
+      const barLeft = colRect.left - wrapRect.left;
+      const barTop = colRect.top - wrapRect.top + barY;
+
+      bar.style.left = barLeft + 'px';
+      bar.style.width = colRect.width + 'px';
+      bar.style.top = (barTop - 1) + 'px';
+
+      const totalMinutes = (boundaryIdx * 15) % 1440;
+      tooltip.textContent = pad2(Math.floor(totalMinutes / 60)) + ':' + pad2(totalMinutes % 60);
+
+      const tipX = barLeft + colRect.width / 2;
+      tooltip.style.left = tipX + 'px';
+      if (barTop > 28) {
+        tooltip.style.top = (barTop - 4) + 'px';
+        tooltip.style.transform = 'translate(-50%, -100%)';
+      } else {
+        tooltip.style.top = (barTop + 4) + 'px';
+        tooltip.style.transform = 'translate(-50%, 0)';
+      }
+
+      bar.classList.add('visible');
+      tooltip.classList.add('visible');
+    }
+
+    body.addEventListener('mousemove', onMove);
+    body.addEventListener('mouseleave', hide);
+  }
+
+  function stateClass(state) {
+    if (state === 1) return ' calendar-cell-actived';
+    if (state === 3) return ' calendar-cell-booked';
+    return '';
+  }
+  function pad2(n) { return String(n).padStart(2, '0'); }
+  function escapeHTML(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  function formatTZOffset(d) {
+    const offMin = -d.getTimezoneOffset();
+    const sign = offMin >= 0 ? '+' : '-';
+    const abs = Math.abs(offMin);
+    const h = Math.floor(abs / 60);
+    const m = abs % 60;
+    return m === 0 ? `UTC${sign}${h}` : `UTC${sign}${h}:${pad2(m)}`;
+  }
+
+  function makeDemoEvents() {
+    const t = new Date(); t.setHours(0, 0, 0, 0);
+    const at = (dayOffset, h, m) => {
+      const d = new Date(t); d.setDate(t.getDate() + dayOffset); d.setHours(h, m, 0, 0); return d;
+    };
+    return [
+      { start: at(0, 10, 0), end: at(0, 11, 0),  title: 'busy' },
+      { start: at(1, 13, 0), end: at(1, 17, 0),  title: 'available' },
+      { start: at(1, 14, 0), end: at(1, 15, 30), title: 'busy' },
+      { start: at(2,  9, 0), end: at(2, 12, 0),  title: 'unavailable' },
+      { start: at(3,  0, 0), end: at(3, 23, 0),  title: 'unavailable' },
+      { start: at(5, 16, 0), end: at(5, 19, 0),  title: 'available' },
+      { start: at(6,  9, 0), end: at(6, 10, 0),  title: 'busy' },
+    ];
+  }
+
+  // Populate timezone info in the header row.
+  (function setupTzInfo() {
+    const el = document.getElementById('tz-info');
+    if (!el) return;
+    const tzName = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    el.textContent = `Showing times for ${tzName} (${formatTZOffset(new Date())})`;
+  })();
+
+  // Book-a-lesson dropdown.
+  (function setupBookMenu() {
+    const btn = document.getElementById('book-button');
+    const menu = document.getElementById('book-menu');
+    if (!btn || !menu) return;
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const open = menu.classList.toggle('open');
+      btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    document.addEventListener('click', (e) => {
+      if (!menu.contains(e.target) && e.target !== btn) {
+        menu.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+      }
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        menu.classList.remove('open');
+        btn.setAttribute('aria-expanded', 'false');
+      }
+    });
+  })();
+
+  loadAndRender();
+  setInterval(loadAndRender, REFRESH_INTERVAL_MS);
+</script>
+</body>
+</html>
