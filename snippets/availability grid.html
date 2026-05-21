@@ -24,13 +24,20 @@
   }
   .legend {
     max-width: 1000px;
-    margin: 0 auto 16px;
+    margin: 0 auto 8px;
     padding: 0 16px;
     display: flex;
     align-items: center;
-    gap: 24px;
+    gap: 12px 24px;
     font-size: 14px;
     flex-wrap: wrap;
+  }
+  .subtitle {
+    max-width: 1000px;
+    margin: 0 auto 16px;
+    padding: 0 16px;
+    font-size: 13px;
+    color: var(--gray3);
   }
   .legend-swatch {
     display: inline-block;
@@ -45,10 +52,6 @@
   .legend-swatch.busy {
     background-color: #ccc;
     background-image: repeating-linear-gradient(45deg, transparent, transparent 1px, #ccc 1px, #eee 3px);
-  }
-  .tz-info {
-    color: var(--gray3);
-    font-size: 13px;
   }
   .book-cta {
     position: relative;
@@ -195,8 +198,21 @@
     }
   }
   @media (max-width: 480px) {
-    .calendar-head-cell-blank span {
-      display: none;
+    .legend {
+      gap: 10px 20px;
+    }
+    .book-cta {
+      width: 100%;
+      margin-left: 0;
+    }
+    .book-button {
+      width: 100%;
+      justify-content: center;
+    }
+    .book-menu {
+      left: 0;
+      right: 0;
+      min-width: 0;
     }
   }
   .calendar-body {
@@ -284,7 +300,6 @@
     <span><span class="legend-swatch available"></span>Available</span>
     <span><span class="legend-swatch unavailable"></span>Not available</span>
     <span><span class="legend-swatch busy"></span>Booked</span>
-    <span class="tz-info" id="tz-info"></span>
     <div class="book-cta">
       <button class="book-button" id="book-button" type="button" aria-haspopup="true" aria-expanded="false">
         Book a lesson <span class="chevron">▾</span>
@@ -295,6 +310,7 @@
       </div>
     </div>
   </div>
+  <div class="subtitle"><span class="tz-info" id="tz-info"></span></div>
   <div id="root"></div>
   <div id="status" class="status"></div>
 
@@ -589,7 +605,7 @@
     const el = document.getElementById('tz-info');
     if (!el) return;
     const tzName = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    el.textContent = `Showing times for ${tzName} (${formatTZOffset(new Date())})`;
+    el.textContent = `Showing times for 45-min+ lessons over the next 7 days in ${tzName} (${formatTZOffset(new Date())}).`;
   })();
 
   // Book-a-lesson dropdown.
