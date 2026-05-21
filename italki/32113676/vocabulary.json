@@ -1,5 +1,31 @@
 [
   {
+    "date": "Thursday May 21, 2026",
+    "vocabulary": [
+      { "word": "fundamental", "IPA": "/ˌfʌn.dəˈmɛn.təl/" },
+      { "word": "primary", "IPA": "/ˈpraɪˌmɛr.i/" },
+      { "word": "participate", "IPA": "/pɑrˈtɪs.əˌpeɪt/" },
+      { "word": "wealthy", "IPA": "/ˈwɛl.θi/" },
+      { "word": "to be in a hurry", "IPA": "/tu bi ɪn ə ˈhɜr.i/" },
+      { "word": "shift", "IPA": "/ʃɪft/" },
+      { "word": "lark", "IPA": "/lɑrk/" },
+      { "word": "early bird", "IPA": "/ˈɜr.li bɜrd/" },
+      { "word": "night owl", "IPA": "/naɪt aʊl/" },
+      { "word": "rare", "IPA": "/rɛr/" },
+      { "word": "sequence", "IPA": "/ˈsi.kwəns/" },
+      { "word": "accept", "IPA": "/əkˈsɛpt/" },
+      { "word": "rubbed", "IPA": "/rʌbd/" },
+      { "word": "hugged", "IPA": "/hʌɡd/" },
+      { "word": "loved", "IPA": "/lʌvd/" },
+      { "word": "breathed", "IPA": "/briðd/" },
+      { "word": "used", "IPA": "/juzd/" },
+      { "word": "changed", "IPA": "/tʃeɪndʒd/" },
+      { "word": "called", "IPA": "/kɑld/" },
+      { "word": "seemed", "IPA": "/simd/" },
+      { "word": "listened", "IPA": "/ˈlɪs.ənd/" }
+    ]
+  },
+  {
     "date": "Monday May 18, 2026",
     "vocabulary": [
       { "word": "burn", "IPA": "/bɜrn/" },
