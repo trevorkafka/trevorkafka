@@ -140,6 +140,7 @@
 	.fade {
 	  opacity: 0;
 	  transform: translate(0, 10vh);
+	  transition-property: opacity, transform;
 	  transition-duration: 1s;
 	  transition-delay: 0.25s;
 	}

@@ -34,7 +34,7 @@
 	</div>
 
 	<!-- YouTube video, which "pops out" of the usual content width when the screen is sufficiently narrow -->
-	<div align="center">
+	<div style="text-align: center">
 
 		<iframe class="full-width-media" style="overflow-y: hidden; aspect-ratio:1.7765; margin-bottom: 20px" src="https://www.youtube.com/embed/Dcrelp-pO2U?autoplay=1&mute=1&rel=0&modestbranding=1&hd=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
@@ -120,7 +120,7 @@
 		<h1 class="fade"><i class="fa-solid fa-address-card"></i> About Me</h1>
 
 		<div class="fade">
-			<img class="widescreen" src="media/TK whiteboard.png" alt="Trevor Kafka in front of a whiteboard with equations and a physics diagram." style="float: left; margin: 0px 20px 10px 0px">
+			<img class="widescreen glow-shadow" src="media/TK whiteboard.png" alt="Trevor Kafka in front of a whiteboard with equations and a physics diagram." style="float: left; margin: 0px 20px 10px 0px; border-radius: 50px;">
 			<div align="center"><img class="narrowscreen" src="media/TK whiteboard.png" alt="Trevor Kafka in front of a whiteboard with equations and a physics diagram." style="width: min(400px, var(--widthmax)); margin-bottom: 1em"></div>
 			<p>
 				Hello! My name is Trevor Kafka, and I am an online teacher of physics and mathematics. I am highly enthusiastic about all the topics that I teach and have extensive experience teaching all levels, all the way from middle school math through college-level math and physics, and beyond. I also teach AP, SAT, ACT, and other school admissions exams, including the notoriously difficult AP Physics C exam. I am a graduate of Brandeis University holding a double major in physics and mathematics and worked as a lead instructor at Wellesley High School for two years. Since 2014, I have been teaching group and 1-on-1 physics and math classes extensively.
@@ -132,135 +132,48 @@
 		</div>
 
 		<a id="availability" style="position: relative; top: -60px"></a>
-		<h1 class="fade" id="availability"><i class="fa-solid fa-calendar-days"></i> My Availability & Scheduling Demand</h1>
+		<h1 class="fade" id="availability"><i class="fa-solid fa-calendar-days"></i> My Availability </h1>
 
 		<div class="fade">
-			<div class="hovertarget">
-				<div>
-					<p><strong>Classes are generally offered during all of the colored times slots below</strong> throughout the school year. Time slots are colored based on the relative historical amount of competition for each time slot: green <span style="display: inline-block; padding-left: 5px; padding-right: 5px;" class="available_easy"><span class="hoverdisplay-text">A</span></span> time slots have low competition, red <span style="display: inline-block; padding-left: 5px; padding-right: 5px;" class="available_hard"><span class="hoverdisplay-text">C</span></span> time slots have high competition, and yellow <span style="display: inline-block; padding-left: 5px; padding-right: 5px;" class="available_medium"><span class="hoverdisplay-text">B</span></span> time slots are somewhere in the middle. Times below listed in Boston time (US Eastern Time): UTC-4 or UTC-5 depending on time of year (<a href="https://www.timeanddate.com/worldclock/converter.html?p1=43" target="_blank">convert to your time zone</a>). </p>
-					<!-- <span class="widescreen">Hover over</span><span class="narrowscreen">Tap</span> the table for color-blind accessibility. -->
-				</div>
-				<div style="align: center;">
-				    <table class="timetable tinytext" id="seasonal-table" style="width: 100%; max-width: 500px; table-layout: fixed; margin: auto"></table>
-				</div>
-				<br>
-				<div align="center">
-				    <table class="timetable tinytext" id="schedule-table"></table>
-				</div>
-
-				<script>
-				const seasonal = "A A B C C B C C C B A A";
-
-				const schedule = `
-				      | Sun Mon Tue Wed Thu
-				 7 am | .   C   C   C   C
-				 8 am | .   B   B   B   B
-				 9 am | B   A   A   A   A
-				10 am | B   A   A   A   A
-				11 am | B   A   A   A   A
-				12 pm | B   A   A   A   A
-				 1 pm | B   A   A   A   A
-				 2 pm | B   A   A   A   A
-				 3 pm | B   A   A   A   A
-				 4 pm | .   B   B   B   B
-				 5 pm | .   C   C   C   C
-				 6 pm | .   C   C   C   C
-				 7 pm | .   C   C   .   C
-				 8 pm | .   B   B   .   B
-				`;
-				// === END EDIT ===
-
-				(function () {
-				    const cls = { A: 'available_easy', B: 'available_medium', C: 'available_hard' };
-				    const cell = ch => cls[ch]
-				        ? `<td class="${cls[ch]}"><span class="hoverdisplay-text">${ch}</span></td>`
-				        : '<td></td>';
-
-				    // Seasonal strip
-				    const months = ['Aug', 'Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr','May','Jun','Jul'];
-				    document.getElementById('seasonal-table').innerHTML =
-				        '<tr>' + months.map(m => `<td style="width:10%">${m}</td>`).join('') + '</tr>' +
-				        '<tr>' + seasonal.trim().split(/\s+/).map(cell).join('') + '</tr>';
-
-				    // Weekly grid
-				    const rows = schedule.split('\n').map(l => l.trim()).filter(Boolean)
-				        .map(l => l.split('|').map(s => s.trim().split(/\s+/)));
-				    const days = rows[0][1];
-				    const body = rows.slice(1);
-				    const colW = 'style="width: calc(100%/8); min-width: 30px;"';
-				    const noCls = `<td rowspan="${body.length}"><div style="display: inline-block; white-space: nowrap; writing-mode: vertical-rl; font-size: 200%; opacity: 10%; font-weight: bold;">no classes</div></td>`;
-
-				    let html = '<tr>' + `<td ${colW}></td>` + days.map(d => `<td ${colW}>${d}</td>`).join('')
-				             + `<td ${colW}>Fri</td><td ${colW}>Sat</td>` + '</tr>';
-				    body.forEach((row, i) => {
-				        html += '<tr>'
-				            + `<td>${row[0].join(' ')}</td>`
-				            + row[1].map(cell).join('')
-				            + (i === 0 ? noCls + noCls : '')
-				            + '</tr>';
-				    });
-				    document.getElementById('schedule-table').innerHTML = html;
-				})();
-				</script>
-			
-				<br>
-				<div style="display: flex; justify-content: space-evenly; align-items: center; flex-wrap: wrap; gap: 20px">
-					<div class="glow-shadow" style="display: inline-block; padding: 20px; border-radius: 20px; text-align: center; font-weight: bold;">
-						Register
-						<table>
-							<tr>
-								<td style="padding: 0px;"><span style="font-family: freeman;"><span style="font-size: 400%;">12</span></td>
-								<td style="padding: 0px; font-family: freeman; line-height: 0.7; vertical-align: middle; text-align: left;">
-									<span style="font-size: 250%">+</span><br><span style="font-size: 150%">hrs</span>
-								</td>
-							</tr>
-						</table>
-						in advance
-					</div>
-					<div class="glow-shadow" style="display: inline-block; padding: 20px; border-radius: 20px; text-align: center; font-weight: bold;">
-						Cancel
-						<table>
-							<tr>
-								<td style="padding: 0px;"><span style="font-family: freeman;"><span style="font-size: 400%;">24</span></td>
-								<td style="padding: 0px; font-family: freeman; line-height: 0.7; vertical-align: middle; text-align: left;">
-									<span style="font-size: 250%">+</span><br><span style="font-size: 150%">hrs</span>
-								</td>
-							</tr>
-						</table>
-						in advance
-					</div>
-					<div class="glow-shadow" style="padding: 10px; border-radius: 20px;">
-						<div style="font-family: freeman; text-align: center;">Demand Key</div>
-						<table class="timetable tinytext">
-							<colgroup>
-								<col style="min-width: 30px; max-width: 50px"></col>
-								<col></col>
-							</colgroup>
-							<tr>
-								<td class="available_easy"><span class="hoverdisplay-text">A</span></td>
-								<td colspan="6" style="text-align:left"> available, low demand, easier to book</td>
-							</tr>
-							<tr>
-								<td class="available_medium"><span class="hoverdisplay-text">B<span></td>
-								<td colspan="6" style="text-align:left">available, medium demand
-							</tr>
-							<tr>
-								<td class="available_hard"><span class="hoverdisplay-text">C</span></td>
-								<td colspan="6" style="text-align:left"> available, highest demand, harder to book</td>
-							</tr>
-						</table>
-					</div>
-				</div>
-			</div>
 			<div>
-				<ul style="margin-top: 16px">
-					<li>Deviations from this schedule may occur due to holidays, personal conflicts, or school breaks.</li>
-					<li> Ease-of-booking indications above are estimates based on historical popularity of timeslots. More popular timeslots will be more difficult in general to schedule.</li>
-					<li>All class scheduling and cancellations are managed through the student portal, accessed by registered students by <a href="login.html">logging in</a>.</li>
-					<li>I generally do not teach classes on Fridays and Saturdays.</li>
-				</ul>
+			    <div style="display: flex; justify-content: space-evenly; align-items: center; flex-wrap: wrap; gap: 20px">
+			        <p style="flex: 1 1 320px; margin: 0; max-width: 600px;">Below is an overview of my availability over the next seven days. Students with <a href="login.html">login</a> access have the ability to view availability and register for lessons up to 90 days in advance. I generally teach all day on Sundays–Thursdays; deviations occur due to holidays, personal conflicts, or school breaks.</p>
+			        <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+			            <div class="glow-shadow" style="padding: 20px; border-radius: 20px; text-align: center; font-weight: bold;">
+			                Register
+			                <table>
+			                    <tr>
+			                        <td style="padding: 0px;"><span style="font-family: freeman; font-size: 400%;">12</span></td>
+			                        <td style="padding: 0px; font-family: freeman; line-height: 0.7; vertical-align: middle; text-align: left;">
+			                            <span style="font-size: 250%">+</span><br><span style="font-size: 150%">hrs</span>
+			                        </td>
+			                    </tr>
+			                </table>
+			                in advance
+			            </div>
+			            <div class="glow-shadow" style="padding: 20px; border-radius: 20px; text-align: center; font-weight: bold;">
+			                Cancel
+			                <table>
+			                    <tr>
+			                        <td style="padding: 0px;"><span style="font-family: freeman; font-size: 400%;">24</span></td>
+			                        <td style="padding: 0px; font-family: freeman; line-height: 0.7; vertical-align: middle; text-align: left;">
+			                            <span style="font-size: 250%">+</span><br><span style="font-size: 150%">hrs</span>
+			                        </td>
+			                    </tr>
+			                </table>
+			                in advance
+			            </div>
+			        </div>
+			    </div>
 			</div>
 		</div>
+		<br>
+	</div>
+	<div class="full-width-media fade" style="margin: 0 auto;">
+		<trevorkafka-availability></trevorkafka-availability>
+	</div>
+
+	<div class="content">
 
 		<h1 class="fade"><i class="fa-solid fa-comments"></i> Client Reviews</h1>
 
@@ -443,9 +356,9 @@
 					<span class="emphatic">
 						I'm interested! What do I do now?
 					</span><br>
-				Please begin by scheduling a free <a href="call.html">20-minute introductory video call</a> with me so that we can touch base about your current situation and how I can best help you.</p>
+				Please begin by scheduling a free <a href="call.html">15-minute introductory video call</a> with me so that we can touch base about your current situation and how I can best help you.</p>
 
-				<p>If you'd like to skip the 20-minute introductory call, it is also possible to directly schedule your first session by emailing me at <trevorkafka-email></trevorkafka-email> and letting me know your availability.
+				<p>If you'd like to skip the 15-minute introductory call, it is also possible to directly schedule your first session by emailing me at <trevorkafka-email></trevorkafka-email> and letting me know your availability.
 				</p>
 			</div>
 		</div>
