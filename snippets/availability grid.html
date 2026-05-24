@@ -230,6 +230,7 @@
   }
   .calendar-time-cell:first-child { visibility: hidden; }
   .calendar-week-day {
+    position: relative;
     display: flex;
     flex: 1;
     flex-direction: column;
@@ -251,18 +252,17 @@
   .calendar-cell-actived { background: #98D45F; }
   .calendar-cell-booked { background: transparent; }
 
-  .hover-bar {
+  .availability-block {
     position: absolute;
-    height: 2px;
-    background: var(--cal-accent);
-    pointer-events: none;
+    left: 0;
+    right: 0;
     z-index: 2;
-    opacity: 0;
-    transition: opacity 0.12s ease;
   }
-  .hover-bar.visible { opacity: 1; }
-  .hover-tooltip {
+  .availability-tooltip {
     position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     background: var(--cal-text);
     color: var(--color3);
     font-size: 12px;
@@ -270,13 +270,12 @@
     padding: 4px 8px;
     border-radius: 6px;
     pointer-events: none;
-    z-index: 3;
-    opacity: 0;
-    transition: opacity 0.12s ease;
     white-space: nowrap;
     box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transition: opacity 0.12s ease;
   }
-  .hover-tooltip.visible { opacity: 1; }
+  .availability-block:hover .availability-tooltip { opacity: 1; }
 
   .error {
     max-width: 1000px;
@@ -538,73 +537,73 @@
 }
 
 function attachHover(root, grid, startSlot) {
-  const wrap = root.querySelector('.calendar-body-wrap');
   const body = root.querySelector('.calendar-body');
-  if (!wrap || !body) return;
+  if (!body) return;
   const cols = body.querySelectorAll('.calendar-week-day');
   const tipFmt = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' });
   const tipDate = new Date();
-  const visibleSlots = SLOTS_PER_DAY - startSlot;
+  const SLOT_PX = 8; // 15-min slot height (calendar-cell-container is 16px = 2 slots)
 
-  const bar = document.createElement('div');
-  bar.className = 'hover-bar';
-  const tooltip = document.createElement('div');
-  tooltip.className = 'hover-tooltip';
-  wrap.appendChild(bar);
-  wrap.appendChild(tooltip);
-
-  function hide() {
-    bar.classList.remove('visible');
-    tooltip.classList.remove('visible');
-  }
-
-  function onMove(e) {
-    const col = e.target.closest('.calendar-week-day');
-    if (!col) { hide(); return; }
-    const colIdx = Array.prototype.indexOf.call(cols, col);
-    if (colIdx < 0) { hide(); return; }
-
-    const colRect = col.getBoundingClientRect();
-    const yInCol = e.clientY - colRect.top;
-    const slotHeight = colRect.height / visibleSlots;
-    const renderedSlotIdx = Math.floor(yInCol / slotHeight);
-    if (renderedSlotIdx < 0 || renderedSlotIdx >= visibleSlots) { hide(); return; }
-    const slotIdx = startSlot + renderedSlotIdx;
-    if (grid[colIdx][slotIdx] !== 1) { hide(); return; }
-
-    const fracInSlot = (yInCol / slotHeight) - renderedSlotIdx;
-    const renderedBoundary = fracInSlot < 0.5 ? renderedSlotIdx : renderedSlotIdx + 1;
-    const boundaryIdx = startSlot + renderedBoundary;
-
-    const wrapRect = wrap.getBoundingClientRect();
-    const barY = renderedBoundary * slotHeight;
-    const barLeft = colRect.left - wrapRect.left;
-    const barTop = colRect.top - wrapRect.top + barY;
-
-    bar.style.left = barLeft + 'px';
-    bar.style.width = colRect.width + 'px';
-    bar.style.top = (barTop - 1) + 'px';
-
-    const totalMinutes = (boundaryIdx * 15) % 1440;
+  function formatSlot(slotIdx) {
+    const totalMinutes = (slotIdx * 15) % 1440;
     tipDate.setHours(Math.floor(totalMinutes / 60), totalMinutes % 60, 0, 0);
-    tooltip.textContent = tipFmt.format(tipDate);
-
-    const tipX = barLeft + colRect.width / 2;
-    tooltip.style.left = tipX + 'px';
-    if (barTop > 28) {
-      tooltip.style.top = (barTop - 4) + 'px';
-      tooltip.style.transform = 'translate(-50%, -100%)';
-    } else {
-      tooltip.style.top = (barTop + 4) + 'px';
-      tooltip.style.transform = 'translate(-50%, 0)';
-    }
-
-    bar.classList.add('visible');
-    tooltip.classList.add('visible');
+    return tipFmt.format(tipDate);
   }
 
-  body.addEventListener('mousemove', onMove);
-  body.addEventListener('mouseleave', hide);
+  // Damped rotational jiggle on the Book button, triggered on each hover.
+  // Models a damped harmonic oscillator: θ'' + 2ζω_n θ' + ω_n² θ = 0
+  // with θ(0)=0 and randomized θ'(0)=ω₀. Closed-form (underdamped):
+  //   θ(t) = (ω₀ / ω_d) · e^(−ζω_n t) · sin(ω_d t),  ω_d = ω_n √(1−ζ²)
+  // Natural frequency and damping ratio stay fixed → friction is consistent;
+  // only the initial kick varies in direction and strength.
+  const bookBtn = document.getElementById('book-button');
+  let jiggleAnim = null;
+  const OMEGA_N = 22;     // natural angular frequency (rad/s)
+  const ZETA    = 0.16;   // damping ratio (<1, underdamped)
+  const OMEGA_D = OMEGA_N * Math.sqrt(1 - ZETA * ZETA);
+  const DURATION_MS = 800;
+  const STEPS = 40;
+
+  function jiggle() {
+    if (!bookBtn) return;
+    if (jiggleAnim) jiggleAnim.cancel();
+
+    // Random initial angular velocity (deg/s); magnitude window tuned so first
+    // peak stays within roughly ±5° to ±10°. Sign chosen uniformly.
+    const speedMag = 140 + Math.random() * 140;            // 140–280 deg/s
+    const omega0 = (Math.random() < 0.5 ? -1 : 1) * speedMag;
+
+    const keyframes = [];
+    for (let i = 0; i <= STEPS; i++) {
+      const t = (i / STEPS) * (DURATION_MS / 1000);
+      const theta = (omega0 / OMEGA_D) * Math.exp(-ZETA * OMEGA_N * t) * Math.sin(OMEGA_D * t);
+      keyframes.push({ transform: `rotate(${theta.toFixed(3)}deg)`, offset: i / STEPS });
+    }
+    // Linear easing: timing is already encoded in the sampled keyframes.
+    jiggleAnim = bookBtn.animate(keyframes, { duration: DURATION_MS, easing: 'linear' });
+  }
+
+  cols.forEach((col, di) => {
+    let si = 0;
+    while (si < SLOTS_PER_DAY) {
+      if (grid[di][si] !== 1) { si++; continue; }
+      const runStart = si;
+      while (si < SLOTS_PER_DAY && grid[di][si] === 1) si++;
+      const runEnd = si; // exclusive
+
+      const block = document.createElement('div');
+      block.className = 'availability-block';
+      block.style.top = ((runStart - startSlot) * SLOT_PX) + 'px';
+      block.style.height = ((runEnd - runStart) * SLOT_PX) + 'px';
+
+      const tooltip = document.createElement('div');
+      tooltip.className = 'availability-tooltip';
+      tooltip.textContent = formatSlot(runStart) + '–' + formatSlot(runEnd);
+      block.appendChild(tooltip);
+      block.addEventListener('mouseenter', jiggle);
+      col.appendChild(block);
+    }
+  });
 }
 
 function stateClass(state) {
