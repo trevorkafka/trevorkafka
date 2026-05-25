@@ -40,7 +40,7 @@
     vertical-align: middle;
   }
   .legend-swatch.available   { background: #98D45F; }
-  .legend-swatch.unavailable { background: var(--color3); border: 1px solid var(--cal-border); }
+  .legend-swatch.unavailable { background: var(--cal-surface); border: 1px solid var(--cal-border); }
   .legend-swatch.busy {
     background-color: #cdbf9d;
     background-image: repeating-linear-gradient(45deg, transparent, transparent 1px, #cdbf9d 1px, #ece2cb 3px);
@@ -118,7 +118,7 @@
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
     overflow: hidden;
-    background: var(--color3);
+    background: var(--cal-surface);
   }
   .calendar-head-cell {
     flex: 1;
@@ -214,7 +214,7 @@
   .calendar-body {
     display: flex;
     overflow: hidden;
-    background: var(--color3);
+    background: var(--cal-surface);
   }
   .calendar-time {
     flex: 0 0 var(--sidebar-width);
@@ -248,7 +248,7 @@
   .calendar-week-day .calendar-cell-container:nth-child(even) { border-top: none; }
   .calendar-head-cell-blank-right { border-left: 1px solid var(--cal-border); }
   .calendar-time-right { border-left: 1px solid var(--cal-border); }
-  .calendar-cell { flex: 1; background: var(--color3); }
+  .calendar-cell { flex: 1; background: var(--cal-surface); }
   .calendar-cell-actived { background: #98D45F; }
   .calendar-cell-booked { background: transparent; }
 
@@ -266,7 +266,7 @@
     top: 0;
     left: 0;
     background: var(--cal-text);
-    color: var(--color3);
+    color: var(--cal-surface);
     font-size: 12px;
     font-weight: bold;
     text-align: center;
@@ -320,6 +320,17 @@
           min-width: 0;
       }
   }
+  /* Standalone-only: center calendar vertically in the viewport when there's
+     room; fall back to start alignment when content exceeds the viewport
+     (safe center) so the top doesn't get clipped. Inert on the homepage —
+     class is only added by setupStandalone() when standalone is detected. */
+  body.calendar-standalone {
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: safe center;
+  }
 </style>
 <div class="legend">
   <span><span class="legend-swatch available"></span>Available</span>
@@ -340,6 +351,20 @@
 <div id="status" class="status"></div>
 
 <script>
+  // When opened standalone, pull in the site's stylesheet and tag <body>
+  // so we can center the calendar in the viewport. Detected by absence of
+  // --color3 on :root — styles.css defines it; this snippet does not. On
+  // the homepage it's already defined, so this is a no-op there.
+  (function setupStandalone() {
+    if (getComputedStyle(document.documentElement)
+        .getPropertyValue('--color3').trim()) return;
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = '../style.css';
+    document.head.appendChild(link);
+    document.body.classList.add('calendar-standalone');
+  })();
+
   // ====== CONFIG ======
   const API_URL = 'https://script.google.com/macros/s/AKfycbz4gutA0-2Z5Ilg4AJZnXIivAMgCzcA1NURvKle-KGCmK0peSORGyrkcxBforiRokJN/exec';
   const REFRESH_INTERVAL_MS = 5 * 60 * 1000;
@@ -487,7 +512,11 @@
       }
     }
     // Round down to nearest hour (4 slots per hour). Default to 0 if nothing.
-    const startSlot = earliest === SLOTS_PER_DAY ? 0 : Math.floor(earliest / 4) * 4;
+    // While loading, fix the visible range to 5am–midnight so the placeholder
+    // grid doesn't briefly show the full 24h before data arrives.
+    const startSlot = loading
+      ? 20
+      : (earliest === SLOTS_PER_DAY ? 0 : Math.floor(earliest / 4) * 4);
     const startHour = startSlot / 4;
     const startContainer = startSlot / 2;
 

@@ -11,7 +11,7 @@ $('trevorkafka-nav').load('snippets/navigation.html', function() {
 $('trevorkafka-email').load('/snippets/email.html')
 $('trevorkafka-footer').load('snippets/footer.html')
 $('trevorkafka-announcement').load('snippets/announcement.html')
-$(`trevorkafka-availability`).load('snippets/availability%20grid.html')
+$(`trevorkafka-availability`).load('snippets/availability.html')
 
 //
 // SECTION 2: SPECIFIC-USE FUNCTIONS
