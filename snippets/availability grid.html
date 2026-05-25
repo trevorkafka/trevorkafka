@@ -258,15 +258,18 @@
     right: 0;
     z-index: 2;
   }
+  /* Floating tooltip lives on document.body so it can escape any clipped
+     ancestor (.calendar-body-wrap has overflow: hidden for its rounded
+     corners). Position is set via JS and clamped to the viewport. */
   .availability-tooltip {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    position: fixed;
+    top: 0;
+    left: 0;
     background: var(--cal-text);
     color: var(--color3);
     font-size: 12px;
     font-weight: bold;
+    text-align: center;
     padding: 4px 8px;
     border-radius: 6px;
     pointer-events: none;
@@ -274,8 +277,9 @@
     box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
     opacity: 0;
     transition: opacity 0.12s ease;
+    z-index: 1000;
   }
-  .availability-block:hover .availability-tooltip { opacity: 1; }
+  .availability-tooltip.visible { opacity: 1; }
 
   .error {
     max-width: 1000px;
@@ -322,7 +326,7 @@
   <span><span class="legend-swatch unavailable"></span>Not available</span>
   <span><span class="legend-swatch busy"></span>Booked</span>
   <div class="book-cta">
-    <button class="book-button" id="book-button" type="button" aria-haspopup="true" aria-expanded="false">
+    <button class="book-button" id="book-button" type="button" aria-has="true" aria-expanded="false">
       <i class="fa-solid fa-calendar"></i> Book a lesson
     </button>
     <div class="book-menu" id="book-menu" role="menu">
@@ -583,6 +587,32 @@ function attachHover(root, grid, startSlot) {
     jiggleAnim = bookBtn.animate(keyframes, { duration: DURATION_MS, easing: 'linear' });
   }
 
+  // One shared tooltip on document.body — escapes the calendar's overflow
+  // clip and can be clamped to the viewport on every show.
+  let tooltip = document.getElementById('availability-tooltip-shared');
+  if (!tooltip) {
+    tooltip = document.createElement('div');
+    tooltip.id = 'availability-tooltip-shared';
+    tooltip.className = 'availability-tooltip';
+    document.body.appendChild(tooltip);
+  }
+  tooltip.classList.remove('visible'); // clear any stale state from prior render
+
+  function showTip(block, html) {
+    tooltip.innerHTML = html;
+    tooltip.classList.add('visible');
+    const blockRect = block.getBoundingClientRect();
+    const tipRect = tooltip.getBoundingClientRect();
+    let left = blockRect.left + (blockRect.width - tipRect.width) / 2;
+    let top  = blockRect.top  + (blockRect.height - tipRect.height) / 2;
+    const margin = 4;
+    left = Math.max(margin, Math.min(left, window.innerWidth  - tipRect.width  - margin));
+    top  = Math.max(margin, Math.min(top,  window.innerHeight - tipRect.height - margin));
+    tooltip.style.left = left + 'px';
+    tooltip.style.top  = top  + 'px';
+  }
+  function hideTip() { tooltip.classList.remove('visible'); }
+
   cols.forEach((col, di) => {
     let si = 0;
     while (si < SLOTS_PER_DAY) {
@@ -596,11 +626,12 @@ function attachHover(root, grid, startSlot) {
       block.style.top = ((runStart - startSlot) * SLOT_PX) + 'px';
       block.style.height = ((runEnd - runStart) * SLOT_PX) + 'px';
 
-      const tooltip = document.createElement('div');
-      tooltip.className = 'availability-tooltip';
-      tooltip.textContent = formatSlot(runStart) + '–' + formatSlot(runEnd);
-      block.appendChild(tooltip);
-      block.addEventListener('mouseenter', jiggle);
+      const html = formatSlot(runStart) + '–' + formatSlot(runEnd) + '<br>Available';
+      block.addEventListener('mouseenter', () => {
+        jiggle();
+        showTip(block, html);
+      });
+      block.addEventListener('mouseleave', hideTip);
       col.appendChild(block);
     }
   });
