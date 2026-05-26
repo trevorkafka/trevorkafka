@@ -705,7 +705,7 @@ function makeDemoEvents() {
   const el = document.getElementById('tz-info');
   if (!el) return;
   const tzName = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  el.textContent = `Showing times for 45-min+ lessons over the next 7 days in ${tzName} (${formatTZOffset(new Date())}).`;
+  el.textContent = `Showing available times for 45-min+ lessons over the next 7 days in ${tzName} (${formatTZOffset(new Date())}).`;
 })();
 
   // Book-a-lesson dropdown.
