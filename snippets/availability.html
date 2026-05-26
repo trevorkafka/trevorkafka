@@ -188,6 +188,11 @@
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
+  .calendar.full-bleed .calendar-head-date,
+  .calendar.full-bleed .calendar-body-wrap {
+    border-left: none;
+    border-right: none;
+  }
   @media (max-width: 600px) {
     .calendar-head-cell-blank-right,
     .calendar-time-right {
@@ -625,22 +630,101 @@ function attachHover(root, grid, startSlot) {
     tooltip.className = 'availability-tooltip';
     document.body.appendChild(tooltip);
   }
-  tooltip.classList.remove('visible'); // clear any stale state from prior render
+  // Force-reset to a known clean state on each render (e.g., periodic refresh
+  // may rebuild blocks mid-hover, leaving the tooltip stranded).
+  tooltip.classList.remove('visible');
+  tooltip._state = 'hidden';
+  tooltip._pendingShow = null;
 
-  function showTip(block, html) {
-    tooltip.innerHTML = html;
-    tooltip.classList.add('visible');
-    const blockRect = block.getBoundingClientRect();
-    const tipRect = tooltip.getBoundingClientRect();
-    let left = blockRect.left + (blockRect.width - tipRect.width) / 2;
-    let top  = blockRect.top  + (blockRect.height - tipRect.height) / 2;
-    const margin = 4;
-    left = Math.max(margin, Math.min(left, window.innerWidth  - tipRect.width  - margin));
-    top  = Math.max(margin, Math.min(top,  window.innerHeight - tipRect.height - margin));
-    tooltip.style.left = left + 'px';
-    tooltip.style.top  = top  + 'px';
+  // Set up fade-between-blocks behavior once per tooltip element. When
+  // showTip is called while the tooltip is still visible or mid-fade, we
+  // queue the new content, finish the fade-out, then fade the new in via the
+  // transitionend hook. State machine: 'hidden' → 'showing' → 'hiding' → 'hidden'.
+  if (!tooltip._fadeHandlerSet) {
+    const tip = tooltip; // stable reference for closures
+
+    function applyShow(block, html) {
+      tip.style.transition = ''; // ensure opacity transition is active
+      tip.innerHTML = html;
+      const blockRect = block.getBoundingClientRect();
+      const tipRect = tip.getBoundingClientRect();
+      let left = blockRect.left + (blockRect.width - tipRect.width) / 2;
+      let top  = blockRect.top  + (blockRect.height - tipRect.height) / 2;
+      const margin = 4;
+      left = Math.max(margin, Math.min(left, window.innerWidth  - tipRect.width  - margin));
+      top  = Math.max(margin, Math.min(top,  window.innerHeight - tipRect.height - margin));
+      tip.style.left = left + 'px';
+      tip.style.top  = top  + 'px';
+      tip.classList.add('visible');
+      tip._state = 'showing';
+    }
+
+    function applySlide(block, html) {
+      tip.innerHTML = html;
+      // Suppress opacity transition so the tooltip stays fully visible;
+      // only left/top animate, producing the translate effect.
+      tip.style.transition = 'left 0.15s ease, top 0.15s ease';
+      const blockRect = block.getBoundingClientRect();
+      const tipRect = tip.getBoundingClientRect();
+      let left = blockRect.left + (blockRect.width - tipRect.width) / 2;
+      let top  = blockRect.top  + (blockRect.height - tipRect.height) / 2;
+      const margin = 4;
+      left = Math.max(margin, Math.min(left, window.innerWidth  - tipRect.width  - margin));
+      top  = Math.max(margin, Math.min(top,  window.innerHeight - tipRect.height - margin));
+      tip.style.left = left + 'px';
+      tip.style.top  = top  + 'px';
+      tip._state = 'showing';
+    }
+
+    tip.showTip = function(block, html) {
+      if (tip._state === 'showing' || tip._state === 'hiding') {
+        // Already on screen or fading out — queue and ensure we're fading out.
+        tip._pendingShow = { block, html };
+        tip.classList.remove('visible');
+        tip._state = 'hiding';
+      } else {
+        tip._pendingShow = null;
+        applyShow(block, html);
+      }
+    };
+
+    tip.slideTip = function(block, html) {
+      applySlide(block, html);
+    };
+
+    tip.hideTip = function() {
+      tip._pendingShow = null;
+      if (tip._state === 'showing') {
+        // Restore opacity transition before fading out (may have been suppressed
+        // during a slide between available slots).
+        tip.style.transition = '';
+        tip.classList.remove('visible');
+        tip._state = 'hiding';
+      }
+    };
+
+    tip.addEventListener('transitionend', (e) => {
+      if (e.propertyName !== 'opacity') return;
+      if (tip._state === 'hiding') {
+        tip._state = 'hidden';
+        if (tip._pendingShow) {
+          const pending = tip._pendingShow;
+          tip._pendingShow = null;
+          applyShow(pending.block, pending.html);
+        }
+      }
+    });
+
+    tip._fadeHandlerSet = true;
   }
-  function hideTip() { tooltip.classList.remove('visible'); }
+
+  const showTip  = tooltip.showTip;
+  const slideTip = tooltip.slideTip;
+  const hideTip  = tooltip.hideTip;
+
+  // Shared timer: defers the hide by one event-loop tick so that a mouseenter
+  // on the next available block can intercept it and slide instead of fade.
+  let hideTimer = null;
 
   cols.forEach((col, di) => {
     let si = 0;
@@ -658,9 +742,22 @@ function attachHover(root, grid, startSlot) {
       const html = formatSlot(runStart) + '–' + formatSlot(runEnd) + '<br>Available';
       block.addEventListener('mouseenter', () => {
         jiggle();
-        showTip(block, html);
+        if (hideTimer !== null) {
+          // Cursor moved directly from another available slot — cancel the
+          // pending fade-out and slide the tooltip to the new position instead.
+          clearTimeout(hideTimer);
+          hideTimer = null;
+          slideTip(block, html);
+        } else {
+          showTip(block, html);
+        }
       });
-      block.addEventListener('mouseleave', hideTip);
+      block.addEventListener('mouseleave', () => {
+        hideTimer = setTimeout(() => {
+          hideTimer = null;
+          hideTip();
+        }, 0);
+      });
       col.appendChild(block);
     }
   });
@@ -730,6 +827,24 @@ function makeDemoEvents() {
       btn.setAttribute('aria-expanded', 'false');
     }
   });
+})();
+
+  // Toggle .full-bleed on the calendar when its edges actually touch the
+  // viewport edges. This is more reliable than a viewport-width media query
+  // because we don't know the surrounding site shell's horizontal padding.
+(function setupFullBleed() {
+  function update() {
+    const cal = document.querySelector('.calendar');
+    if (!cal) return;
+    const rect = cal.getBoundingClientRect();
+    const fullBleed = rect.left <= 0.5 && rect.right >= window.innerWidth - 0.5;
+    cal.classList.toggle('full-bleed', fullBleed);
+  }
+  window.addEventListener('resize', update);
+  // Run after each render so the class is reapplied when innerHTML is rebuilt.
+  const obs = new MutationObserver(update);
+  obs.observe(document.getElementById('root') || document.body, { childList: true, subtree: true });
+  update();
 })();
 
 loadAndRender();
