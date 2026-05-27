@@ -452,21 +452,46 @@
       }
     }
 
-    // Adjacency, including across day boundaries.
+    // Per-event unavailability buffers for busy events.
+    // Before a busy block: always add a 15-min unavailability slot.
+    // After a busy block: skip the buffer when ceil-rounding already built in
+    // >= 10 min of padding (e.g. a 50-min lesson ceiled to 60 min leaves 10 min
+    // of dead "busy" time, so no extra buffer is needed after the displayed block).
     const flat = grid.flat();
-    const bump = new Set();
-    for (let i = 0; i < flat.length; i++) {
-      if (flat[i] === 3) {
-        if (i > 0)               bump.add(i - 1);
-        if (i < flat.length - 1) bump.add(i + 1);
-      }
-    }
-    for (const i of bump) if (flat[i] < 2) flat[i] = 2;
+    const TEN_MIN_MS = 10 * 60 * 1000;
+
+    for (const ev of events) {
+      const title = (ev.title || '').toLowerCase().trim();
+      if (title !== 'busy') continue;
+
       for (let di = 0; di < days.length; di++) {
-        for (let si = 0; si < SLOTS_PER_DAY; si++) {
-          grid[di][si] = flat[di * SLOTS_PER_DAY + si];
+        if (ev.end.getTime() <= dayStarts[di] || ev.start.getTime() >= dayEnds[di]) continue;
+
+        const ovStart = Math.max(ev.start.getTime(), dayStarts[di]);
+        const ovEnd   = Math.min(ev.end.getTime(),   dayEnds[di]);
+        const sSlot   = Math.floor((ovStart - dayStarts[di]) / FIFTEEN_MIN);
+        const eSlot   = Math.ceil ((ovEnd   - dayStarts[di]) / FIFTEEN_MIN);
+
+        // Before-buffer: always mark the slot just before the busy block.
+        const beforeIdx = di * SLOTS_PER_DAY + sSlot - 1;
+        if (beforeIdx >= 0 && flat[beforeIdx] < 2) flat[beforeIdx] = 2;
+
+        // After-buffer: skip when ceil-rounding provides >= 10 min of padding.
+        const ceilEndMs = dayStarts[di] + eSlot * FIFTEEN_MIN;
+        const builtInPadding = ceilEndMs - ovEnd;
+
+        if (builtInPadding < TEN_MIN_MS) {
+          const afterIdx = di * SLOTS_PER_DAY + eSlot;
+          if (afterIdx < flat.length && flat[afterIdx] < 2) flat[afterIdx] = 2;
         }
       }
+    }
+
+    for (let di = 0; di < days.length; di++) {
+      for (let si = 0; si < SLOTS_PER_DAY; si++) {
+        grid[di][si] = flat[di * SLOTS_PER_DAY + si];
+      }
+    }
 
     // Hide availability that's less than 12 hours out (too close to book).
       const cutoff = Date.now() + 12 * 60 * 60 * 1000;
