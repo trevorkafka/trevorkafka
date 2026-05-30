@@ -76,7 +76,7 @@ details.options[open] > summary{
 }
 .settings-sentence{
   font-family:'Freeman',Arial,sans-serif;
-  font-size:.85rem;color:var(--ink);
+  font-size:.95rem;color:var(--muted);
   flex:1;align-self:center;line-height:1;
 }
 details.options[open] .settings-sentence{display:none}
@@ -162,6 +162,11 @@ details.options[open] > .options-body{
 .uc-quadlbl{color:var(--ink);display:flex;align-items:center;justify-content:center;width:100%;height:100%;line-height:1;white-space:nowrap;font-size:11px;opacity:.55}
 .uc-reftext{color:var(--accent3);display:flex;align-items:center;justify-content:center;width:100%;height:100%;line-height:1;white-space:nowrap;font-size:15px}
 .uc-explain{color:var(--muted);display:flex;align-items:center;justify-content:center;width:100%;height:100%;line-height:1;white-space:nowrap;font-size:15px}
+.explain{display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;line-height:1.25;width:100%}
+.explain:empty{display:none}
+.explain .ex-coord{color:var(--accent);font-size:1rem}
+.explain .ex-ref{color:var(--accent3);font-size:.95rem}
+.explain .ex-def{color:var(--muted);font-size:.95rem}
 
 /* preset buttons */
 .preset-btn{
@@ -223,7 +228,7 @@ details.hist[open] summary .arr{transform:rotate(90deg)}
     </summary>
     <div class="options-body">
       <div class="grp">
-        <span class="lbl">Preset</span>
+        <span class="lbl">Presets</span>
         <div class="opts">
           <button class="preset-btn" data-preset="easy">easy</button>
           <button class="preset-btn" data-preset="medium">medium</button>
@@ -280,11 +285,10 @@ details.hist[open] summary .arr{transform:rotate(90deg)}
         </div>
       </div>
       <div class="grp">
-        <span class="lbl">Diagram</span>
-        <div class="opts slide" id="diagramOpts">
-          <span class="pill"></span>
-          <label class="opt"><input type="radio" name="diagram" value="show" checked><span>\(\text{show}\)</span></label>
-          <label class="opt"><input type="radio" name="diagram" value="hide"><span>\(\text{hide}\)</span></label>
+        <span class="lbl">Add-ons</span>
+        <div class="opts" id="addonOpts">
+          <label class="opt"><input type="checkbox" id="aDiagram"><span>\(\text{diagram}\)</span></label>
+          <label class="opt"><input type="checkbox" id="aExplain"><span>\(\text{explanation}\)</span></label>
         </div>
       </div>
     </div>
@@ -292,7 +296,8 @@ details.hist[open] summary .arr{transform:rotate(90deg)}
 
   <div class="stage">
     <div id="q"><span id="qlhs"></span><span id="qeq"></span><span id="qans"></span></div>
-    <div class="circle" id="circleWrap"><svg id="uc" viewBox="0 0 300 370" aria-hidden="true"></svg></div>
+    <div class="circle" id="circleWrap"><svg id="uc" viewBox="0 0 300 285" aria-hidden="true"></svg></div>
+    <div id="explain" class="explain"></div>
   </div>
 
   <div class="controls">
@@ -395,10 +400,13 @@ function makeQuestion(){
   const fs=activeFuncs();
   if(mode==='inv'){
     const allFs=fs;
-    const validFs=invDomain==='all'?allFs:allFs.filter(f=>INV_POOLS[f].some(d=>invDomain==='nonneg'?d>=0:d<0));
+    // Restrict the DOMAIN of the inverse function: filter on the sign of the
+    // argument passed into it (= val(f,deg)), not the sign of the answer angle.
+    const inDom=(f,d)=>{const v=val(f,d);return invDomain==='nonneg'?v.n>=0:v.n<0;};
+    const validFs=invDomain==='all'?allFs:allFs.filter(f=>INV_POOLS[f].some(d=>inDom(f,d)));
     const func=validFs[rnd(validFs.length)];
     const rawPool=INV_POOLS[func];
-    const p=invDomain==='all'?rawPool:rawPool.filter(d=>invDomain==='nonneg'?d>=0:d<0);
+    const p=invDomain==='all'?rawPool:rawPool.filter(d=>inDom(func,d));
     let deg,t=0; do{deg=p[rnd(p.length)];t++;}while(p.length>1&&deg===lastDeg&&t<25); lastDeg=deg;
     const cmd=INV_CMD[invNotation][func];
     const lhs=cmd+'\\!\\left('+tex(val(func,deg))+'\\right)';
@@ -492,15 +500,31 @@ function drawCircle(deg,revealed,func){
     if(onAxis){ const a=22*Math.PI/180,ca=Math.cos(a),sa=Math.sin(a); [ux,uy]=[ux*ca-uy*sa,ux*sa+uy*ca]; }
     const lpx=px+(onAxis?21:17)*ux, lpy=py+(onAxis?21:17)*uy;
     s+='<foreignObject x="'+(lpx-11).toFixed(1)+'" y="'+(lpy-12).toFixed(1)+'" width="22" height="22"><div xmlns="http://www.w3.org/1999/xhtml" class="uc-ptlbl">\\(P\\)</div></foreignObject>';
-    // Bottom info panel
-    const angTex=units==='rad'?degToRadTex(deg).replace(/dfrac/g,'tfrac'):deg+'^\\circ';
-    s+='<foreignObject x="5" y="278" width="290" height="28"><div xmlns="http://www.w3.org/1999/xhtml" class="uc-coord">\\(P\\!\\left('+texTfrac(sc.cos)+',\\ '+texTfrac(sc.sin)+'\\right),\\;\\theta='+angTex+'\\)</div></foreignObject>';
-    const refTex2=units==='rad'?degToRadTex(refDeg).replace(/dfrac/g,'tfrac'):refDeg+'^\\circ';
-    s+='<foreignObject x="5" y="308" width="290" height="24"><div xmlns="http://www.w3.org/1999/xhtml" class="uc-reftext">\\(\\text{reference angle: }'+refTex2+'\\)</div></foreignObject>';
-    if(func) s+='<foreignObject x="5" y="334" width="290" height="32" overflow="visible"><div xmlns="http://www.w3.org/1999/xhtml" class="uc-explain">\\('+explanationTex(func)+'\\)</div></foreignObject>';
   }
   uc.innerHTML=s;
   if(revealed&&window.MathJax&&MathJax.typesetPromise){ if(MathJax.typesetClear)MathJax.typesetClear([uc]); MathJax.typesetPromise([uc]); }
+}
+/* bottom text block (coordinates, reference angle, relevant definition) — the "explanation" add-on */
+function explainHTML(deg,func,blank){
+  const base=((deg%360)+360)%360, sc=SC[base];
+  const angTex=units==='rad'?degToRadTex(deg).replace(/dfrac/g,'tfrac'):deg+'^\\circ';
+  const rad=base*Math.PI/180, axisDir=(Math.cos(rad)>=0)?0:180;
+  let d=base-axisDir; while(d>180)d-=360; while(d<=-180)d+=360;
+  const refDeg=Math.abs(d);
+  const refTex=units==='rad'?degToRadTex(refDeg).replace(/dfrac/g,'tfrac'):refDeg+'^\\circ';
+  // when blank, wrap each line in \phantom so it reserves identical width/height but renders nothing
+  const w=t=>blank?'\\phantom{'+t+'}':t;
+  let h='<div class="ex-ref">\\('+w('\\text{reference angle: }'+refTex)+'\\)</div>';
+  h+='<div class="ex-coord">\\('+w('P\\!\\left('+texTfrac(sc.cos)+',\\ '+texTfrac(sc.sin)+'\\right),\\;\\theta='+angTex)+'\\)</div>';
+  if(func) h+='<div class="ex-def">\\('+w(explanationTex(func))+'\\)</div>';
+  return h;
+}
+function applyAddons(){
+  const q=questions[pos];
+  $('circleWrap').style.display=$('aDiagram').checked?'':'none';
+  const exEl=$('explain');
+  if(q&&$('aExplain').checked) setMath(exEl,explainHTML(q.deg,q.func,!q.revealed));
+  else exEl.innerHTML='';
 }
 
 function setMath(el,t){
@@ -509,15 +533,16 @@ function setMath(el,t){
 }
 function invPoolEmpty(){
   const fs=activeFuncs();
-  return mode==='inv'&&invDomain!=='all'&&!fs.some(f=>INV_POOLS[f].some(d=>invDomain==='nonneg'?d>=0:d<0));
+  return mode==='inv'&&invDomain!=='all'&&!fs.some(f=>INV_POOLS[f].some(d=>{const v=val(f,d);return invDomain==='nonneg'?v.n>=0:v.n<0;}));
 }
 function render(){
   const noFuncs=activeFuncs().length===0, noPool=invPoolEmpty();
   if(noFuncs||noPool||pos<0||!questions[pos]){
-    const msg=noPool?'No selected functions have '+(invDomain==='neg'?'negative':'non-negative')+' output values.':'Select at least one function.';
+    const msg=noPool?'No selected functions are defined for '+(invDomain==='neg'?'negative':'non-negative')+' inputs.':'Select at least one function.';
     qlhs.innerHTML='<span class="qhint">'+msg+'</span>';
     qlhs.style.textAlign='center'; qeq.style.display='none'; qans.innerHTML='';
     drawCircle(0,false);
+    applyAddons();
     primary.disabled=true; undoBtn.style.visibility='hidden'; return;
   }
   primary.disabled=false;
@@ -532,6 +557,7 @@ function render(){
   const ansStr=q.ans.replace('\\text{undef.}',undef);
   setMath(qans, q.revealed ? '\\('+ansStr+vph+'\\)' : '\\('+vph+'\\)');
   drawCircle(q.deg,q.revealed,q.func);
+  applyAddons();
   primary.textContent=q.revealed?'Next':'Show answer';
   undoBtn.style.visibility=actions.length?'visible':'hidden';
   const items=questions.slice(0,pos+1).filter(x=>x.revealed);
@@ -591,7 +617,10 @@ function settingsSummary(){
   const all=fs.length===6;
   if(mode==='inv'){
     const subject=all?'all inverse trig functions':listJoin(fs.map(f=>INV_NAMES[invNotation][f]));
-    return'Quizzing '+subject+' in '+utext+'.';
+    const domTxt=invDomain==='neg'?'with negative inputs'
+                :invDomain==='nonneg'?'with non-negative inputs'
+                :'over their full domain';
+    return'Quizzing '+subject+' '+domTxt+' in '+utext+'.';
   }
   const subject=all?'all trig functions':listJoin(fs.map(f=>TRIG_NAMES[f]));
   const dom=DOMAINS.find(d=>d.id===domainId);
@@ -644,7 +673,7 @@ document.querySelectorAll('input[name=units]').forEach(i=>i.onchange=e=>{ units=
 document.querySelectorAll('input[name=mode]').forEach(i=>i.onchange=e=>{ mode=e.target.value; movePill($('modeOpts')); updateSettingsUI(); onSettings(); });
 document.querySelectorAll('input[name=notation]').forEach(i=>i.onchange=e=>{ invNotation=e.target.value; movePill($('notationOpts')); relabelFunctions(); onSettings(); });
 document.querySelectorAll('input[name=invdomain]').forEach(i=>i.onchange=e=>{ invDomain=e.target.value; movePill($('invDomainOpts')); onSettings(); });
-document.querySelectorAll('input[name=diagram]').forEach(i=>i.onchange=e=>{ movePill($('diagramOpts')); $('circleWrap').style.display=e.target.value==='show'?'':'none'; });
+['aDiagram','aExplain'].forEach(id=>$(id).addEventListener('change',applyAddons));
 function addCycleToSlide(c){
   let pre=false;
   c.addEventListener('mousedown',e=>{
@@ -661,11 +690,12 @@ function addCycleToSlide(c){
     next.dispatchEvent(new Event('change',{bubbles:true}));
   });
 }
-['unitOpts','modeOpts','notationOpts','invDomainOpts','diagramOpts','domainOpts'].forEach(id=>addCycleToSlide($(id)));
+['unitOpts','modeOpts','notationOpts','invDomainOpts','domainOpts'].forEach(id=>addCycleToSlide($(id)));
 function applyPreset(p){
   if(p==='easy'){ units='deg'; mode='trig'; domainId='full'; }
   else if(p==='medium'){ units='rad'; mode='trig'; domainId='any'; }
-  else if(p==='hard'){ units='rad'; mode='inv'; invDomain='all'; }
+  else if(p==='hard'){ units='rad'; mode='inv'; invDomain='all';
+    ['fSin','fCos','fTan','fSec','fCsc','fCot'].forEach(id=>$(id).checked=true); }
   document.querySelector('input[name=units][value='+units+']').checked=true;
   document.querySelector('input[name=mode][value='+mode+']').checked=true;
   if(mode==='inv') document.querySelector('input[name=invdomain][value='+invDomain+']').checked=true;
@@ -673,9 +703,13 @@ function applyPreset(p){
   relabelDomains(); relabelFunctions(); updateSettingsUI(); onSettings();
 }
 document.querySelectorAll('.preset-btn').forEach(b=>b.addEventListener('click',()=>applyPreset(b.dataset.preset)));
+/* clicking empty space inside the open panel (not a control) closes it */
+$('settingsDetails').querySelector('.options-body').addEventListener('click',e=>{
+  if(!e.target.closest('.opt,.preset-btn')) $('settingsDetails').open=false;
+});
 window.addEventListener('resize',()=>{
   movePill($('domainOpts'),true); movePill($('unitOpts'),true);
-  movePill($('modeOpts'),true); movePill($('notationOpts'),true); movePill($('diagramOpts'),true); movePill($('invDomainOpts'),true);
+  movePill($('modeOpts'),true); movePill($('notationOpts'),true); movePill($('invDomainOpts'),true);
 });
 
 /* init after MathJax loads */
@@ -686,7 +720,7 @@ window.addEventListener('resize',()=>{
     relabelDomains();
     relabelFunctions();
     MathJax.typesetPromise([document.querySelector('.options')]).then(()=>{
-      movePill($('domainOpts'),true); movePill($('unitOpts'),true); movePill($('modeOpts'),true); movePill($('diagramOpts'),true);
+      movePill($('domainOpts'),true); movePill($('unitOpts'),true); movePill($('modeOpts'),true);
     });
     updateSettingsUI();
     if(activeFuncs().length) pushNew(false);
