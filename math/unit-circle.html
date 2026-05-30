@@ -55,6 +55,7 @@ body{
   background:var(--surface);
   border:1px solid var(--line);
   border-radius:16px;
+  position:relative;
 }
 .options > summary{
   list-style:none;cursor:pointer;
@@ -67,17 +68,24 @@ body{
 .options > summary::-webkit-details-marker{display:none}
 .options > summary .arr{transition:transform .2s;font-size:.9rem;flex:none;align-self:center;line-height:1}
 details.options[open] > summary .arr{transform:rotate(90deg)}
-.settings-sentence,.settings-label{align-self:center;line-height:1}
+details.options[open] > summary{
+  position:absolute;
+  top:8px;left:18px;
+  height:32px;
+  padding:0;
+}
 .settings-sentence{
-  font-family:Arial,Helvetica,sans-serif;
+  font-family:'Freeman',Arial,sans-serif;
   font-size:.85rem;color:var(--ink);
-  flex:1;
+  flex:1;align-self:center;line-height:1;
 }
 details.options[open] .settings-sentence{display:none}
-details.options:not([open]) .settings-label{display:none}
 .options-body{
-  padding:0 18px 16px;
+  padding:8px 18px 16px;
   display:flex;flex-direction:column;gap:12px;
+}
+details.options[open] > .options-body{
+  padding-left:30px;
 }
 
 .grp{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap}
@@ -91,7 +99,10 @@ details.options:not([open]) .settings-label{display:none}
   display:flex;
   align-items:center;
 }
-.grp .opts{display:flex;flex-wrap:wrap;gap:8px;flex:1}
+.grp .opts{display:flex;flex-wrap:wrap;column-gap:8px;row-gap:4px;flex:1}
+.func-break{flex-basis:100%;height:0}
+@media(min-width:560px){.func-break{display:none}}
+#funcOpts.inv .func-break{display:block}
 .opt{
   position:relative;
   display:inline-flex;align-items:center;justify-content:center;
@@ -130,9 +141,9 @@ details.options:not([open]) .settings-label{display:none}
 .stage.inv{margin-top:clamp(7px,1.5vw,14px)}
 #q{font-size:clamp(1.8rem,7vw,2.4rem);line-height:1.25;display:flex;align-items:center;width:100%}
 #q:not(.inv) .mjx-container{margin:0}
-#qlhs{flex:1;text-align:right}
+#qlhs{flex:1;text-align:center}
 #qeq{flex:none;padding:0 .2em}
-#qans{flex:1;text-align:left}
+#qans{flex:1;text-align:center}
 #qans.reveal{color:var(--accent)}
 .qhint{font-size:1rem;color:var(--muted)}
 .circle{width:clamp(220px,72vw,320px)}
@@ -151,6 +162,18 @@ details.options:not([open]) .settings-label{display:none}
 .uc-quadlbl{color:var(--ink);display:flex;align-items:center;justify-content:center;width:100%;height:100%;line-height:1;white-space:nowrap;font-size:11px;opacity:.55}
 .uc-reftext{color:var(--accent3);display:flex;align-items:center;justify-content:center;width:100%;height:100%;line-height:1;white-space:nowrap;font-size:15px}
 .uc-explain{color:var(--muted);display:flex;align-items:center;justify-content:center;width:100%;height:100%;line-height:1;white-space:nowrap;font-size:15px}
+
+/* preset buttons */
+.preset-btn{
+  border:1.5px solid var(--line);border-radius:999px;
+  background:none;cursor:pointer;
+  font-size:.9rem;padding:5px 14px;min-height:32px;
+  color:var(--muted);font-family:'Freeman',Arial,sans-serif;
+  transition:border-color var(--tx) ease,color var(--tx) ease;
+  user-select:none;-webkit-tap-highlight-color:transparent;
+}
+.preset-btn:hover{color:var(--ink);border-color:var(--muted)}
+.preset-btn:active{background:var(--chip);border-color:var(--chip-line);color:var(--accent)}
 
 /* controls */
 .controls{display:flex;flex-direction:column;align-items:center;gap:10px}
@@ -193,13 +216,20 @@ details.hist[open] summary .arr{transform:rotate(90deg)}
 <div class="wrap">
   <h1 class="title">Unit Circle Math Facts</h1>
 
-  <details class="options" id="settingsDetails" open>
+  <details class="options" id="settingsDetails">
     <summary>
       <span class="arr">›</span>
-      <span class="settings-label">Settings</span>
       <span id="settingsSentence" class="settings-sentence"></span>
     </summary>
     <div class="options-body">
+      <div class="grp">
+        <span class="lbl">Preset</span>
+        <div class="opts">
+          <button class="preset-btn" data-preset="easy">easy</button>
+          <button class="preset-btn" data-preset="medium">medium</button>
+          <button class="preset-btn" data-preset="hard">hard</button>
+        </div>
+      </div>
       <div class="grp">
         <span class="lbl">Units</span>
         <div class="opts slide" id="unitOpts">
@@ -222,6 +252,7 @@ details.hist[open] summary .arr{transform:rotate(90deg)}
           <label class="opt"><input type="checkbox" id="fSin" checked><span>\(\sin\)</span></label>
           <label class="opt"><input type="checkbox" id="fCos" checked><span>\(\cos\)</span></label>
           <label class="opt"><input type="checkbox" id="fTan" checked><span>\(\tan\)</span></label>
+          <span class="func-break"></span>
           <label class="opt"><input type="checkbox" id="fSec"><span>\(\sec\)</span></label>
           <label class="opt"><input type="checkbox" id="fCsc"><span>\(\csc\)</span></label>
           <label class="opt"><input type="checkbox" id="fCot"><span>\(\cot\)</span></label>
@@ -230,6 +261,15 @@ details.hist[open] summary .arr{transform:rotate(90deg)}
       <div class="grp" id="domainGrp">
         <span class="lbl">Domain</span>
         <div class="opts slide" id="domainOpts"></div>
+      </div>
+      <div class="grp" id="invDomainGrp" style="display:none">
+        <span class="lbl">Domain</span>
+        <div class="opts slide" id="invDomainOpts">
+          <span class="pill"></span>
+          <label class="opt"><input type="radio" name="invdomain" value="nonneg" checked><span>\(\ge 0\)</span></label>
+          <label class="opt"><input type="radio" name="invdomain" value="neg"><span>\(< 0\)</span></label>
+          <label class="opt"><input type="radio" name="invdomain" value="all"><span>\(\text{all}\)</span></label>
+        </div>
       </div>
       <div class="grp" id="notationGrp" style="display:none">
         <span class="lbl">Notation</span>
@@ -304,8 +344,8 @@ function degToRadTex(deg){
 /* ---------- domains ---------- */
 const ALL=[0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330];
 const DOMAINS=[
-  {id:'ref', text:'reference angles',  deg:'30^\\circ,\\ 45^\\circ,\\ 60^\\circ', rad:'\\tfrac{\\pi}{6},\\ \\tfrac{\\pi}{4},\\ \\tfrac{\\pi}{3}'},
-  {id:'q1',  text:'first quadrant',    deg:'[\\,0^\\circ,\\,90^\\circ\\,]',       rad:'[\\,0,\\,\\tfrac{\\pi}{2}\\,]'},
+  {id:'ref', text:'30°, 45°, and 60° only',       deg:'30^\\circ,\\ 45^\\circ,\\ 60^\\circ', rad:'\\tfrac{\\pi}{6},\\ \\tfrac{\\pi}{4},\\ \\tfrac{\\pi}{3}'},
+  {id:'q1',  text:'the first quadrant [0°, 90°]', deg:'[\\,0^\\circ,\\,90^\\circ\\,]',       rad:'[\\,0,\\,\\tfrac{\\pi}{2}\\,]'},
   {id:'full',text:'the full circle',   deg:'[\\,0^\\circ,\\,360^\\circ)',         rad:'[\\,0,\\,2\\pi)'},
   {id:'neg', text:'−360° to 360°', deg:'(-360^\\circ,\\,360^\\circ)', rad:'(-2\\pi,\\,2\\pi)'},
   {id:'any', text:'any angle',         deg:'\\text{any angle}',                   rad:'\\text{any angle}'}
@@ -335,7 +375,7 @@ const INV_CMD={
 };
 
 /* ---------- state ---------- */
-let questions=[],pos=-1,actions=[],lastDeg=null,domainId='full',units='deg',mode='trig',invNotation='pow',ready=false;
+let questions=[],pos=-1,actions=[],lastDeg=null,domainId='full',units='deg',mode='trig',invNotation='pow',invDomain='nonneg',ready=false;
 const $=id=>document.getElementById(id);
 const qlhs=$('qlhs'),qeq=$('qeq'),qans=$('qans'),uc=$('uc'),primary=$('primary'),undoBtn=$('undo'),histList=$('histList'),histCount=$('histCount');
 function ansSlot(){ const u=window.innerWidth>=480?'\\text{undefined}':'\\text{undef.}'; return'\\phantom{'+u+'}\\vphantom{\\left(\\dfrac{\\sqrt{2}}{2}\\right)}'; }
@@ -353,15 +393,19 @@ function activeFuncs(){
 const rnd=n=>Math.floor(Math.random()*n);
 function makeQuestion(){
   const fs=activeFuncs();
-  const func=fs[rnd(fs.length)];
   if(mode==='inv'){
-    const p=INV_POOLS[func];
+    const allFs=fs;
+    const validFs=invDomain==='all'?allFs:allFs.filter(f=>INV_POOLS[f].some(d=>invDomain==='nonneg'?d>=0:d<0));
+    const func=validFs[rnd(validFs.length)];
+    const rawPool=INV_POOLS[func];
+    const p=invDomain==='all'?rawPool:rawPool.filter(d=>invDomain==='nonneg'?d>=0:d<0);
     let deg,t=0; do{deg=p[rnd(p.length)];t++;}while(p.length>1&&deg===lastDeg&&t<25); lastDeg=deg;
     const cmd=INV_CMD[invNotation][func];
     const lhs=cmd+'\\!\\left('+tex(val(func,deg))+'\\right)';
     const ans=units==='rad'?degToRadTex(deg):deg+'^\\circ';
     return{lhs,ans,deg,func,revealed:false};
   }
+  const func=fs[rnd(fs.length)];
   const p=pool(domainId);
   let deg,t=0; do{deg=p[rnd(p.length)];t++;}while(p.length>1&&deg===lastDeg&&t<25); lastDeg=deg;
   const ang=units==='rad'?degToRadTex(deg):deg+'^\\circ';
@@ -463,9 +507,15 @@ function setMath(el,t){
   el.innerHTML=t;
   if(window.MathJax&&MathJax.typesetPromise){ if(MathJax.typesetClear)MathJax.typesetClear([el]); MathJax.typesetPromise([el]); }
 }
+function invPoolEmpty(){
+  const fs=activeFuncs();
+  return mode==='inv'&&invDomain!=='all'&&!fs.some(f=>INV_POOLS[f].some(d=>invDomain==='nonneg'?d>=0:d<0));
+}
 function render(){
-  if(activeFuncs().length===0||pos<0||!questions[pos]){
-    qlhs.innerHTML='<span class="qhint">Select at least one function.</span>';
+  const noFuncs=activeFuncs().length===0, noPool=invPoolEmpty();
+  if(noFuncs||noPool||pos<0||!questions[pos]){
+    const msg=noPool?'No selected functions have '+(invDomain==='neg'?'negative':'non-negative')+' output values.':'Select at least one function.';
+    qlhs.innerHTML='<span class="qhint">'+msg+'</span>';
     qlhs.style.textAlign='center'; qeq.style.display='none'; qans.innerHTML='';
     drawCircle(0,false);
     primary.disabled=true; undoBtn.style.visibility='hidden'; return;
@@ -477,10 +527,10 @@ function render(){
   const q=questions[pos];
   setMath(qlhs,'\\('+q.lhs+'\\)');
   qans.classList.toggle('reveal',q.revealed);
-  const slot=ansSlot();
+  const vph='\\vphantom{\\left(\\dfrac{\\sqrt{2}}{2}\\right)}';
   const undef=window.innerWidth>=480?'\\text{undefined}':'\\text{undef.}';
   const ansStr=q.ans.replace('\\text{undef.}',undef);
-  setMath(qans, q.revealed ? '\\(\\rlap{'+ansStr+'}'+slot+'\\)' : '\\('+slot+'\\)');
+  setMath(qans, q.revealed ? '\\('+ansStr+vph+'\\)' : '\\('+vph+'\\)');
   drawCircle(q.deg,q.revealed,q.func);
   primary.textContent=q.revealed?'Next':'Show answer';
   undoBtn.style.visibility=actions.length?'visible':'hidden';
@@ -560,14 +610,16 @@ function relabelFunctions(){
     $('f'+f[0].toUpperCase()+f.slice(1)).nextElementSibling.innerHTML=set[f];
   });
   const c=$('funcOpts');
+  c.classList.toggle('inv',mode==='inv');
   if(window.MathJax&&MathJax.typesetPromise){if(MathJax.typesetClear)MathJax.typesetClear([c]);MathJax.typesetPromise([c]);}
 }
 
 function updateSettingsUI(){
   const isInv=mode==='inv';
   $('domainGrp').style.display=isInv?'none':'';
+  $('invDomainGrp').style.display=isInv?'':'none';
   $('notationGrp').style.display=isInv?'':'none';
-  if(isInv) movePill($('notationOpts'),true);
+  if(isInv){ movePill($('notationOpts'),true); movePill($('invDomainOpts'),true); }
   relabelFunctions();
   updateSummary();
 }
@@ -583,7 +635,7 @@ function relabelDomains(){
 function onSettings(){
   if(!ready)return;
   updateSummary();
-  if(activeFuncs().length===0){ render(); return; }
+  if(activeFuncs().length===0||invPoolEmpty()){ render(); return; }
   if(pos<0||!questions[pos]) pushNew(false); else pushNew(true);
   render();
 }
@@ -591,10 +643,39 @@ function onSettings(){
 document.querySelectorAll('input[name=units]').forEach(i=>i.onchange=e=>{ units=e.target.value; movePill($('unitOpts')); relabelDomains(); onSettings(); });
 document.querySelectorAll('input[name=mode]').forEach(i=>i.onchange=e=>{ mode=e.target.value; movePill($('modeOpts')); updateSettingsUI(); onSettings(); });
 document.querySelectorAll('input[name=notation]').forEach(i=>i.onchange=e=>{ invNotation=e.target.value; movePill($('notationOpts')); relabelFunctions(); onSettings(); });
+document.querySelectorAll('input[name=invdomain]').forEach(i=>i.onchange=e=>{ invDomain=e.target.value; movePill($('invDomainOpts')); onSettings(); });
 document.querySelectorAll('input[name=diagram]').forEach(i=>i.onchange=e=>{ movePill($('diagramOpts')); $('circleWrap').style.display=e.target.value==='show'?'':'none'; });
+function addCycleToSlide(c){
+  let pre=false;
+  c.addEventListener('mousedown',e=>{
+    const inp=e.target.closest('.opt')?.querySelector('input[type=radio]');
+    pre=inp?inp.checked:false;
+  });
+  c.addEventListener('click',e=>{
+    if(!pre)return;
+    const opt=e.target.closest('.opt'); if(!opt)return;
+    const inp=opt.querySelector('input[type=radio]'); if(!inp)return;
+    const all=[...c.querySelectorAll('input[type=radio]')];
+    const next=all[(all.indexOf(inp)+1)%all.length];
+    next.checked=true;
+    next.dispatchEvent(new Event('change',{bubbles:true}));
+  });
+}
+['unitOpts','modeOpts','notationOpts','invDomainOpts','diagramOpts','domainOpts'].forEach(id=>addCycleToSlide($(id)));
+function applyPreset(p){
+  if(p==='easy'){ units='deg'; mode='trig'; domainId='full'; }
+  else if(p==='medium'){ units='rad'; mode='trig'; domainId='any'; }
+  else if(p==='hard'){ units='rad'; mode='inv'; invDomain='all'; }
+  document.querySelector('input[name=units][value='+units+']').checked=true;
+  document.querySelector('input[name=mode][value='+mode+']').checked=true;
+  if(mode==='inv') document.querySelector('input[name=invdomain][value='+invDomain+']').checked=true;
+  movePill($('unitOpts')); movePill($('modeOpts'));
+  relabelDomains(); relabelFunctions(); updateSettingsUI(); onSettings();
+}
+document.querySelectorAll('.preset-btn').forEach(b=>b.addEventListener('click',()=>applyPreset(b.dataset.preset)));
 window.addEventListener('resize',()=>{
   movePill($('domainOpts'),true); movePill($('unitOpts'),true);
-  movePill($('modeOpts'),true); movePill($('notationOpts'),true); movePill($('diagramOpts'),true);
+  movePill($('modeOpts'),true); movePill($('notationOpts'),true); movePill($('diagramOpts'),true); movePill($('invDomainOpts'),true);
 });
 
 /* init after MathJax loads */
