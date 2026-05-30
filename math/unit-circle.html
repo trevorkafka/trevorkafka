@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unit Circle</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(','\\)']] },
+  svg: { fontCache: 'global' },
+  startup: { typeset: false }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.js" async></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Freeman&display=swap');
+
+:root{
+  --paper:#F5EEE2;
+  --surface:#FCF8EF;
+  --ink:#3C303E;
+  --muted:#8a7a60;
+  --line:#d9c9a6;
+  --accent:#d46a53;
+  --accent-h:#FB7F64;
+  --chip:rgba(212,106,83,.14);
+  --chip-line:rgba(212,106,83,.42);
+  --tx:.2s;
+  --accent3:#2b7a78;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:Arial,Helvetica,sans-serif;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  padding:clamp(18px,5vw,48px) 18px;
+}
+.wrap{width:100%;max-width:600px}
+
+.title{
+  font-family:'Freeman',Arial,sans-serif;
+  font-weight:400;
+  letter-spacing:.005em;
+  font-size:1.75rem;
+  margin:0 0 20px;
+  color:var(--ink);
+}
+
+/* collapsible options panel */
+.options{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:16px;
+}
+.options > summary{
+  list-style:none;cursor:pointer;
+  display:flex;align-items:center;gap:8px;
+  padding:12px 18px;
+  font-family:'Freeman',Arial,sans-serif;
+  font-size:.95rem;color:var(--muted);line-height:1;
+  user-select:none;-webkit-tap-highlight-color:transparent;
+}
+.options > summary::-webkit-details-marker{display:none}
+.options > summary .arr{transition:transform .2s;font-size:.9rem;flex:none;align-self:center;line-height:1}
+details.options[open] > summary .arr{transform:rotate(90deg)}
+.settings-sentence,.settings-label{align-self:center;line-height:1}
+.settings-sentence{
+  font-family:Arial,Helvetica,sans-serif;
+  font-size:.85rem;color:var(--ink);
+  flex:1;
+}
+details.options[open] .settings-sentence{display:none}
+details.options:not([open]) .settings-label{display:none}
+.options-body{
+  padding:0 18px 16px;
+  display:flex;flex-direction:column;gap:12px;
+}
+
+.grp{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap}
+.grp > .lbl{
+  font-family:'Freeman',Arial,sans-serif;
+  font-size:.95rem;
+  color:var(--muted);
+  width:88px;
+  flex:none;
+  min-height:32px;
+  display:flex;
+  align-items:center;
+}
+.grp .opts{display:flex;flex-wrap:wrap;gap:8px;flex:1}
+.opt{
+  position:relative;
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:32px;padding:5px 14px;border-radius:999px;
+  cursor:pointer;font-size:.98rem;
+  color:var(--muted);background:transparent;
+  border:1.5px solid transparent;
+  transition:background-color var(--tx) ease,color var(--tx) ease,border-color var(--tx) ease;
+  user-select:none;-webkit-tap-highlight-color:transparent;
+}
+.opt:hover{color:var(--ink)}
+.opt input{position:absolute;opacity:0;width:0;height:0;margin:0;pointer-events:none}
+.opt:has(input:checked){
+  background:var(--chip);
+  border-color:var(--chip-line);
+  color:var(--accent);
+}
+.opt:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.opts.slide{position:relative}
+.opts.slide .pill{
+  position:absolute;left:0;top:0;width:0;height:32px;
+  background:var(--chip);border:1.5px solid var(--chip-line);
+  border-radius:999px;z-index:0;pointer-events:none;opacity:0;
+  transition:transform var(--tx) ease,width var(--tx) ease,height var(--tx) ease,opacity var(--tx) ease;
+}
+.opts.slide .opt{position:relative;z-index:1}
+.opts.slide .opt:has(input:checked){background:transparent;border-color:transparent;color:var(--accent)}
+
+/* stage */
+.stage{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:clamp(7px,1.5vw,14px);
+  text-align:center;
+  padding:10px 8px;
+}
+.stage.inv{margin-top:clamp(7px,1.5vw,14px)}
+#q{font-size:clamp(1.8rem,7vw,2.4rem);line-height:1.25;display:flex;align-items:center;width:100%}
+#q:not(.inv) .mjx-container{margin:0}
+#qlhs{flex:1;text-align:right}
+#qeq{flex:none;padding:0 .2em}
+#qans{flex:1;text-align:left}
+#qans.reveal{color:var(--accent)}
+.qhint{font-size:1rem;color:var(--muted)}
+.circle{width:clamp(220px,72vw,320px)}
+#uc{width:100%;height:auto;display:block;overflow:visible}
+.uc-axis{stroke:var(--ink);stroke-width:1}
+.uc-circle{fill:none;stroke:var(--ink);stroke-width:1.1}
+.uc-ray{stroke:var(--accent);stroke-width:2.2;stroke-linecap:round}
+.uc-arc{fill:none;stroke:var(--accent);stroke-width:2}
+.uc-arrow2{fill:var(--accent)}
+.uc-proj{stroke:var(--accent);stroke-width:1.2;stroke-dasharray:3 4;opacity:.5}
+.uc-pt{fill:var(--accent)}
+.uc-ref{fill:none;stroke:var(--accent3);stroke-width:2}
+.uc-coord{color:var(--accent);display:flex;align-items:center;justify-content:center;width:100%;height:100%;line-height:1;white-space:nowrap;font-size:15px}
+.uc-reflbl{color:var(--accent3);display:flex;align-items:center;justify-content:center;width:100%;height:100%;line-height:1;white-space:nowrap;font-size:15px}
+.uc-ptlbl{color:var(--accent);display:flex;align-items:center;justify-content:center;width:100%;height:100%;line-height:1;white-space:nowrap;font-size:14px}
+.uc-quadlbl{color:var(--ink);display:flex;align-items:center;justify-content:center;width:100%;height:100%;line-height:1;white-space:nowrap;font-size:11px;opacity:.55}
+.uc-reftext{color:var(--accent3);display:flex;align-items:center;justify-content:center;width:100%;height:100%;line-height:1;white-space:nowrap;font-size:15px}
+.uc-explain{color:var(--muted);display:flex;align-items:center;justify-content:center;width:100%;height:100%;line-height:1;white-space:nowrap;font-size:15px}
+
+/* controls */
+.controls{display:flex;flex-direction:column;align-items:center;gap:10px}
+#primary{
+  font-family:Arial,Helvetica,sans-serif;
+  font-size:1.02rem;font-weight:700;
+  color:#fff;background:var(--accent);
+  border:none;border-radius:12px;
+  padding:13px 40px;cursor:pointer;
+  box-shadow:0 6px 16px rgba(60,48,62,.22);
+  transition:background-color var(--tx),transform .08s,box-shadow var(--tx);
+  min-width:180px;
+}
+#primary:hover{background:var(--accent-h);box-shadow:0 8px 20px rgba(60,48,62,.26)}
+#primary:active{transform:translateY(1px);box-shadow:0 4px 12px rgba(60,48,62,.22)}
+#primary:disabled{background:#c9b79a;box-shadow:none;cursor:not-allowed}
+#undo{
+  background:none;border:none;cursor:pointer;
+  color:var(--muted);font-size:.84rem;font-family:inherit;
+  padding:4px 8px;text-decoration:underline;text-underline-offset:3px;
+}
+#undo:hover{color:var(--accent)}
+
+/* history */
+details.hist{margin-top:26px;border-top:1px solid var(--line);padding-top:8px}
+.hist summary{
+  list-style:none;cursor:pointer;
+  font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--muted);display:flex;align-items:center;gap:8px;padding:8px 2px;
+}
+.hist summary::-webkit-details-marker{display:none}
+.hist summary .arr{transition:transform .2s;font-size:.9rem}
+details.hist[open] summary .arr{transform:rotate(90deg)}
+#histList{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:8px 2px 4px}
+.hrow{display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:4px 13px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-size:.95rem;color:var(--ink)}
+.hempty{font-size:.85rem;color:var(--muted);font-style:italic;padding:6px 2px;text-align:center;width:100%}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1 class="title">Unit Circle Math Facts</h1>
+
+  <details class="options" id="settingsDetails" open>
+    <summary>
+      <span class="arr">›</span>
+      <span class="settings-label">Settings</span>
+      <span id="settingsSentence" class="settings-sentence"></span>
+    </summary>
+    <div class="options-body">
+      <div class="grp">
+        <span class="lbl">Units</span>
+        <div class="opts slide" id="unitOpts">
+          <span class="pill"></span>
+          <label class="opt"><input type="radio" name="units" value="deg" checked><span>\(\text{degrees}\)</span></label>
+          <label class="opt"><input type="radio" name="units" value="rad"><span>\(\text{radians}\)</span></label>
+        </div>
+      </div>
+      <div class="grp">
+        <span class="lbl">Mode</span>
+        <div class="opts slide" id="modeOpts">
+          <span class="pill"></span>
+          <label class="opt"><input type="radio" name="mode" value="trig" checked><span>\(\text{trig}\)</span></label>
+          <label class="opt"><input type="radio" name="mode" value="inv"><span>\(\text{inverse trig}\)</span></label>
+        </div>
+      </div>
+      <div class="grp">
+        <span class="lbl">Functions</span>
+        <div class="opts" id="funcOpts">
+          <label class="opt"><input type="checkbox" id="fSin" checked><span>\(\sin\)</span></label>
+          <label class="opt"><input type="checkbox" id="fCos" checked><span>\(\cos\)</span></label>
+          <label class="opt"><input type="checkbox" id="fTan" checked><span>\(\tan\)</span></label>
+          <label class="opt"><input type="checkbox" id="fSec"><span>\(\sec\)</span></label>
+          <label class="opt"><input type="checkbox" id="fCsc"><span>\(\csc\)</span></label>
+          <label class="opt"><input type="checkbox" id="fCot"><span>\(\cot\)</span></label>
+        </div>
+      </div>
+      <div class="grp" id="domainGrp">
+        <span class="lbl">Domain</span>
+        <div class="opts slide" id="domainOpts"></div>
+      </div>
+      <div class="grp" id="notationGrp" style="display:none">
+        <span class="lbl">Notation</span>
+        <div class="opts slide" id="notationOpts">
+          <span class="pill"></span>
+          <label class="opt"><input type="radio" name="notation" value="pow" checked><span>\({}^{-1}\)</span></label>
+          <label class="opt"><input type="radio" name="notation" value="arc"><span>\(\text{arc}\)</span></label>
+        </div>
+      </div>
+      <div class="grp">
+        <span class="lbl">Diagram</span>
+        <div class="opts slide" id="diagramOpts">
+          <span class="pill"></span>
+          <label class="opt"><input type="radio" name="diagram" value="show" checked><span>\(\text{show}\)</span></label>
+          <label class="opt"><input type="radio" name="diagram" value="hide"><span>\(\text{hide}\)</span></label>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <div class="stage">
+    <div id="q"><span id="qlhs"></span><span id="qeq"></span><span id="qans"></span></div>
+    <div class="circle" id="circleWrap"><svg id="uc" viewBox="0 0 300 370" aria-hidden="true"></svg></div>
+  </div>
+
+  <div class="controls">
+    <button id="primary">Show answer</button>
+    <button id="undo">undo</button>
+  </div>
+
+  <details class="hist">
+    <summary><span class="arr">›</span> History <span id="histCount" style="margin-left:auto;font-variant-numeric:tabular-nums"></span></summary>
+    <div id="histList"></div>
+  </details>
+</div>
+
+<script>
+/* ---------- exact value arithmetic: value = n*sqrt(r)/d ---------- */
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b];}return a||1;};
+function norm({n,r,d}){ if(n===0)return{n:0,r:1,d:1}; if(d<0){n=-n;d=-d;} const g=gcd(n,d); return{n:n/g,r,d:d/g}; }
+function simpRoot(p){let f=1;for(let s=2;s*s<=p;s++){while(p%(s*s)===0){p/=s*s;f*=s;}}return{f,r:p};}
+function mul(a,b){const s=simpRoot(a.r*b.r);return norm({n:a.n*b.n*s.f,r:s.r,d:a.d*b.d});}
+function recip(a){ if(a.n===0)return null; return norm({n:a.d,r:a.r,d:a.n*a.r}); }
+function divV(a,b){const rb=recip(b);return rb?mul(a,rb):null;}
+function tex(v){
+  if(v===null)return '\\text{undef.}';
+  if(v.n===0)return '0';
+  const sign=v.n<0?'-':'',an=Math.abs(v.n);
+  let num=(v.r===1)?String(an):(an===1?'':String(an))+'\\sqrt{'+v.r+'}';
+  return v.d===1 ? sign+num : sign+'\\dfrac{'+num+'}{'+v.d+'}';
+}
+const H={n:1,r:1,d:2},R2={n:1,r:2,d:2},R3={n:1,r:3,d:2},Z={n:0,r:1,d:1},ONE={n:1,r:1,d:1};
+const neg=v=>({n:-v.n,r:v.r,d:v.d});
+const SC={
+  0:{sin:Z,cos:ONE}, 30:{sin:H,cos:R3}, 45:{sin:R2,cos:R2}, 60:{sin:R3,cos:H}, 90:{sin:ONE,cos:Z},
+  120:{sin:R3,cos:neg(H)}, 135:{sin:R2,cos:neg(R2)}, 150:{sin:H,cos:neg(R3)}, 180:{sin:Z,cos:neg(ONE)},
+  210:{sin:neg(H),cos:neg(R3)}, 225:{sin:neg(R2),cos:neg(R2)}, 240:{sin:neg(R3),cos:neg(H)}, 270:{sin:neg(ONE),cos:Z},
+  300:{sin:neg(R3),cos:H}, 315:{sin:neg(R2),cos:R2}, 330:{sin:neg(H),cos:R3}
+};
+function val(func,deg){
+  const sc=SC[((deg%360)+360)%360],s=sc.sin,c=sc.cos;
+  return {sin:s,cos:c,tan:divV(s,c),sec:recip(c),csc:recip(s),cot:divV(c,s)}[func];
+}
+function degToRadTex(deg){
+  let num=deg,den=180; const g=gcd(Math.abs(num),den); num/=g;den/=g;
+  if(num===0)return '0';
+  let sign=''; if(num<0){sign='-';num=-num;}
+  const top=(num===1?'':num)+'\\pi';
+  return den===1 ? sign+top : sign+'\\dfrac{'+top+'}{'+den+'}';
+}
+
+/* ---------- domains ---------- */
+const ALL=[0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330];
+const DOMAINS=[
+  {id:'ref', text:'reference angles',  deg:'30^\\circ,\\ 45^\\circ,\\ 60^\\circ', rad:'\\tfrac{\\pi}{6},\\ \\tfrac{\\pi}{4},\\ \\tfrac{\\pi}{3}'},
+  {id:'q1',  text:'first quadrant',    deg:'[\\,0^\\circ,\\,90^\\circ\\,]',       rad:'[\\,0,\\,\\tfrac{\\pi}{2}\\,]'},
+  {id:'full',text:'the full circle',   deg:'[\\,0^\\circ,\\,360^\\circ)',         rad:'[\\,0,\\,2\\pi)'},
+  {id:'neg', text:'−360° to 360°', deg:'(-360^\\circ,\\,360^\\circ)', rad:'(-2\\pi,\\,2\\pi)'},
+  {id:'any', text:'any angle',         deg:'\\text{any angle}',                   rad:'\\text{any angle}'}
+];
+function pool(id){
+  if(id==='ref')return[30,45,60];
+  if(id==='q1')return[0,30,45,60,90];
+  if(id==='full')return ALL.slice();
+  if(id==='neg'){const p=ALL.slice();for(const a of ALL)if(a>0)p.push(a-360);return p;}
+  const p=[];for(const a of ALL)for(let k=-2;k<=2;k++){const v=a+360*k;if(v>=-720&&v<=720)p.push(v);}return p;
+}
+
+/* ---------- inverse trig ---------- */
+const INV_POOLS={
+  sin:[-90,-60,-45,-30,0,30,45,60,90],
+  cos:[0,30,45,60,90,120,135,150,180],
+  tan:[-60,-45,-30,0,30,45,60],
+  sec:[0,30,45,60,120,135,150,180],
+  csc:[-90,-60,-45,-30,30,45,60,90],
+  cot:[30,45,60,90,120,135,150]
+};
+const INV_CMD={
+  arc:{sin:'\\arcsin',cos:'\\arccos',tan:'\\arctan',
+       sec:'\\operatorname{arcsec}',csc:'\\operatorname{arccsc}',cot:'\\operatorname{arccot}'},
+  pow:{sin:'\\sin^{-1}',cos:'\\cos^{-1}',tan:'\\tan^{-1}',
+       sec:'\\sec^{-1}',csc:'\\csc^{-1}',cot:'\\cot^{-1}'}
+};
+
+/* ---------- state ---------- */
+let questions=[],pos=-1,actions=[],lastDeg=null,domainId='full',units='deg',mode='trig',invNotation='pow',ready=false;
+const $=id=>document.getElementById(id);
+const qlhs=$('qlhs'),qeq=$('qeq'),qans=$('qans'),uc=$('uc'),primary=$('primary'),undoBtn=$('undo'),histList=$('histList'),histCount=$('histCount');
+function ansSlot(){ const u=window.innerWidth>=480?'\\text{undefined}':'\\text{undef.}'; return'\\phantom{'+u+'}\\vphantom{\\left(\\dfrac{\\sqrt{2}}{2}\\right)}'; }
+
+function activeFuncs(){
+  const f=[];
+  if($('fSin').checked)f.push('sin');
+  if($('fCos').checked)f.push('cos');
+  if($('fTan').checked)f.push('tan');
+  if($('fSec').checked)f.push('sec');
+  if($('fCsc').checked)f.push('csc');
+  if($('fCot').checked)f.push('cot');
+  return f;
+}
+const rnd=n=>Math.floor(Math.random()*n);
+function makeQuestion(){
+  const fs=activeFuncs();
+  const func=fs[rnd(fs.length)];
+  if(mode==='inv'){
+    const p=INV_POOLS[func];
+    let deg,t=0; do{deg=p[rnd(p.length)];t++;}while(p.length>1&&deg===lastDeg&&t<25); lastDeg=deg;
+    const cmd=INV_CMD[invNotation][func];
+    const lhs=cmd+'\\!\\left('+tex(val(func,deg))+'\\right)';
+    const ans=units==='rad'?degToRadTex(deg):deg+'^\\circ';
+    return{lhs,ans,deg,func,revealed:false};
+  }
+  const p=pool(domainId);
+  let deg,t=0; do{deg=p[rnd(p.length)];t++;}while(p.length>1&&deg===lastDeg&&t<25); lastDeg=deg;
+  const ang=units==='rad'?degToRadTex(deg):deg+'^\\circ';
+  return{lhs:'\\'+func+'\\!\\left('+ang+'\\right)',ans:tex(val(func,deg)),deg,func,revealed:false};
+}
+function pushNew(undoable){
+  const from=pos; questions.push(makeQuestion()); pos=questions.length-1;
+  if(undoable)actions.push({type:'advance',from,created:true});
+}
+
+/* ---------- unit circle diagram ---------- */
+function texTfrac(v){
+  if(v.n===0)return '0';
+  const sg=v.n<0?'-':'',an=Math.abs(v.n);
+  const num=v.r===1?String(an):(an===1?'':String(an))+'\\sqrt{'+v.r+'}';
+  return v.d===1 ? sg+num : sg+'\\tfrac{'+num+'}{'+v.d+'}';
+}
+function explanationTex(func){
+  const pre='\\text{Relevant definition: }';
+  if(mode==='trig'){
+    const t={sin:'\\sin\\theta=y',cos:'\\cos\\theta=x',tan:'\\tan\\theta=\\tfrac{y}{x}',
+             sec:'\\sec\\theta=\\tfrac{1}{x}',csc:'\\csc\\theta=\\tfrac{1}{y}',cot:'\\cot\\theta=\\tfrac{x}{y}'};
+    return pre+t[func];
+  }
+  const info={
+    sin:{i:'y',             rd:'-90^\\circ\\le\\theta\\le90^\\circ',  rr:'-\\tfrac{\\pi}{2}\\le\\theta\\le\\tfrac{\\pi}{2}'},
+    cos:{i:'x',             rd:'0^\\circ\\le\\theta\\le180^\\circ',   rr:'0\\le\\theta\\le\\pi'},
+    tan:{i:'\\tfrac{y}{x}', rd:'-90^\\circ<\\theta<90^\\circ',       rr:'-\\tfrac{\\pi}{2}<\\theta<\\tfrac{\\pi}{2}'},
+    sec:{i:'\\tfrac{1}{x}', rd:'0^\\circ\\le\\theta\\le180^\\circ',  rr:'0\\le\\theta\\le\\pi'},
+    csc:{i:'\\tfrac{1}{y}', rd:'-90^\\circ\\le\\theta\\le90^\\circ', rr:'-\\tfrac{\\pi}{2}\\le\\theta\\le\\tfrac{\\pi}{2}'},
+    cot:{i:'\\tfrac{x}{y}', rd:'0^\\circ<\\theta\\le180^\\circ',     rr:'0<\\theta\\le\\pi'}
+  }[func];
+  const cmd=INV_CMD[invNotation][func];
+  return pre+cmd+'('+info.i+')=\\theta,\\;'+(units==='deg'?info.rd:info.rr);
+}
+function drawCircle(deg,revealed,func){
+  const cx=150,cy=150,R=96,A0=30,A1=270,AR=26,SPIRAL=8;
+  let s='<defs>'+
+    '<marker id="sa" markerWidth="6" markerHeight="6" refX="4" refY="3" orient="auto"><path d="M0,0 L5,3 L0,6 Z" class="uc-arrow2"/></marker>'+
+    '</defs>';
+  s+='<line class="uc-axis" x1="'+A0+'" y1="'+cy+'" x2="'+A1+'" y2="'+cy+'"/>';
+  s+='<line class="uc-axis" x1="'+cx+'" y1="'+A1+'" x2="'+cx+'" y2="'+A0+'"/>';
+  s+='<circle class="uc-circle" cx="'+cx+'" cy="'+cy+'" r="'+R+'"/>';
+  if(revealed){
+    const base=((deg%360)+360)%360, rad=base*Math.PI/180;
+    const px=cx+R*Math.cos(rad), py=cy-R*Math.sin(rad);
+    const sc=SC[base];
+    // Quadrant labels at (±1,±1) in math coords = (cx±R, cy∓R) in SVG
+    const qw=32,qh=20;
+    [['I',cx+R,cy-R],['II',cx-R,cy-R],['III',cx-R,cy+R],['IV',cx+R,cy+R]].forEach(([lbl,qx,qy])=>{
+      s+='<foreignObject x="'+(qx-qw/2)+'" y="'+(qy-qh/2)+'" width="'+qw+'" height="'+qh+'"><div xmlns="http://www.w3.org/1999/xhtml" class="uc-quadlbl">\\(\\text{'+lbl+'}\\)</div></foreignObject>';
+    });
+    // Orange arc + angle label
+    if(deg!==0){
+      const totalRad=deg*Math.PI/180;
+      const steps=Math.max(4,Math.round(Math.abs(deg)/4));
+      const pts=[];
+      for(let i=0;i<=steps;i++){
+        const t=totalRad*i/steps;
+        const r=AR+SPIRAL*Math.abs(t)/(2*Math.PI);
+        pts.push((cx+r*Math.cos(t)).toFixed(1)+','+(cy-r*Math.sin(t)).toFixed(1));
+      }
+      s+='<path class="uc-arc" marker-end="url(#sa)" d="M'+pts.join(' L')+'"/>';
+    }
+    // Teal reference angle arc + label
+    const axisDir=(Math.cos(rad)>=0)?0:180;
+    let d=base-axisDir; while(d>180)d-=360; while(d<=-180)d+=360;
+    const refDeg=Math.abs(d);
+    if(refDeg>0.5){
+      const a0=axisDir*Math.PI/180, rs=Math.max(2,Math.round(refDeg/4)), rr=48, rp=[];
+      for(let i=0;i<=rs;i++){const t=a0+(d*Math.PI/180)*i/rs; rp.push((cx+rr*Math.cos(t)).toFixed(1)+','+(cy-rr*Math.sin(t)).toFixed(1));}
+      s+='<path class="uc-ref" d="M'+rp.join(' L')+'"/>';
+      const mid=(axisDir+d/2)*Math.PI/180, rl=68, rlx=cx+rl*Math.cos(mid), rly=cy-rl*Math.sin(mid);
+      const refTex=units==='rad'?degToRadTex(refDeg).replace(/dfrac/g,'tfrac'):(refDeg+'^\\circ');
+      s+='<foreignObject x="'+(rlx-32).toFixed(1)+'" y="'+(rly-16).toFixed(1)+'" width="64" height="32"><div xmlns="http://www.w3.org/1999/xhtml" class="uc-reflbl">\\('+refTex+'\\)</div></foreignObject>';
+    }
+    // Projection lines, ray, point, P label
+    s+='<line class="uc-proj" x1="'+px.toFixed(1)+'" y1="'+py.toFixed(1)+'" x2="'+px.toFixed(1)+'" y2="'+cy+'"/>';
+    s+='<line class="uc-proj" x1="'+px.toFixed(1)+'" y1="'+py.toFixed(1)+'" x2="'+cx+'" y2="'+py.toFixed(1)+'"/>';
+    s+='<line class="uc-ray" x1="'+cx+'" y1="'+cy+'" x2="'+px.toFixed(1)+'" y2="'+py.toFixed(1)+'"/>';
+    s+='<circle class="uc-pt" cx="'+px.toFixed(1)+'" cy="'+py.toFixed(1)+'" r="4.5"/>';
+    let ux=(px-cx)/R, uy=(py-cy)/R;
+    const onAxis=base%90===0;
+    if(onAxis){ const a=22*Math.PI/180,ca=Math.cos(a),sa=Math.sin(a); [ux,uy]=[ux*ca-uy*sa,ux*sa+uy*ca]; }
+    const lpx=px+(onAxis?21:17)*ux, lpy=py+(onAxis?21:17)*uy;
+    s+='<foreignObject x="'+(lpx-11).toFixed(1)+'" y="'+(lpy-12).toFixed(1)+'" width="22" height="22"><div xmlns="http://www.w3.org/1999/xhtml" class="uc-ptlbl">\\(P\\)</div></foreignObject>';
+    // Bottom info panel
+    const angTex=units==='rad'?degToRadTex(deg).replace(/dfrac/g,'tfrac'):deg+'^\\circ';
+    s+='<foreignObject x="5" y="278" width="290" height="28"><div xmlns="http://www.w3.org/1999/xhtml" class="uc-coord">\\(P\\!\\left('+texTfrac(sc.cos)+',\\ '+texTfrac(sc.sin)+'\\right),\\;\\theta='+angTex+'\\)</div></foreignObject>';
+    const refTex2=units==='rad'?degToRadTex(refDeg).replace(/dfrac/g,'tfrac'):refDeg+'^\\circ';
+    s+='<foreignObject x="5" y="308" width="290" height="24"><div xmlns="http://www.w3.org/1999/xhtml" class="uc-reftext">\\(\\text{reference angle: }'+refTex2+'\\)</div></foreignObject>';
+    if(func) s+='<foreignObject x="5" y="334" width="290" height="32" overflow="visible"><div xmlns="http://www.w3.org/1999/xhtml" class="uc-explain">\\('+explanationTex(func)+'\\)</div></foreignObject>';
+  }
+  uc.innerHTML=s;
+  if(revealed&&window.MathJax&&MathJax.typesetPromise){ if(MathJax.typesetClear)MathJax.typesetClear([uc]); MathJax.typesetPromise([uc]); }
+}
+
+function setMath(el,t){
+  el.innerHTML=t;
+  if(window.MathJax&&MathJax.typesetPromise){ if(MathJax.typesetClear)MathJax.typesetClear([el]); MathJax.typesetPromise([el]); }
+}
+function render(){
+  if(activeFuncs().length===0||pos<0||!questions[pos]){
+    qlhs.innerHTML='<span class="qhint">Select at least one function.</span>';
+    qlhs.style.textAlign='center'; qeq.style.display='none'; qans.innerHTML='';
+    drawCircle(0,false);
+    primary.disabled=true; undoBtn.style.visibility='hidden'; return;
+  }
+  primary.disabled=false;
+  $('q').classList.toggle('inv',mode==='inv');
+  document.querySelector('.stage').classList.toggle('inv',mode==='inv');
+  qlhs.style.textAlign=''; qeq.style.display='';
+  const q=questions[pos];
+  setMath(qlhs,'\\('+q.lhs+'\\)');
+  qans.classList.toggle('reveal',q.revealed);
+  const slot=ansSlot();
+  const undef=window.innerWidth>=480?'\\text{undefined}':'\\text{undef.}';
+  const ansStr=q.ans.replace('\\text{undef.}',undef);
+  setMath(qans, q.revealed ? '\\(\\rlap{'+ansStr+'}'+slot+'\\)' : '\\('+slot+'\\)');
+  drawCircle(q.deg,q.revealed,q.func);
+  primary.textContent=q.revealed?'Next':'Show answer';
+  undoBtn.style.visibility=actions.length?'visible':'hidden';
+  const items=questions.slice(0,pos+1).filter(x=>x.revealed);
+  histCount.textContent=items.length?items.length:'';
+  if(items.length===0){ histList.innerHTML='<div class="hempty">No answers seen yet.</div>'; }
+  else{
+    histList.innerHTML=items.slice().reverse().map(x=>'<div class="hrow">'+('\\('+x.lhs+' = '+x.ans+'\\)').replace(/\\dfrac/g,'\\tfrac')+'</div>').join('');
+    if(window.MathJax&&MathJax.typesetPromise){ if(MathJax.typesetClear)MathJax.typesetClear([histList]); MathJax.typesetPromise([histList]); }
+  }
+}
+
+/* ---------- controls ---------- */
+primary.onclick=()=>{
+  const q=questions[pos]; if(!q)return;
+  if(!q.revealed){ q.revealed=true; actions.push({type:'reveal',pos}); }
+  else{
+    if(pos===questions.length-1) pushNew(true);
+    else{ actions.push({type:'advance',from:pos,created:false}); pos++; }
+  }
+  render();
+};
+undoBtn.onclick=()=>{
+  const a=actions.pop(); if(!a)return;
+  if(a.type==='reveal'){ questions[a.pos].revealed=false; pos=a.pos; }
+  else{ if(a.created)questions.pop(); pos=a.from; }
+  render();
+};
+
+/* ---------- settings ---------- */
+function movePill(c, instant){
+  const pill=c.querySelector('.pill'); if(!pill)return;
+  const inp=c.querySelector('input:checked'), sel=inp?inp.closest('.opt'):null;
+  if(!sel){pill.style.opacity='0';return;}
+  if(instant) pill.style.transition='none';
+  pill.style.opacity='1';
+  pill.style.width=sel.offsetWidth+'px';
+  pill.style.height=sel.offsetHeight+'px';
+  pill.style.transform='translate('+sel.offsetLeft+'px,'+sel.offsetTop+'px)';
+  if(instant) requestAnimationFrame(()=>{ pill.style.transition=''; });
+}
+
+function listJoin(arr){
+  if(arr.length===0)return'';
+  if(arr.length===1)return arr[0];
+  if(arr.length===2)return arr[0]+' and '+arr[1];
+  return arr.slice(0,-1).join(', ')+', and '+arr[arr.length-1];
+}
+const TRIG_NAMES={sin:'sine',cos:'cosine',tan:'tangent',sec:'secant',csc:'cosecant',cot:'cotangent'};
+const INV_NAMES={
+  arc:{sin:'arcsin',cos:'arccos',tan:'arctan',sec:'arcsec',csc:'arccsc',cot:'arccot'},
+  pow:{sin:'sin⁻¹',cos:'cos⁻¹',tan:'tan⁻¹',sec:'sec⁻¹',csc:'csc⁻¹',cot:'cot⁻¹'}
+};
+function settingsSummary(){
+  const fs=activeFuncs();
+  if(fs.length===0)return'No functions selected.';
+  const utext=units==='deg'?'degrees':'radians';
+  const all=fs.length===6;
+  if(mode==='inv'){
+    const subject=all?'all inverse trig functions':listJoin(fs.map(f=>INV_NAMES[invNotation][f]));
+    return'Quizzing '+subject+' in '+utext+'.';
+  }
+  const subject=all?'all trig functions':listJoin(fs.map(f=>TRIG_NAMES[f]));
+  const dom=DOMAINS.find(d=>d.id===domainId);
+  return'Quizzing '+subject+' on '+dom.text+' in '+utext+'.';
+}
+function updateSummary(){ $('settingsSentence').textContent=settingsSummary(); }
+
+const FUNC_LABELS={
+  trig:{sin:'\\(\\sin\\)',cos:'\\(\\cos\\)',tan:'\\(\\tan\\)',sec:'\\(\\sec\\)',csc:'\\(\\csc\\)',cot:'\\(\\cot\\)'},
+  pow: {sin:'\\(\\sin^{-1}\\)',cos:'\\(\\cos^{-1}\\)',tan:'\\(\\tan^{-1}\\)',sec:'\\(\\sec^{-1}\\)',csc:'\\(\\csc^{-1}\\)',cot:'\\(\\cot^{-1}\\)'},
+  arc: {sin:'\\(\\arcsin\\)',cos:'\\(\\arccos\\)',tan:'\\(\\arctan\\)',sec:'\\(\\operatorname{arcsec}\\)',csc:'\\(\\operatorname{arccsc}\\)',cot:'\\(\\operatorname{arccot}\\)'}
+};
+function relabelFunctions(){
+  const set=mode==='trig'?FUNC_LABELS.trig:FUNC_LABELS[invNotation];
+  ['sin','cos','tan','sec','csc','cot'].forEach(f=>{
+    $('f'+f[0].toUpperCase()+f.slice(1)).nextElementSibling.innerHTML=set[f];
+  });
+  const c=$('funcOpts');
+  if(window.MathJax&&MathJax.typesetPromise){if(MathJax.typesetClear)MathJax.typesetClear([c]);MathJax.typesetPromise([c]);}
+}
+
+function updateSettingsUI(){
+  const isInv=mode==='inv';
+  $('domainGrp').style.display=isInv?'none':'';
+  $('notationGrp').style.display=isInv?'':'none';
+  if(isInv) movePill($('notationOpts'),true);
+  relabelFunctions();
+  updateSummary();
+}
+
+function relabelDomains(){
+  const c=$('domainOpts');
+  c.innerHTML='<span class="pill"></span>'+DOMAINS.map(d=>
+    '<label class="opt"><input type="radio" name="domain" value="'+d.id+'"'+(d.id===domainId?' checked':'')+'><span>\\('+d[units]+'\\)</span></label>'
+  ).join('');
+  c.querySelectorAll('input').forEach(i=>i.onchange=e=>{ domainId=e.target.value; movePill(c); onSettings(); });
+  if(window.MathJax&&MathJax.typesetPromise){ if(MathJax.typesetClear)MathJax.typesetClear([c]); MathJax.typesetPromise([c]).then(()=>movePill(c,true)); }
+}
+function onSettings(){
+  if(!ready)return;
+  updateSummary();
+  if(activeFuncs().length===0){ render(); return; }
+  if(pos<0||!questions[pos]) pushNew(false); else pushNew(true);
+  render();
+}
+['fSin','fCos','fTan','fSec','fCsc','fCot'].forEach(id=>$(id).onchange=onSettings);
+document.querySelectorAll('input[name=units]').forEach(i=>i.onchange=e=>{ units=e.target.value; movePill($('unitOpts')); relabelDomains(); onSettings(); });
+document.querySelectorAll('input[name=mode]').forEach(i=>i.onchange=e=>{ mode=e.target.value; movePill($('modeOpts')); updateSettingsUI(); onSettings(); });
+document.querySelectorAll('input[name=notation]').forEach(i=>i.onchange=e=>{ invNotation=e.target.value; movePill($('notationOpts')); relabelFunctions(); onSettings(); });
+document.querySelectorAll('input[name=diagram]').forEach(i=>i.onchange=e=>{ movePill($('diagramOpts')); $('circleWrap').style.display=e.target.value==='show'?'':'none'; });
+window.addEventListener('resize',()=>{
+  movePill($('domainOpts'),true); movePill($('unitOpts'),true);
+  movePill($('modeOpts'),true); movePill($('notationOpts'),true); movePill($('diagramOpts'),true);
+});
+
+/* init after MathJax loads */
+(function wait(){
+  if(window.MathJax&&MathJax.typesetPromise){
+    ready=true;
+    setMath(qeq,'\\(=\\)');
+    relabelDomains();
+    relabelFunctions();
+    MathJax.typesetPromise([document.querySelector('.options')]).then(()=>{
+      movePill($('domainOpts'),true); movePill($('unitOpts'),true); movePill($('modeOpts'),true); movePill($('diagramOpts'),true);
+    });
+    updateSettingsUI();
+    if(activeFuncs().length) pushNew(false);
+    render();
+  } else setTimeout(wait,60);
+})();
+</script>
+</body>
+</html>
