@@ -26,7 +26,8 @@
 
 		<trevorkafka-announcement></trevorkafka-announcement>
 
-		<h1><i class="fa-solid fa-key"></i> Login<span class="widescreen"> to Schedule Lessons</span></h1>
+		<h1 class="widescreen"><i class="fa-solid fa-key"></i> Login to Schedule Lessons</h1>
+		<div class="narrowscreen" style="margin-top: 40px;"></div>
 
 		<style>
 			@keyframes fadeColors {
@@ -34,69 +35,38 @@
 			  50% { background-color: #d7ba6480 }
 			  100% { background-color: #FFFFFF80; }
 			}
+			@media (width >= 900px) {
+				#login-col-widget { order: 1; }
+				#login-col-info   { order: 2; }
+			}
+			@media (width < 900px) {
+				#login-col-widget { order: 2; }
+				#login-col-info   { order: 1; }
+			}
 		</style>
 
 		<!-- <div style="border: solid 1px black; border-radius: 5px; line-height: 24px; padding: 10px; margin: 20px; background-color: #FFFFFF80; text-align: center; animation: fadeColors 0.4s ease-in-out 4;">
 			<strong>New as of Summer 2025:</strong> to schedule lessons, first login and then click <strong>"Find and Book"</strong> at the top of the calendar to view available dates and times. Click on any day on the calendar with availability to schedule your lesson. Lessons can now be scheduled in 15-minute increments.
 		</div> -->
 
-		<ul style="padding-bottom: 20px">
-			<li>Accounts are automatically created when registering for a <a href="call.html">free intro call</a>.</li>
-			<li>If you are having trouble logging in and you haven't taken class with me in over a year, your account may have been archived. Please email <trevorkafka-email></trevorkafka-email> to confirm availability and reactivate (I do this to prevent overbooking of appointments).</li>
-		</ul>
+		<div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; margin-bottom: 1em;">
 
-		<div class="flexcontainer" style="gap: 10px">
-			<div style="flex-grow: 1; background-color: white; border-radius: 20px; padding: 20px">
-				<!-- TUTORBIRD LOGIN WIDGET -->
-				<div>
-					<script src="https://app.tutorbird.com/Widget/v4/Widget.ashx?settings=eyJTY2hvb2xJRCI6InNjaF9kMXhKMiIsIldlYnNpdGVJRCI6Indic19zSkpzIiwiV2Vic2l0ZUJsb2NrSUQiOiJ3YmJfekZ5TEpEIn0="></script>
+			<div id="login-col-widget" style="flex: 1 1 300px;">
+				<div style="background-color: white; border-radius: 20px; padding: 20px;">
+					<!-- TUTORBIRD LOGIN WIDGET -->
+					<div>
+						<script src="https://app.tutorbird.com/Widget/v4/Widget.ashx?settings=eyJTY2hvb2xJRCI6InNjaF9kMXhKMiIsIldlYnNpdGVJRCI6Indic19zSkpzIiwiV2Vic2l0ZUJsb2NrSUQiOiJ3YmJfekZ5TEpEIn0="></script>
+					</div>
 				</div>
 			</div>
-			<div style="flex-basis: 400px; flex-grow: 1; padding: 36px; border-radius: 20px; background-color: white">
-				<h2 style="margin-top: -10px"><i class="fa-solid fa-clock"></i> <span class="widescreen">A Note About </span>Lesson Lengths</h2>
+
+			<div id="login-col-info" style="flex: 1 1 300px;">
+				<div style="text-align:center; padding: 10px 0;"><a onclick="openAvailabilityOverlay()" class="button" style="cursor:pointer; display:inline-block;"><div align="center" style="padding: 16px 28px;"><i class="fa-solid fa-calendar-days"></i> Preview 7-Day Availability</div></a></div>
 				<p>
-					<ul>
-						<li>
-							As of Summer 2025, lessons scheduled with me are not limited to only 60 minutes in length. Each student has a default lesson length assigned to their profile on the admin side, which is determined during the <a href="call.html">intro call</a> process. This lesson length is applied to lessons booked through the online portal.
-						</li>
-						<li>
-							You can also request to change your default lesson length to <strong>the timing that works best for you</strong> (45, 60, 75, 90 mins etc). Send me an email</strong> at <trevorkafka-email></trevorkafka-email> to update your default lesson length. 
-						</li>
-						<li>
-							Lesson fees are prorated based on the length of each lesson.
-						</li>
-						<li>
-							My recommended lesson schedules based on student ages are shown below.
-						</li>
-							<table style="border-collapse: collapse; margin: 20px auto;">
-							  <thead>
-							    <tr style="font-weight: bold; border-bottom: 1px solid black; text-align: left">
-							      <th style="padding: 4px 20px 4px 4px; vertical-align: top;">Student age</th>
-							      <th style="padding: 4px; vertical-align: top;">Recommended<span class="widescreen"> lesson</span> schedule</th>
-							    </tr>
-							  </thead>
-							  <tbody>
-							    <tr>
-							      <td style="padding: 4px 20px 4px 4px; vertical-align: top;">≤13</td>
-							      <td style="padding: 4px; vertical-align: top;">45 <span class="widescreen">minutes</span><span class="narrowscreen">min</span> × 1–2/wk</td>
-							    </tr>
-							    <tr>
-							      <td style="padding: 4px 20px 4px 4px; vertical-align: top;">14–17</td>
-							      <td style="padding: 4px; vertical-align: top;">60 <span class="widescreen">minutes</span><span class="narrowscreen">min</span> × 1–2/wk <em>or</em></td>
-							    </tr>
-							    <tr>
-							      <td style="padding: 4px 20px 4px 4px; vertical-align: top;"></td>
-							      <td style="padding: 4px; vertical-align: top;">45 <span class="widescreen">minutes</span><span class="narrowscreen">min</span> × 2–3/wk</td>
-							    </tr>
-							    <tr>
-							      <td style="padding: 4px 20px 4px 4px; vertical-align: top;">18+</td>
-							      <td style="padding: 4px; vertical-align: top;">60–90 <span class="widescreen">minutes</span><span class="narrowscreen">min</span> × 1–2/wk</td>
-							    </tr>
-							  </tbody>
-							</table>
-					</ul>
+					Accounts are automatically created when registering for a <a href="call.html">free intro call</a>. If you are having trouble logging in and you haven't taken class with me in over a year, your account may have been archived. Please email <trevorkafka-email></trevorkafka-email> to confirm availability and reactivate (I do this to prevent overbooking of appointments).
 				</p>
 			</div>
+
 		</div>
 
 		<div class="FAQ" style="padding-top: 2em">
@@ -125,6 +95,51 @@
 					<p>
 						No-shows and late cancellations are truly my least favorite situations to encounter in the online teaching business, but it's a necessity in order for me to be able to keep teaching as a reliable and sustainable occupation, which is fundamentally what allows me to be able to provide teaching opportunities in the first place. 😊 Let's please work together to try to avoid late cancellation situations in the first place and we all will remain happy.
 					</p>
+				</div>
+			</details>
+			<details>
+				<summary>Information About Lesson Lengths</summary>
+				<div>
+					<ul>
+						<li>
+							As of Summer 2025, lessons scheduled with me are not limited to only 60 minutes in length. Each student has a default lesson length assigned to their profile on the admin side, which is determined during the <a href="call.html">intro call</a> process. This lesson length is applied to lessons booked through the online portal.
+						</li>
+						<li>
+							You can also request to change your default lesson length to <strong>the timing that works best for you</strong> (45, 60, 75, 90 mins etc). Email <trevorkafka-email></trevorkafka-email> to update your default lesson length.
+						</li>
+						<li>
+							Lesson fees are prorated based on the length of each lesson.
+						</li>
+						<li>
+							My recommended lesson schedules based on student ages are shown below.
+						</li>
+						<table style="border-collapse: collapse; margin: 20px auto;">
+							<thead>
+								<tr style="font-weight: bold; border-bottom: 1px solid black; text-align: left">
+									<th style="padding: 4px 20px 4px 4px; vertical-align: top;">Student age</th>
+									<th style="padding: 4px; vertical-align: top;">Recommended<span class="widescreen"> lesson</span> schedule</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td style="padding: 4px 20px 4px 4px; vertical-align: top;">≤13</td>
+									<td style="padding: 4px; vertical-align: top;">45 <span class="widescreen">minutes</span><span class="narrowscreen">min</span> × 1–2/wk</td>
+								</tr>
+								<tr>
+									<td style="padding: 4px 20px 4px 4px; vertical-align: top;">14–17</td>
+									<td style="padding: 4px; vertical-align: top;">60 <span class="widescreen">minutes</span><span class="narrowscreen">min</span> × 1–2/wk <em>or</em></td>
+								</tr>
+								<tr>
+									<td style="padding: 4px 20px 4px 4px; vertical-align: top;"></td>
+									<td style="padding: 4px; vertical-align: top;">45 <span class="widescreen">minutes</span><span class="narrowscreen">min</span> × 2–3/wk</td>
+								</tr>
+								<tr>
+									<td style="padding: 4px 20px 4px 4px; vertical-align: top;">18+</td>
+									<td style="padding: 4px; vertical-align: top;">60–90 <span class="widescreen">minutes</span><span class="narrowscreen">min</span> × 1–2/wk</td>
+								</tr>
+							</tbody>
+						</table>
+					</ul>
 				</div>
 			</details>
 			<details>
@@ -208,7 +223,51 @@
 		</div>
 		<div style="padding-bottom: 20px"></div>
 	</div>
-	
+
+	<!-- Availability overlay -->
+	<style>
+		#availability-overlay-inner {
+			margin: 80px auto 40px;
+			max-width: 1100px;
+			width: 90vw;
+			background: var(--color3);
+			border-radius: 20px;
+			padding: 16px 0 24px 0;
+			position: relative;
+			overflow: hidden;
+		}
+		@media (max-width: 899px) {
+			#availability-overlay-inner {
+				width: 100vw;
+				margin: 60px 0 0 0;
+				border-radius: 16px 16px 0 0;
+			}
+		}
+	</style>
+	<div id="availability-overlay" onclick="if(event.target===this)closeAvailabilityOverlay()" style="display:none; position:fixed; inset:0; z-index:200; background:#00000070; overflow-y:auto;">
+		<div id="availability-overlay-inner" class="glow-shadow">
+			<button onclick="closeAvailabilityOverlay()" style="position:absolute; top:10px; right:12px; background:none; border:none; font-size:120%; opacity:0.35; cursor:pointer; padding:4px 8px; color:var(--color1);">&#x2715;</button>
+			<div id="availability-overlay-content"></div>
+		</div>
+	</div>
+
+	<script>
+		function openAvailabilityOverlay() {
+			const overlay = document.getElementById('availability-overlay');
+			const container = document.getElementById('availability-overlay-content');
+			overlay.style.display = 'block';
+			document.body.style.overflow = 'hidden';
+			if (!container.dataset.loaded) {
+				$(container).load('/snippets/availability.html');
+				container.dataset.loaded = 'true';
+			}
+		}
+		function closeAvailabilityOverlay() {
+			document.getElementById('availability-overlay').style.display = 'none';
+			document.body.style.overflow = '';
+		}
+	</script>
+
 </body>
 
 <trevorkafka-footer></trevorkafka-footer>
