@@ -3,15 +3,15 @@
 //
 
 //navigation bar HTML insertion and addition of "active-link" class to current page for styling purposes
-$('trevorkafka-nav').load('snippets/navigation.html', function() {
+$('trevorkafka-nav').load('/snippets/navigation.html', function() {
         $("#" + window.location.pathname.split("/").pop().split(".")[0]).addClass("active-link");
     });
 
 //other replacements
 $('trevorkafka-email').load('/snippets/email.html')
-$('trevorkafka-footer').load('snippets/footer.html')
-$('trevorkafka-announcement').load('snippets/announcement.html')
-$(`trevorkafka-availability`).load('snippets/availability.html')
+$('trevorkafka-footer').load('/snippets/footer.html')
+$('trevorkafka-announcement').load('/snippets/announcement.html')
+$(`trevorkafka-availability`).load('/snippets/availability.html')
 
 //
 // SECTION 2: SPECIFIC-USE FUNCTIONS
