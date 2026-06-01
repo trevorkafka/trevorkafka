@@ -28,38 +28,40 @@
 
 		<h1><i class="fa-solid fa-pencil"></i> My Class Notes</h1>
 		
-		<div style="border: solid 1px black; border-radius: 5px; line-height: 24px; padding: 10px; margin: 20px; background-color: #FFFFFF80; text-align: center">
-			Tutoring students can access their class notes and materials at any time by filling out the form below.
-		</div>
+		<p>Comprehensive notes and class materials from our tutoring sessions (both present and past) online for access at any time. To find the link to your folder, type your first and last name below.</p>
 
-		<p>Comprehensive notes and class materials from our tutoring sessions (both present and past) are stored on Google Drive and are available for access by students at any time. A Google Drive account is <em>not</em> needed to view our files on Google Drive. To find the link to your Google Drive folder, type your first and last name below.</p>
-
-		<p><strong>Please note:</strong> Since this functionality on my website is new, this form may not work if you haven't taken a class with me since June 2025.</p>
-
-		<div style="display: block; justify-content: center; text-align:center">
-			<p style="text-align:center">
-				<input type="text" id="firstName" placeholder="first name"/>
-				<input type="text" id="lastName" placeholder="last name"/>
-			    <button onclick="lookup()"><i class="fa-solid fa-magnifying-glass"></i> find my notes</button>
+		<div style="text-align: center;">
+			<p style="font-family: Freeman, serif; font-size: clamp(0.85em, 3.5vw, 1.6em);">
+				<span style="white-space: nowrap;">
+					<input type="text" id="firstName" placeholder="first name" style="font-family: Freeman, serif; font-size: 1em; width: 8em;"/>
+					<input type="text" id="lastName" placeholder="last name" style="font-family: Freeman, serif; font-size: 1em; width: 8em;"/>
+				</span>
+				<button onclick="lookup()" style="font-family: Freeman, serif; font-size: 1em;"><i class="fa-solid fa-magnifying-glass"></i> find my notes</button>
 			</p>
-			<p id="message" style="color: red; font-weight: bold"></p>
+			<p id="message" style="color: red; font-family: Freeman, serif; font-size: 130%;"></p>
 		</div>
 
-		<p>For <em>most</em> students, Google Drive folders will be organized by month. If we are working on a full course together from scratch, for example, the content may be organized by unit instead.</p> 
-				<ul>
-					<li>
-						Handwritten notes taken by me during class titled <span style="background-color: #00000010; padding: 4px 7px; border-radius: 4px">⭐ Class Notes.pdf</span> are notes organized in chronological order. All handwritten notes from the entire month are in this single file.
-					</li>
-					<li>
-						Zoom screenshots (especially from when I do on-screen annotations when you share your screen) are organized into folders titled <span style="background-color: #00000010; padding: 4px 7px; border-radius: 4px">YYYY-MM-DD screenshots</span>. All screenshots from a single day are organized into a single subfolder. 
-					</li>
-					<li>
-						Additional files that vary on a student-to-student basis may also be included.
-					</li>
-					<li>
-						A subfolder titled <span style="background-color: #00000010; padding: 4px 7px; border-radius: 4px">teacher notes</span> is sometimes present if I need to store files that I use for creating other files and may be ignored.</p>
-					</li>
-				</ul>
+		<div class="FAQ">
+			<details>
+				<summary>How are my notes organized?</summary>
+				<div>
+					<p>For <em>most</em> students, Google Drive folders will be organized by month. If we are working on a full course together from scratch, the content may be organized by unit instead.</p>
+					<ul>
+						<li>Handwritten notes taken by me during class titled <span style="background-color: #00000010; padding: 4px 7px; border-radius: 4px">⭐ Class Notes.pdf</span> are organized in chronological order. All handwritten notes from the entire month are in this single file.</li>
+						<li>Zoom screenshots (especially from when I do on-screen annotations when you share your screen) are organized into folders titled <span style="background-color: #00000010; padding: 4px 7px; border-radius: 4px">YYYY-MM-DD screenshots</span>. All screenshots from a single day are in a single subfolder.</li>
+						<li>Additional files that vary on a student-to-student basis may also be included.</li>
+						<li>A subfolder titled <span style="background-color: #00000010; padding: 4px 7px; border-radius: 4px">teacher notes</span> is sometimes present — these are files I use for my own preparation and may be ignored.</li>
+					</ul>
+				</div>
+			</details>
+			<details>
+				<summary>What if the form doesn't work?</summary>
+				<div>
+					<p>Since this functionality is relatively new, the form may not work if you haven't taken a class with me since June 2025. Please email <trevorkafka-email></trevorkafka-email> and I will assist as soon as possible.</p>
+				</div>
+			</details>
+		</div>
+
 	</div>
 
 	<script>

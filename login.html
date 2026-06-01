@@ -35,13 +35,14 @@
 			  50% { background-color: #d7ba6480 }
 			  100% { background-color: #FFFFFF80; }
 			}
+			#login-col-widget, #login-col-info { flex: 1 1 300px; }
 			@media (width >= 900px) {
 				#login-col-widget { order: 1; }
 				#login-col-info   { order: 2; }
 			}
 			@media (width < 900px) {
-				#login-col-widget { order: 2; }
-				#login-col-info   { order: 1; }
+				#login-col-widget { order: 2; flex-basis: 100%; }
+				#login-col-info   { order: 1; flex-basis: 100%; }
 			}
 		</style>
 
@@ -51,7 +52,7 @@
 
 		<div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; margin-bottom: 1em;">
 
-			<div id="login-col-widget" style="flex: 1 1 300px;">
+			<div id="login-col-widget">
 				<div style="background-color: white; border-radius: 20px; padding: 20px;">
 					<!-- TUTORBIRD LOGIN WIDGET -->
 					<div>
@@ -60,10 +61,10 @@
 				</div>
 			</div>
 
-			<div id="login-col-info" style="flex: 1 1 300px;">
+			<div id="login-col-info">
 				<div style="text-align:center; padding: 10px 0;"><a onclick="openAvailabilityOverlay()" class="button" style="cursor:pointer; display:inline-block;"><div align="center" style="padding: 16px 28px;"><i class="fa-solid fa-calendar-days"></i> Preview 7-Day Availability</div></a></div>
 				<p>
-					Accounts are automatically created when registering for a <a href="call.html">free intro call</a>. If you are having trouble logging in and you haven't taken class with me in over a year, your account may have been archived. Please email <trevorkafka-email></trevorkafka-email> to confirm availability and reactivate (I do this to prevent overbooking of appointments).
+					Accounts are automatically created when registering for a <a href="call.html">free intro call</a>.
 				</p>
 			</div>
 
@@ -71,7 +72,7 @@
 
 		<div class="FAQ" style="padding-top: 2em">
 			<details>
-				<summary class="red">Please note that I hold a strict 24-hour cancellation policy. (click for details)</summary>
+				<summary class="red">Please note that I hold a strict 24-hour cancellation policy (click for details)</summary>
 				<div style="background-color: #FFDCDC; border-radius: 10px">
 					<h1 style="margin-top: 0px">Lesson Cancellation Information</h1>
 					<ul>
@@ -98,7 +99,13 @@
 				</div>
 			</details>
 			<details>
-				<summary>Information About Lesson Lengths</summary>
+				<summary>Having trouble logging in and haven't taken classes in over a year?</summary>
+				<div>
+					<p>If you are having trouble logging in and you haven't taken class with me in over a year, your account may have been archived. Please email <trevorkafka-email></trevorkafka-email> to confirm availability and reactivate (I do this to prevent overbooking of appointments).</p>
+				</div>
+			</details>
+			<details>
+				<summary>Information about lesson lengths</summary>
 				<div>
 					<ul>
 						<li>
@@ -180,6 +187,7 @@
 			<details>
 				<summary>How can I synchronize my class calendar with my calendar, such as Google Calendar or iCal?</summary>
 				<br>
+				<p>After logging in,</p>
 					<ol>
 						<li>Navigate to <em>Calendar</em> from the main menu on the left.</li>
 						<li>Click <em>Sync Calendar</em> in the toolbar.</li>
@@ -232,7 +240,7 @@
 			width: 90vw;
 			background: var(--color3);
 			border-radius: 20px;
-			padding: 16px 0 24px 0;
+			padding: 24px 0;
 			position: relative;
 			overflow: hidden;
 		}
@@ -252,14 +260,32 @@
 	</div>
 
 	<script>
+		function updateOverlayCorners() {
+			if (window.innerWidth >= 900) return;
+			const inner = document.getElementById('availability-overlay-inner');
+			if (!inner || inner.closest('#availability-overlay').style.display === 'none') return;
+			const rounded = inner.getBoundingClientRect().bottom <= window.innerHeight - 1;
+			inner.style.borderBottomLeftRadius  = rounded ? '16px' : '0';
+			inner.style.borderBottomRightRadius = rounded ? '16px' : '0';
+		}
+		window.addEventListener('resize', updateOverlayCorners);
+
 		function openAvailabilityOverlay() {
 			const overlay = document.getElementById('availability-overlay');
 			const container = document.getElementById('availability-overlay-content');
 			overlay.style.display = 'block';
 			document.body.style.overflow = 'hidden';
 			if (!container.dataset.loaded) {
-				$(container).load('/snippets/availability.html');
+				$(container).load('/snippets/availability-no-button.html', function() {
+					updateOverlayCorners();
+					const inner = document.getElementById('availability-overlay-inner');
+					if (inner && window.ResizeObserver) {
+						new ResizeObserver(updateOverlayCorners).observe(inner);
+					}
+				});
 				container.dataset.loaded = 'true';
+			} else {
+				updateOverlayCorners();
 			}
 		}
 		function closeAvailabilityOverlay() {

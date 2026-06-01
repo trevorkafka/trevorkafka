@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Unit Circle</title>
+<title>Unit Circle - Tutoring with Trevor Kafka</title>
 <script>
 window.MathJax = {
   tex: { inlineMath: [['\\(','\\)']] },
@@ -12,8 +12,10 @@ window.MathJax = {
 };
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.js" async></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Freeman&display=block" rel="stylesheet">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Freeman&display=swap');
 
 :root{
   --paper:#F5EEE2;
@@ -43,10 +45,8 @@ body{
 
 .title{
   font-family:'Freeman',Arial,sans-serif;
-  font-weight:400;
-  letter-spacing:.005em;
-  font-size:1.75rem;
-  margin:0 0 20px;
+  font-size:300%;
+  margin:50px 0 20px;
   color:var(--ink);
 }
 
@@ -59,14 +59,14 @@ body{
 }
 .options > summary{
   list-style:none;cursor:pointer;
-  display:flex;align-items:center;gap:8px;
+  display:flex;align-items:flex-start;gap:8px;
   padding:12px 18px;
   font-family:'Freeman',Arial,sans-serif;
   font-size:.95rem;color:var(--muted);line-height:1;
   user-select:none;-webkit-tap-highlight-color:transparent;
 }
 .options > summary::-webkit-details-marker{display:none}
-.options > summary .arr{transition:transform .2s;font-size:.9rem;flex:none;align-self:center;line-height:1}
+.options > summary .arr{transition:transform .2s;font-size:.9rem;flex:none;line-height:1;margin-top:0.35em}
 details.options[open] > summary .arr{transform:rotate(90deg)}
 details.options[open] > summary{
   position:absolute;
@@ -77,7 +77,7 @@ details.options[open] > summary{
 .settings-sentence{
   font-family:'Freeman',Arial,sans-serif;
   font-size:.95rem;color:var(--muted);
-  flex:1;align-self:center;line-height:1;
+  flex:1;line-height:1.6;
 }
 details.options[open] .settings-sentence{display:none}
 .options-body{
@@ -134,16 +134,33 @@ details.options[open] > .options-body{
 /* stage */
 .stage{
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:clamp(7px,1.5vw,14px);
+
   text-align:center;
   padding:10px 8px;
+  margin-top:1em;
+  cursor:pointer;
+  border-radius:12px;
 }
 .stage.inv{margin-top:clamp(7px,1.5vw,14px)}
-#q{font-size:clamp(1.8rem,7vw,2.4rem);line-height:1.25;display:flex;align-items:center;width:100%}
+#stage-hint{
+  text-align:center;
+  color:var(--muted);
+  font-size:0.82rem;
+  margin-top:2px;
+  min-height:1.2em;
+  transition:opacity 0.6s ease;
+}
+.hint-click{display:inline}
+.hint-tap{display:none}
+@media(max-width:899px){
+  .hint-click{display:none}
+  .hint-tap{display:inline}
+}
+#q{font-size:clamp(1.8rem,7vw,2.4rem);line-height:1.25;display:flex;align-items:center;width:100%;transition:opacity 0.15s ease}
 #q:not(.inv) .mjx-container{margin:0}
 #qlhs{flex:1;text-align:center}
 #qeq{flex:none;padding:0 .2em}
-#qans{flex:1;text-align:center}
+#qans{flex:1;text-align:center;transition:opacity 0.15s ease}
 #qans.reveal{color:var(--accent)}
 .qhint{font-size:1rem;color:var(--muted)}
 .circle{width:clamp(220px,72vw,320px)}
@@ -179,28 +196,8 @@ details.options[open] > .options-body{
 }
 .preset-btn:hover{color:var(--ink);border-color:var(--muted)}
 .preset-btn:active{background:var(--chip);border-color:var(--chip-line);color:var(--accent)}
+.preset-btn.active{background:var(--chip);border-color:var(--chip-line);color:var(--accent)}
 
-/* controls */
-.controls{display:flex;flex-direction:column;align-items:center;gap:10px}
-#primary{
-  font-family:Arial,Helvetica,sans-serif;
-  font-size:1.02rem;font-weight:700;
-  color:#fff;background:var(--accent);
-  border:none;border-radius:12px;
-  padding:13px 40px;cursor:pointer;
-  box-shadow:0 6px 16px rgba(60,48,62,.22);
-  transition:background-color var(--tx),transform .08s,box-shadow var(--tx);
-  min-width:180px;
-}
-#primary:hover{background:var(--accent-h);box-shadow:0 8px 20px rgba(60,48,62,.26)}
-#primary:active{transform:translateY(1px);box-shadow:0 4px 12px rgba(60,48,62,.22)}
-#primary:disabled{background:#c9b79a;box-shadow:none;cursor:not-allowed}
-#undo{
-  background:none;border:none;cursor:pointer;
-  color:var(--muted);font-size:.84rem;font-family:inherit;
-  padding:4px 8px;text-decoration:underline;text-underline-offset:3px;
-}
-#undo:hover{color:var(--accent)}
 
 /* history */
 details.hist{margin-top:26px;border-top:1px solid var(--line);padding-top:8px}
@@ -214,12 +211,14 @@ details.hist{margin-top:26px;border-top:1px solid var(--line);padding-top:8px}
 details.hist[open] summary .arr{transform:rotate(90deg)}
 #histList{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:8px 2px 4px}
 .hrow{display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:4px 13px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-size:.95rem;color:var(--ink)}
+@keyframes hrow-fadein{from{opacity:0}to{opacity:1}}
+.hrow-new{animation:hrow-fadein 0.25s ease forwards}
 .hempty{font-size:.85rem;color:var(--muted);font-style:italic;padding:6px 2px;text-align:center;width:100%}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1 class="title">Unit Circle Math Facts</h1>
+  <h1 class="title">Unit Circle</h1>
 
   <details class="options" id="settingsDetails">
     <summary>
@@ -285,10 +284,10 @@ details.hist[open] summary .arr{transform:rotate(90deg)}
         </div>
       </div>
       <div class="grp">
-        <span class="lbl">Add-ons</span>
+        <span class="lbl">Show</span>
         <div class="opts" id="addonOpts">
-          <label class="opt"><input type="checkbox" id="aDiagram"><span>\(\text{diagram}\)</span></label>
-          <label class="opt"><input type="checkbox" id="aExplain"><span>\(\text{explanation}\)</span></label>
+          <label class="opt"><input type="checkbox" id="aDiagram"><span>\(\text{unit circle}\)</span></label>
+          <label class="opt"><input type="checkbox" id="aExplain"><span>\(\text{details}\)</span></label>
         </div>
       </div>
     </div>
@@ -300,10 +299,7 @@ details.hist[open] summary .arr{transform:rotate(90deg)}
     <div id="explain" class="explain"></div>
   </div>
 
-  <div class="controls">
-    <button id="primary">Show answer</button>
-    <button id="undo">undo</button>
-  </div>
+  <div id="stage-hint"></div>
 
   <details class="hist">
     <summary><span class="arr">›</span> History <span id="histCount" style="margin-left:auto;font-variant-numeric:tabular-nums"></span></summary>
@@ -349,15 +345,17 @@ function degToRadTex(deg){
 /* ---------- domains ---------- */
 const ALL=[0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330];
 const DOMAINS=[
-  {id:'ref', text:'30°, 45°, and 60° only',       deg:'30^\\circ,\\ 45^\\circ,\\ 60^\\circ', rad:'\\tfrac{\\pi}{6},\\ \\tfrac{\\pi}{4},\\ \\tfrac{\\pi}{3}'},
-  {id:'q1',  text:'the first quadrant [0°, 90°]', deg:'[\\,0^\\circ,\\,90^\\circ\\,]',       rad:'[\\,0,\\,\\tfrac{\\pi}{2}\\,]'},
-  {id:'full',text:'the full circle',   deg:'[\\,0^\\circ,\\,360^\\circ)',         rad:'[\\,0,\\,2\\pi)'},
+  {id:'ref', text:'30°, 45°, and 60° only',              deg:'30^\\circ,\\ 45^\\circ,\\ 60^\\circ', rad:'\\tfrac{\\pi}{6},\\ \\tfrac{\\pi}{4},\\ \\tfrac{\\pi}{3}'},
+  {id:'q1',  text:'the first quadrant [0°, 90°]',        deg:'[\\,0^\\circ,\\,90^\\circ\\,]',       rad:'[\\,0,\\,\\tfrac{\\pi}{2}\\,]'},
+  {id:'half',text:'the upper half-circle [0°, 180°]',    deg:'[\\,0^\\circ,\\,180^\\circ\\,]',      rad:'[\\,0,\\,\\pi\\,]'},
+  {id:'full',text:'the full circle',                     deg:'[\\,0^\\circ,\\,360^\\circ)',          rad:'[\\,0,\\,2\\pi)'},
   {id:'neg', text:'−360° to 360°', deg:'(-360^\\circ,\\,360^\\circ)', rad:'(-2\\pi,\\,2\\pi)'},
   {id:'any', text:'any angle',         deg:'\\text{any angle}',                   rad:'\\text{any angle}'}
 ];
 function pool(id){
   if(id==='ref')return[30,45,60];
   if(id==='q1')return[0,30,45,60,90];
+  if(id==='half')return[0,30,45,60,90,120,135,150,180];
   if(id==='full')return ALL.slice();
   if(id==='neg'){const p=ALL.slice();for(const a of ALL)if(a>0)p.push(a-360);return p;}
   const p=[];for(const a of ALL)for(let k=-2;k<=2;k++){const v=a+360*k;if(v>=-720&&v<=720)p.push(v);}return p;
@@ -380,9 +378,9 @@ const INV_CMD={
 };
 
 /* ---------- state ---------- */
-let questions=[],pos=-1,actions=[],lastDeg=null,domainId='full',units='deg',mode='trig',invNotation='pow',invDomain='nonneg',ready=false;
+let questions=[],pos=-1,lastDeg=null,domainId='half',prevHistCount=0,units='deg',mode='trig',invNotation='pow',invDomain='nonneg',ready=false,hintClicks=0;
 const $=id=>document.getElementById(id);
-const qlhs=$('qlhs'),qeq=$('qeq'),qans=$('qans'),uc=$('uc'),primary=$('primary'),undoBtn=$('undo'),histList=$('histList'),histCount=$('histCount');
+const qlhs=$('qlhs'),qeq=$('qeq'),qans=$('qans'),uc=$('uc'),histList=$('histList'),histCount=$('histCount');
 function ansSlot(){ const u=window.innerWidth>=480?'\\text{undefined}':'\\text{undef.}'; return'\\phantom{'+u+'}\\vphantom{\\left(\\dfrac{\\sqrt{2}}{2}\\right)}'; }
 
 function activeFuncs(){
@@ -419,9 +417,8 @@ function makeQuestion(){
   const ang=units==='rad'?degToRadTex(deg):deg+'^\\circ';
   return{lhs:'\\'+func+'\\!\\left('+ang+'\\right)',ans:tex(val(func,deg)),deg,func,revealed:false};
 }
-function pushNew(undoable){
-  const from=pos; questions.push(makeQuestion()); pos=questions.length-1;
-  if(undoable)actions.push({type:'advance',from,created:true});
+function pushNew(){
+  questions.push(makeQuestion()); pos=questions.length-1;
 }
 
 /* ---------- unit circle diagram ---------- */
@@ -432,7 +429,7 @@ function texTfrac(v){
   return v.d===1 ? sg+num : sg+'\\tfrac{'+num+'}{'+v.d+'}';
 }
 function explanationTex(func){
-  const pre='\\text{Relevant definition: }';
+  const pre='\\text{Function definition: }';
   if(mode==='trig'){
     const t={sin:'\\sin\\theta=y',cos:'\\cos\\theta=x',tan:'\\tan\\theta=\\tfrac{y}{x}',
              sec:'\\sec\\theta=\\tfrac{1}{x}',csc:'\\csc\\theta=\\tfrac{1}{y}',cot:'\\cot\\theta=\\tfrac{x}{y}'};
@@ -512,12 +509,21 @@ function explainHTML(deg,func,blank){
   let d=base-axisDir; while(d>180)d-=360; while(d<=-180)d+=360;
   const refDeg=Math.abs(d);
   const refTex=units==='rad'?degToRadTex(refDeg).replace(/dfrac/g,'tfrac'):refDeg+'^\\circ';
-  // when blank, wrap each line in \phantom so it reserves identical width/height but renders nothing
-  const w=t=>blank?'\\phantom{'+t+'}':t;
-  let h='<div class="ex-ref">\\('+w('\\text{reference angle: }'+refTex)+'\\)</div>';
-  h+='<div class="ex-coord">\\('+w('P\\!\\left('+texTfrac(sc.cos)+',\\ '+texTfrac(sc.sin)+'\\right),\\;\\theta='+angTex)+'\\)</div>';
-  if(func) h+='<div class="ex-def">\\('+w(explanationTex(func))+'\\)</div>';
-  return h;
+  // Worst-case strings — tallest possible content for each line
+  const wcR='\\text{reference angle: }\\tfrac{5\\pi}{6}';
+  const wcC='P\\!\\left(\\tfrac{\\sqrt{3}}{2},\\ \\tfrac{\\sqrt{3}}{2}\\right),\\;\\theta=\\tfrac{5\\pi}{6}';
+  const wcD='\\text{Function definition: }\\sin^{-1}(y)=\\theta,\\;{-}\\tfrac{\\pi}{2}\\le\\theta\\le\\tfrac{\\pi}{2}';
+  const vph=s=>'\\vphantom{'+s+'}';
+  if(blank) return(
+    '<div class="ex-ref">\\(\\phantom{'+wcR+'}\\)</div>'+
+    '<div class="ex-coord">\\(\\phantom{'+wcC+'}\\)</div>'+
+    '<div class="ex-def">\\(\\phantom{'+wcD+'}\\)</div>'
+  );
+  return(
+    '<div class="ex-ref">\\(\\text{reference angle: }'+refTex+vph(wcR)+'\\)</div>'+
+    '<div class="ex-coord">\\(P\\!\\left('+texTfrac(sc.cos)+',\\ '+texTfrac(sc.sin)+'\\right),\\;\\theta='+angTex+vph(wcC)+'\\)</div>'+
+    '<div class="ex-def">\\('+(func?explanationTex(func)+vph(wcD):'\\phantom{'+wcD+'}')+'\\)</div>'
+  );
 }
 function applyAddons(){
   const q=questions[pos];
@@ -543,9 +549,8 @@ function render(){
     qlhs.style.textAlign='center'; qeq.style.display='none'; qans.innerHTML='';
     drawCircle(0,false);
     applyAddons();
-    primary.disabled=true; undoBtn.style.visibility='hidden'; return;
+    updateHint(null); return;
   }
-  primary.disabled=false;
   $('q').classList.toggle('inv',mode==='inv');
   document.querySelector('.stage').classList.toggle('inv',mode==='inv');
   qlhs.style.textAlign=''; qeq.style.display='';
@@ -558,33 +563,48 @@ function render(){
   setMath(qans, q.revealed ? '\\('+ansStr+vph+'\\)' : '\\('+vph+'\\)');
   drawCircle(q.deg,q.revealed,q.func);
   applyAddons();
-  primary.textContent=q.revealed?'Next':'Show answer';
-  undoBtn.style.visibility=actions.length?'visible':'hidden';
+  updateHint(q);
   const items=questions.slice(0,pos+1).filter(x=>x.revealed);
   histCount.textContent=items.length?items.length:'';
+  const newItems=items.length-prevHistCount;
+  prevHistCount=items.length;
   if(items.length===0){ histList.innerHTML='<div class="hempty">No answers seen yet.</div>'; }
   else{
     histList.innerHTML=items.slice().reverse().map(x=>'<div class="hrow">'+('\\('+x.lhs+' = '+x.ans+'\\)').replace(/\\dfrac/g,'\\tfrac')+'</div>').join('');
+    if(newItems>0)[...histList.children].slice(0,newItems).forEach(el=>el.classList.add('hrow-new'));
     if(window.MathJax&&MathJax.typesetPromise){ if(MathJax.typesetClear)MathJax.typesetClear([histList]); MathJax.typesetPromise([histList]); }
   }
 }
 
-/* ---------- controls ---------- */
-primary.onclick=()=>{
-  const q=questions[pos]; if(!q)return;
-  if(!q.revealed){ q.revealed=true; actions.push({type:'reveal',pos}); }
-  else{
-    if(pos===questions.length-1) pushNew(true);
-    else{ actions.push({type:'advance',from:pos,created:false}); pos++; }
+function fadeRender(revealOnly){
+  if(revealOnly){
+    qans.style.opacity='0';
+    setTimeout(()=>{ render(); qans.style.opacity='1'; },150);
+  } else {
+    const qEl=$('q');
+    qEl.style.opacity='0';
+    setTimeout(()=>{ render(); qEl.style.opacity='1'; },150);
   }
-  render();
-};
-undoBtn.onclick=()=>{
-  const a=actions.pop(); if(!a)return;
-  if(a.type==='reveal'){ questions[a.pos].revealed=false; pos=a.pos; }
-  else{ if(a.created)questions.pop(); pos=a.from; }
-  render();
-};
+}
+
+/* ---------- controls ---------- */
+function updateHint(q){
+  const el=$('stage-hint'); if(!el)return;
+  const w='<span class="hint-click">Click</span><span class="hint-tap">Tap</span>';
+  if(hintClicks>=2){ el.style.opacity='0'; return; }
+  if(hintClicks===0) el.innerHTML=w+' question to see answer';
+  else               el.innerHTML=w+' again to continue';
+  el.style.opacity='1';
+}
+document.querySelector('.stage').addEventListener('click',()=>{
+  if(activeFuncs().length===0||invPoolEmpty()||pos<0||!questions[pos])return;
+  hintClicks++;
+  const q=questions[pos];
+  const revealing=!q.revealed;
+  if(revealing) q.revealed=true;
+  else pushNew();
+  fadeRender(revealing);
+});
 
 /* ---------- settings ---------- */
 function movePill(c, instant){
@@ -627,6 +647,19 @@ function settingsSummary(){
   return'Quizzing '+subject+' on '+dom.text+' in '+utext+'.';
 }
 function updateSummary(){ $('settingsSentence').textContent=settingsSummary(); }
+function matchedPreset(){
+  const allSix=['fSin','fCos','fTan','fSec','fCsc','fCot'].every(id=>$(id).checked);
+  const sinCosTanOnly=$('fSin').checked&&$('fCos').checked&&$('fTan').checked&&
+                      !$('fSec').checked&&!$('fCsc').checked&&!$('fCot').checked;
+  if(units==='deg'&&mode==='trig'&&domainId==='half'&&sinCosTanOnly) return'easy';
+  if(units==='rad'&&mode==='trig'&&domainId==='any'&&allSix) return'medium';
+  if(units==='rad'&&mode==='inv'&&invDomain==='all'&&allSix) return'hard';
+  return null;
+}
+function updatePresetButtons(){
+  const m=matchedPreset();
+  document.querySelectorAll('.preset-btn').forEach(b=>b.classList.toggle('active',b.dataset.preset===m));
+}
 
 const FUNC_LABELS={
   trig:{sin:'\\(\\sin\\)',cos:'\\(\\cos\\)',tan:'\\(\\tan\\)',sec:'\\(\\sec\\)',csc:'\\(\\csc\\)',cot:'\\(\\cot\\)'},
@@ -651,6 +684,7 @@ function updateSettingsUI(){
   if(isInv){ movePill($('notationOpts'),true); movePill($('invDomainOpts'),true); }
   relabelFunctions();
   updateSummary();
+  updatePresetButtons();
 }
 
 function relabelDomains(){
@@ -664,8 +698,9 @@ function relabelDomains(){
 function onSettings(){
   if(!ready)return;
   updateSummary();
+  updatePresetButtons();
   if(activeFuncs().length===0||invPoolEmpty()){ render(); return; }
-  if(pos<0||!questions[pos]) pushNew(false); else pushNew(true);
+  pushNew();
   render();
 }
 ['fSin','fCos','fTan','fSec','fCsc','fCot'].forEach(id=>$(id).onchange=onSettings);
@@ -692,10 +727,17 @@ function addCycleToSlide(c){
 }
 ['unitOpts','modeOpts','notationOpts','invDomainOpts','domainOpts'].forEach(id=>addCycleToSlide($(id)));
 function applyPreset(p){
-  if(p==='easy'){ units='deg'; mode='trig'; domainId='full'; }
-  else if(p==='medium'){ units='rad'; mode='trig'; domainId='any'; }
-  else if(p==='hard'){ units='rad'; mode='inv'; invDomain='all';
-    ['fSin','fCos','fTan','fSec','fCsc','fCot'].forEach(id=>$(id).checked=true); }
+  if(p==='easy'){
+    units='deg'; mode='trig'; domainId='half';
+    ['fSin','fCos','fTan'].forEach(id=>$(id).checked=true);
+    ['fSec','fCsc','fCot'].forEach(id=>$(id).checked=false);
+  } else if(p==='medium'){
+    units='rad'; mode='trig'; domainId='any';
+    ['fSin','fCos','fTan','fSec','fCsc','fCot'].forEach(id=>$(id).checked=true);
+  } else if(p==='hard'){
+    units='rad'; mode='inv'; invDomain='all';
+    ['fSin','fCos','fTan','fSec','fCsc','fCot'].forEach(id=>$(id).checked=true);
+  }
   document.querySelector('input[name=units][value='+units+']').checked=true;
   document.querySelector('input[name=mode][value='+mode+']').checked=true;
   if(mode==='inv') document.querySelector('input[name=invdomain][value='+invDomain+']').checked=true;
@@ -723,7 +765,7 @@ window.addEventListener('resize',()=>{
       movePill($('domainOpts'),true); movePill($('unitOpts'),true); movePill($('modeOpts'),true);
     });
     updateSettingsUI();
-    if(activeFuncs().length) pushNew(false);
+    if(activeFuncs().length) pushNew();
     render();
   } else setTimeout(wait,60);
 })();

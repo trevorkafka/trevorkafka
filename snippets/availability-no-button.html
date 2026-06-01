@@ -1,0 +1,735 @@
+<style>
+  :root {
+    --sidebar-width: clamp(60px, 12vw, 116px);
+    /* Site-derived theme tokens with fallbacks, so this snippet still
+       reads well if previewed outside the site shell. */
+    --cal-text:     var(--color1, #3C303E);
+    --cal-muted:    #8a7a60;                        /* warm muted (sits between color4 and color1) */
+    --cal-border:   #d9c9a6;                        /* warm light border (derived from color4 #C6B895) */
+    --cal-surface:  var(--color3, #F5EEE2);         /* page tan — used for hover bgs */
+    --cal-accent:   var(--defaultlink, #d46a53);    /* terracotta */
+    --cal-accent-h: var(--hoverlink, #FB7F64);      /* hover orange */
+    --cal-tx:       var(--transitiontime, 0.2s);
+  }
+  * { box-sizing: border-box; }
+
+  .legend {
+    max-width: 1000px;
+    margin: 0 auto 8px;
+    padding: 0 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px 24px;
+    font-size: 14px;
+    flex-wrap: wrap;
+    color: var(--cal-text);
+  }
+  .subtitle {
+    max-width: 1000px;
+    margin: 0 auto 16px;
+    padding: 0 16px;
+    font-size: 13px;
+    color: var(--cal-muted);
+  }
+  .legend-swatch {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+  .legend-swatch.available   { background: #98D45F; }
+  .legend-swatch.unavailable { background: var(--cal-surface); border: 1px solid var(--cal-border); }
+  .legend-swatch.busy {
+    background-color: #cdbf9d;
+    background-image: repeating-linear-gradient(45deg, transparent, transparent 1px, #cdbf9d 1px, #ece2cb 3px);
+  }
+
+  .status {
+    max-width: 1000px;
+    margin: 8px auto;
+    padding: 0 16px;
+    color: var(--cal-muted);
+    font-size: 12px;
+    text-align: right;
+  }
+
+  .calendar {
+    max-width: 1000px;
+    margin: 0 auto;
+    /*padding: 0 16px;*/
+    text-align: center;
+  }
+  .calendar-head-date {
+    display: flex;
+    height: 48px;
+    align-items: stretch;
+    border: 1px solid var(--cal-border);
+    border-bottom: none;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    overflow: hidden;
+    background: var(--cal-surface);
+  }
+  .calendar-head-cell {
+    flex: 1;
+    border-left: 1px solid var(--cal-border);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .calendar-head-cell-blank {
+    border-left: none;
+    flex: 0 0 var(--sidebar-width);
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    color: var(--cal-muted);
+    font-size: 12px;
+    overflow: hidden;
+  }
+  .calendar-head-cell-today {
+    background: #F3DECC; /* very pale terracotta tint */
+    position: relative;
+  }
+  .calendar-head-cell-today::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+    border-left: 8px solid transparent;
+    border-top: 8px solid var(--cal-accent);
+  }
+  .calendar-head-cell-weekday {
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--cal-muted);
+    font-weight: bold;
+    line-height: 1.4;
+    letter-spacing: 0.04em;
+  }
+  .calendar-head-cell-date {
+    font-size: 13px;
+    color: var(--cal-text);
+    font-weight: bold;
+    line-height: 1.4;
+  }
+  .calendar-body-wrap {
+    border: 1px solid var(--cal-border);
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    /*box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.06);*/
+  }
+  .loading-spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 32px;
+    height: 32px;
+    margin: -16px 0 0 -16px;
+    border: 3px solid var(--cal-border);
+    border-top-color: var(--cal-accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    z-index: 1;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .calendar.full-bleed .calendar-head-date,
+  .calendar.full-bleed .calendar-body-wrap {
+    border-left: none;
+    border-right: none;
+  }
+  @media (max-width: 600px) {
+    .calendar-head-cell-blank-right,
+    .calendar-time-right {
+      display: none;
+    }
+  }
+  @media (max-width: 600px) {
+    .legend { gap: 10px 20px; }
+  }
+
+  .calendar-body {
+    display: flex;
+    overflow: hidden;
+    background: var(--cal-surface);
+  }
+  .calendar-time {
+    flex: 0 0 var(--sidebar-width);
+  }
+  .calendar-time-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 32px;
+    transform: translateY(-50%);
+    font-size: 12px;
+    color: var(--cal-muted);
+  }
+  .calendar-time-cell:first-child { visibility: hidden; }
+  .calendar-week-day {
+    position: relative;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    background-color: #cdbf9d;
+    background-image: repeating-linear-gradient(60deg, transparent, transparent 2px, #ece2cb 2px, #ece2cb 7px);
+  }
+  .calendar-cell-container {
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid var(--cal-border);
+    border-top: 1px solid var(--cal-border);
+    height: 16px;
+  }
+  .calendar-week-day .calendar-cell-container:first-child { border-top: none; }
+  .calendar-week-day .calendar-cell-container:nth-child(even) { border-top: none; }
+  .calendar-head-cell-blank-right { border-left: 1px solid var(--cal-border); }
+  .calendar-time-right { border-left: 1px solid var(--cal-border); }
+  .calendar-cell { flex: 1; background: var(--cal-surface); }
+  .calendar-cell-actived { background: #98D45F; }
+  .calendar-cell-booked { background: transparent; }
+
+  .availability-block {
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 2;
+  }
+  /* Floating tooltip lives on document.body so it can escape any clipped
+     ancestor (.calendar-body-wrap has overflow: hidden for its rounded
+     corners). Position is set via JS and clamped to the viewport. */
+  .availability-tooltip {
+    position: fixed;
+    top: 0;
+    left: 0;
+    background: var(--cal-text);
+    color: var(--cal-surface);
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+    padding: 4px 8px;
+    border-radius: 6px;
+    pointer-events: none;
+    white-space: nowrap;
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transition: opacity 0.12s ease;
+    z-index: 1000;
+  }
+  .availability-tooltip.visible { opacity: 1; }
+
+  .error {
+    max-width: 1000px;
+    margin: 16px auto;
+    padding: 16px;
+    background: #FFE7E0;
+    border: 1px solid #E8B5A5;
+    border-radius: 10px;
+    color: #8a3a26;
+    font-size: 14px;
+  }
+
+  @media (width <= 900px) {
+      .calendar-head-date {
+          border-top-left-radius: 0;
+          border-top-right-radius: 0;
+      }
+      .calendar-body-wrap {
+          border-bottom-left-radius: 0;
+          border-bottom-right-radius: 0;
+      }
+  }
+
+  @media (max-width: 700px) {
+      .legend { gap: 10px 20px; }
+  }
+  /* Standalone-only: center calendar vertically in the viewport when there's
+     room; fall back to start alignment when content exceeds the viewport
+     (safe center) so the top doesn't get clipped. Inert on the homepage —
+     class is only added by setupStandalone() when standalone is detected. */
+  body.calendar-standalone {
+    min-height: 100vh;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: safe center;
+  }
+</style>
+<div class="legend">
+  <span><span class="legend-swatch available"></span>Available</span>
+  <span><span class="legend-swatch unavailable"></span>Not available</span>
+  <span><span class="legend-swatch busy"></span>Booked</span>
+</div>
+<div class="subtitle"><span class="tz-info" id="tz-info"></span></div>
+<div id="root"></div>
+<div id="status" class="status"></div>
+
+<script>
+  // When opened standalone, pull in the site's stylesheet and tag <body>
+  // so we can center the calendar in the viewport. Detected by absence of
+  // --color3 on :root — styles.css defines it; this snippet does not. On
+  // the homepage it's already defined, so this is a no-op there.
+  (function setupStandalone() {
+    if (getComputedStyle(document.documentElement)
+        .getPropertyValue('--color3').trim()) return;
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = '../style.css';
+    document.head.appendChild(link);
+    document.body.classList.add('calendar-standalone');
+  })();
+
+  // ====== CONFIG ======
+  const API_URL = 'https://script.google.com/macros/s/AKfycbz4gutA0-2Z5Ilg4AJZnXIivAMgCzcA1NURvKle-KGCmK0peSORGyrkcxBforiRokJN/exec';
+  const REFRESH_INTERVAL_MS = 5 * 60 * 1000;
+
+  const FIFTEEN_MIN = 15 * 60 * 1000;
+  const SLOTS_PER_DAY = 96;
+
+  async function loadAndRender() {
+    const root = document.getElementById('root');
+    const status = document.getElementById('status');
+    const days = buildWeek(new Date());
+
+    // Render empty grid immediately so the structure is visible while loading.
+    if (!root.querySelector('.calendar')) {
+      const emptyGrid = days.map(() => new Array(SLOTS_PER_DAY).fill(0));
+      render(root, days, emptyGrid, true);
+      status.textContent = '';
+    }
+
+    try {
+      let events;
+      if (!API_URL || API_URL.startsWith('PASTE_')) {
+        events = makeDemoEvents();
+        status.textContent = 'Demo data — set API_URL in the source.';
+      } else {
+        const res = await fetch(API_URL);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const data = await res.json();
+        events = data.events.map(e => ({
+          start: new Date(e.start),
+          end:   new Date(e.end),
+          title: e.title,
+        }));
+        // status.textContent = 'Updated ' + new Date().toLocaleString();
+      }
+      const grid = classify(events, days);
+      render(root, days, grid);
+    } catch (err) {
+      root.innerHTML = '<div class="error">Could not load availability: ' + escapeHTML(err.message) + '</div>';
+      status.textContent = '';
+    }
+  }
+
+  function buildWeek(today) {
+    const start = new Date(today);
+    start.setHours(0, 0, 0, 0);
+    const days = [];
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(start);
+      d.setDate(start.getDate() + i);
+      days.push(d);
+    }
+    return days;
+  }
+
+  // States: 0 default, 1 available, 2 unavailable, 3 busy.
+  // Higher wins. After event passes, every neighbor of a 3 is bumped to >=2.
+  function classify(events, days) {
+    const grid = days.map(() => new Array(SLOTS_PER_DAY).fill(0));
+    const dayStarts = days.map(d => d.getTime());
+    const dayEnds = days.map(d => d.getTime() + 24 * 60 * 60 * 1000);
+
+    for (const ev of events) {
+      const title = (ev.title || '').toLowerCase().trim();
+      let state;
+      if      (title === 'busy')        state = 3;
+      else if (title === 'unavailable') state = 2;
+      else if (title === 'available')   state = 1;
+      else continue;
+
+      for (let di = 0; di < days.length; di++) {
+        if (ev.end.getTime() <= dayStarts[di] || ev.start.getTime() >= dayEnds[di]) continue;
+        const ovStart = Math.max(ev.start.getTime(), dayStarts[di]);
+        const ovEnd   = Math.min(ev.end.getTime(),   dayEnds[di]);
+        const sSlot = Math.floor((ovStart - dayStarts[di]) / FIFTEEN_MIN);
+        const eSlot = Math.ceil ((ovEnd   - dayStarts[di]) / FIFTEEN_MIN);
+        for (let i = Math.max(0, sSlot); i < Math.min(SLOTS_PER_DAY, eSlot); i++) {
+          if (state > grid[di][i]) grid[di][i] = state;
+        }
+      }
+    }
+
+    // Per-event unavailability buffers for busy events.
+    // Before a busy block: always add a 15-min unavailability slot.
+    // After a busy block: skip the buffer when ceil-rounding already built in
+    // >= 10 min of padding (e.g. a 50-min lesson ceiled to 60 min leaves 10 min
+    // of dead "busy" time, so no extra buffer is needed after the displayed block).
+    const flat = grid.flat();
+    const TEN_MIN_MS = 10 * 60 * 1000;
+
+    for (const ev of events) {
+      const title = (ev.title || '').toLowerCase().trim();
+      if (title !== 'busy') continue;
+
+      for (let di = 0; di < days.length; di++) {
+        if (ev.end.getTime() <= dayStarts[di] || ev.start.getTime() >= dayEnds[di]) continue;
+
+        const ovStart = Math.max(ev.start.getTime(), dayStarts[di]);
+        const ovEnd   = Math.min(ev.end.getTime(),   dayEnds[di]);
+        const sSlot   = Math.floor((ovStart - dayStarts[di]) / FIFTEEN_MIN);
+        const eSlot   = Math.ceil ((ovEnd   - dayStarts[di]) / FIFTEEN_MIN);
+
+        // Before-buffer: always mark the slot just before the busy block.
+        const beforeIdx = di * SLOTS_PER_DAY + sSlot - 1;
+        if (beforeIdx >= 0 && flat[beforeIdx] < 2) flat[beforeIdx] = 2;
+
+        // After-buffer: skip when ceil-rounding provides >= 10 min of padding.
+        const ceilEndMs = dayStarts[di] + eSlot * FIFTEEN_MIN;
+        const builtInPadding = ceilEndMs - ovEnd;
+
+        if (builtInPadding < TEN_MIN_MS) {
+          const afterIdx = di * SLOTS_PER_DAY + eSlot;
+          if (afterIdx < flat.length && flat[afterIdx] < 2) flat[afterIdx] = 2;
+        }
+      }
+    }
+
+    for (let di = 0; di < days.length; di++) {
+      for (let si = 0; si < SLOTS_PER_DAY; si++) {
+        grid[di][si] = flat[di * SLOTS_PER_DAY + si];
+      }
+    }
+
+    // Hide availability that's less than 12 hours out (too close to book).
+      const cutoff = Date.now() + 12 * 60 * 60 * 1000;
+      for (let di = 0; di < days.length; di++) {
+        for (let si = 0; si < SLOTS_PER_DAY; si++) {
+          if (grid[di][si] === 1 && dayStarts[di] + si * FIFTEEN_MIN < cutoff) {
+            grid[di][si] = 0;
+          }
+        }
+      }
+
+    // Drop visible "available" runs shorter than 45 min (3 contiguous slots).
+    // Runs are measured across day boundaries.
+      const MIN_RUN = 3;
+      const flat2 = grid.flat();
+      let i = 0;
+      while (i < flat2.length) {
+        if (flat2[i] === 1) {
+          let j = i;
+          while (j < flat2.length && flat2[j] === 1) j++;
+          if (j - i < MIN_RUN) {
+            for (let k = i; k < j; k++) flat2[k] = 0;
+          }
+        i = j;
+      } else {
+        i++;
+      }
+    }
+    for (let di = 0; di < days.length; di++) {
+      for (let si = 0; si < SLOTS_PER_DAY; si++) {
+        grid[di][si] = flat2[di * SLOTS_PER_DAY + si];
+      }
+    }
+    return grid;
+  }
+
+  function render(root, days, grid, loading) {
+    const todayKey = new Date().toDateString();
+    const weekdayFmt = new Intl.DateTimeFormat(undefined, { weekday: 'short' });
+    const timeFmt = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' });
+
+    // Find earliest slot containing available or booked time across all 7 days.
+    let earliest = SLOTS_PER_DAY;
+    for (let di = 0; di < days.length; di++) {
+      for (let si = 0; si < earliest; si++) {
+        const s = grid[di][si];
+        if (s === 1 || s === 3) { earliest = si; break; }
+      }
+    }
+    // Round down to nearest hour (4 slots per hour). Default to 0 if nothing.
+    // While loading, fix the visible range to 5am–midnight so the placeholder
+    // grid doesn't briefly show the full 24h before data arrives.
+    const startSlot = loading
+      ? 20
+      : (earliest === SLOTS_PER_DAY ? 0 : Math.floor(earliest / 4) * 4);
+    const startHour = startSlot / 4;
+    const startContainer = startSlot / 2;
+
+    const headCells = days.map(d => {
+      const today = d.toDateString() === todayKey;
+      return `<div class="calendar-head-cell${today ? ' calendar-head-cell-today' : ''}">
+        <div class="calendar-head-cell-weekday">${weekdayFmt.format(d)}</div>
+        <div class="calendar-head-cell-date">${d.getDate()}</div>
+    </div>`;
+  }).join('');
+
+    const timeCells = [];
+    const baseDate = new Date();
+    baseDate.setMinutes(0, 0, 0);
+    for (let i = startHour; i < 24; i++) {
+      const d = new Date(baseDate);
+      d.setHours(i);
+      timeCells.push(`<div class="calendar-time-cell">${timeFmt.format(d)}</div>`);
+    }
+
+    const dayCols = days.map((_, di) => {
+      const containers = [];
+      for (let ci = startContainer; ci < 48; ci++) {
+        const top = stateClass(grid[di][ci * 2]);
+        const bot = stateClass(grid[di][ci * 2 + 1]);
+        containers.push(`<div class="calendar-cell-container">
+          <div class="calendar-cell${top}"></div>
+          <div class="calendar-cell${bot}"></div>
+      </div>`);
+      }
+      return `<div class="calendar-week-day">${containers.join('')}</div>`;
+    }).join('');
+
+    root.innerHTML = `<div class="calendar">
+      <div class="calendar-head-date">
+        <div class="calendar-head-cell calendar-head-cell-blank"></div>
+        ${headCells}
+        <div class="calendar-head-cell calendar-head-cell-blank calendar-head-cell-blank-right"></div>
+      </div>
+      <div class="calendar-body-wrap">
+        ${loading ? '<div class="loading-spinner"></div>' : ''}
+        <div class="calendar-body">
+          <div class="calendar-time">${timeCells.join('')}</div>
+          ${dayCols}
+          <div class="calendar-time calendar-time-right">${timeCells.join('')}</div>
+        </div>
+      </div>
+  </div>`;
+
+  if (!loading) attachHover(root, grid, startSlot);
+}
+
+function attachHover(root, grid, startSlot) {
+  const body = root.querySelector('.calendar-body');
+  if (!body) return;
+  const cols = body.querySelectorAll('.calendar-week-day');
+  const tipFmt = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' });
+  const tipDate = new Date();
+  const SLOT_PX = 8; // 15-min slot height (calendar-cell-container is 16px = 2 slots)
+
+  function formatSlot(slotIdx) {
+    const totalMinutes = (slotIdx * 15) % 1440;
+    tipDate.setHours(Math.floor(totalMinutes / 60), totalMinutes % 60, 0, 0);
+    return tipFmt.format(tipDate);
+  }
+
+  // One shared tooltip on document.body — escapes the calendar's overflow
+  // clip and can be clamped to the viewport on every show.
+  let tooltip = document.getElementById('availability-tooltip-shared');
+  if (!tooltip) {
+    tooltip = document.createElement('div');
+    tooltip.id = 'availability-tooltip-shared';
+    tooltip.className = 'availability-tooltip';
+    document.body.appendChild(tooltip);
+  }
+  // Force-reset to a known clean state on each render (e.g., periodic refresh
+  // may rebuild blocks mid-hover, leaving the tooltip stranded).
+  tooltip.classList.remove('visible');
+  tooltip._state = 'hidden';
+  tooltip._pendingShow = null;
+
+  // Set up fade-between-blocks behavior once per tooltip element. When
+  // showTip is called while the tooltip is still visible or mid-fade, we
+  // queue the new content, finish the fade-out, then fade the new in via the
+  // transitionend hook. State machine: 'hidden' → 'showing' → 'hiding' → 'hidden'.
+  if (!tooltip._fadeHandlerSet) {
+    const tip = tooltip; // stable reference for closures
+
+    function applyShow(block, html) {
+      tip.style.transition = ''; // ensure opacity transition is active
+      tip.innerHTML = html;
+      const blockRect = block.getBoundingClientRect();
+      const tipRect = tip.getBoundingClientRect();
+      let left = blockRect.left + (blockRect.width - tipRect.width) / 2;
+      let top  = blockRect.top  + (blockRect.height - tipRect.height) / 2;
+      const margin = 4;
+      left = Math.max(margin, Math.min(left, window.innerWidth  - tipRect.width  - margin));
+      top  = Math.max(margin, Math.min(top,  window.innerHeight - tipRect.height - margin));
+      tip.style.left = left + 'px';
+      tip.style.top  = top  + 'px';
+      tip.classList.add('visible');
+      tip._state = 'showing';
+    }
+
+    function applySlide(block, html) {
+      tip.innerHTML = html;
+      // Suppress opacity transition so the tooltip stays fully visible;
+      // only left/top animate, producing the translate effect.
+      tip.style.transition = 'left 0.15s ease, top 0.15s ease';
+      const blockRect = block.getBoundingClientRect();
+      const tipRect = tip.getBoundingClientRect();
+      let left = blockRect.left + (blockRect.width - tipRect.width) / 2;
+      let top  = blockRect.top  + (blockRect.height - tipRect.height) / 2;
+      const margin = 4;
+      left = Math.max(margin, Math.min(left, window.innerWidth  - tipRect.width  - margin));
+      top  = Math.max(margin, Math.min(top,  window.innerHeight - tipRect.height - margin));
+      tip.style.left = left + 'px';
+      tip.style.top  = top  + 'px';
+      tip._state = 'showing';
+    }
+
+    tip.showTip = function(block, html) {
+      if (tip._state === 'showing' || tip._state === 'hiding') {
+        // Already on screen or fading out — queue and ensure we're fading out.
+        tip._pendingShow = { block, html };
+        tip.classList.remove('visible');
+        tip._state = 'hiding';
+      } else {
+        tip._pendingShow = null;
+        applyShow(block, html);
+      }
+    };
+
+    tip.slideTip = function(block, html) {
+      applySlide(block, html);
+    };
+
+    tip.hideTip = function() {
+      tip._pendingShow = null;
+      if (tip._state === 'showing') {
+        // Restore opacity transition before fading out (may have been suppressed
+        // during a slide between available slots).
+        tip.style.transition = '';
+        tip.classList.remove('visible');
+        tip._state = 'hiding';
+      }
+    };
+
+    tip.addEventListener('transitionend', (e) => {
+      if (e.propertyName !== 'opacity') return;
+      if (tip._state === 'hiding') {
+        tip._state = 'hidden';
+        if (tip._pendingShow) {
+          const pending = tip._pendingShow;
+          tip._pendingShow = null;
+          applyShow(pending.block, pending.html);
+        }
+      }
+    });
+
+    tip._fadeHandlerSet = true;
+  }
+
+  const showTip  = tooltip.showTip;
+  const slideTip = tooltip.slideTip;
+  const hideTip  = tooltip.hideTip;
+
+  // Shared timer: defers the hide by one event-loop tick so that a mouseenter
+  // on the next available block can intercept it and slide instead of fade.
+  let hideTimer = null;
+
+  cols.forEach((col, di) => {
+    let si = 0;
+    while (si < SLOTS_PER_DAY) {
+      if (grid[di][si] !== 1) { si++; continue; }
+      const runStart = si;
+      while (si < SLOTS_PER_DAY && grid[di][si] === 1) si++;
+      const runEnd = si; // exclusive
+
+      const block = document.createElement('div');
+      block.className = 'availability-block';
+      block.style.top = ((runStart - startSlot) * SLOT_PX) + 'px';
+      block.style.height = ((runEnd - runStart) * SLOT_PX) + 'px';
+
+      const html = formatSlot(runStart) + '–' + formatSlot(runEnd) + '<br>Available';
+      block.addEventListener('mouseenter', () => {
+        if (hideTimer !== null) {
+          // Cursor moved directly from another available slot — cancel the
+          // pending fade-out and slide the tooltip to the new position instead.
+          clearTimeout(hideTimer);
+          hideTimer = null;
+          slideTip(block, html);
+        } else {
+          showTip(block, html);
+        }
+      });
+      block.addEventListener('mouseleave', () => {
+        hideTimer = setTimeout(() => {
+          hideTimer = null;
+          hideTip();
+        }, 0);
+      });
+      col.appendChild(block);
+    }
+  });
+}
+
+function stateClass(state) {
+  if (state === 1) return ' calendar-cell-actived';
+  if (state === 3) return ' calendar-cell-booked';
+  return '';
+}
+function pad2(n) { return String(n).padStart(2, '0'); }
+function escapeHTML(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function formatTZOffset(d) {
+  const offMin = -d.getTimezoneOffset();
+  const sign = offMin >= 0 ? '+' : '-';
+  const abs = Math.abs(offMin);
+  const h = Math.floor(abs / 60);
+  const m = abs % 60;
+  return m === 0 ? `UTC${sign}${h}` : `UTC${sign}${h}:${pad2(m)}`;
+}
+
+function makeDemoEvents() {
+  const t = new Date(); t.setHours(0, 0, 0, 0);
+  const at = (dayOffset, h, m) => {
+    const d = new Date(t); d.setDate(t.getDate() + dayOffset); d.setHours(h, m, 0, 0); return d;
+  };
+  return [
+    { start: at(0, 10, 0), end: at(0, 11, 0),  title: 'busy' },
+    { start: at(1, 13, 0), end: at(1, 17, 0),  title: 'available' },
+    { start: at(1, 14, 0), end: at(1, 15, 30), title: 'busy' },
+    { start: at(2,  9, 0), end: at(2, 12, 0),  title: 'unavailable' },
+    { start: at(3,  0, 0), end: at(3, 23, 0),  title: 'unavailable' },
+    { start: at(5, 16, 0), end: at(5, 19, 0),  title: 'available' },
+    { start: at(6,  9, 0), end: at(6, 10, 0),  title: 'busy' },
+  ];
+}
+
+  // Populate timezone info in the header row.
+(function setupTzInfo() {
+  const el = document.getElementById('tz-info');
+  if (!el) return;
+  const tzName = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  el.textContent = `Showing available times for 45-min+ lessons over the next 7 days in ${tzName} (${formatTZOffset(new Date())}).`;
+})();
+
+  // Toggle .full-bleed on the calendar when its edges actually touch the
+  // viewport edges. This is more reliable than a viewport-width media query
+  // because we don't know the surrounding site shell's horizontal padding.
+(function setupFullBleed() {
+  function update() {
+    const cal = document.querySelector('.calendar');
+    if (!cal) return;
+    const rect = cal.getBoundingClientRect();
+    const fullBleed = rect.left <= 0.5 && rect.right >= window.innerWidth - 0.5;
+    cal.classList.toggle('full-bleed', fullBleed);
+  }
+  window.addEventListener('resize', update);
+  // Run after each render so the class is reapplied when innerHTML is rebuilt.
+  const obs = new MutationObserver(update);
+  obs.observe(document.getElementById('root') || document.body, { childList: true, subtree: true });
+  update();
+})();
+
+loadAndRender();
+setInterval(loadAndRender, REFRESH_INTERVAL_MS);
+</script>
