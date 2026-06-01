@@ -81,8 +81,8 @@ details.options[open] > summary{
 }
 details.options[open] .settings-sentence{display:none}
 .options-body{
-  padding:8px 18px 16px;
-  display:flex;flex-direction:column;gap:12px;
+  padding:8px 18px 8px;
+  display:flex;flex-direction:column;gap:18px;
 }
 details.options[open] > .options-body{
   padding-left:30px;
@@ -198,6 +198,8 @@ details.options[open] > .options-body{
 .preset-btn:hover{color:var(--ink);border-color:var(--muted)}
 .preset-btn:active{background:var(--chip);border-color:var(--chip-line);color:var(--accent)}
 .preset-btn.active{background:var(--chip);border-color:var(--chip-line);color:var(--accent)}
+.undo-preset{cursor:pointer;color:var(--muted);font-size:.85rem;padding:0 2px;align-self:center;user-select:none;-webkit-tap-highlight-color:transparent}
+.undo-preset:hover{color:var(--ink)}
 
 
 /* history */
@@ -233,6 +235,7 @@ details.hist[open] summary .arr{transform:rotate(90deg)}
           <button class="preset-btn" data-preset="easy">easy</button>
           <button class="preset-btn" data-preset="medium">medium</button>
           <button class="preset-btn" data-preset="hard">hard</button>
+          <span id="undoPreset" class="undo-preset" style="display:none">undo</span>
         </div>
       </div>
       <div class="grp">
@@ -346,11 +349,11 @@ function degToRadTex(deg){
 /* ---------- domains ---------- */
 const ALL=[0,30,45,60,90,120,135,150,180,210,225,240,270,300,315,330];
 const DOMAINS=[
-  {id:'ref', text:'30°, 45°, and 60° only',              deg:'30^\\circ,\\ 45^\\circ,\\ 60^\\circ', rad:'\\tfrac{\\pi}{6},\\ \\tfrac{\\pi}{4},\\ \\tfrac{\\pi}{3}'},
-  {id:'q1',  text:'the first quadrant [0°, 90°]',        deg:'[\\,0^\\circ,\\,90^\\circ\\,]',       rad:'[\\,0,\\,\\tfrac{\\pi}{2}\\,]'},
-  {id:'half',text:'the upper half-circle [0°, 180°]',    deg:'[\\,0^\\circ,\\,180^\\circ\\,]',      rad:'[\\,0,\\,\\pi\\,]'},
+  {id:'ref', text:'\\(30^\\circ\\), \\(45^\\circ\\), and \\(60^\\circ\\) only', textRad:'\\(\\tfrac{\\pi}{6}\\), \\(\\tfrac{\\pi}{4}\\), and \\(\\tfrac{\\pi}{3}\\) only', deg:'30^\\circ,\\ 45^\\circ,\\ 60^\\circ', rad:'\\tfrac{\\pi}{6},\\ \\tfrac{\\pi}{4},\\ \\tfrac{\\pi}{3}'},
+  {id:'q1',  text:'the first quadrant',                  deg:'[\\,0^\\circ,\\,90^\\circ\\,]',       rad:'[\\,0,\\,\\tfrac{\\pi}{2}\\,]'},
+  {id:'half',text:'the upper half-circle',               deg:'[\\,0^\\circ,\\,180^\\circ\\,]',      rad:'[\\,0,\\,\\pi\\,]'},
   {id:'full',text:'the full circle',                     deg:'[\\,0^\\circ,\\,360^\\circ)',          rad:'[\\,0,\\,2\\pi)'},
-  {id:'neg', text:'−360° to 360°', deg:'(-360^\\circ,\\,360^\\circ)', rad:'(-2\\pi,\\,2\\pi)'},
+  {id:'neg', text:'\\(-360^\\circ\\) to \\(360^\\circ\\)', textRad:'\\(-2\\pi\\) to \\(2\\pi\\)', deg:'(-360^\\circ,\\,360^\\circ)', rad:'(-2\\pi,\\,2\\pi)'},
   {id:'any', text:'any angle',         deg:'\\text{any angle}',                   rad:'\\text{any angle}'}
 ];
 function pool(id){
@@ -379,7 +382,7 @@ const INV_CMD={
 };
 
 /* ---------- state ---------- */
-let questions=[],pos=-1,lastDeg=null,domainId='half',prevHistCount=0,units='deg',mode='trig',invNotation='pow',invDomain='nonneg',ready=false,hintClicks=0;
+let questions=[],pos=-1,lastDeg=null,domainId='half',prevHistCount=0,units='deg',mode='trig',invNotation='pow',invDomain='nonneg',ready=false,hintClicks=0,presetSnapshot=null,suppressHideUndo=false;
 const $=id=>document.getElementById(id);
 const qlhs=$('qlhs'),qeq=$('qeq'),qans=$('qans'),uc=$('uc'),histList=$('histList'),histCount=$('histCount');
 function ansSlot(){ const u=window.innerWidth>=480?'\\text{undefined}':'\\text{undef.}'; return'\\phantom{'+u+'}\\vphantom{\\left(\\dfrac{\\sqrt{2}}{2}\\right)}'; }
@@ -429,8 +432,20 @@ function texTfrac(v){
   const num=v.r===1?String(an):(an===1?'':String(an))+'\\sqrt{'+v.r+'}';
   return v.d===1 ? sg+num : sg+'\\tfrac{'+num+'}{'+v.d+'}';
 }
+function preRatTeX(a,b){
+  // (n_a√r_a/d_a)÷(n_b√r_b/d_b) — simplified but not yet rationalized
+  if(a.n===0) return '0';
+  const sign=((a.n<0)!==(b.n<0))?'-':'';
+  const ni=Math.abs(a.n)*b.d, di=a.d*Math.abs(b.n), g=gcd(ni,di);
+  const nI=ni/g, dI=di/g;
+  const gr=gcd(a.r,b.r), rn=a.r/gr, rd=b.r/gr;
+  const numTex=rn===1?String(nI):(nI===1?'':nI)+'\\sqrt{'+rn+'}';
+  const denTex=rd===1?String(dI):(dI===1?'':dI)+'\\sqrt{'+rd+'}';
+  if(denTex==='1') return sign+numTex;
+  return sign+'\\tfrac{'+numTex+'}{'+denTex+'}';
+}
 function explanationTex(func){
-  const pre='\\text{Function definition: }';
+  const pre='\\text{function definition: }';
   if(mode==='trig'){
     const t={sin:'\\sin\\theta=y',cos:'\\cos\\theta=x',tan:'\\tan\\theta=\\tfrac{y}{x}',
              sec:'\\sec\\theta=\\tfrac{1}{x}',csc:'\\csc\\theta=\\tfrac{1}{y}',cot:'\\cot\\theta=\\tfrac{x}{y}'};
@@ -459,11 +474,6 @@ function drawCircle(deg,revealed,func){
     const base=((deg%360)+360)%360, rad=base*Math.PI/180;
     const px=cx+R*Math.cos(rad), py=cy-R*Math.sin(rad);
     const sc=SC[base];
-    // Quadrant labels at (±1,±1) in math coords = (cx±R, cy∓R) in SVG
-    const qw=32,qh=20;
-    [['I',cx+R,cy-R],['II',cx-R,cy-R],['III',cx-R,cy+R],['IV',cx+R,cy+R]].forEach(([lbl,qx,qy])=>{
-      s+='<foreignObject x="'+(qx-qw/2)+'" y="'+(qy-qh/2)+'" width="'+qw+'" height="'+qh+'"><div xmlns="http://www.w3.org/1999/xhtml" class="uc-quadlbl">\\(\\text{'+lbl+'}\\)</div></foreignObject>';
-    });
     // Orange arc + angle label
     if(deg!==0){
       const totalRad=deg*Math.PI/180;
@@ -497,7 +507,6 @@ function drawCircle(deg,revealed,func){
     const onAxis=base%90===0;
     if(onAxis){ const a=22*Math.PI/180,ca=Math.cos(a),sa=Math.sin(a); [ux,uy]=[ux*ca-uy*sa,ux*sa+uy*ca]; }
     const lpx=px+(onAxis?21:17)*ux, lpy=py+(onAxis?21:17)*uy;
-    s+='<foreignObject x="'+(lpx-11).toFixed(1)+'" y="'+(lpy-12).toFixed(1)+'" width="22" height="22"><div xmlns="http://www.w3.org/1999/xhtml" class="uc-ptlbl">\\(P\\)</div></foreignObject>';
   }
   uc.innerHTML=s;
   if(revealed&&window.MathJax&&MathJax.typesetPromise){ if(MathJax.typesetClear)MathJax.typesetClear([uc]); MathJax.typesetPromise([uc]); }
@@ -512,24 +521,56 @@ function explainHTML(deg,func,blank){
   const refTex=units==='rad'?degToRadTex(refDeg).replace(/dfrac/g,'tfrac'):refDeg+'^\\circ';
   // Worst-case strings — tallest possible content for each line
   const wcR='\\text{reference angle: }\\tfrac{5\\pi}{6}';
-  const wcC='P\\!\\left(\\tfrac{\\sqrt{3}}{2},\\ \\tfrac{\\sqrt{3}}{2}\\right),\\;\\theta=\\tfrac{5\\pi}{6}';
-  const wcD='\\text{Function definition: }\\sin^{-1}(y)=\\theta,\\;{-}\\tfrac{\\pi}{2}\\le\\theta\\le\\tfrac{\\pi}{2}';
+  const wcC='\\theta=\\tfrac{5\\pi}{6},\\;\\text{coordinates: }\\left(\\tfrac{\\sqrt{3}}{2},\\ \\tfrac{\\sqrt{3}}{2}\\right)';
+  const wcD='\\text{function definition: }\\sin^{-1}(y)=\\theta,\\;{-}\\tfrac{\\pi}{2}\\le\\theta\\le\\tfrac{\\pi}{2}';
+  const wcW='\\tan(\\tfrac{5\\pi}{6}) = \\dfrac{\\tfrac{1}{2}}{\\tfrac{\\sqrt{3}}{2}} = \\tfrac{1}{\\sqrt{3}} = \\tfrac{\\sqrt{3}}{3}';
   const vph=s=>'\\vphantom{'+s+'}';
   if(blank) return(
     '<div class="ex-ref">\\(\\phantom{'+wcR+'}\\)</div>'+
     '<div class="ex-coord">\\(\\phantom{'+wcC+'}\\)</div>'+
-    '<div class="ex-def">\\(\\phantom{'+wcD+'}\\)</div>'
+    '<div class="ex-def">\\(\\phantom{'+wcD+'}\\)</div>'+
+    '<div class="ex-def">\\(\\phantom{'+wcW+'}\\)</div>'
   );
+  const trigCmd={sin:'\\sin',cos:'\\cos',tan:'\\tan',sec:'\\sec',csc:'\\csc',cot:'\\cot'};
+  let workTex;
+  if(mode==='trig'){
+    if(func==='sin'||func==='cos'){
+      const coord=func==='sin'?sc.sin:sc.cos, letter=func==='sin'?'y':'x';
+      workTex=trigCmd[func]+'('+angTex+') = '+letter+' = '+texTfrac(coord);
+    } else {
+      const specs={tan:[sc.sin,sc.cos],cot:[sc.cos,sc.sin],sec:[{n:1,r:1,d:1},sc.cos],csc:[{n:1,r:1,d:1},sc.sin]};
+      const [numV,denV]=specs[func];
+      const compound='\\dfrac{'+texTfrac(numV)+'}{'+texTfrac(denV)+'}';
+      const gr=gcd(numV.r,denV.r),rd=denV.r/gr;
+      workTex=trigCmd[func]+'('+angTex+') = '+compound+(rd>1?' = '+preRatTeX(numV,denV):'')+' = '+texTfrac(val(func,deg));
+    }
+  } else {
+    const invInput={sin:sc.sin,cos:sc.cos,tan:val('tan',deg),sec:val('sec',deg),csc:val('csc',deg),cot:val('cot',deg)};
+    const cmd=INV_CMD[invNotation][func];
+    const inputTex=texTfrac(invInput[func]);
+    let coordTex=null;
+    if(func==='tan'||func==='cot'){
+      const [numV,denV]=func==='tan'?[sc.sin,sc.cos]:[sc.cos,sc.sin];
+      if(numV.n!==0) coordTex='\\dfrac{'+texTfrac(numV)+'}{'+texTfrac(denV)+'}';
+    } else if(func==='sec'||func==='csc'){
+      const coord=func==='sec'?sc.cos:sc.sin;
+      if(coord.d>1||coord.r>1) coordTex='\\dfrac{1}{'+texTfrac(coord)+'}';
+    }
+    workTex=cmd+'\\!\\left('+inputTex+'\\right)'+(coordTex?' = '+cmd+'\\!\\left('+coordTex+'\\right)':'')+' = '+angTex;
+  }
   return(
     '<div class="ex-ref">\\(\\text{reference angle: }'+refTex+vph(wcR)+'\\)</div>'+
-    '<div class="ex-coord">\\(P\\!\\left('+texTfrac(sc.cos)+',\\ '+texTfrac(sc.sin)+'\\right),\\;\\theta='+angTex+vph(wcC)+'\\)</div>'+
-    '<div class="ex-def">\\('+(func?explanationTex(func)+vph(wcD):'\\phantom{'+wcD+'}')+'\\)</div>'
+    '<div class="ex-coord">\\(\\theta='+angTex+',\\;\\text{coordinates: }\\left('+texTfrac(sc.cos)+',\\ '+texTfrac(sc.sin)+'\\right)'+vph(wcC)+'\\)</div>'+
+    '<div class="ex-def">\\('+(func?explanationTex(func)+vph(wcD):'\\phantom{'+wcD+'}')+'\\)</div>'+
+    '<div class="ex-def">\\('+(func?workTex+vph(wcW):'\\phantom{'+wcW+'}')+'\\)</div>'
   );
 }
 function applyAddons(){
   const q=questions[pos];
-  $('circleWrap').style.display=$('aDiagram').checked?'':'none';
+  const showCircle=$('aDiagram').checked;
+  $('circleWrap').style.display=showCircle?'':'none';
   const exEl=$('explain');
+  exEl.style.paddingTop=showCircle?'':'18px';
   if(q&&$('aExplain').checked) setMath(exEl,explainHTML(q.deg,q.func,!q.revealed));
   else exEl.innerHTML='';
 }
@@ -644,9 +685,14 @@ function settingsSummary(){
   }
   const subject=all?'all trig functions':listJoin(fs.map(f=>TRIG_NAMES[f]));
   const dom=DOMAINS.find(d=>d.id===domainId);
-  return'Quizzing '+subject+' on '+dom.text+' in '+utext+'.';
+  const domText=units==='rad'&&dom.textRad?dom.textRad:dom.text;
+  return'Quizzing '+subject+' for '+domText+' in '+utext+'.';
 }
-function updateSummary(){ $('settingsSentence').textContent=settingsSummary(); }
+function updateSummary(){
+  const el=$('settingsSentence');
+  el.innerHTML=settingsSummary();
+  if(window.MathJax&&MathJax.typesetPromise){ if(MathJax.typesetClear)MathJax.typesetClear([el]); MathJax.typesetPromise([el]); }
+}
 function matchedPreset(){
   const allSix=['fSin','fCos','fTan','fSec','fCsc','fCot'].every(id=>$(id).checked);
   const sinCosTanOnly=$('fSin').checked&&$('fCos').checked&&$('fTan').checked&&
@@ -696,6 +742,7 @@ function relabelDomains(){
   if(window.MathJax&&MathJax.typesetPromise){ if(MathJax.typesetClear)MathJax.typesetClear([c]); MathJax.typesetPromise([c]).then(()=>movePill(c,true)); }
 }
 function onSettings(){
+  if(!suppressHideUndo) hideUndo();
   if(!ready)return;
   updateSummary();
   updatePresetButtons();
@@ -726,7 +773,25 @@ function addCycleToSlide(c){
   });
 }
 ['unitOpts','modeOpts','notationOpts','invDomainOpts','domainOpts'].forEach(id=>addCycleToSlide($(id)));
+function captureSnapshot(){
+  return{units,mode,domainId,invDomain,invNotation,
+    funcs:['fSin','fCos','fTan','fSec','fCsc','fCot'].map(id=>$(id).checked)};
+}
+function restoreSnapshot(s){
+  units=s.units; mode=s.mode; domainId=s.domainId; invDomain=s.invDomain; invNotation=s.invNotation;
+  ['fSin','fCos','fTan','fSec','fCsc','fCot'].forEach((id,i)=>$(id).checked=s.funcs[i]);
+  document.querySelector('input[name=units][value='+units+']').checked=true;
+  document.querySelector('input[name=mode][value='+mode+']').checked=true;
+  if(mode==='inv') document.querySelector('input[name=invdomain][value='+invDomain+']').checked=true;
+  document.querySelector('input[name=notation][value='+invNotation+']').checked=true;
+  movePill($('unitOpts')); movePill($('modeOpts')); movePill($('notationOpts'));
+  relabelDomains(); relabelFunctions(); updateSettingsUI(); onSettings();
+}
+function showUndo(){ $('undoPreset').style.display=''; }
+function hideUndo(){ $('undoPreset').style.display='none'; presetSnapshot=null; }
 function applyPreset(p){
+  presetSnapshot=captureSnapshot();
+  suppressHideUndo=true;
   if(p==='easy'){
     units='deg'; mode='trig'; domainId='half';
     ['fSin','fCos','fTan'].forEach(id=>$(id).checked=true);
@@ -743,11 +808,14 @@ function applyPreset(p){
   if(mode==='inv') document.querySelector('input[name=invdomain][value='+invDomain+']').checked=true;
   movePill($('unitOpts')); movePill($('modeOpts'));
   relabelDomains(); relabelFunctions(); updateSettingsUI(); onSettings();
+  suppressHideUndo=false;
+  showUndo();
 }
 document.querySelectorAll('.preset-btn').forEach(b=>b.addEventListener('click',()=>applyPreset(b.dataset.preset)));
+$('undoPreset').addEventListener('click',()=>{ if(presetSnapshot) restoreSnapshot(presetSnapshot); });
 /* clicking empty space inside the open panel (not a control) closes it */
 $('settingsDetails').querySelector('.options-body').addEventListener('click',e=>{
-  if(!e.target.closest('.opt,.preset-btn')) $('settingsDetails').open=false;
+  if(!e.target.closest('.opt,.preset-btn,.undo-preset')) $('settingsDetails').open=false;
 });
 window.addEventListener('resize',()=>{
   movePill($('domainOpts'),true); movePill($('unitOpts'),true);
