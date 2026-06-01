@@ -1,4 +1,18 @@
 [
+	{"date": "Monday June 01, 2026",
+	"vocabulary": [
+		{"word": "usual", "IPA": "/ˈjuʒuəl/"},
+		{"word": "usually", "IPA": "/ˈjuʒuəli/"},
+		{"word": "/juʒ/", "audio": "juʒ", "IPA": "/juʒ/"},
+		{"word": "cap", "IPA": "/kæp/"},
+		{"word": "lock", "IPA": "/lɑk/"},
+		{"word": "lid", "IPA": "/lɪd/"},
+		{"word": "ribs", "IPA": "/rɪbz/"},
+		{"word": "brown", "IPA": "/braʊn/"},
+		{"word": "didn't", "IPA": "/ˈdɪdnt/"},
+		{"word": "did it", "IPA": "/dɪd ɪt/"},
+		{"word": "always", "IPA": "/ˈɑlweɪz/"}
+	]},
 	{"date": "Tuesday May 19, 2026",
 	"vocabulary": [
 		{"word": "brunch", "IPA": "/brʌntʃ/"},
