@@ -140,6 +140,7 @@ details.options[open] > .options-body{
   margin-top:1em;
   cursor:pointer;
   border-radius:12px;
+  -webkit-tap-highlight-color:transparent;
 }
 .stage.inv{margin-top:clamp(7px,1.5vw,14px)}
 #stage-hint{
@@ -579,11 +580,10 @@ function render(){
 function fadeRender(revealOnly){
   if(revealOnly){
     qans.style.opacity='0';
-    setTimeout(()=>{ render(); qans.style.opacity='1'; },150);
+    render();
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{ qans.style.opacity='1'; }));
   } else {
-    const qEl=$('q');
-    qEl.style.opacity='0';
-    setTimeout(()=>{ render(); qEl.style.opacity='1'; },150);
+    render();
   }
 }
 
