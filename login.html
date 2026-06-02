@@ -26,8 +26,7 @@
 
 		<trevorkafka-announcement></trevorkafka-announcement>
 
-		<h1 class="widescreen"><i class="fa-solid fa-key"></i> Login to Schedule Lessons</h1>
-		<div class="narrowscreen" style="margin-top: 40px;"></div>
+		<h1><i class="fa-solid fa-key"></i> Login<span class="widescreen"> to Schedule Lessons</span></h1>
 
 		<style>
 			@keyframes fadeColors {
@@ -36,13 +35,16 @@
 			  100% { background-color: #FFFFFF80; }
 			}
 			#login-col-widget, #login-col-info { flex: 1 1 300px; }
+			#login-account-note { margin-top: 2em; }
 			@media (width >= 900px) {
 				#login-col-widget { order: 1; }
 				#login-col-info   { order: 2; }
 			}
 			@media (width < 900px) {
-				#login-col-widget { order: 2; flex-basis: 100%; }
-				#login-col-info   { order: 1; flex-basis: 100%; }
+				#login-col-widget { order: 1; flex-basis: 100%; }
+				#login-col-info   { order: 2; flex: none; width: 100vw; margin-left: calc((var(--widthmax) - 100vw) / 2); }
+				#login-col-info .calendar-head-date { border-top-left-radius: 0; border-top-right-radius: 0; }
+				#login-col-info .calendar-body-wrap { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
 			}
 		</style>
 
@@ -59,22 +61,20 @@
 						<script src="https://app.tutorbird.com/Widget/v4/Widget.ashx?settings=eyJTY2hvb2xJRCI6InNjaF9kMXhKMiIsIldlYnNpdGVJRCI6Indic19zSkpzIiwiV2Vic2l0ZUJsb2NrSUQiOiJ3YmJfekZ5TEpEIn0="></script>
 					</div>
 				</div>
+				<p id="login-account-note">Accounts are automatically created when registering for a <a href="call.html">free intro call</a>. A preview of my 7-day availability is available in the adjacent table.</p>
 			</div>
 
 			<div id="login-col-info">
-				<div style="text-align:center; padding: 10px 0;"><a onclick="openAvailabilityOverlay()" class="button" style="cursor:pointer; display:inline-block;"><div align="center" style="padding: 16px 28px;"><i class="fa-solid fa-calendar-days"></i> Preview 7-Day Availability</div></a></div>
-				<p>
-					Accounts are automatically created when registering for a <a href="call.html">free intro call</a>.
-				</p>
+				<div id="availability-inline-content"></div>
 			</div>
 
 		</div>
 
-		<div class="FAQ" style="padding-top: 2em">
+		<h1><i class="fa-solid fa-circle-question"></i> Frequently Asked Questions</h1>
+		<div class="FAQ">
 			<details>
 				<summary class="red">Please note that I hold a strict 24-hour cancellation policy (click for details)</summary>
 				<div style="background-color: #FFDCDC; border-radius: 10px">
-					<h1 style="margin-top: 0px">Lesson Cancellation Information</h1>
 					<ul>
 						<li>The online registration system will not accept cancellations once the 24 hour window has passed.</li>
 						<li>Late-cancelled lessons (cancellations less than 24 hours in advance) are still billable.</li>
@@ -227,71 +227,16 @@
 				<p>First, login above to access the parent/student portal. Then, follow the steps below.</p>
 				<div align="center"><img src="media/help - cancel lesson.png" style="width: min(500px, 100%); border-radius: 20px"></div>	
 				<p>Please note that students whose parent/guardian(s) haven't granted them calendar booking permissions will not be able to sign up for or cancel lessons on the calendar. This setting can be changed on the parent/guardian-side profile settings.</p>
+			<p>If in a pinch, you can also email me at <trevorkafka-email></trevorkafka-email> or text me in order to make a cancellation.</p>
 			</details>
 		</div>
 		<div style="padding-bottom: 20px"></div>
 	</div>
 
-	<!-- Availability overlay -->
-	<style>
-		#availability-overlay-inner {
-			margin: 80px auto 40px;
-			max-width: 1100px;
-			width: 90vw;
-			background: var(--color3);
-			border-radius: 20px;
-			padding: 24px 0;
-			position: relative;
-			overflow: hidden;
-		}
-		@media (max-width: 899px) {
-			#availability-overlay-inner {
-				width: 100vw;
-				margin: 60px 0 0 0;
-				border-radius: 16px 16px 0 0;
-			}
-		}
-	</style>
-	<div id="availability-overlay" onclick="if(event.target===this)closeAvailabilityOverlay()" style="display:none; position:fixed; inset:0; z-index:200; background:#00000070; overflow-y:auto;">
-		<div id="availability-overlay-inner" class="glow-shadow">
-			<button onclick="closeAvailabilityOverlay()" style="position:absolute; top:10px; right:12px; background:none; border:none; font-size:120%; opacity:0.35; cursor:pointer; padding:4px 8px; color:var(--color1);">&#x2715;</button>
-			<div id="availability-overlay-content"></div>
-		</div>
-	</div>
-
 	<script>
-		function updateOverlayCorners() {
-			if (window.innerWidth >= 900) return;
-			const inner = document.getElementById('availability-overlay-inner');
-			if (!inner || inner.closest('#availability-overlay').style.display === 'none') return;
-			const rounded = inner.getBoundingClientRect().bottom <= window.innerHeight - 1;
-			inner.style.borderBottomLeftRadius  = rounded ? '16px' : '0';
-			inner.style.borderBottomRightRadius = rounded ? '16px' : '0';
-		}
-		window.addEventListener('resize', updateOverlayCorners);
-
-		function openAvailabilityOverlay() {
-			const overlay = document.getElementById('availability-overlay');
-			const container = document.getElementById('availability-overlay-content');
-			overlay.style.display = 'block';
-			document.body.style.overflow = 'hidden';
-			if (!container.dataset.loaded) {
-				$(container).load('/snippets/availability-no-button.html', function() {
-					updateOverlayCorners();
-					const inner = document.getElementById('availability-overlay-inner');
-					if (inner && window.ResizeObserver) {
-						new ResizeObserver(updateOverlayCorners).observe(inner);
-					}
-				});
-				container.dataset.loaded = 'true';
-			} else {
-				updateOverlayCorners();
-			}
-		}
-		function closeAvailabilityOverlay() {
-			document.getElementById('availability-overlay').style.display = 'none';
-			document.body.style.overflow = '';
-		}
+		$(function() {
+			$('#availability-inline-content').load('/snippets/availability-for-login-page.html');
+		});
 	</script>
 
 </body>

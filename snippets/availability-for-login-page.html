@@ -12,6 +12,7 @@
     --cal-tx:       var(--transitiontime, 0.2s);
   }
   * { box-sizing: border-box; }
+  .cal-container { container-type: inline-size; }
 
   .legend {
     max-width: 1000px;
@@ -145,13 +146,11 @@
     border-left: none;
     border-right: none;
   }
-  @media (max-width: 600px) {
+  @container (max-width: 600px) {
     .calendar-head-cell-blank-right,
     .calendar-time-right {
       display: none;
     }
-  }
-  @media (max-width: 600px) {
     .legend { gap: 10px 20px; }
   }
 
@@ -236,7 +235,7 @@
     font-size: 14px;
   }
 
-  @media (width <= 900px) {
+  @container (max-width: 500px) {
       .calendar-head-date {
           border-top-left-radius: 0;
           border-top-right-radius: 0;
@@ -247,7 +246,7 @@
       }
   }
 
-  @media (max-width: 700px) {
+  @container (max-width: 700px) {
       .legend { gap: 10px 20px; }
   }
   /* Standalone-only: center calendar vertically in the viewport when there's
@@ -262,6 +261,7 @@
     justify-content: safe center;
   }
 </style>
+<div class="cal-container">
 <div class="legend">
   <span><span class="legend-swatch available"></span>Available</span>
   <span><span class="legend-swatch unavailable"></span>Not available</span>
@@ -270,6 +270,7 @@
 <div class="subtitle"><span class="tz-info" id="tz-info"></span></div>
 <div id="root"></div>
 <div id="status" class="status"></div>
+</div>
 
 <script>
   // When opened standalone, pull in the site's stylesheet and tag <body>
