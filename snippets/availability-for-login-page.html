@@ -32,6 +32,12 @@
     font-size: 13px;
     color: var(--cal-muted);
   }
+  trevorkafka-availability-announcement {
+    display: block;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
   .legend-swatch {
     display: inline-block;
     width: 12px;
@@ -268,6 +274,7 @@
   <span><span class="legend-swatch busy"></span>Booked</span>
 </div>
 <div class="subtitle"><span class="tz-info" id="tz-info"></span></div>
+<trevorkafka-availability-announcement></trevorkafka-availability-announcement>
 <div id="root"></div>
 <div id="status" class="status"></div>
 </div>
@@ -730,6 +737,8 @@ function makeDemoEvents() {
   obs.observe(document.getElementById('root') || document.body, { childList: true, subtree: true });
   update();
 })();
+
+$('trevorkafka-availability-announcement').load('/snippets/availability-announcement.html');
 
 loadAndRender();
 setInterval(loadAndRender, REFRESH_INTERVAL_MS);
