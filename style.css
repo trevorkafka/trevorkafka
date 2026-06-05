@@ -16,6 +16,7 @@
 
 	html {
 	  scroll-behavior: smooth; /* makes links within same page scroll smoothly */
+	  overflow-x: hidden; /* prevents 100vw full-bleed elements from causing horizontal scroll due to scrollbar width */
 	  /*margin: 0;
 	  padding: 0;*/
 	  background-color: var(--color3);
