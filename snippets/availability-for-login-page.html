@@ -67,6 +67,7 @@
     margin: 0 auto;
     /*padding: 0 16px;*/
     text-align: center;
+    user-select: none;
   }
   .calendar-head-date {
     display: flex;
@@ -268,13 +269,13 @@
   }
 </style>
 <div class="cal-container">
+<div class="subtitle"><span class="tz-info" id="tz-info"></span></div>
+<trevorkafka-availability-announcement></trevorkafka-availability-announcement>
 <div class="legend">
   <span><span class="legend-swatch available"></span>Available</span>
   <span><span class="legend-swatch unavailable"></span>Not available</span>
   <span><span class="legend-swatch busy"></span>Booked</span>
 </div>
-<div class="subtitle"><span class="tz-info" id="tz-info"></span></div>
-<trevorkafka-availability-announcement></trevorkafka-availability-announcement>
 <div id="root"></div>
 <div id="status" class="status"></div>
 </div>
