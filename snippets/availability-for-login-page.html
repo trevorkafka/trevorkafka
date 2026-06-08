@@ -1,6 +1,6 @@
 <style>
   :root {
-    --sidebar-width: clamp(60px, 12vw, 116px);
+    --sidebar-width: clamp(62px, 8vw, 80px);
     /* Site-derived theme tokens with fallbacks, so this snippet still
        reads well if previewed outside the site shell. */
     --cal-text:     var(--color1, #3C303E);
@@ -52,6 +52,43 @@
     background-color: #cdbf9d;
     background-image: repeating-linear-gradient(45deg, transparent, transparent 1px, #cdbf9d 1px, #ece2cb 3px);
   }
+
+  .cal-week-nav {
+    position: relative;
+    display: inline-flex;
+    flex-direction: column;
+    border: 1px solid var(--cal-border);
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+  .cal-week-label {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    padding: 1px 7px;
+    font-size: 12px;
+    font-family: inherit;
+    line-height: 1.5;
+    white-space: nowrap;
+    text-align: center;
+    color: var(--cal-muted);
+    transition: color 0.2s ease;
+    user-select: none;
+  }
+  .cal-week-nav[data-week="0"] .cal-week-label:nth-child(1),
+  .cal-week-nav[data-week="1"] .cal-week-label:nth-child(2) { color: #fff; }
+  .cal-week-indicator {
+    position: absolute;
+    inset: 0 0 50% 0;
+    background: var(--cal-accent);
+    transition: transform 0.2s ease;
+    pointer-events: none;
+  }
+  .cal-week-nav[data-week="1"] .cal-week-indicator { transform: translateY(100%); }
+
+  #root { overflow: hidden; }
 
   .status {
     max-width: 1000px;
@@ -177,6 +214,7 @@
     transform: translateY(-50%);
     font-size: 12px;
     color: var(--cal-muted);
+    white-space: nowrap;
   }
   .calendar-time-cell:first-child { visibility: hidden; }
   .calendar-week-day {
@@ -273,8 +311,13 @@
 <trevorkafka-availability-announcement></trevorkafka-availability-announcement>
 <div class="legend">
   <span><span class="legend-swatch available"></span>Available</span>
-  <span><span class="legend-swatch unavailable"></span>Not available</span>
+  <span><span class="legend-swatch unavailable"></span>Unavailable</span>
   <span><span class="legend-swatch busy"></span>Booked</span>
+  <div class="cal-week-nav" id="cal-week-nav" data-week="0" tabindex="0" role="button" aria-label="Switch week">
+    <span class="cal-week-label">this week</span>
+    <span class="cal-week-label">next week</span>
+    <span class="cal-week-indicator" aria-hidden="true"></span>
+  </div>
 </div>
 <div id="root"></div>
 <div id="status" class="status"></div>
@@ -302,10 +345,13 @@
   const FIFTEEN_MIN = 15 * 60 * 1000;
   const SLOTS_PER_DAY = 96;
 
+  let weekOffset = 0;
+  let cachedEvents = null;
+
   async function loadAndRender() {
     const root = document.getElementById('root');
     const status = document.getElementById('status');
-    const days = buildWeek(new Date());
+    const days = buildWeek(new Date(), weekOffset);
 
     // Render empty grid immediately so the structure is visible while loading.
     if (!root.querySelector('.calendar')) {
@@ -320,7 +366,7 @@
         events = makeDemoEvents();
         status.textContent = 'Demo data — set API_URL in the source.';
       } else {
-        const res = await fetch(API_URL);
+        const res = await fetch(API_URL + '?days=14');
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const data = await res.json();
         events = data.events.map(e => ({
@@ -330,17 +376,28 @@
         }));
         // status.textContent = 'Updated ' + new Date().toLocaleString();
       }
-      const grid = classify(events, days);
-      render(root, days, grid);
+      cachedEvents = events;
+      renderWeek();
     } catch (err) {
       root.innerHTML = '<div class="error">Could not load availability: ' + escapeHTML(err.message) + '</div>';
       status.textContent = '';
     }
   }
 
-  function buildWeek(today) {
+  function renderWeek() {
+    const root = document.getElementById('root');
+    if (!cachedEvents) return;
+    const nav = document.getElementById('cal-week-nav');
+    if (nav) nav.setAttribute('data-week', weekOffset);
+    const days = buildWeek(new Date(), weekOffset);
+    const grid = classify(cachedEvents, days);
+    render(root, days, grid);
+  }
+
+  function buildWeek(today, offset = 0) {
     const start = new Date(today);
     start.setHours(0, 0, 0, 0);
+    start.setDate(start.getDate() + offset * 7);
     const days = [];
     for (let i = 0; i < 7; i++) {
       const d = new Date(start);
@@ -469,9 +526,9 @@
     // Round down to nearest hour (4 slots per hour). Default to 0 if nothing.
     // While loading, fix the visible range to 5am–midnight so the placeholder
     // grid doesn't briefly show the full 24h before data arrives.
-    const startSlot = loading
+    const startSlot = loading || earliest === SLOTS_PER_DAY
       ? 20
-      : (earliest === SLOTS_PER_DAY ? 0 : Math.floor(earliest / 4) * 4);
+      : Math.floor(earliest / 4) * 4;
     const startHour = startSlot / 4;
     const startContainer = startSlot / 2;
 
@@ -703,13 +760,18 @@ function makeDemoEvents() {
     const d = new Date(t); d.setDate(t.getDate() + dayOffset); d.setHours(h, m, 0, 0); return d;
   };
   return [
-    { start: at(0, 10, 0), end: at(0, 11, 0),  title: 'busy' },
-    { start: at(1, 13, 0), end: at(1, 17, 0),  title: 'available' },
-    { start: at(1, 14, 0), end: at(1, 15, 30), title: 'busy' },
-    { start: at(2,  9, 0), end: at(2, 12, 0),  title: 'unavailable' },
-    { start: at(3,  0, 0), end: at(3, 23, 0),  title: 'unavailable' },
-    { start: at(5, 16, 0), end: at(5, 19, 0),  title: 'available' },
-    { start: at(6,  9, 0), end: at(6, 10, 0),  title: 'busy' },
+    { start: at(0, 10, 0),  end: at(0, 11, 0),  title: 'busy' },
+    { start: at(1, 13, 0),  end: at(1, 17, 0),  title: 'available' },
+    { start: at(1, 14, 0),  end: at(1, 15, 30), title: 'busy' },
+    { start: at(2,  9, 0),  end: at(2, 12, 0),  title: 'unavailable' },
+    { start: at(3,  0, 0),  end: at(3, 23, 0),  title: 'unavailable' },
+    { start: at(5, 16, 0),  end: at(5, 19, 0),  title: 'available' },
+    { start: at(6,  9, 0),  end: at(6, 10, 0),  title: 'busy' },
+    { start: at(8, 10, 0),  end: at(8, 12, 0),  title: 'available' },
+    { start: at(9,  9, 0),  end: at(9, 10, 0),  title: 'busy' },
+    { start: at(10, 14, 0), end: at(10, 17, 0), title: 'available' },
+    { start: at(12,  0, 0), end: at(12, 23, 0), title: 'unavailable' },
+    { start: at(13, 15, 0), end: at(13, 19, 0), title: 'available' },
   ];
 }
 
@@ -718,7 +780,7 @@ function makeDemoEvents() {
   const el = document.getElementById('tz-info');
   if (!el) return;
   const tzName = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  el.textContent = `Showing available times for 45-min+ lessons over the next 7 days in ${tzName} (${formatTZOffset(new Date())}).`;
+  el.textContent = `Showing available times for 45-min+ lessons over the next 14 days in ${tzName} (${formatTZOffset(new Date())}).`;
 })();
 
   // Toggle .full-bleed on the calendar when its edges actually touch the
@@ -740,6 +802,14 @@ function makeDemoEvents() {
 })();
 
 $('trevorkafka-availability-announcement').load('/snippets/availability-announcement.html');
+
+(function setupNavButtons() {
+  const nav = document.getElementById('cal-week-nav');
+  if (!nav) return;
+  function toggle() { weekOffset = weekOffset === 0 ? 1 : 0; renderWeek(); }
+  nav.addEventListener('click', toggle);
+  nav.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+})();
 
 loadAndRender();
 setInterval(loadAndRender, REFRESH_INTERVAL_MS);
