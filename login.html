@@ -34,8 +34,26 @@
 			  50% { background-color: #d7ba6480 }
 			  100% { background-color: #FFFFFF80; }
 			}
-			#login-col-widget, #login-col-info { flex: 1 1 300px; }
-			#login-account-note { margin-top: 2em; }
+#login-col-widget, #login-col-info { flex: 1 1 300px; }
+			.login-notes {
+				list-style: none;
+				padding: 0;
+				margin: 14px 0 0;
+				display: flex;
+				flex-direction: column;
+				gap: 10px;
+				font-size: 14px;
+			}
+			.login-notes li {
+				display: grid;
+				grid-template-columns: 1.5em 1fr;
+				gap: 0 9px;
+			}
+			.login-notes li i {
+				color: var(--defaultlink, #d46a53);
+				margin-top: 3px;
+				justify-self: start;
+			}
 			@media (width >= 900px) {
 				#login-col-widget { order: 1; }
 				#login-col-info   { order: 2; }
@@ -61,13 +79,11 @@
 						<script src="https://app.tutorbird.com/Widget/v4/Widget.ashx?settings=eyJTY2hvb2xJRCI6InNjaF9kMXhKMiIsIldlYnNpdGVJRCI6Indic19zSkpzIiwiV2Vic2l0ZUJsb2NrSUQiOiJ3YmJfekZ5TEpEIn0="></script>
 					</div>
 				</div>
-				<p id="login-account-note">Accounts are automatically created when registering for a <a href="call.html">free intro call</a>.</p>
-
-				<p>A preview of my 14-day availability is available in the table <span class="widescreen">to the right</span><span class="narrowscreen">below</span>.</p>
-
-				<p><span style="font-size: 120%; font-weight: bold">Want to change your lesson length? Want to make your lessons weekly-recurring?</span></p>
-
-				<p>Please email me at <trevorkafka-email></trevorkafka-email> to get either of these set up.</p>
+				<ul class="login-notes">
+					<li><i class="fa-solid fa-user-plus"></i><span>Accounts are automatically created when registering for a <a href="call.html">free intro call</a>.</span></li>
+					<li><i class="fa-solid fa-calendar-days"></i><span>A preview of my 14-day availability is in the table <span class="widescreen">to the right</span><span class="narrowscreen">below</span>.</span></li>
+					<li><i class="fa-solid fa-envelope"></i><span>To change your lesson length or set up weekly-recurring lessons, email <trevorkafka-email></trevorkafka-email>.</span></li>
+				</ul>
 			</div>
 
 			<div id="login-col-info">

@@ -27,16 +27,37 @@
   }
   .subtitle {
     max-width: 1000px;
-    margin: 0 auto 16px;
+    margin: 16px auto 0;
     padding: 0 16px;
     font-size: 13px;
     color: var(--cal-muted);
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+  }
+  .subtitle i {
+    color: var(--cal-muted);
+    margin-top: 2px;
+    flex-shrink: 0;
   }
   trevorkafka-availability-announcement {
     display: block;
     max-width: 1000px;
     margin: 0 auto;
     padding: 0 16px;
+  }
+  trevorkafka-availability-announcement p {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--cal-muted);
+    margin: 0;
+  }
+  trevorkafka-availability-announcement p i {
+    color: var(--cal-muted);
+    margin-top: 2px;
+    flex-shrink: 0;
   }
   .legend-swatch {
     display: inline-block;
@@ -307,8 +328,6 @@
   }
 </style>
 <div class="cal-container">
-<div class="subtitle"><span class="tz-info" id="tz-info"></span></div>
-<trevorkafka-availability-announcement></trevorkafka-availability-announcement>
 <div class="legend">
   <span><span class="legend-swatch available"></span>Available</span>
   <span><span class="legend-swatch unavailable"></span>Unavailable</span>
@@ -321,6 +340,9 @@
 </div>
 <div id="root"></div>
 <div id="status" class="status"></div>
+<div class="subtitle"><i class="fa-solid fa-clock fa-fw"></i><span class="tz-info" id="tz-info"></span></div>
+<br>
+<trevorkafka-availability-announcement></trevorkafka-availability-announcement>
 </div>
 
 <script>
