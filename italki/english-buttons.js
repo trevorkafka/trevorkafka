@@ -81,27 +81,29 @@ async function loadNotes(entry, groupContainer) {
       const controls = document.createElement("div");
       controls.classList.add("note-audio");
 
+      const playLabel = '<i class="fa-solid fa-play"></i> Play';
+      const stopLabel = '<i class="fa-solid fa-stop"></i> Stop';
       const playBtn = document.createElement("button");
-      playBtn.textContent = "▶ Play";
+      playBtn.innerHTML = playLabel;
       let audio = null;
       playBtn.addEventListener("click", () => {
         if (audio) {
           audio.pause();
           audio = null;
-          playBtn.textContent = "▶ Play";
+          playBtn.innerHTML = playLabel;
           return;
         }
         audio = new Audio(audioPath);
-        playBtn.textContent = "⏹ Stop";
+        playBtn.innerHTML = stopLabel;
         audio.addEventListener("ended", () => {
           audio = null;
-          playBtn.textContent = "▶ Play";
+          playBtn.innerHTML = playLabel;
         });
         audio.play();
       });
 
       const downloadBtn = document.createElement("a");
-      downloadBtn.textContent = "⭳ Download";
+      downloadBtn.innerHTML = '<i class="fa-solid fa-download"></i> Download';
       downloadBtn.href = audioPath;
       downloadBtn.setAttribute("download", "");
 
