@@ -28,8 +28,8 @@ fetch("vocabulary.json")
 
       const div = document.createElement("div");
       div.classList.add("word-box");
-      div.innerHTML = `<span class="english">${word}</span><br><span class="IPA">${item.IPA ?? ""}</span>`
-        + (item.translation ? `<br><span class="translation">${item.translation}</span>` : "");
+      div.innerHTML = `<span class="english">${word}</span><span class="IPA">${item.IPA ?? ""}</span>`
+        + (item.translation ? `<span class="translation">${item.translation}</span>` : "");
       subContainer.appendChild(div);
       fetch(`../English audio/${audioFile}.m4a`, { method: "HEAD" })
         .then(res => {
@@ -127,6 +127,19 @@ noteStyle.textContent = `
     color: #c0392b;
     font-size: 90%;
   }
+  /* Each part of a word-box is its own line; hiding one collapses its line
+     entirely (no leftover blank line) and shrinks the button to fit. */
+  .word-box .english,
+  .word-box .IPA,
+  .word-box .translation {
+    display: block;
+  }
+  #word-container.ipa-hidden .IPA {
+    display: none;
+  }
+  #word-container.translations-hidden .translation {
+    display: none;
+  }
   .note-box {
     display: block;
     background-color: #00000010;
@@ -162,16 +175,18 @@ noteStyle.textContent = `
 `;
 document.head.appendChild(noteStyle);
 
-// toggle IPA
-document.getElementById("ipa-toggle").addEventListener("change", function() {
-    document.querySelectorAll(".IPA").forEach(el => {
-      el.style.display = this.checked ? "" : "none";
-    });
-  });
+// IPA + translation visibility are controlled by classes on #word-container so
+// that words loaded asynchronously inherit the current state automatically. The
+// initial state is read from each checkbox (translations default to unchecked).
+const wordContainer = document.getElementById("word-container");
 
-// toggle translations
-document.getElementById("translation-toggle")?.addEventListener("change", function() {
-    document.querySelectorAll(".translation").forEach(el => {
-      el.style.display = this.checked ? "" : "none";
-    });
+function syncToggle(toggle, cls) {
+  if (!toggle) return;
+  wordContainer.classList.toggle(cls, !toggle.checked);
+  toggle.addEventListener("change", function() {
+    wordContainer.classList.toggle(cls, !this.checked);
   });
+}
+
+syncToggle(document.getElementById("ipa-toggle"), "ipa-hidden");
+syncToggle(document.getElementById("translation-toggle"), "translations-hidden");
