@@ -13,6 +13,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Freeman&amp;display=block" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai+Looped:wght@100..900&display=swap" rel="stylesheet">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> <!-- use JQuery -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script> <!-- markdown parser for note boxes -->
 <script src="../english-buttons.js" defer></script>
 
 </head>
@@ -68,11 +69,12 @@
 			<p>Before clicking on a word, try to recall the pronunciation on your own. Then, listen click the word to listen to the audio to hear my pronunciation. After that, repeat the word aloud and try to imitate my pronunciation as best as possible.</p>
 			<p>在点击单词之前，先试着自己回忆它的发音。然后，点击单词聆听音频，听我的发音。之后，大声重复这个单词，尽量模仿我的发音。</p>
 
-			<label><input type="checkbox" id="ipa-toggle" checked style="width: auto"> Show IPA 表示国际音标</label>
-
+			<label><input type="checkbox" id="ipa-toggle" checked style="width: auto"> Show IPA 显示国际音标</label>
 			<a href="../IPA/" class="button" style="display:inline-block">
 				<div align="center">IPA vowels</div>
 			</a>
+			<br>
+			<label><input type="checkbox" id="translation-toggle" checked style="width: auto"> Show translation 显示翻译</label>
 			
 		</div>
 
@@ -81,55 +83,5 @@
 		</div>
 
 	</div>
-
-	<script>
-	  fetch("vocabulary.json")
-	    .then(res => res.json())
-	    .then(data => {
-	      data.forEach(entry => {
-	        const h2 = document.createElement("h2");
-	        h2.textContent = entry.date;
-	        document.getElementById("word-container").appendChild(h2);
-	        fetch(`../English audio/${entry.date}.m4a`, { method: "HEAD" })
-	          .then(res => {
-	            if (res.ok) {
-	              h2.classList.add("has-audio");
-	              h2.addEventListener("click", () => {
-	                new Audio(`../English audio/${entry.date}.m4a`).play();
-	              });
-	            }
-	          });
-	        const subContainer = document.createElement("div");
-	        document.getElementById("word-container").appendChild(subContainer);
-	        entry.vocabulary.forEach(item => {
-	          const word = typeof item === "string" ? item : item.word;
-	          const audioFile = item.audio ?? item.word;
-
-	          const div = document.createElement("div");
-	          div.classList.add("word-box");
-	          div.innerHTML = `<span class="english">${word}</span><br><span class="IPA">${item.IPA}</span>`;
-	          subContainer.appendChild(div);
-	          fetch(`../English audio/${audioFile}.m4a`, { method: "HEAD" })
-	            .then(res => {
-	              if (res.ok) {
-	                div.classList.add("has-audio");
-	                div.addEventListener("click", () => {
-	                  new Audio(`../English audio/${audioFile}.m4a`).play();
-	                });
-	              } else {
-	                div.classList.add("no-audio");
-	              }
-	            });
-	        });
-	      });
-	    });
-
-	    // toggle IPA
-	    document.getElementById("ipa-toggle").addEventListener("change", function() {
-	        document.querySelectorAll(".IPA").forEach(el => {
-	          el.style.display = this.checked ? "" : "none";
-	        });
-	      });
-	</script>
 
 </body>
