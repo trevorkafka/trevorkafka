@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 370 148" fill="none">
+  <defs>
+    <filter id="sketch" x="-12%" y="-12%" width="124%" height="124%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.038 0.032" numOctaves="3" seed="9" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="4.5" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#sketch)" stroke="#FB7F64" stroke-width="5.5" stroke-linejoin="round" stroke-linecap="round" fill="none">
+    <!-- Left arrow — tilted more counterclockwise -->
+    <path transform="rotate(-14, 75, 74)"
+      d="M 54,13 C 63,12 82,13 96,14 C 96,32 95,55 95,73 C 103,72 112,72 116,71 C 103,93 88,111 75,129 C 62,111 46,92 35,72 C 40,72 50,73 56,73 C 55,55 54,32 54,13 Z"/>
+    <!-- Middle arrow — slight tilt -->
+    <path transform="translate(123, 2) rotate(3, 75, 74)"
+      d="M 54,11 C 64,11 83,12 96,13 C 96,31 95,54 95,73 C 103,72 112,71 116,70 C 103,93 88,111 75,129 C 61,110 46,92 35,71 C 40,72 50,73 56,73 C 56,54 55,31 54,11 Z"/>
+    <!-- Right arrow — tilted more clockwise -->
+    <path transform="translate(243, 5) rotate(16, 72, 70) scale(1, 0.93)"
+      d="M 54,12 C 63,11 82,12 96,13 C 96,31 95,54 95,72 C 103,71 112,71 116,70 C 103,93 88,111 75,129 C 61,110 46,92 35,71 C 40,71 50,72 56,72 C 55,54 54,31 54,12 Z"/>
+  </g>
+</svg>
