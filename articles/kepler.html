@@ -5,7 +5,7 @@
 	<meta name="viewport" content="width=device-width"> <!-- essential for making sure that the ACTUAL screen width is interpreted by the CSS as opposed to some idealized number presented by smartphones (980px+) -->
 
 	<link rel="stylesheet" href="/style.css">
-	<link rel="shortcut icon" href="favicon.ico">
+	<link rel="shortcut icon" href="/favicon.ico">
 
 	<!-- Google font stuff -->
 	<link rel="preconnect" href="https://fonts.googleapis.com">
@@ -57,7 +57,7 @@
 	}
 
 	details[open] {
-		border-color: --color1;
+		border-color: var(--color1);
 		border-left-style: solid;
 		padding-left: 10px;
 	}
@@ -269,7 +269,7 @@
 			<p>Through some remarkable and nontrivial algebraic rearrangement, this can be reexpressed as follows.</p>
 
 			\begin{equation}
-				d\theta = -\frac{\displaystyle -\frac{\frac{l^2}{M\alpha} \frac{1}{r^2}}{\sqrt{1 + \frac{2EL^2}{M\alpha^2}}}}{\displaystyle \sqrt{1 - \left( \frac{\frac{l^2}{M\alpha} \frac{1}{r}-1}{\sqrt{1 + \frac{2El^2}{M\alpha^2}}} \right)^2}}\ dr
+				d\theta = -\frac{\displaystyle -\frac{\frac{l^2}{M\alpha} \frac{1}{r^2}}{\sqrt{1 + \frac{2El^2}{M\alpha^2}}}}{\displaystyle \sqrt{1 - \left( \frac{\frac{l^2}{M\alpha} \frac{1}{r}-1}{\sqrt{1 + \frac{2El^2}{M\alpha^2}}} \right)^2}}\ dr
 			\end{equation}
 
 			<p>Let $p = \frac{l^2}{M\alpha}$ and $e = \sqrt{1 + \frac{2El^2}{M\alpha^2}}$. Integrate the result.</p>
