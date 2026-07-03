@@ -78,44 +78,67 @@
 			}
 
 			// *************************************************************************************
+			// TRAVEL ITINERARY — add, remove, or edit as many stops as you like.
+			// Keep them in chronological order by 'date'. Each entry is:
+			//   date     : 'YYYY-MM-DD', the day you ARRIVE / the day the location flips
+			//   location : text shown after "Currently located in"
+			//   offset   : that place's current UTC offset in hours (mind daylight saving!)
+			// The most recent stop whose date has already passed is treated as "now".
+			// Tip: list your home base first, and again at the end for when you return.
 			// *************************************************************************************
-			// *************************************************************************************
-			const location1 = 'Somerville, Massachusetts, USA'
-			const timeOffset1 = -4
-			const location2 = 'Barcelona, Spain'
-			const timeOffset2 = +2
-			const travelDate = new Date('2026-07-15'); // CHANGE DATE HERE in the format 'YYYY-MM-DD'
-			// *************************************************************************************
-			// *************************************************************************************
+			const itinerary = [
+			    { date: '2026-01-01', location: 'Somerville, Massachusetts, USA',    offset: -4 },
+			    { date: '2026-07-16', location: 'Sitges (Barcelona), Spain',         offset: +2 },
+			    { date: '2026-07-18', location: 'Amersfoort, Netherlands',           offset: +2 },
+			    { date: '2026-07-21', location: 'Amsterdam, Netherlands',            offset: +2 },
+			    { date: '2026-07-24', location: 'Berlin, Germany',                   offset: +2 },
+			    { date: '2026-07-29', location: 'Maspalomas, Gran Canaria, Spain',   offset: +1 },
+			    { date: '2026-08-02', location: 'Costa Calma, Fuerteventura, Spain', offset: +1 },
+			    { date: '2026-08-08', location: 'Edinburgh, Scotland',               offset: +1 },
+			    { date: '2026-08-10', location: 'Palma, Mallorca, Spain',            offset: +2 },
+			    { date: '2026-08-14', location: 'Barcelona, Spain',                  offset: +2 },
+			    { date: '2026-08-20', location: 'Somerville, Massachusetts, USA',    offset: -4 },
+			];
 			// *************************************************************************************
 
+			function currentStop() {
+			    const now = Date.now();
+			    let current = itinerary[0];
+			    for (const stop of itinerary) {
+			        // midnight of stop.date in that stop's own time zone, as a UTC instant
+			        const startUTC = new Date(stop.date).getTime() - stop.offset * 1000 * 60 * 60;
+			        if (now >= startUTC) {
+			            current = stop;
+			        }
+			    }
+			    return current;
+			}
+
 			function updateLocationAndTime() {
+			    const stop = currentStop();
 			    const now = new Date();
-			    const timeDifference = now - travelDate - 5 * 1000 * 60 * 60 ; // Difference in milliseconds and account for UTC-5 time zone
-			    const daysAgo = Math.floor(timeDifference / (1000 * 60 * 60 * 24)); // Convert to days
-			    const hour = now.getUTCHours();
-				const minute = now.getUTCMinutes();
-				const formattedMinutes = minute.toString().padStart(2, '0');
 
 			    // Update the text content of the location placeholders
 			    const lastUpdatedElementsLocation = document.getElementsByClassName('location');
 			    for (let i = 0; i < lastUpdatedElementsLocation.length; i++) {
-			        if (daysAgo < 0) {
-			            lastUpdatedElementsLocation[i].textContent = location1;
-			        } else {
-			            lastUpdatedElementsLocation[i].textContent = location2;
-			        }
+			        lastUpdatedElementsLocation[i].textContent = stop.location;
 			    }
 
-			    // Update the text content of the time placeholders
-				const lastUpdatedElementsTime = document.getElementsByClassName('time');
-				for (let i = 0; i < lastUpdatedElementsTime.length; i++) {
-					const adjustedHour = daysAgo < 0 ? hour + timeOffset1 : hour + timeOffset2;
-			        const normalizedHour = ((adjustedHour % 24) + 24) % 24; // Ensure the hour stays within 24-hour range; extra math accounts for the way that remainders work on negative numbers in JS
-			        const formattedNormalizedHour = normalizedHour.toString().padStart(2, `0`);
+			    // Update the text content of the time placeholders (local time at that stop)
+			    const minute = now.getUTCMinutes();
+			    const formattedMinutes = minute.toString().padStart(2, '0');
+			    const adjustedHour = now.getUTCHours() + stop.offset;
+			    const normalizedHour = ((adjustedHour % 24) + 24) % 24; // Keep within 24-hour range; extra math handles JS negative remainders
+			    const formattedNormalizedHour = normalizedHour.toString().padStart(2, `0`);
+
+			    const lastUpdatedElementsTime = document.getElementsByClassName('time');
+			    for (let i = 0; i < lastUpdatedElementsTime.length; i++) {
 			        lastUpdatedElementsTime[i].textContent = `${formattedNormalizedHour}:${formattedMinutes}`;
-				}
+			    }
 			}
+
+			// Keep the displayed clock ticking without a page reload
+			setInterval(updateLocationAndTime, 60 * 1000);
 
 			// Call the function when the page loads
 			window.addEventListener('load', updateDaysAgo);
@@ -564,6 +587,7 @@
 
 					<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 					<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+					<script src="https://unpkg.com/leaflet-polylinedecorator@1.6.0/dist/leaflet.polylineDecorator.js"></script>
 
 					<div id="travel-map" style="height: 500px; width: 100%; border-radius: 20px; margin: 1em 0; border: 1px solid #e5e5e5;"></div>
 
@@ -594,10 +618,25 @@
 					  }).addTo(map);
 
 					  // path
-					  L.polyline(stops.map(s => s.coords), {
+					  const routeLine = L.polyline(stops.map(s => s.coords), {
 					    color: '#e63946',
 					    weight: 4,
 					    opacity: 0.85
+					  }).addTo(map);
+
+					  // direction-of-travel arrows along the path
+					  L.polylineDecorator(routeLine, {
+					    patterns: [
+					      {
+					        offset: 25,
+					        repeat: 80,
+					        symbol: L.Symbol.arrowHead({
+					          pixelSize: 12,
+					          polygon: false,
+					          pathOptions: { stroke: true, color: '#e63946', weight: 3, opacity: 0.95 }
+					        })
+					      }
+					    ]
 					  }).addTo(map);
 
 					  // markers (skip duplicate Barcelona at end)
