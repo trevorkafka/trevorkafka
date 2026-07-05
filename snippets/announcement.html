@@ -1,33 +1,142 @@
-<div class="announcement" style="background: #0000000d; padding: 15px 15px 0px 15px; border-radius: 10px; border-style: solid; border-color: var(--color1); margin-bottom: -40px">
+<div class="announcement" id="announcement-box" style="background: #0000000d; padding: 15px 40px 0px 15px; border-radius: 10px; border: 3px solid var(--color1); margin-bottom: -40px; position: relative">
+	<button type="button" id="announcement-collapse" aria-label="Collapse announcement" title="Collapse"><i class="fa-solid fa-xmark"></i></button>
 	<p>
-		<strong>Announcement (Sunday June 28, 2026):</strong> Lessons and introductory calls will be unavailable from July 15 through August 20 this summer. I will have regular Monday–Thursday availablity during the summer outside of those dates. Sunday availability will resume during the school year.
+		<strong><i class="fa-solid fa-bullhorn" style="margin-right: 0.5em"></i>Announcement (Sunday June 28, 2026):</strong>
 	</p>
+	<ul>
+		<li>Lessons and introductory calls will be <em>unavailable</em> from <span class="date-chip">July 16</span> through <span class="date-chip">August 21</span> this summer.
+		<li>Outside of the aforementioned dates, I will have regular <span class="date-chip">Monday–Thursday</span> availability.
+		<li><span class="date-chip">Sunday</span> availability will resume in <span class="date-chip">mid-September</span>.
+	</ul>
 	<!-- <p>
 		<strong>Announcement (Monday June 01, 2026):</strong> Two exciting discounts are available this summer! Get up to 50% off June 2026 lessons, and/or an additional 10% off Summer 2026 lessons when you prepay. <a href="/announcements/2026-06-01.html">Learn more.</a>
 	</p> -->
 </div>
 
-<!-- waitlist announcement -->
-<!-- <div class="announcement" style="background: #0000000d; padding: 15px; text-align: center; border-radius: 10px; border-style: solid; border-color: var(--color1); margin-bottom: -40px">
-	<p  style="margin-bottom: 0px">
-		<strong>Announcement (Tuesday October 01, 2024):</strong> Unfortunately, due to high demand for lessons, I am temporarily neither scheduling intro calls nor accepting new students at this time. If you would like to be added to the waitlist in order to be notified when I have room in my schedule, please email <span class="tooltip"><a onclick="copyWaitlistEmail()" onmouseout="outFunc()">tutor+waitlist@trevorkafka.com</a><span class="tooltiptext">Copy to clipboard</span></span>. If you are in immediate need of tutoring, please email <span class="tooltip"><a onclick="copyEmail()" onmouseout="outFunc()">tutor@trevorkafka.com</a><span class="tooltiptext">Copy to clipboard</span></span> to request a referral of a tutoring colleague with availability.
-	</p>
-</div> -->
-
-<!-- <div class="announcement" style="background: #0000000d; padding: 15px; border-radius: 10px; border-style: solid; border-color: var(--color1); margin-bottom: -40px">
-	<p  style="margin-bottom: 0px">
-		<i class="fa-solid fa-bullhorn"></i> <strong>Announcement (Wednesday March 11, 2026):</strong> 
-		<ul>
-			<li>
-				Tutoring sessions and introductory calls are available for booking 4pm – 10pm only (Boston time) until <strong>Wednesday March 18</strong>.
-			</li>
-			<li>
-				Tutoring sessions and introductory calls will be <em>unavailable</em> for booking on <strong>Thursday March 19</strong>.
-			</li>
-			<li>
-				My <a href="/index.html#availability">usual availability</a> will resume on <strong>Sunday, March 22</strong>.
-			</li>
-		</ul>
-	</p>
+<div class="announcement-pill-wrap" id="announcement-pill-wrap" hidden>
+	<button type="button" id="announcement-pill" aria-label="Show announcement"><i class="fa-solid fa-bullhorn"></i>Announcement</button>
 </div>
-<br> -->
+
+<style>
+	#announcement-box {
+		cursor: pointer;
+	}
+
+	/* the leading "Announcement (...)" label matches the collapsed pill's look */
+	#announcement-box strong {
+		font-family: "Freeman", sans-serif;
+		font-weight: normal;
+		color: var(--color1);
+	}
+
+	/* dates get a soft highlighter swipe: hugs the text, no box edges,
+	   so it pops without interrupting the reading flow */
+	#announcement-box .date-chip {
+		background: #00000010;
+		padding: 0.08em 0.3em;
+		margin: 0 -0.05em;
+		border-radius: 5px;
+		white-space: nowrap;
+		font-weight: bold;
+	}
+
+	#announcement-box ul {
+		padding-left: 25px;
+		padding-bottom: 15px;
+		margin-top: 5px;
+	}
+
+	#announcement-box li {
+		margin: 4px 0;
+	}
+
+	#announcement-box a {
+		cursor: pointer;
+	}
+
+	#announcement-collapse {
+		position: absolute;
+		top: 8px;
+		right: 8px;
+		margin: 0;
+		padding: 5px 9px;
+		width: auto;
+		background: none;
+		border: none;
+		border-radius: 6px;
+		color: var(--color1);
+		cursor: pointer;
+		font-size: 90%;
+		transition: background-color 0.2s ease;
+	}
+
+	#announcement-collapse:hover {
+		background-color: #00000015;
+	}
+
+	.announcement-pill-wrap {
+		margin-bottom: -40px;
+	}
+
+	#announcement-pill {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5em;
+		margin: 0;
+		width: auto;
+		padding: 8px 18px;
+		background: #0000000d;
+		border: 3px solid var(--color1);
+		border-radius: 999px;
+		color: var(--color1);
+		font-family: "Freeman", sans-serif;
+		font-size: 95%;
+		cursor: pointer;
+		transition: background-color 0.2s ease;
+	}
+
+	#announcement-pill:hover {
+		background-color: #00000020;
+	}
+</style>
+
+<script>
+	(function () {
+		var box  = document.getElementById('announcement-box');
+		var wrap = document.getElementById('announcement-pill-wrap');
+		if (!box || !wrap) return;
+
+		// Key the collapsed state to a hash of the announcement text, so a new
+		// or edited announcement automatically reappears for everyone.
+		var text = (box.textContent || '').replace(/\s+/g, ' ').trim();
+		var hash = 5381;
+		for (var i = 0; i < text.length; i++) hash = ((hash * 33) ^ text.charCodeAt(i)) >>> 0;
+		var KEY = 'tk-announcement-collapsed';
+
+		function setCollapsed(collapsed) {
+			box.hidden = collapsed;
+			wrap.hidden = !collapsed;
+			try {
+				if (collapsed) localStorage.setItem(KEY, String(hash));
+				else localStorage.removeItem(KEY);
+			} catch (e) {} /* private browsing etc.: still toggles, just doesn't persist */
+		}
+
+		var stored = null;
+		try { stored = localStorage.getItem(KEY); } catch (e) {}
+		setCollapsed(stored === String(hash));
+
+		document.getElementById('announcement-collapse').addEventListener('click', function () { setCollapsed(true); });
+		document.getElementById('announcement-pill').addEventListener('click', function () { setCollapsed(false); });
+
+		// Clicking anywhere on the box that isn't already a click target (a link,
+		// or the collapse button itself) also collapses the announcement.
+		box.addEventListener('click', function (e) {
+			if (e.target.closest('a') || e.target.closest('button')) return;
+			// selecting/copying announcement text shouldn't collapse the box
+			var sel = window.getSelection && window.getSelection();
+			if (sel && !sel.isCollapsed && box.contains(sel.anchorNode)) return;
+			setCollapsed(true);
+		});
+	})();
+</script>

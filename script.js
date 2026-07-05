@@ -72,36 +72,39 @@ $(document).ready(function() {
     };
 });
 
-//MASONRY: setup
+//MASONRY: setup (only on pages that load the Masonry plugin — calling it elsewhere would throw and kill the rest of this script)
 
-	$('.grid').masonry({
-		itemSelector: '.grid > div',
-		columnWidth: 300,
-		gutter: 20,
-		fitWidth: true,
-		// transitionDuration: 0
-	});
+	if ($.fn.masonry) {
+		$('.grid').masonry({
+			itemSelector: '.grid > div',
+			columnWidth: 300,
+			gutter: 20,
+			fitWidth: true,
+			// transitionDuration: 0
+		});
 
-	$('summary').click(function () {
-		setTimeout(() => $('.grid').masonry(),1);
-	});
+		$('summary').click(function () {
+			setTimeout(() => $('.grid').masonry(),1);
+		});
+	}
 
-//MATHJAX: adds some mathjax commands and, importantly, refreshes Masonry layout once mathjax is fully loaded via an annoying workaround
+//MATHJAX: default config. Pages that need their own settings (e.g. /ask.html, /articles/*) define window.MathJax inline before this runs and it is respected.
 
-	window.MathJax = {
+	window.MathJax = window.MathJax || {
 		tex: {
 		    inlineMath: [['$', '$'], ['\\(', '\\)']]
-		  },
-	  startup: {
-	    ready: () => {
-	      MathJax.startup.defaultReady();
-	      MathJax.startup.promise.then(() => {
-	      	refresh = setInterval("$('.grid').masonry()",100);
-	      	setTimeout("clearInterval(refresh)", 1000); //workaround: performs ten refreshes spaced apart by 100ms in order to enusre that the masonry layout is adjusted in accordance with the completed mathjax rendering
-	      });
-	    }
-	  }
+		  }
 	};
+
+	//refreshes Masonry layout once MathJax is fully loaded via an annoying workaround
+	window.addEventListener('load', function () {
+		if ($.fn.masonry && window.MathJax && MathJax.startup && MathJax.startup.promise) {
+			MathJax.startup.promise.then(() => {
+				refresh = setInterval("$('.grid').masonry()",100);
+				setTimeout("clearInterval(refresh)", 1000); //workaround: performs ten refreshes spaced apart by 100ms in order to enusre that the masonry layout is adjusted in accordance with the completed mathjax rendering
+			});
+		}
+	});
 
 //EMAIL LINK TOOLTIP STUFF
 

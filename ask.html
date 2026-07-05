@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Questions &amp; Answers - Trevor Kafka - Academic Tutoring</title>
+
+<link rel="stylesheet" href="style.css">
+<link rel="shortcut icon" href="favicon.ico">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> <!-- use JQuery -->
+<script type="text/javascript" src="script.js" defer></script> <!-- injects site nav/announcement/footer; respects this page's window.MathJax config -->
+
+<link href="https://fonts.googleapis.com/css2?family=Freeman&display=swap" rel="stylesheet">
+
+<!-- MathJax (SVG output) renders the questions and answers -->
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['\\[', '\\]']]
+    },
+    svg: { fontCache: 'none' },
+    options: { skipHtmlTags: ['script','noscript','style','textarea'] },
+    startup: {
+      typeset: false, // the Q&A list loads asynchronously; it is typeset explicitly
+      pageReady: () => MathJax.startup.defaultPageReady().then(() => {
+        // typeset the answered-questions list if it finished loading before MathJax did
+        if (window.__qaPendingTypeset) {
+          const el = window.__qaPendingTypeset;
+          window.__qaPendingTypeset = null;
+          return MathJax.typesetPromise([el]);
+        }
+      })
+    }
+  };
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js" id="MathJax-script" async></script>
+<!-- marked: Markdown parsing for the question/answer files -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
+
+<style>
+  :root{
+    --tan:#F5EEE2;
+    --plum:#3C303E;
+    --terracotta:#d46a53;
+    --plum-soft:#6a5a6e;
+    --line:#e2d8c8;
+    --paper:#fffdf8;
+  }
+  .ask-scope, .ask-scope *{ box-sizing:border-box; }
+  .ask-scope{
+    color:var(--plum); font-size:17px; line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* style.css styles every input/button globally (6px margins, centered text,
+     150px input width, chunky padding). Neutralize that inside the Q&A UI so the
+     rules below fully control the look. :where() keeps specificity at a single
+     class, so all the later, more specific rules still win. */
+  .ask-scope :where(input){ margin:0; width:auto; padding:0; border:none; border-radius:0; background:none; text-align:left; }
+  .ask-scope :where(button){ margin:0; width:auto; }
+
+  .eq-btn{
+    font-family:'Freeman', sans-serif; font-size:.9rem;
+    border:1px solid var(--terracotta); color:var(--terracotta); background:transparent;
+    padding:6px 13px; border-radius:8px; cursor:pointer; transition:background .15s, color .15s;
+  }
+  .eq-btn:hover{ background:var(--terracotta); color:var(--paper); }
+
+  /* call-to-action link to the ask-a-question page */
+  .qa-cta{
+    display:inline-block; font-family:'Freeman', sans-serif; font-size:1.05rem;
+    background:var(--plum); color:var(--tan) !important; border-radius:10px;
+    padding:13px 30px; text-decoration:none; transition:background .15s;
+  }
+  .qa-cta:hover{ background:var(--terracotta); color:var(--paper) !important; }
+
+  /* ============================================================
+     Answered questions (populated from /questions/*.md)
+     ============================================================ */
+  .qa-section{ margin:6px 0 40px; }
+  .qa-item{
+    background:var(--paper); border:1px solid var(--line); border-radius:14px;
+    padding:22px 24px; margin-bottom:18px;
+  }
+  .qa-meta{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:16px; }
+  .qa-tags{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .qa-subject{
+    font-family:'Freeman', sans-serif; font-size:.8rem; color:var(--terracotta);
+    border:1px solid var(--terracotta); border-radius:999px; padding:3px 12px;
+  }
+  .qa-city{
+    font-family:'Freeman', sans-serif; font-size:.8rem; color:var(--plum-soft);
+    border:1px solid var(--plum-soft); border-radius:999px; padding:3px 12px;
+  }
+  .qa-date{ font-size:.82rem; color:var(--plum-soft); }
+  .qa-row{ display:flex; gap:14px; align-items:flex-start; }
+  .qa-badge{
+    flex:0 0 auto; width:30px; height:30px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Freeman', sans-serif; font-size:.95rem;
+  }
+  .qa-row.q .qa-badge{ background:var(--plum); color:var(--tan); }
+  .qa-avatar{
+    flex:0 0 auto; width:30px; height:30px; border-radius:50%;
+    object-fit:cover;
+  }
+  .qa-sep{ border:none; border-top:1px dashed var(--line); margin:18px 0; }
+  .qa-body{ flex:1; min-width:0; font-size:1.02rem; line-height:1.65; overflow-wrap:break-word; }
+  .qa-body > :first-child{ margin-top:0; }
+  .qa-body > :last-child{ margin-bottom:0; }
+  .qa-body p{ margin:0 0 .7em; }
+  .qa-body h1, .qa-body h2, .qa-body h3{ font-family:'Freeman', sans-serif; font-weight:400; line-height:1.3; margin:.7em 0 .35em; }
+  .qa-body h1{ font-size:1.3rem; }
+  .qa-body h2{ font-size:1.15rem; }
+  .qa-body h3{ font-size:1.05rem; }
+  .qa-body ul, .qa-body ol{ margin:.2em 0 .7em; padding-left:1.4em; }
+  .qa-body li{ margin:.15em 0; }
+  .qa-body code{
+    font-family:ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size:.9em;
+    background:#efe6d8; padding:.1em .35em; border-radius:4px;
+  }
+  .qa-body pre{ background:#efe6d8; padding:10px 12px; border-radius:8px; overflow-x:auto; margin:0 0 .7em; }
+  .qa-body pre code{ background:none; padding:0; }
+  .qa-body blockquote{ margin:0 0 .7em; padding:.2em 0 .2em .9em; border-left:3px solid var(--line); color:var(--plum-soft); }
+  .qa-body a{ color:var(--terracotta); }
+  .qa-body img{ max-width:100%; }
+  /* long display equations scroll sideways instead of blowing out the card on phones */
+  .qa-body mjx-container{ overflow-x:auto; overflow-y:hidden; max-width:100%; }
+  .qa-pending{ color:var(--plum-soft); font-style:italic; }
+
+  /* toolbar: search + show/hide answers toggle */
+  .qa-toolbar{ display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:14px; }
+  .qa-search{
+    flex:1; min-width:180px; max-width:340px; padding:9px 13px;
+    border:1px solid var(--line); border-radius:9px;
+    background:var(--paper); color:var(--plum); font-family:inherit; font-size:.95rem;
+  }
+  .qa-search:focus{ outline:none; border-color:var(--terracotta); box-shadow:0 0 0 3px rgba(212,106,83,.18); }
+  .qa-search::placeholder{ color:#b9ad9b; }
+  .qa-filter{
+    min-width:150px; max-width:300px; padding:9px 13px;
+    border:1px solid var(--line); border-radius:9px;
+    background:var(--paper); color:var(--plum); font-family:inherit; font-size:.95rem; cursor:pointer;
+  }
+  .qa-filter:focus{ outline:none; border-color:var(--terracotta); box-shadow:0 0 0 3px rgba(212,106,83,.18); }
+  .qa-empty{ color:var(--plum-soft); font-style:italic; padding:8px 2px; }
+  .qa-empty a{ color:var(--terracotta); }
+  .qa-end{ text-align:center; color:var(--plum-soft); margin:26px 0 6px; }
+  .qa-end a{ color:var(--terracotta); }
+
+  /* byline at the top of each question/answer */
+  .qa-byline{ font-weight:700; margin-bottom:.55em; }
+
+  /* permalinks */
+  .qa-item{ scroll-margin-top:110px; } /* keep anchored items clear of the fixed navbar */
+  .qa-meta-right{ display:flex; align-items:center; gap:10px; }
+  .qa-permalink{ color:var(--plum-soft); font-size:.85rem; text-decoration:none; transition:color .15s; }
+  .qa-permalink:hover{ color:var(--terracotta); }
+  .qa-copied{ opacity:0; transition:opacity .3s; font-size:.78rem; color:var(--terracotta); font-family:'Freeman', sans-serif; white-space:nowrap; }
+  .qa-copied::before{ content:"Copy permalink"; }
+  .qa-copied.on::before{ content:"Link copied!"; }
+  .qa-meta-right:has(.qa-permalink:hover) .qa-copied,
+  .qa-copied.on{ opacity:1; }
+  @keyframes qaFlash{ 0%{ background:var(--paper); } 35%{ background:#fbeee9; } 100%{ background:var(--paper); } }
+  .qa-item.flash{ animation:qaFlash 1.6s ease-out; }
+
+  /* answers hidden: questions become click-to-reveal */
+  .answers-hidden .qa-item .qa-sep,
+  .answers-hidden .qa-item .qa-row.a{ display:none; }
+  .answers-hidden .qa-item.expanded .qa-sep{ display:block; }
+  .answers-hidden .qa-item.expanded .qa-row.a{ display:flex; }
+  .answers-hidden .qa-item{ cursor:pointer; }
+  .answers-hidden .qa-item .qa-row.a{ cursor:auto; }
+  .qa-reveal{
+    display:none; margin-top:12px; margin-left:44px; /* aligns with the question text */
+    background:none; border:none; padding:0; cursor:pointer;
+    font-family:'Freeman', sans-serif; font-size:.85rem; color:var(--terracotta);
+  }
+  .answers-hidden .qa-reveal{ display:inline-block; }
+
+  @media (max-width:520px){
+    .qa-item{ padding:16px; border-radius:12px; }
+    .qa-row{ gap:10px; }
+    .qa-badge, .qa-avatar{ width:26px; height:26px; font-size:.85rem; }
+    .qa-reveal{ margin-left:36px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){ .ask-scope *{ transition:none !important; } }
+</style>
+</head>
+<body>
+
+<trevorkafka-nav></trevorkafka-nav>
+
+<div class="content">
+
+	<trevorkafka-announcement></trevorkafka-announcement>
+
+	<h1><i class="fa-solid fa-comments" style="margin-right: 0.35em"></i>Questions &amp; Answers</h1>
+
+	<p>These are real math and physics questions from students and site visitors, and I write every answer myself. I teach this material every day, so my goal is always to get at the <em>why</em> behind things, not just the steps.</p>
+
+	<p>Have a question of your own? I'd love to hear it. Anyone is welcome to ask, not just my current students, and I answer most questions within 24 hours.</p>
+
+	<p style="margin: 26px 0 34px"><a class="qa-cta" href="/ask-a-question.html"><i class="fa-solid fa-pencil" style="margin-right: 0.5em"></i>Ask a Question</a></p>
+
+	<div class="qa-section ask-scope" id="qaSection" hidden>
+		<div class="qa-toolbar">
+			<input type="search" class="qa-search" id="qaSearch" placeholder="Search questions…" aria-label="Search questions">
+			<select class="qa-filter" id="qaSubjectFilter" aria-label="Filter by subject" hidden></select>
+			<button type="button" class="eq-btn" id="qaToggle"><i class="fa-solid fa-eye-slash"></i> Hide answers</button>
+		</div>
+		<div id="qaList"></div>
+		<p class="qa-empty" id="qaEmpty" hidden>No questions match your filters. Curious about something in this topic? <a href="/ask-a-question.html">Ask me a question</a> to see it answered here!</p>
+		<p class="qa-end" id="qaEnd">That's everything so far! If you have a math or physics question of your own, <a href="/ask-a-question.html">ask me a question</a> to see it answered here.</p>
+	</div>
+
+</div>
+
+<script>
+/* ============================================================
+   Markdown + LaTeX rendering (marked for prose, MathJax for math)
+   ============================================================ */
+function escapeHtml(s){
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+/* Render markdown while shielding math from the markdown parser (so subscripts,
+   asterisks, matrix & separators, etc. survive). Protects $...$ (inline),
+   \(...\) (inline), and \[...\] (display). */
+function renderMarkdownWithMath(raw){
+  const math = [];
+  const guarded = raw.replace(/\\\[[\s\S]*?\\\]|\\\([\s\S]*?\\\)|\$[^$]*\$/g,
+    (m) => '@@MATH' + (math.push(m) - 1) + '@@');
+  const parse = window.marked && (window.marked.parse || window.marked);
+  let html = parse ? parse(guarded, { breaks: true }) : escapeHtml(guarded);
+  // Restore math (HTML-escaped so MathJax reads & < > correctly).
+  return html.replace(/@@MATH(\d+)@@/g, (m, i) => escapeHtml(math[+i]));
+}
+
+/* ============================================================
+   Answered questions — rendered from markdown/LaTeX files in /questions.
+   To post one: drop a .md file in /questions and add its filename as a
+   line in /questions/index.txt (top of the list appears first here).
+   File format: optional "Subject:", "Date:", "Id:" (6-digit permalink
+   number), and "Student: yes" lines at the very top, then the question,
+   then a line containing only ---, then the answer.
+   ============================================================ */
+window.addEventListener('DOMContentLoaded', loadQA);
+
+async function loadQA(){
+  const section = document.getElementById('qaSection');
+  const listEl  = document.getElementById('qaList');
+  if (!section || !listEl) return;
+
+  let names = [];
+  try {
+    const res = await fetch('/questions/index.txt', { cache: 'no-cache' });
+    if (!res.ok) return; // no list yet — leave the section hidden
+    names = (await res.text()).split('\n')
+      .map(s => s.trim())
+      .filter(s => s && !s.startsWith('#')); // '#' lines are comments
+  } catch (_) { return; }
+  if (!names.length) return;
+
+  const files = await Promise.all(names.map(async (name) => {
+    try {
+      const r = await fetch('/questions/' + name, { cache: 'no-cache' });
+      return r.ok ? { name, text: await r.text() } : null;
+    } catch (_) { return null; }
+  }));
+
+  let shown = 0;
+  files.forEach((f) => {
+    if (!f) return; // a listed file that failed to load is skipped, not fatal
+    listEl.appendChild(renderQAItem(f));
+    shown++;
+  });
+  if (!shown) return;
+
+  section.hidden = false;
+  buildSubjectFilter(listEl);
+  setupQAInteractions(listEl);
+  setAnswersHidden(true); // answers start hidden; the toggle and per-question clicks reveal them
+  if (window.MathJax && MathJax.typesetPromise) {
+    MathJax.typesetPromise([listEl]).then(focusHashedQA).catch(() => {});
+  } else {
+    window.__qaPendingTypeset = listEl; // MathJax hasn't loaded yet — its pageReady will typeset this
+    setTimeout(focusHashedQA, 900);     // best-effort permalink scroll on that path
+  }
+}
+
+/* ============================================================
+   Subjects — the same options as the ask-a-question form. The filter
+   dropdown only offers the ones that actually appear in the loaded
+   questions, so no choice can come up empty.
+   ============================================================ */
+const QA_SUBJECT_GROUPS = [
+  ['Math', [
+    'Middle school mathematics',
+    'Algebra I + II (high school)',
+    'Geometry (high school)',
+    'Trigonometry (high school)',
+    'SAT math',
+    'ACT math, ACT science',
+    'Precalculus (high school, college level)',
+    'Calculus (high school, AP, college level, including multivariable)',
+    'Linear Algebra (high school, college level)',
+    'Mathematical proofs / discrete mathematics (college level)',
+    'Math: other',
+  ]],
+  ['Physics', [
+    'High School 9th Grade Introductory Physics',
+    'High School 12th Grade Physics (including all AP exams)',
+    'College-level introductory physics',
+    'Physics: other',
+  ]],
+];
+
+/* Resolve a file's "Subject:" text to a canonical form-subject value.
+   Accepts either the short label ("SAT math") or the prefixed form value
+   ("Math: SAT math"). Unrecognized subjects filter under their own name. */
+function canonicalSubject(raw){
+  const norm = (s) => s.trim().toLowerCase();
+  const r = norm(raw || '');
+  if (!r) return null;
+  for (const [group, labels] of QA_SUBJECT_GROUPS) {
+    for (const label of labels) {
+      const value = label.indexOf(group + ':') === 0 ? label : group + ': ' + label;
+      if (r === norm(label) || r === norm(value)) return { group, label, value };
+    }
+  }
+  return { group: null, label: raw.trim(), value: raw.trim() };
+}
+
+/* Populate the dropdown with only the subjects present in the list. */
+function buildSubjectFilter(listEl){
+  const sel = document.getElementById('qaSubjectFilter');
+  const present = new Set(
+    [...listEl.querySelectorAll('.qa-item')].map((i) => i.dataset.subjectKey).filter(Boolean)
+  );
+  if (!present.size) return; // no subjects anywhere — leave the dropdown hidden
+
+  let html = '<option value="">All subjects</option>';
+  const used = new Set();
+  QA_SUBJECT_GROUPS.forEach(([group, labels]) => {
+    const opts = labels
+      .map((label) => {
+        const value = label.indexOf(group + ':') === 0 ? label : group + ': ' + label;
+        return present.has(value)
+          ? '<option value="' + escapeHtml(value) + '">' + escapeHtml(label) + '</option>'
+          : '';
+      })
+      .join('');
+    if (opts) html += '<optgroup label="' + group + '">' + opts + '</optgroup>';
+    labels.forEach((label) => used.add(label.indexOf(group + ':') === 0 ? label : group + ': ' + label));
+  });
+  // subjects in files that aren't in the canonical list still get an entry
+  present.forEach((key) => {
+    if (!used.has(key)) html += '<option value="' + escapeHtml(key) + '">' + escapeHtml(key) + '</option>';
+  });
+  sel.innerHTML = html;
+  sel.hidden = false;
+}
+
+/* ============================================================
+   Interactions: show/hide toggle, per-question reveal (when hidden),
+   live search + subject filter, and permalinks
+   ============================================================ */
+let qaAnswersHidden = false;
+const QA_REVEAL_SHOW = 'Show answer ▾';
+const QA_REVEAL_HIDE = 'Hide answer ▴';
+
+function setAnswersHidden(hidden){
+  qaAnswersHidden = hidden;
+  const listEl = document.getElementById('qaList');
+  listEl.classList.toggle('answers-hidden', hidden);
+  // collapse everything for a clean slate whenever the mode flips
+  listEl.querySelectorAll('.qa-item.expanded').forEach((i) => i.classList.remove('expanded'));
+  listEl.querySelectorAll('.qa-reveal').forEach((b) => { b.textContent = QA_REVEAL_SHOW; });
+  const btn = document.getElementById('qaToggle');
+  btn.innerHTML = hidden
+    ? '<i class="fa-solid fa-eye"></i> Show answers'
+    : '<i class="fa-solid fa-eye-slash"></i> Hide answers';
+}
+
+function toggleQAItem(item){
+  const expanded = item.classList.toggle('expanded');
+  const b = item.querySelector('.qa-reveal');
+  if (b) b.textContent = expanded ? QA_REVEAL_HIDE : QA_REVEAL_SHOW;
+}
+
+function setupQAInteractions(listEl){
+  document.getElementById('qaToggle').addEventListener('click', () => setAnswersHidden(!qaAnswersHidden));
+
+  // live search (plain-text substring match against subject, city, date, and
+  // the raw markdown/LaTeX of both halves) combined with the subject dropdown
+  const search = document.getElementById('qaSearch');
+  const subjectSel = document.getElementById('qaSubjectFilter');
+  const applyQAFilters = () => {
+    const q = search.value.trim().toLowerCase();
+    const subj = subjectSel.value;
+    let visible = 0;
+    listEl.querySelectorAll('.qa-item').forEach((item) => {
+      const hit = (!q || (item.dataset.search || '').indexOf(q) !== -1)
+        && (!subj || item.dataset.subjectKey === subj);
+      item.style.display = hit ? '' : 'none';
+      if (hit) visible++;
+    });
+    document.getElementById('qaEmpty').hidden = visible > 0;
+    document.getElementById('qaEnd').hidden = visible === 0; // end-of-list note only makes sense under a list
+  };
+  search.addEventListener('input', applyQAFilters);
+  subjectSel.addEventListener('change', applyQAFilters);
+
+  listEl.addEventListener('click', (e) => {
+    // permalink: let the hash update natively, and copy the full URL too
+    const pl = e.target.closest('.qa-permalink');
+    if (pl) {
+      try { navigator.clipboard.writeText(location.origin + location.pathname + pl.getAttribute('href')); } catch (_) {}
+      const tip = pl.parentNode.querySelector('.qa-copied');
+      if (tip) { tip.classList.add('on'); setTimeout(() => tip.classList.remove('on'), 1400); }
+      return;
+    }
+    if (!qaAnswersHidden) return;
+    if (e.target.closest('a')) return; // links inside a question keep their normal behavior
+    const item = e.target.closest('.qa-item');
+    if (!item) return;
+    if (e.target.closest('.qa-row.a')) return; // clicks inside a revealed answer don't collapse it
+    toggleQAItem(item); // anywhere else on the card toggles the answer
+  });
+
+  window.addEventListener('hashchange', focusHashedQA);
+}
+
+/* Scroll to, expand (if answers are hidden), and flash the item named in the URL hash. */
+function focusHashedQA(){
+  const id = decodeURIComponent(location.hash.slice(1));
+  if (!id) return;
+  const item = document.getElementById(id);
+  if (!item || !item.classList.contains('qa-item')) return;
+  if (qaAnswersHidden && !item.classList.contains('expanded')) toggleQAItem(item);
+  item.scrollIntoView({ block: 'start' });
+  item.classList.remove('flash');
+  void item.offsetWidth; // restart the animation if it was already flashed
+  item.classList.add('flash');
+}
+
+/* ============================================================
+   Parsing and rendering
+   ============================================================ */
+function parseQAFile(f){
+  const lines = f.text.replace(/\r\n?/g, '\n').split('\n');
+  const meta = {};
+  let i = 0;
+  while (i < lines.length) {
+    const m = lines[i].match(/^(subject|date|student|id|city)\s*:\s*(\S.*)$/i);
+    if (!m) break;
+    meta[m[1].toLowerCase()] = m[2].trim();
+    i++;
+  }
+  const body = lines.slice(i).join('\n');
+  const sep = body.match(/^[ \t]*---+[ \t]*$/m); // first ----only line splits question from answer
+  const question = (sep ? body.slice(0, sep.index) : body).trim();
+  const answer   = (sep ? body.slice(sep.index + sep[0].length) : '').trim();
+  if (!meta.date) {
+    const fm = f.name.match(/^(\d{4}-\d{2}-\d{2})/); // fall back to a date-prefixed filename
+    if (fm) meta.date = fm[1];
+  }
+  return { meta, question, answer };
+}
+
+/* Permalink id: the YYYY-MM-DD date plus a 6-digit number. The number comes
+   from an "Id:" line in the file; if there isn't one, a stable 6-digit code
+   is derived from the filename so the link never changes between visits. */
+function qaId(f, meta){
+  let num = (meta.id || '').replace(/\D/g, '').slice(0, 6);
+  if (!num) {
+    let h = 5381;
+    for (let k = 0; k < f.name.length; k++) h = ((h * 33) ^ f.name.charCodeAt(k)) >>> 0;
+    num = String(100000 + (h % 900000));
+  }
+  return (meta.date ? meta.date + '-' : '') + num;
+}
+
+function formatQADate(d){
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d || '');
+  if (!m) return d || '';
+  return new Date(+m[1], +m[2] - 1, +m[3])
+    .toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+}
+
+function renderQAItem(f){
+  const { meta, question, answer } = parseQAFile(f);
+  const item = document.createElement('article');
+  item.className = 'qa-item';
+  item.id = qaId(f, meta);
+
+  const isStudent = /^(y|yes|true)$/i.test(meta.student || '');
+  const askerTitle = isStudent ? 'Current Tutoring Student' : 'Fellow Learner';
+  let html = '';
+  html += '<div class="qa-meta"><div class="qa-tags">'
+    + (meta.subject ? '<span class="qa-subject">' + escapeHtml(meta.subject) + '</span>' : '')
+    + (meta.city ? '<span class="qa-city"><i class="fa-solid fa-location-dot" style="margin-right: 5px"></i>' + escapeHtml(meta.city) + '</span>' : '')
+    + '</div>'
+    + '<span class="qa-meta-right">'
+    + '<span class="qa-copied" aria-hidden="true"></span>'
+    + '<a class="qa-permalink" href="#' + item.id + '" aria-label="Copy permalink to this question">'
+    + '<i class="fa-solid fa-link"></i></a>'
+    + (meta.date ? '<time class="qa-date">' + escapeHtml(formatQADate(meta.date)) + '</time>' : '')
+    + '</span></div>';
+  html += '<div class="qa-row q"><span class="qa-badge" aria-hidden="true">Q</span>'
+    + '<div class="qa-body">'
+    + (askerTitle ? '<div class="qa-byline">' + askerTitle + '</div>' : '')
+    + renderMarkdownWithMath(question) + '</div></div>';
+  html += '<button type="button" class="qa-reveal">' + QA_REVEAL_SHOW + '</button>';
+  html += '<hr class="qa-sep">';
+  html += '<div class="qa-row a"><img class="qa-avatar" src="/media/TK indonesia.png" alt="Trevor Kafka" title="Trevor Kafka">'
+    + '<div class="qa-body">'
+    + (answer
+        ? '<div class="qa-byline">Trevor Kafka</div>' + renderMarkdownWithMath(answer)
+        : '<p class="qa-pending">Answer coming soon.</p>')
+    + '</div></div>';
+  item.innerHTML = html;
+  // searchable haystack: metadata + the raw markdown/LaTeX source of both halves
+  item.dataset.search = [meta.subject, meta.city, formatQADate(meta.date), askerTitle, question, answer]
+    .join(' ').toLowerCase();
+  const canon = canonicalSubject(meta.subject);
+  if (canon) item.dataset.subjectKey = canon.value;
+  return item;
+}
+</script>
+
+<trevorkafka-footer></trevorkafka-footer>
+
+</body>
+</html>
