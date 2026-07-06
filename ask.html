@@ -48,7 +48,7 @@
     --line:#e2d8c8;
     --paper:#fffdf8;
   }
-  .ask-scope, .ask-scope *{ box-sizing:border-box; }
+  .ask-scope, .ask-scope *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   .ask-scope{
     color:var(--plum); font-size:17px; line-height:1.55;
     -webkit-font-smoothing:antialiased;
@@ -184,6 +184,13 @@
     .qa-row{ gap:10px; }
     .qa-badge, .qa-avatar{ width:26px; height:26px; font-size:.85rem; }
     .qa-reveal{ margin-left:36px; }
+    /* stack the card header: chips get the full width on their own line(s),
+       then the permalink + date sit together on the next line */
+    .qa-meta{ flex-direction:column; align-items:flex-start; gap:8px; }
+    .qa-date{ white-space:nowrap; }
+    /* flush left: the invisible copy-feedback label trails to the right
+       instead of indenting the date row */
+    .qa-meta-right{ flex-direction:row-reverse; justify-content:flex-end; }
   }
 
   @media (prefers-reduced-motion: reduce){ .ask-scope *{ transition:none !important; } }

@@ -13,13 +13,14 @@
 	</p> -->
 </div>
 
-<div class="announcement-pill-wrap" id="announcement-pill-wrap" hidden>
+<div class="announcement-pill-wrap announcement" id="announcement-pill-wrap" hidden>
 	<button type="button" id="announcement-pill" aria-label="Show announcement"><i class="fa-solid fa-bullhorn"></i>Announcement</button>
 </div>
 
 <style>
 	#announcement-box {
 		cursor: pointer;
+		-webkit-tap-highlight-color: transparent;
 	}
 
 	/* the leading "Announcement (...)" label matches the collapsed pill's look */
@@ -90,8 +91,11 @@
 		border-radius: 999px;
 		color: var(--color1);
 		font-family: "Freeman", sans-serif;
-		font-size: 95%;
+		/* inherit from .announcement so the pill matches the expanded box's
+		   text size, including the narrow-screen override in style.css */
+		font-size: 100%;
 		cursor: pointer;
+		-webkit-tap-highlight-color: transparent;
 		transition: background-color 0.2s ease;
 	}
 
