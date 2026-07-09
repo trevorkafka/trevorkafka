@@ -910,6 +910,9 @@ function renderPauseNotice(root, days) {
   const colEls = root.querySelectorAll('.calendar-week-day');
   if (!wrap || colEls.length !== days.length) return;
 
+  // Clear any previously placed notices (e.g. when repositioning on resize).
+  wrap.querySelectorAll('.pause-notice').forEach(n => n.remove());
+
   const DAY_MS = 24 * 60 * 60 * 1000;
   const MIN_RUN = 5;      // minimum length of a non-teaching stretch to announce
   const MIN_VISIBLE = 2;  // minimum of those days that must be on screen
@@ -1078,6 +1081,21 @@ $('trevorkafka-availability-announcement').load('/snippets/availability-announce
   function toggle() { weekOffset = weekOffset === 0 ? 1 : 0; renderWeek(); }
   nav.addEventListener('click', toggle);
   nav.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+})();
+
+// Reposition the pause notice when the viewport changes (column widths and the
+// full-bleed borders shift), so it stays centered over the visible pause days.
+(function setupPauseNoticeReflow() {
+  let raf = null;
+  window.addEventListener('resize', () => {
+    if (raf) cancelAnimationFrame(raf);
+    raf = requestAnimationFrame(() => {
+      raf = null;
+      const root = document.getElementById('root');
+      if (!root || !root.querySelector('.calendar')) return;
+      renderPauseNotice(root, buildWeek(new Date(), weekOffset));
+    });
+  });
 })();
 
 loadAndRender();
