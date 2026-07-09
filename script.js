@@ -1,4 +1,18 @@
 //
+// SECTION 0: CLOUDFLARE WEB ANALYTICS (cookieless, privacy-friendly)
+//
+// Injected here so every page that loads script.js is tracked automatically,
+// without pasting the beacon into each HTML file. Cloudflare's beacon reads the
+// token from the data-cf-beacon attribute on its own <script> element.
+(function loadCloudflareAnalytics() {
+    var s = document.createElement('script');
+    s.defer = true;
+    s.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+    s.setAttribute('data-cf-beacon', '{"token": "389e2db315b8432fbe6d5844de5f490e"}');
+    document.head.appendChild(s);
+})();
+
+//
 // SECTION 1: CUSTOM HTML TAG REPLACEMENTS
 //
 
