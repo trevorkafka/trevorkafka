@@ -327,6 +327,28 @@
     flex-direction: column;
     justify-content: safe center;
   }
+
+  /* Floating notice announcing an extended teaching pause. Positioned by JS,
+     centered over the visible portion of the non-teaching days. */
+  .pause-notice {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    max-width: min(280px, 92%);
+    background: #fff;
+    border: 1px solid var(--cal-accent);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 1.35;
+    color: var(--cal-text);
+    text-align: center;
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.15);
+    z-index: 5;
+    pointer-events: none;
+  }
+  .pause-notice i { color: var(--cal-accent); margin-right: 4px; }
 </style>
 <div class="cal-container">
 <div class="legend">
@@ -364,6 +386,7 @@
   // ====== CONFIG ======
   const API_URL = 'https://script.google.com/macros/s/AKfycbz4gutA0-2Z5Ilg4AJZnXIivAMgCzcA1NURvKle-KGCmK0peSORGyrkcxBforiRokJN/exec';
   const REFRESH_INTERVAL_MS = 5 * 60 * 1000;
+  const HORIZON_DAYS = 90; // how far ahead to fetch, so extended pauses & return dates are known
 
   const FIFTEEN_MIN = 15 * 60 * 1000;
   const SLOTS_PER_DAY = 96;
@@ -389,7 +412,7 @@
         events = makeDemoEvents();
         status.textContent = 'Demo data — set API_URL in the source.';
       } else {
-        const res = await fetch(API_URL + '?days=14');
+        const res = await fetch(API_URL + '?days=' + HORIZON_DAYS);
         if (!res.ok) throw new Error('HTTP ' + res.status);
         const data = await res.json();
         events = data.events.map(e => ({
@@ -602,6 +625,7 @@
   </div>`;
 
   if (!loading) attachHover(root, grid, startSlot);
+  if (!loading) renderPauseNotice(root, days);
 }
 
 function attachHover(root, grid, startSlot) {
@@ -757,6 +781,86 @@ function attachHover(root, grid, startSlot) {
       col.appendChild(block);
     }
   });
+}
+
+// Show a floating notice when there's an extended stretch with no teaching
+// (no available and no booked time) of >= 5 days, and >= 2 of those days are
+// in the currently visible week. Centered over the visible non-teaching days.
+function renderPauseNotice(root, days) {
+  if (!cachedEvents) return;
+  const wrap = root.querySelector('.calendar-body-wrap');
+  const colEls = root.querySelectorAll('.calendar-week-day');
+  if (!wrap || colEls.length !== days.length) return;
+
+  const DAY_MS = 24 * 60 * 60 * 1000;
+  const MIN_RUN = 5;      // minimum length of a non-teaching stretch to announce
+  const MIN_VISIBLE = 2;  // minimum of those days that must be on screen
+
+  const today0 = new Date();
+  today0.setHours(0, 0, 0, 0);
+
+  // teaching[d] = true if day d (0 = today) has any available or booked time.
+  const teaching = new Array(HORIZON_DAYS).fill(false);
+  for (const ev of cachedEvents) {
+    const title = (ev.title || '').toLowerCase().trim();
+    if (title !== 'available' && title !== 'busy') continue;
+    let s = Math.floor((ev.start.getTime() - today0.getTime()) / DAY_MS);
+    let e = Math.floor((ev.end.getTime() - 1 - today0.getTime()) / DAY_MS);
+    s = Math.max(0, s);
+    e = Math.min(HORIZON_DAYS - 1, e);
+    for (let d = s; d <= e; d++) teaching[d] = true;
+  }
+
+  const visStart = Math.round((days[0].getTime() - today0.getTime()) / DAY_MS);
+  const visEnd = visStart + days.length - 1;
+  const fmt = new Intl.DateTimeFormat(undefined, { month: 'long', day: 'numeric' });
+
+  let d = 0;
+  while (d < HORIZON_DAYS) {
+    if (teaching[d]) { d++; continue; }
+    let j = d;
+    while (j < HORIZON_DAYS && !teaching[j]) j++;
+    const runStart = d, runEndIncl = j - 1, endKnown = j < HORIZON_DAYS;
+    const runLen = runEndIncl - runStart + 1;
+    d = j;
+
+    if (runLen < MIN_RUN) continue;
+    const iStart = Math.max(runStart, visStart);
+    const iEnd = Math.min(runEndIncl, visEnd);
+    if (iEnd - iStart + 1 < MIN_VISIBLE) continue;
+
+    const startDate = new Date(today0.getTime() + runStart * DAY_MS);
+    let msg = `I'm unavailable starting ${fmt.format(startDate)}`;
+    if (endKnown) {
+      const returnDate = new Date(today0.getTime() + j * DAY_MS);
+      let durTxt;
+      if (runLen > 14) {
+        const w = Math.floor(runLen / 7), rem = runLen % 7;
+        durTxt = w + (w === 1 ? ' week' : ' weeks');
+        if (rem) durTxt += ' ' + rem + (rem === 1 ? ' day' : ' days');
+      } else {
+        durTxt = runLen + ' days';
+      }
+      msg = `I'm unavailable from ${fmt.format(startDate)} until ${fmt.format(returnDate)} (${durTxt})`;
+    }
+    msg += '.';
+
+    const c0 = iStart - visStart, c1 = iEnd - visStart;
+    const wrapRect = wrap.getBoundingClientRect();
+    const r0 = colEls[c0].getBoundingClientRect();
+    const r1 = colEls[c1].getBoundingClientRect();
+    const centerX = (r0.left + r1.right) / 2 - wrapRect.left;
+
+    const notice = document.createElement('div');
+    notice.className = 'pause-notice';
+    notice.innerHTML = `<i class="fa-solid fa-circle-info"></i>${escapeHTML(msg)}`;
+    wrap.appendChild(notice);
+
+    const nRect = notice.getBoundingClientRect();
+    let left = centerX - nRect.width / 2;
+    left = Math.max(6, Math.min(left, wrapRect.width - nRect.width - 6));
+    notice.style.left = left + 'px';
+  }
 }
 
 function stateClass(state) {
