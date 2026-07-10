@@ -9,6 +9,9 @@
     --cal-surface:  var(--color3, #F5EEE2);         /* page tan — used for hover bgs */
     --cal-accent:   var(--defaultlink, #d46a53);    /* terracotta */
     --cal-accent-h: var(--hoverlink, #FB7F64);      /* hover orange */
+    --cal-available: #98D45F;                       /* posted availability (green) */
+    --cal-busy:      #cdbf9d;                        /* booked/blocked base */
+    --cal-busy-alt:  #ece2cb;                        /* booked/blocked stripe */
     --cal-tx:       var(--transitiontime, 0.2s);
   }
   * { box-sizing: border-box; }
@@ -67,11 +70,11 @@
     margin-right: 8px;
     vertical-align: middle;
   }
-  .legend-swatch.available   { background: #98D45F; }
+  .legend-swatch.available   { background: var(--cal-available); }
   .legend-swatch.unavailable { background: var(--cal-surface); border: 1px solid var(--cal-border); }
   .legend-swatch.busy {
-    background-color: #cdbf9d;
-    background-image: repeating-linear-gradient(45deg, transparent, transparent 1px, #cdbf9d 1px, #ece2cb 3px);
+    background-color: var(--cal-busy);
+    background-image: repeating-linear-gradient(45deg, transparent, transparent 1px, var(--cal-busy) 1px, var(--cal-busy-alt) 3px);
   }
 
   /* Book-a-lesson CTA — matches site .button style (terracotta, shadowed). */
@@ -305,8 +308,8 @@
     display: flex;
     flex: 1;
     flex-direction: column;
-    background-color: #cdbf9d;
-    background-image: repeating-linear-gradient(60deg, transparent, transparent 2px, #ece2cb 2px, #ece2cb 7px);
+    background-color: var(--cal-busy);
+    background-image: repeating-linear-gradient(60deg, transparent, transparent 2px, var(--cal-busy-alt) 2px, var(--cal-busy-alt) 7px);
   }
   .calendar-cell-container {
     display: flex;
@@ -320,7 +323,7 @@
   .calendar-head-cell-blank-right { border-left: 1px solid var(--cal-border); }
   .calendar-time-right { border-left: 1px solid var(--cal-border); }
   .calendar-cell { flex: 1; background: var(--cal-surface); }
-  .calendar-cell-actived { background: #98D45F; }
+  .calendar-cell-actived { background: var(--cal-available); }
   .calendar-cell-booked { background: transparent; }
 
   .availability-block {
