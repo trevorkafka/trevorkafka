@@ -1,3 +1,50 @@
+// Light/dark theme: apply a saved choice and add a floating toggle, since these
+// italki lesson pages have no site nav. (Mirrors the logic in script.js.)
+(function themeToggleSetup() {
+    var root = document.documentElement;
+    try {
+        var saved = localStorage.getItem('theme');
+        if (saved === 'dark' || saved === 'light') root.setAttribute('data-theme', saved);
+    } catch (e) {}
+
+    var mq = window.matchMedia('(prefers-color-scheme: dark)');
+    function effective() {
+        var a = root.getAttribute('data-theme');
+        if (a === 'dark' || a === 'light') return a;
+        return mq.matches ? 'dark' : 'light';
+    }
+    function addFloatingToggle() {
+        if (document.querySelector('trevorkafka-nav')) return;
+        if (document.getElementById('theme-toggle-float') || !document.body) return;
+        var btn = document.createElement('button');
+        btn.id = 'theme-toggle-float';
+        btn.type = 'button';
+        btn.setAttribute('aria-label', 'Toggle dark mode');
+        btn.style.cssText = 'position:fixed;top:14px;right:14px;z-index:1000;width:42px;height:42px;border-radius:50%;border:1px solid var(--surface-border);background:var(--color3);color:var(--color1);cursor:pointer;box-shadow:1px 1px 10px var(--shadow);font-size:18px;display:flex;align-items:center;justify-content:center;padding:0;margin:0;';
+        function updateIcon() {
+            btn.innerHTML = effective() === 'dark'
+                ? '<i class="fa-solid fa-sun"></i>'
+                : '<i class="fa-solid fa-moon"></i>';
+        }
+        btn.addEventListener('click', function () {
+            var next = effective() === 'dark' ? 'light' : 'dark';
+            root.setAttribute('data-theme', next);
+            try { localStorage.setItem('theme', next); } catch (e) {}
+            updateIcon();
+        });
+        mq.addEventListener('change', function () {
+            if (!root.getAttribute('data-theme')) updateIcon();
+        });
+        document.body.appendChild(btn);
+        updateIcon();
+    }
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', addFloatingToggle);
+    } else {
+        addFloatingToggle();
+    }
+})();
+
 fetch("vocabulary.json")
 .then(res => res.json())
 .then(data => {

@@ -7,8 +7,8 @@
     --cal-muted:    #8a7a60;                        /* warm muted (sits between color4 and color1) */
     --cal-border:   #d9c9a6;                        /* warm light border (derived from color4 #C6B895) */
     --cal-surface:  var(--color3, #F5EEE2);         /* page tan — used for hover bgs */
-    --cal-accent:   var(--defaultlink, #d46a53);    /* terracotta */
-    --cal-accent-h: var(--hoverlink, #FB7F64);      /* hover orange */
+    --cal-accent:   var(--button-bg, #d46a53);      /* terracotta (fixed in both themes, like the site buttons) */
+    --cal-accent-h: var(--button-bg-hover, #FB7F64);/* hover orange */
     --cal-available: #98D45F;                       /* posted availability (green) */
     --cal-busy:      #cdbf9d;                        /* booked/blocked base */
     --cal-busy-alt:  #ece2cb;                        /* booked/blocked stripe */
@@ -352,6 +352,29 @@
     pointer-events: none;
   }
   .pause-notice i { color: var(--cal-accent); margin-right: 4px; }
+
+  /* Dark mode: recolor the calendar's fixed neutrals. --cal-text and
+     --cal-surface flip automatically via --color1 / --color3. */
+  :root[data-theme="dark"] {
+    --cal-border:   #ffffff24;
+    --cal-muted:    #9C8AA0;
+    --cal-busy:     #3A3340;
+    --cal-busy-alt: #4A4250;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --cal-border:   #ffffff24;
+      --cal-muted:    #9C8AA0;
+      --cal-busy:     #3A3340;
+      --cal-busy-alt: #4A4250;
+    }
+  }
+  :root[data-theme="dark"] .book-menu { background: #302838; }
+  :root[data-theme="dark"] .calendar-head-cell-today { background: #2E2733; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .book-menu { background: #302838; }
+    :root:not([data-theme="light"]) .calendar-head-cell-today { background: #2E2733; }
+  }
 </style>
 <div class="cal-container">
 <div class="legend">

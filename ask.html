@@ -48,6 +48,25 @@
     --line:#e2d8c8;
     --paper:#fffdf8;
   }
+  /* Dark mode: flip the local surfaces (text/terracotta flip via the globals). */
+  :root[data-theme="dark"]{
+    --plum-soft:#b3a4ba;
+    --line:#ffffff1f;
+    --paper:#2c2534;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --plum-soft:#b3a4ba;
+      --line:#ffffff1f;
+      --paper:#2c2534;
+    }
+  }
+  :root[data-theme="dark"] .qa-body code,
+  :root[data-theme="dark"] .qa-body pre{ background:#ffffff14; }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]) .qa-body code,
+    :root:not([data-theme="light"]) .qa-body pre{ background:#ffffff14; }
+  }
   .ask-scope, .ask-scope *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
   .ask-scope{
     color:var(--plum); font-size:17px; line-height:1.55;
