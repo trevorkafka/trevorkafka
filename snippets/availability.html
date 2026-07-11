@@ -444,10 +444,12 @@
       --cal-busy-alt: #4A4250;
     }
   }
-  :root[data-theme="dark"] .book-menu { background: #302838; }
+  :root[data-theme="dark"] .book-menu,
+  :root[data-theme="dark"] .pause-notice { background: #302838; }
   :root[data-theme="dark"] .calendar-head-cell-today { background: #2E2733; }
   @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) .book-menu { background: #302838; }
+    :root:not([data-theme="light"]) .book-menu,
+    :root:not([data-theme="light"]) .pause-notice { background: #302838; }
     :root:not([data-theme="light"]) .calendar-head-cell-today { background: #2E2733; }
   }
 </style>
@@ -940,8 +942,8 @@ function renderPauseNotice(root, days) {
   wrap.querySelectorAll('.pause-notice').forEach(n => n.remove());
 
   const DAY_MS = 24 * 60 * 60 * 1000;
-  const MIN_RUN = 5;      // minimum length of a non-teaching stretch to announce
-  const MIN_VISIBLE = 2;  // minimum of those days that must be on screen
+  const MIN_RUN = 10;     // minimum length of a non-teaching stretch to announce
+  const MIN_VISIBLE = 4;  // minimum of those days that must be on screen
 
   const today0 = new Date();
   today0.setHours(0, 0, 0, 0);
@@ -1002,6 +1004,10 @@ function renderPauseNotice(root, days) {
     notice.className = 'pause-notice';
     notice.innerHTML = `<i class="fa-solid fa-circle-info"></i>${escapeHTML(msg)}`;
     wrap.appendChild(notice);
+
+    // Constrain the box to the width of the days it covers (leaving a little margin).
+    const spanW = r1.right - r0.left;
+    notice.style.maxWidth = Math.max(110, spanW - 16) + 'px';
 
     const nRect = notice.getBoundingClientRect();
     let left = centerX - nRect.width / 2;

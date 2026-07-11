@@ -14,7 +14,7 @@
 				</div>
 			</div>
 			<a href="/login.html" id="login">Login</a>
-			<a href="javascript:void(0)" id="theme-toggle" role="button" tabindex="0" aria-label="Toggle dark mode" title="Toggle dark mode"><i class="fa-solid fa-moon"></i></a>
+			<a href="javascript:void(0)" id="theme-toggle" role="button" tabindex="0" aria-label="Toggle dark mode" title="Toggle dark mode"><i class="fa-solid fa-moon fa-fw"></i></a>
 		</div>
 	</div>
 </div>
@@ -38,8 +38,8 @@
 		function updateIcon() {
 			var dark = effective() === 'dark';
 			btn.innerHTML = dark
-				? '<i class="fa-solid fa-sun"></i>'
-				: '<i class="fa-solid fa-moon"></i>';
+				? '<i class="fa-solid fa-sun fa-fw"></i>'
+				: '<i class="fa-solid fa-moon fa-fw"></i>';
 			var label = dark ? 'Switch to light mode' : 'Switch to dark mode';
 			btn.setAttribute('aria-label', label);
 			btn.setAttribute('title', label);

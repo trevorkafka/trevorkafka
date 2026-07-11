@@ -116,7 +116,7 @@
 	}
 
 	.glow-shadow {
-		border: solid 1px var(--surface-border);
+		border: solid 1.5px var(--surface-border);
 		box-shadow: 1px 1px 10px var(--shadow);
 	}
 
