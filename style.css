@@ -239,7 +239,7 @@
 		background-color: var(--button-bg);
 		padding: 10px; /* has narrowscreen override */
 		border-radius: 10px;
-		box-shadow: 3px 3px 3px grey; /* right shift, down shift, blur */
+		box-shadow: 3px 3px 3px var(--shadow); /* right shift, down shift, blur */
 		color: white;
 		font-size: 120%;
 		font-weight: bold;
