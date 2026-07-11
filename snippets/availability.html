@@ -268,6 +268,9 @@
     .calendar-time-right {
       display: none;
     }
+    /* Right time axis is hidden here, so nudge the spinner right by half the
+       left axis width to keep it centered over the 7 day columns. */
+    .loading-spinner { left: calc(50% + var(--sidebar-width) / 2); }
     .legend { gap: 10px 20px; }
     .book-cta {
       width: 100%;
@@ -943,7 +946,7 @@ function renderPauseNotice(root, days) {
 
   const DAY_MS = 24 * 60 * 60 * 1000;
   const MIN_RUN = 10;     // minimum length of a non-teaching stretch to announce
-  const MIN_VISIBLE = 4;  // minimum of those days that must be on screen
+  const MIN_VISIBLE = 7;  // minimum of those days that must be on screen (a full visible week)
 
   const today0 = new Date();
   today0.setHours(0, 0, 0, 0);
