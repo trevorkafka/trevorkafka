@@ -47,6 +47,13 @@
 		transition: background-color 0.1s ease, color 0.1s ease, border-color 0.1s ease;
 	}
 
+	/* Keep the content above the footer at least a viewport tall (wrapper added
+	   by script.js) so the footer sits below the fold on short pages. */
+	#above-footer {
+		min-height: 100vh;
+		min-height: 100dvh;
+	}
+
 	html {
 	  scroll-behavior: smooth; /* makes links within same page scroll smoothly */
 	  overflow-x: hidden; /* prevents 100vw full-bleed elements from causing horizontal scroll due to scrollbar width */

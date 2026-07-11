@@ -54,6 +54,30 @@
 })();
 
 //
+// SECTION 0.25: FULL-HEIGHT CONTENT ABOVE THE FOOTER
+//
+// Wrap everything above the footer in one element that's at least a viewport
+// tall (see #above-footer in style.css). On short pages this keeps the footer
+// just below the fold, so it's only revealed on scroll. Runs synchronously —
+// script.js is deferred, so the DOM (including <trevorkafka-footer>) is parsed.
+(function padAboveFooter() {
+    var footer = document.querySelector('body > trevorkafka-footer, body > footer');
+    if (!footer || document.getElementById('above-footer')) return;
+    var wrap = document.createElement('div');
+    wrap.id = 'above-footer';
+    // Collect every body child before the footer, except the fixed nav.
+    var node = document.body.firstChild;
+    var toMove = [];
+    while (node && node !== footer) {
+        var isNav = node.nodeType === 1 && node.tagName.toLowerCase() === 'trevorkafka-nav';
+        if (!isNav) toMove.push(node);
+        node = node.nextSibling;
+    }
+    document.body.insertBefore(wrap, footer);
+    toMove.forEach(function (n) { wrap.appendChild(n); });
+})();
+
+//
 // SECTION 0.5: CLOUDFLARE WEB ANALYTICS (cookieless, privacy-friendly)
 //
 // Injected here so every page that loads script.js is tracked automatically,
