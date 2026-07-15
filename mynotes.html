@@ -49,6 +49,50 @@
 			<p id="message" style="color: red; font-family: Freeman, serif; font-size: 130%;"></p>
 		</div>
 
+		<style>
+			/* 1. Define Theme Variables */
+			:root, [data-theme="light"] {
+			    --callout-bg: #fff9db;
+			    --callout-border: #f59f00;
+			    --callout-text: #2b2b2b;
+			    --callout-shadow: rgba(0, 0, 0, 0.05);
+			}
+
+			[data-theme="dark"] {
+			    --callout-bg: #2d240e;
+			    --callout-border: #f59f00;
+			    --callout-text: #f1f3f5;
+			    --callout-shadow: rgba(0, 0, 0, 0.3);
+			}
+
+			/* 2. Callout Box Styles */
+			.callout-box {
+			    background-color: var(--callout-bg);
+			    border-left: 5px solid var(--callout-border);
+			    color: var(--callout-text);
+			    padding: 16px;
+			    margin: 20px 0;
+			    border-radius: 4px;
+			    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+			    font-size: 14px;
+			    line-height: 1.5;
+			    box-shadow: 0 1px 3px var(--callout-shadow);
+			    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition when toggling */
+			}
+
+			.callout-label {
+			    color: var(--callout-border);
+			    text-transform: uppercase;
+			    font-size: 12px;
+			    letter-spacing: 0.5px;
+			    margin-right: 4px;
+			}
+		</style>
+		<div class="callout-box">
+		    <strong class="callout-label"><i class="fa-solid fa-circle-exclamation"></i> Important:</strong> 
+		    Unfortunately, in some cases annotations on PDF files may appear missing entirely when opening files using the Google Drive app. If PDF files appear blank or not annotated in the Google Drive app, try opening the files in a browser instead.
+		</div>
+
 		<div class="FAQ">
 			<details>
 				<summary>How are my notes organized?</summary>

@@ -516,6 +516,21 @@ function formatQADate(d){
     .toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
+// " (N units ago)" — largest sensible unit. Days round to a whole number;
+// weeks/months/years round to the nearest tenth. A trailing ".0" is omitted.
+function qaRelative(d){
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d || '');
+  if (!m) return '';
+  const days = (Date.now() - new Date(+m[1], +m[2] - 1, +m[3]).getTime()) / 86400000;
+  if (days < 0) return '';
+  let val, unit;
+  if (days < 7)          { val = Math.round(days);             unit = 'day';   }
+  else if (days < 30.437){ val = Math.round(days / 7 * 10) / 10;      unit = 'week';  }
+  else if (days < 365.25){ val = Math.round(days / 30.437 * 10) / 10; unit = 'month'; }
+  else                   { val = Math.round(days / 365.25 * 10) / 10; unit = 'year';  }
+  return ' (' + val + ' ' + unit + (val === 1 ? '' : 's') + ' ago)';
+}
+
 function renderQAItem(f){
   const { meta, question, answer } = parseQAFile(f);
   const item = document.createElement('article');
@@ -533,7 +548,7 @@ function renderQAItem(f){
     + '<span class="qa-copied" aria-hidden="true"></span>'
     + '<a class="qa-permalink" href="#' + item.id + '" aria-label="Copy permalink to this question">'
     + '<i class="fa-solid fa-link"></i></a>'
-    + (meta.date ? '<time class="qa-date">' + escapeHtml(formatQADate(meta.date)) + '</time>' : '')
+    + (meta.date ? '<time class="qa-date">' + escapeHtml(formatQADate(meta.date)) + qaRelative(meta.date) + '</time>' : '')
     + '</span></div>';
   html += '<div class="qa-row q"><span class="qa-badge" aria-hidden="true">Q</span>'
     + '<div class="qa-body">'

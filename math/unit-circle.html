@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Apply a saved light/dark choice before paint (device default handled by CSS). -->
+<script>try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
 <title>Unit Circle Quiz - Tutoring with Trevor Kafka</title>
 <script>
 window.MathJax = {
@@ -15,22 +17,52 @@ window.MathJax = {
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Freeman&display=block" rel="stylesheet">
+<script src="https://kit.fontawesome.com/157b2a3980.js" crossorigin="anonymous"></script>
+<link rel="stylesheet" href="/style.css">
 <style>
 
 :root{
-  --paper:#F5EEE2;
+  /* Inherited from style.css (flip automatically in dark mode) */
+  --paper:var(--color3);
+  --ink:var(--color1);
+  --accent:var(--defaultlink);
+  --accent-h:var(--hoverlink);
+  --tx:var(--transitiontime, .2s);
+  /* Page-specific colors (dark values in the block below) */
   --surface:#FCF8EF;
-  --ink:#3C303E;
   --muted:#8a7a60;
   --line:#d9c9a6;
-  --accent:#d46a53;
-  --accent-h:#FB7F64;
   --chip:rgba(212,106,83,.14);
   --chip-line:rgba(212,106,83,.42);
-  --tx:.2s;
   --accent3:#2b7a78;
 }
+
+/* Dark mode — only the page-specific tokens. --paper/--ink/--accent/--accent-h
+   flip automatically via style.css's dark palette. Kept in sync across the
+   explicit toggle ([data-theme="dark"]) and the device default. */
+:root[data-theme="dark"]{
+  --surface:#302838;
+  --muted:#9C8AA0;
+  --line:#ffffff24;
+  --chip:rgba(232,138,112,.16);
+  --chip-line:rgba(232,138,112,.5);
+  --accent3:#6FBFBB;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --surface:#302838;
+    --muted:#9C8AA0;
+    --line:#ffffff24;
+    --chip:rgba(232,138,112,.16);
+    --chip-line:rgba(232,138,112,.5);
+    --accent3:#6FBFBB;
+  }
+}
 *{box-sizing:border-box}
+/* style.css handles the bg/color/border cross-fade; add fill/stroke for the
+   SVG graphic, and neutralize style.css's generic button margin in the quiz UI. */
+.uc-axis,.uc-circle,.uc-ray,.uc-arc,.uc-arrow2,.uc-proj,.uc-pt,.uc-ref{transition:fill var(--tx) ease,stroke var(--tx) ease}
+.preset-btn{margin:0}
 html,body{margin:0}
 body{
   background:var(--paper);
@@ -236,7 +268,7 @@ details.hist[open] summary .arr{transform:rotate(90deg)}
           <button class="preset-btn" data-preset="easy">easy</button>
           <button class="preset-btn" data-preset="medium">medium</button>
           <button class="preset-btn" data-preset="hard">hard</button>
-          <span id="undoPreset" class="undo-preset" style="display:none">undo</span>
+          <span id="undoPreset" class="undo-preset" style="display:none">undo preset</span>
         </div>
       </div>
       <div class="grp">
@@ -837,6 +869,26 @@ window.addEventListener('resize',()=>{
     if(activeFuncs().length) pushNew();
     render();
   } else setTimeout(wait,60);
+})();
+</script>
+<script>
+// Floating light/dark toggle (this page has no site nav). The theme itself is
+// applied earlier in <head>; the device default is handled by CSS.
+(function(){
+  var root=document.documentElement;
+  var mq=window.matchMedia('(prefers-color-scheme: dark)');
+  function eff(){var a=root.getAttribute('data-theme');return (a==='dark'||a==='light')?a:(mq.matches?'dark':'light');}
+  var moon='<i class="fa-solid fa-moon fa-fw"></i>';
+  var sun='<i class="fa-solid fa-sun fa-fw"></i>';
+  var btn=document.createElement('button');
+  btn.type='button';
+  btn.setAttribute('aria-label','Toggle dark mode');
+  btn.style.cssText='position:fixed;top:14px;right:14px;z-index:1000;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;box-shadow:1px 1px 10px rgba(0,0,0,.2);display:flex;align-items:center;justify-content:center;padding:0;font-size:18px;margin:0;';
+  function upd(){btn.innerHTML=eff()==='dark'?sun:moon;btn.title=eff()==='dark'?'Switch to light mode':'Switch to dark mode';}
+  btn.addEventListener('click',function(){var n=eff()==='dark'?'light':'dark';root.setAttribute('data-theme',n);try{localStorage.setItem('theme',n);}catch(e){}upd();});
+  mq.addEventListener('change',function(){if(!root.getAttribute('data-theme'))upd();});
+  document.body.appendChild(btn);
+  upd();
 })();
 </script>
 </body>

@@ -35,6 +35,7 @@
 		/* Orange buttons keep their light-mode colors in dark mode. */
 		--button-bg:       #d46a53;
 		--button-bg-hover: #FB7F64;
+		--button-text:     var(--color3); /* light: matches page background; dark: overridden to parchment */
 		/* "red" warning FAQ (e.g. the cancellation policy) */
 		--faq-red-bg:       #FFBABA;
 		--faq-red-bg-hover: #FFACAC;
@@ -44,7 +45,7 @@
 
 	/* Quick cross-fade when switching light/dark. */
 	*, *::before, *::after {
-		transition: background-color 0.1s ease, color 0.1s ease, border-color 0.1s ease;
+		transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 	}
 
 	/* Keep the content above the footer at least a viewport tall (wrapper added
@@ -52,6 +53,9 @@
 	#above-footer {
 		min-height: 100vh;
 		min-height: 100dvh;
+		/* Contain the nav-spacer's top margin so it counts toward the height
+		   instead of collapsing out and pushing the footer ~140px too low. */
+		display: flow-root;
 	}
 
 	html {
@@ -247,7 +251,7 @@
 		padding: 10px; /* has narrowscreen override */
 		border-radius: 10px;
 		box-shadow: 3px 3px 3px var(--shadow); /* right shift, down shift, blur */
-		color: white;
+		color: var(--button-text);
 		font-size: 120%;
 		font-weight: bold;
 		text-shadow: 1px 1px 2px black;
@@ -588,7 +592,7 @@ div.hovertarget:hover .hoverdisplay-text {
    whole shell flips without per-component dark rules. */
 /* */
 :root[data-theme="dark"] {
-	--color1: #F2EADF;        /* dark plum text -> warm off-white */
+	--color1: #E1CEB4;        /* TEST: warm parchment cream (between #F2EADF and #C6B895) */
 	--color3: #221C28;        /* light tan bg  -> deep warm plum */
 	--color4: #9C8AA0;        /* muted secondary */
 	--color4light: #ffffff14;
@@ -605,10 +609,11 @@ div.hovertarget:hover .hoverdisplay-text {
 	--footer-bg:      #1B1620;
 	--footer-text:    #F2EADF;
 	--footer-muted:   #9C8AA0;
+	--button-text:    #E1CEB4;
 }
 @media (prefers-color-scheme: dark) {
 	:root:not([data-theme="light"]) {
-		--color1: #F2EADF;
+		--color1: #E1CEB4;
 		--color3: #221C28;
 		--color4: #9C8AA0;
 		--color4light: #ffffff14;
@@ -625,6 +630,7 @@ div.hovertarget:hover .hoverdisplay-text {
 		--footer-bg:      #1B1620;
 		--footer-text:    #F2EADF;
 		--footer-muted:   #9C8AA0;
+		--button-text:    #E1CEB4;
 	}
 }
 
