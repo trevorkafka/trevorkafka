@@ -1,4 +1,6 @@
 <head>
+<!-- Apply saved light/dark choice before paint (avoids a flash when the device default differs from the toggle) -->
+<script>try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
 	<title>Trevor Kafka | Me</title>
 
 	<meta charset="utf-8"> <!--ensures that there aren't any issues with the display of emojis -->
@@ -54,7 +56,7 @@
 			// *************************************************************************************
 			// *************************************************************************************
 			// *************************************************************************************
-			const lastUpdateDate = new Date('2026-05-24'); // CHANGE DATE HERE in the format 'YYYY-MM-DD'
+			const lastUpdateDate = new Date('2026-07-17'); // CHANGE DATE HERE in the format 'YYYY-MM-DD'
 			// *************************************************************************************
 			// *************************************************************************************
 			// *************************************************************************************
@@ -88,7 +90,7 @@
 			// *************************************************************************************
 			const itinerary = [
 			    { date: '2026-01-01', location: 'Somerville, Massachusetts, USA',    offset: -4 },
-			    { date: '2026-07-16', location: 'Sitges (Barcelona), Spain',         offset: +2 },
+			    { date: '2026-07-16', location: 'Sitges, Spain',   				     offset: +2 },
 			    { date: '2026-07-18', location: 'Amersfoort, Netherlands',           offset: +2 },
 			    { date: '2026-07-21', location: 'Amsterdam, Netherlands',            offset: +2 },
 			    { date: '2026-07-24', location: 'Berlin, Germany',                   offset: +2 },
@@ -318,7 +320,7 @@
 				}
 
 				td {
-					color: rgba(0, 0, 0, 1);
+					color: var(--color1);
 					transition-duration: 0.3s;
 					font-family: sans-serif;
 					font-weight: bold;
@@ -479,15 +481,20 @@
 					  .travel-table td {
 					    padding: 0.5em 1.5em 0.5em 0;
 					    text-align: left;
-					    border-bottom: 1px solid #e5e5e5;
+					    border-bottom: 1px solid var(--tint-3);
 					    white-space: nowrap;
 					  }
 					  .travel-table th {
 					    font-weight: 700;
-					    border-bottom: 2px solid #333;
+					    border-bottom: 2px solid var(--color1);
 					  }
 					  .travel-table tr:last-child td {
 					    border-bottom: none;
+					  }
+					  /* Monospace the date columns so they line up vertically */
+					  .travel-table td:nth-child(3),
+					  .travel-table td:nth-child(4) {
+					    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Courier New", monospace;
 					  }
 					  .travel-table .fi {
 					    margin-right: 0.5em;
@@ -523,7 +530,7 @@
 					        "country  country"
 					        "start    end";
 					      row-gap: 0.5em;
-					      border: 1px solid #c0c0c0;
+					      border: 1px solid var(--tint-4);
 					      border-radius: 12px;
 					      padding: 1.1em 1em;
 					      margin-bottom: 0.6em;
@@ -537,7 +544,7 @@
 					    }
 					    .travel-table td:nth-child(1) {  /* country + flag */
 					      grid-area: country;
-					      color: #666;
+					      color: var(--color4);
 					      font-size: 0.9em;
 					    }
 					    .travel-table td:nth-child(2) {  /* location */
@@ -548,7 +555,7 @@
 					    .travel-table td:nth-child(3) {  /* start date */
 					      grid-area: start;
 					      justify-self: end;
-					      color: #666;
+					      color: var(--color4);
 					      font-size: 0.9em;
 					    }
 					    .travel-table td:nth-child(3)::after {
@@ -557,7 +564,7 @@
 					    .travel-table td:nth-child(4) {  /* end date */
 					      grid-area: end;
 					      justify-self: start;
-					      color: #666;
+					      color: var(--color4);
 					      font-size: 0.9em;
 					    }
 					  }
@@ -589,7 +596,7 @@
 					<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 					<script src="https://unpkg.com/leaflet-polylinedecorator@1.6.0/dist/leaflet.polylineDecorator.js"></script>
 
-					<div id="travel-map" style="height: 500px; width: 100%; border-radius: 20px; margin: 1em 0; border: 1px solid #e5e5e5;"></div>
+					<div id="travel-map" style="height: 500px; width: 100%; border-radius: 20px; margin: 1em 0; border: 1px solid var(--tint-3);"></div>
 
 					<script>
 					(function() {
@@ -796,21 +803,29 @@
 
 		<style type="text/css">
 
+			/* Halo behind emoji/flags: white on the light page, inverted to
+			   black for night mode so it doesn't bloom against the dark bg. */
+			:root { --emoji-glow: white; }
+			:root[data-theme="dark"] { --emoji-glow: black; }
+			@media (prefers-color-scheme: dark) {
+				:root:not([data-theme="light"]) { --emoji-glow: black; }
+			}
+
 			.icon {
 				padding: 5px 5px 5px 5px;
 				font-size: 150%;
-				text-shadow: 0px 0px 10px white;
+				text-shadow: 0px 0px 10px var(--emoji-glow);
 			}
 
 			.fis {
-				border-radius: 100%; 
+				border-radius: 100%;
 				font-size: 200%;
 				margin: 0px 5px 0px 5px;
-				box-shadow: 0px 0px 20px white;
+				box-shadow: 0px 0px 20px var(--emoji-glow);
 			}
 
 			.bigshadow {
-				text-shadow: 0px 0px 15px white;
+				text-shadow: 0px 0px 15px var(--emoji-glow);
 			}
 
 			.bigname {
@@ -853,8 +868,8 @@
 			}
 
 			.lang{
-				display: inline-block; 
-				background-color: #0000000F; 
+				display: inline-block;
+				background-color: var(--tint-2);
 				border-radius: 5px; 
 				padding: 5px;
 				margin: 2px 0px 2px 0px;
