@@ -395,6 +395,7 @@
 <div id="root"></div>
 <div id="status" class="status"></div>
 <div class="subtitle"><i class="fa-solid fa-clock fa-fw"></i><span class="tz-info" id="tz-info"></span></div>
+<div class="subtitle"><i class="fa-solid fa-calendar-week fa-fw"></i><span>Availability typically spans mornings, afternoons, and evenings on Sundays through Thursdays (Boston time<span class="boston-offset"></span>). Deviations from this general pattern may occur due to holidays, particularly school breaks, and during the summer.</span></div>
 <br>
 <trevorkafka-availability-announcement></trevorkafka-availability-announcement>
 </div>
@@ -592,22 +593,42 @@
     const weekdayFmt = new Intl.DateTimeFormat(undefined, { weekday: 'short' });
     const timeFmt = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' });
 
-    // Find earliest slot containing available or booked time across all 7 days.
-    let earliest = SLOTS_PER_DAY;
-    for (let di = 0; di < days.length; di++) {
-      for (let si = 0; si < earliest; si++) {
-        const s = grid[di][si];
-        if (s === 1 || s === 3) { earliest = si; break; }
+    // Determine the visible hour range from the earliest & latest available or
+    // booked slots. Consider BOTH this week and next week so the axis doesn't
+    // resize when toggling between them. Unavailable/empty slots don't count.
+    // 4 slots = 1 hour.
+    let earliest = SLOTS_PER_DAY, latest = -1;
+    if (!loading && cachedEvents) {
+      for (let wk = 0; wk <= 1; wk++) {
+        const wkGrid = classify(cachedEvents, buildWeek(new Date(), wk));
+        for (let di = 0; di < wkGrid.length; di++) {
+          for (let si = 0; si < SLOTS_PER_DAY; si++) {
+            const s = wkGrid[di][si];
+            if (s === 1 || s === 3) {
+              if (si < earliest) earliest = si;
+              if (si > latest) latest = si;
+            }
+          }
+        }
       }
     }
-    // Round down to nearest hour (4 slots per hour). Default to 0 if nothing.
-    // While loading, fix the visible range to 5am–midnight so the placeholder
-    // grid doesn't briefly show the full 24h before data arrives.
-    const startSlot = loading || earliest === SLOTS_PER_DAY
-      ? 20
-      : Math.floor(earliest / 4) * 4;
-    const startHour = startSlot / 4;
-    const startContainer = startSlot / 2;
+    // Start: round the earliest slot DOWN to the hour; if it's exactly on the
+    // hour, drop a full hour. End: round the end of the latest slot UP to the
+    // hour; if it's exactly on the hour, add a full hour. Clamp to [0,24] so an
+    // exact-hour boundary can never push the range before or past midnight.
+    // While loading / with nothing to show, default to 5am–midnight.
+    let startHour, endHour;
+    if (loading || latest < 0) {
+      startHour = 5;
+      endHour = 24;
+    } else {
+      startHour = Math.max(0, Math.floor(earliest / 4) - (earliest % 4 === 0 ? 1 : 0));
+      const endBoundary = latest + 1; // slots from midnight to the end of the last slot
+      endHour = Math.min(24, Math.ceil(endBoundary / 4) + (endBoundary % 4 === 0 ? 1 : 0));
+    }
+    const startSlot = startHour * 4;
+    const startContainer = startHour * 2;
+    const endContainer = endHour * 2;
 
     const headCells = days.map(d => {
       const today = d.toDateString() === todayKey;
@@ -620,7 +641,7 @@
     const timeCells = [];
     const baseDate = new Date();
     baseDate.setMinutes(0, 0, 0);
-    for (let i = startHour; i < 24; i++) {
+    for (let i = startHour; i < endHour; i++) {
       const d = new Date(baseDate);
       d.setHours(i);
       timeCells.push(`<div class="calendar-time-cell">${timeFmt.format(d)}</div>`);
@@ -628,7 +649,7 @@
 
     const dayCols = days.map((_, di) => {
       const containers = [];
-      for (let ci = startContainer; ci < 48; ci++) {
+      for (let ci = startContainer; ci < endContainer; ci++) {
         const top = stateClass(grid[di][ci * 2]);
         const bot = stateClass(grid[di][ci * 2 + 1]);
         containers.push(`<div class="calendar-cell-container">
@@ -946,6 +967,18 @@ function makeDemoEvents() {
   if (!el) return;
   const tzName = Intl.DateTimeFormat().resolvedOptions().timeZone;
   el.textContent = `Showing available times for 45-min+ lessons over the next 14 days in ${tzName} (${formatTZOffset(new Date())}).`;
+})();
+
+  // Fill in Boston's live UTC offset (accounts for daylight saving).
+(function setupBostonOffset() {
+  let off = '';
+  try {
+    const parts = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', timeZoneName: 'shortOffset' }).formatToParts(new Date());
+    const tz = parts.find(p => p.type === 'timeZoneName');
+    if (tz) off = tz.value.replace('GMT', 'UTC');
+  } catch (e) {}
+  if (!off) return;
+  document.querySelectorAll('.boston-offset').forEach(el => { el.textContent = ', ' + off; });
 })();
 
   // Toggle .full-bleed on the calendar when its edges actually touch the

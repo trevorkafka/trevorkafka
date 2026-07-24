@@ -9,6 +9,10 @@
 	<link rel="stylesheet" href="style.css">
 	<link rel="shortcut icon" href="favicon.ico">
 
+	<!-- Warm up the TutorBird connection early so the login widget loads sooner -->
+	<link rel="preconnect" href="https://app.tutorbird.com">
+	<link rel="dns-prefetch" href="https://app.tutorbird.com">
+
 	<!-- Google font stuff -->
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,6 +41,21 @@
 			  100% { background-color: #FFFFFF80; }
 			}
 #login-col-widget, #login-col-info { flex: 1 1 300px; }
+			/* Loading spinner shown behind the TutorBird widget until it renders */
+			.widget-spinner {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				width: 34px;
+				height: 34px;
+				margin: -17px 0 0 -17px;
+				border: 3px solid #e5e5e5;
+				border-top-color: #d46a53;
+				border-radius: 50%;
+				animation: widget-spin 0.8s linear infinite;
+				z-index: 0;
+			}
+			@keyframes widget-spin { to { transform: rotate(360deg); } }
 			.login-notes {
 				list-style: none;
 				padding: 0;
@@ -75,12 +94,29 @@
 		<div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; margin-bottom: 1em;">
 
 			<div id="login-col-widget">
-				<div class="invert-in-dark" style="background-color: white; border-radius: 20px; padding: 20px;">
+				<div class="invert-in-dark" style="background-color: white; border-radius: 20px; padding: 20px; position: relative; min-height: 120px;">
+					<div id="login-widget-spinner" class="widget-spinner"></div>
 					<!-- TUTORBIRD LOGIN WIDGET -->
-					<div>
+					<div id="login-widget-target" style="position: relative; z-index: 1;">
 						<script src="https://app.tutorbird.com/Widget/v4/Widget.ashx?settings=eyJTY2hvb2xJRCI6InNjaF9kMXhKMiIsIldlYnNpdGVJRCI6Indic19zSkpzIiwiV2Vic2l0ZUJsb2NrSUQiOiJ3YmJfekZ5TEpEIn0="></script>
 					</div>
 				</div>
+				<script>
+					// Hide the spinner once the TutorBird widget has rendered (gains
+					// height), or after a timeout fallback so it never spins forever.
+					(function () {
+						var target = document.getElementById('login-widget-target');
+						var spinner = document.getElementById('login-widget-spinner');
+						if (!target || !spinner) return;
+						var start = Date.now();
+						var iv = setInterval(function () {
+							if (target.offsetHeight > 40 || Date.now() - start > 20000) {
+								spinner.style.display = 'none';
+								clearInterval(iv);
+							}
+						}, 150);
+					})();
+				</script>
 				<ul class="login-notes">
 					<li><i class="fa-solid fa-user-plus"></i><span>Accounts are automatically created when registering for a <a href="call.html">free intro call</a>.</span></li>
 					<li><i class="fa-solid fa-calendar-days"></i><span>A preview of my 14-day availability is in the table <span class="widescreen">to the right</span><span class="narrowscreen">below</span>.</span></li>
