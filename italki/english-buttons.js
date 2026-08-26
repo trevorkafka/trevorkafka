@@ -195,6 +195,12 @@ noteStyle.textContent = `
     border-radius: 10px;
     text-align: left;
   }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .note-box { background-color: #ffffff18; }
+    :root:not([data-theme="light"]) .word-box.has-audio { box-shadow: 2px 2px 5px rgba(255,255,255,0.2); }
+  }
+  :root[data-theme="dark"] .note-box { background-color: #ffffff18; }
+  :root[data-theme="dark"] .word-box.has-audio { box-shadow: 2px 2px 5px rgba(255,255,255,0.2); }
   .note-box > *:first-child { margin-top: 0; }
   .note-box > *:last-child { margin-bottom: 0; }
   .note-audio {
