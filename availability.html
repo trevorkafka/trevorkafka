@@ -20,14 +20,17 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> <!-- use JQuery -->
 	<script type="text/javascript" src="script.js" defer></script> <!-- defer means to wait to run the script until the whole page is ready -->
 
-	<!-- Font Awesome (loaded directly since this standalone page has no nav to pull it in) -->
+	<!-- Font Awesome loaded directly so the calendar's icons are ready immediately (the nav also loads it, but asynchronously) -->
 	<script src="https://kit.fontawesome.com/157b2a3980.js" crossorigin="anonymous"></script>
 
 </head>
 
 <body>
 
+	<trevorkafka-nav></trevorkafka-nav>
+
 <div class="content">
+	<trevorkafka-announcement></trevorkafka-announcement>
 	<h1 id="availability" style="font-size: 40px">Trevor<span class="widescreen"> Kafka</span>'s<span class="widescreen"> 14-Day</span> Availability</h1>
 </div>
 

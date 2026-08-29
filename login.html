@@ -41,7 +41,6 @@
 			  50% { background-color: #d7ba6480 }
 			  100% { background-color: #FFFFFF80; }
 			}
-#login-col-widget, #login-col-info { flex: 1 1 300px; }
 			/* Loading spinner shown behind the TutorBird widget until it renders */
 			.widget-spinner {
 				position: absolute;
@@ -76,59 +75,41 @@
 				margin-top: 3px;
 				justify-self: start;
 			}
-			@media (width >= 900px) {
-				#login-col-widget { order: 1; }
-				#login-col-info   { order: 2; }
-			}
-			@media (width < 900px) {
-				#login-col-widget { order: 1; flex-basis: 100%; }
-				#login-col-info   { order: 2; flex: none; width: 100vw; margin-left: calc((var(--widthmax) - 100vw) / 2); }
-				#login-col-info .calendar-head-date { border-top-left-radius: 0; border-top-right-radius: 0; }
-				#login-col-info .calendar-body-wrap { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
-			}
 		</style>
 
 		<!-- <div style="border: solid 1px black; border-radius: 5px; line-height: 24px; padding: 10px; margin: 20px; background-color: #FFFFFF80; text-align: center; animation: fadeColors 0.4s ease-in-out 4;">
 			<strong>New as of Summer 2025:</strong> to schedule lessons, first login and then click <strong>"Find and Book"</strong> at the top of the calendar to view available dates and times. Click on any day on the calendar with availability to schedule your lesson. Lessons can now be scheduled in 15-minute increments.
 		</div> -->
 
-		<div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; margin-bottom: 1em;">
-
-			<div id="login-col-widget">
-				<div class="invert-in-dark" style="background-color: white; border-radius: 20px; padding: 20px; position: relative; min-height: 120px;">
-					<div id="login-widget-spinner" class="widget-spinner"></div>
-					<!-- TUTORBIRD LOGIN WIDGET -->
-					<div id="login-widget-target" style="position: relative; z-index: 1;">
-						<script src="https://app.tutorbird.com/Widget/v4/Widget.ashx?settings=eyJTY2hvb2xJRCI6InNjaF9kMXhKMiIsIldlYnNpdGVJRCI6Indic19zSkpzIiwiV2Vic2l0ZUJsb2NrSUQiOiJ3YmJfekZ5TEpEIn0="></script>
-					</div>
+		<div style="max-width: 500px; margin: 0 auto 1em;">
+			<div class="invert-in-dark" style="background-color: white; border-radius: 20px; padding: 20px; position: relative; min-height: 120px;">
+				<div id="login-widget-spinner" class="widget-spinner"></div>
+				<!-- TUTORBIRD LOGIN WIDGET -->
+				<div id="login-widget-target" style="position: relative; z-index: 1;">
+					<script src="https://app.tutorbird.com/Widget/v4/Widget.ashx?settings=eyJTY2hvb2xJRCI6InNjaF9kMXhKMiIsIldlYnNpdGVJRCI6Indic19zSkpzIiwiV2Vic2l0ZUJsb2NrSUQiOiJ3YmJfekZ5TEpEIn0="></script>
 				</div>
-				<script>
-					// Hide the spinner once the TutorBird widget has rendered (gains
-					// height), or after a timeout fallback so it never spins forever.
-					(function () {
-						var target = document.getElementById('login-widget-target');
-						var spinner = document.getElementById('login-widget-spinner');
-						if (!target || !spinner) return;
-						var start = Date.now();
-						var iv = setInterval(function () {
-							if (target.offsetHeight > 40 || Date.now() - start > 20000) {
-								spinner.style.display = 'none';
-								clearInterval(iv);
-							}
-						}, 150);
-					})();
-				</script>
-				<ul class="login-notes">
-					<li><i class="fa-solid fa-user-plus"></i><span>Accounts are automatically created when registering for a <a href="call.html">free intro call</a>.</span></li>
-					<li><i class="fa-solid fa-calendar-days"></i><span>A preview of my 14-day availability is in the table <span class="widescreen">to the right</span><span class="narrowscreen">below</span>.</span></li>
-					<li><i class="fa-solid fa-envelope"></i><span>To change your lesson length or set up weekly-recurring lessons, email <trevorkafka-email></trevorkafka-email>.</span></li>
-				</ul>
 			</div>
-
-			<div id="login-col-info">
-				<div id="availability-inline-content"></div>
-			</div>
-
+			<script>
+				// Hide the spinner once the TutorBird widget has rendered (gains
+				// height), or after a timeout fallback so it never spins forever.
+				(function () {
+					var target = document.getElementById('login-widget-target');
+					var spinner = document.getElementById('login-widget-spinner');
+					if (!target || !spinner) return;
+					var start = Date.now();
+					var iv = setInterval(function () {
+						if (target.offsetHeight > 40 || Date.now() - start > 20000) {
+							spinner.style.display = 'none';
+							clearInterval(iv);
+						}
+					}, 150);
+				})();
+			</script>
+			<ul class="login-notes">
+				<li><i class="fa-solid fa-user-plus"></i><span>Accounts are automatically created when registering for a <a href="call.html">free intro call</a>.</span></li>
+				<li><i class="fa-solid fa-calendar-days"></i><span>See a preview of my 14-day availability <a href="availability.html">here</a>.</span></li>
+				<li><i class="fa-solid fa-envelope"></i><span>To change your lesson length or set up weekly-recurring lessons, email <trevorkafka-email></trevorkafka-email>.</span></li>
+			</ul>
 		</div>
 
 		<h1><i class="fa-solid fa-circle-question"></i> Frequently Asked Questions</h1>
@@ -293,12 +274,6 @@
 		</div>
 		<div style="padding-bottom: 20px"></div>
 	</div>
-
-	<script>
-		$(function() {
-			$('#availability-inline-content').load('/snippets/availability-for-login-page.html');
-		});
-	</script>
 
 </body>
 

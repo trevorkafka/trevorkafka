@@ -8,9 +8,11 @@
 			<div class="nav-dropdown">
 				<a href="javascript:void(0)" class="nav-dropdown-trigger" tabindex="0">Students <i class="fa-solid fa-caret-down" style="font-size: 60%; transform: translateY(-0.15ex)"></i></a>
 				<div class="nav-dropdown-menu">
+					<a href="/availability.html" id="availability">Tutoring Availability</a>
 					<a href="/mynotes.html" id="mynotes">My Class Notes</a>
 					<a href="/ask.html" id="ask">Questions &amp; Answers</a>
 					<a href="/resources.html" id="resources">Resources</a>
+					<a href="/announcements/referral-discount.html" id="referral-discount">Referral Discount</a>
 				</div>
 			</div>
 			<a href="/login.html" id="login">Login</a>
@@ -87,13 +89,19 @@
 		float: left;
 	}
 
-	/* the dropdown menu items should stack vertically, not float like the top-level links */
+	/* Dropdown items stack vertically (not floated like the top-level links) and
+	   use a smaller, cleaner, more comfortably spaced style than the navbar titles. */
 	.nav-dropdown-menu a {
 		float: none;
 		display: block;
 		white-space: nowrap;
 		text-align: left;
-		margin: 4px 0;
+		font-family: Arial, sans-serif;
+		font-size: 15px;
+		font-weight: bold;
+		padding: 9px 16px;
+		margin: 1px 0;
+		border-radius: 10px;
 	}
 
 	.nav-dropdown-menu {
