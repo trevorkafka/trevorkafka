@@ -113,8 +113,20 @@
 		padding: 6px;
 		background-color: var(--color3);
 		border-radius: 20px;
-		box-shadow: 0px 4px 15px #3c303e40;
+		box-shadow: 0px 4px 15px var(--shadow);
 		z-index: 101;
+	}
+
+	/* On dark backgrounds a drop shadow is nearly invisible, so add a faint
+	   ring to keep the dropdown visually separated from the page. */
+	:root[data-theme="dark"] .nav-dropdown-menu {
+		box-shadow: 0px 4px 15px var(--shadow), 0 0 0 1px #ffffff26;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		:root:not([data-theme="light"]) .nav-dropdown-menu {
+			box-shadow: 0px 4px 15px var(--shadow), 0 0 0 1px #ffffff26;
+		}
 	}
 
 	/* keep the menu reachable while the mouse travels from trigger to menu */
