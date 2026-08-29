@@ -5,7 +5,7 @@
 		<ul style="margin-bottom: -1em;">
 			<li>Introductory calls and tutoring sessions have resumed on a <span class="date-chip">Monday–Thursday</span> schedule. </li>
 			<li><span class="date-chip">Sunday</span> availability will resume on <span class="date-chip">September 13</span>.</li>
-			<li><strong style="color: darkred">NEW:</strong> A referral discount is now available for current students that refer new families to tutoring! Click <a href="/announcements/referral-discount.html">here</a> to learn more.</li>
+			<li><strong class="announcement-new">NEW:</strong> A referral discount is now available for current students that refer new families to tutoring! Click <a href="/announcements/referral-discount.html">here</a> to learn more.</li>
 		</ul>
 	</p>
 	<!-- <p>
@@ -21,6 +21,21 @@
 	#announcement-box {
 		cursor: pointer;
 		-webkit-tap-highlight-color: transparent;
+	}
+
+	/* "NEW:" tag: darkred in light mode, brighter red in dark mode for contrast */
+	#announcement-box strong.announcement-new {
+		color: darkred;
+	}
+
+	:root[data-theme="dark"] #announcement-box strong.announcement-new {
+		color: red;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		:root:not([data-theme="light"]) #announcement-box strong.announcement-new {
+			color: red;
+		}
 	}
 
 	/* the leading "Announcement (...)" label matches the collapsed pill's look */
