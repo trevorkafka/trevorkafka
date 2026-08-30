@@ -96,12 +96,18 @@
 		align-items: center;
 		justify-content: center;
 		line-height: 1;
+		visibility: hidden; /* revealed once the weather API responds */
 	}
 
 	.weather-icon {
 		position: absolute;
+		top: 50%;
+		left: 50%;
+		/* Center, then nudge up-and-right so the icon sits diagonally offset from
+		   the temperature rather than concentric with it. */
+		transform: translate(-50%, -50%) translate(62%, -55%);
 		z-index: 0;
-		font-size: 9.6vw;
+		font-size: 4.8vw;
 		color: var(--color1);
 		opacity: 0.18;
 	}
@@ -119,7 +125,7 @@
 	   number itself, not on "number + degree". */
 	.weather-temp {
 		position: relative;
-		font-size: 3vw;
+		font-size: 4.5vw;
 	}
 
 	.weather-deg {
@@ -200,7 +206,7 @@
 						<i id="weather-icon" class="fa-solid fa-cloud weather-icon"></i>
 						<div class="weather-readout">
 							<span class="weather-temp"><span id="weather-temp-num"></span><span class="weather-deg">°</span></span>
-							<span class="weather-hilo"><span id="weather-low"></span>°<span class="weather-hilo-sep"> &ndash; </span><span id="weather-high"></span>°</span>
+							<span class="weather-hilo">(<span id="weather-low"></span><span class="weather-hilo-sep">&ndash;</span><span id="weather-high"></span>°)</span>
 						</div>
 					</div>
 				</td>
@@ -358,7 +364,17 @@
 	function updateTable() {
 		for (const route in timeTable) {
 			for (const prediction in timeTable[route]) {
-				document.getElementById(prediction).innerHTML = timeTable[route][prediction];
+				const value = timeTable[route][prediction];
+				// -1 means the bus is still catchable, but you must leave now and
+				// hustle: show a running figure instead of a bare "-1". East-bound
+				// stops are on the left, so mirror the runner to face that way (as
+				// the walking-person icons do).
+				const runnerClass = (prediction.indexOf("-E") !== -1)
+					? "fa-solid fa-person-running mirrored"
+					: "fa-solid fa-person-running";
+				document.getElementById(prediction).innerHTML = (value === -1)
+					? '<i class="' + runnerClass + '" title="Leave now and hurry!"></i>'
+					: value;
 			};
 		};
 	};
@@ -414,6 +430,7 @@
 					document.getElementById("weather-high").innerHTML = Math.round(data.daily.temperature_2m_max[0]);
 					document.getElementById("weather-low").innerHTML = Math.round(data.daily.temperature_2m_min[0]);
 				}
+				document.querySelector(".weather").style.visibility = "visible";
 			})
 			.catch(() => {});
 	}
