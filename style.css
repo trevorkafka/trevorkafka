@@ -268,8 +268,33 @@
 		background-color: var(--button-bg-hover);
 	}
 
+	/* Subtle secondary button: muted, smaller, and flatter than the primary
+	   call-to-action so it reads as a lower-priority link. */
+	.button.subtle div {
+		background-color: var(--tint-2);
+		color: var(--color1);
+		font-size: 100%;
+		text-shadow: none;
+		box-shadow: 1px 1px 2px var(--shadow);
+	}
+
+	.button.subtle div:hover {
+		background-color: var(--tint-4);
+	}
+
 	.label {
 		font-weight: bold;
+	}
+
+	/* Language chip (also defined locally on me.html; kept here so other pages
+	   can reuse the same pill styling). */
+	.lang {
+		display: inline-block;
+		background-color: var(--tint-2);
+		border-radius: 5px;
+		padding: 5px;
+		margin: 2px 0px 2px 0px;
+		font-size: 100%;
 	}
 
 	.sublabel {

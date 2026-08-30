@@ -30,9 +30,33 @@
 
 		<trevorkafka-announcement></trevorkafka-announcement>
 
-		<h1 class="smaller-for-narrow-screen">Online <span class="color"><span class="widescreen">Individualized</span><span class="narrowscreen">1-on-1</span> Tutoring</span> with Trevor Kafka</h1>
+		<h1 class="smaller-for-narrow-screen">Online <span class="color">Math &amp; Physics</span> Tutoring with Trevor Kafka</h1>
 
-		<p>Trevor Kafka offers professional one-on-one and small group tutoring for middle-school through adult students in <strong>mathematics, physics, and high stakes tests (SAT, ACT, and AP)</strong>. Real help from a real person: one-on-one lessons built around you, at your pace, with someone who's genuinely excited to teach you.</p>	
+		<div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 12px 0 16px;">
+			<span class="subject-chip"><i class="fa-solid fa-square-root-variable"></i> Mathematics</span>
+			<span class="subject-chip"><i class="fa-solid fa-atom"></i> Physics</span>
+			<span class="subject-chip"><i class="fa-solid fa-pencil"></i> SAT</span>
+			<span class="subject-chip"><i class="fa-solid fa-pencil"></i> ACT</span>
+			<span class="subject-chip"><i class="fa-solid fa-graduation-cap"></i> AP Exams</span>
+			<a href="#teaching-subjects" onclick="var d=document.getElementById('teaching-subjects');if(d)d.open=true;">See all teaching subjects</a>
+		</div>
+
+		<p>Trevor Kafka offers professional one-on-one and small group tutoring for middle-school through adult students in <strong>mathematics, physics, and high stakes tests (SAT, ACT, and AP)</strong>. Real help from a real person: one-on-one lessons built around you, at your pace, with someone who's genuinely excited to teach you.</p>
+
+		<style>
+			.subject-chip {
+				display: inline-flex;
+				align-items: center;
+				gap: 6px;
+				background: var(--tint-1);
+				border: 1px solid var(--color1);
+				color: var(--color1);
+				font-weight: bold;
+				padding: 6px 14px;
+				border-radius: 100px;
+				white-space: nowrap;
+			}
+		</style>
 
 	</div>
 
@@ -67,26 +91,78 @@
 				</p>
 
 				<div class="FAQ">
-					<details>
+					<details id="teaching-subjects" style="scroll-margin-top: 95px">
 						<summary style="background-color: var(--color1); color: var(--color3); border: 1px solid var(--color1);">Teaching Subjects</summary>
 						<div>
-							<ul>
-								<li>Middle School mathematics</li>
-								<li>SAT math</li>
-								<li>ACT math, ACT science</li>
-								<li>High School 9th Grade Introductory Physics</li>
-								<li>High School 12th Grade Physics (including all AP exams)</li>
-								<li>College-level introductory physics</li>
-								<li>Geometry (high school)</li>
-								<li>Algebra I + II (high school)</li>
-								<li>Precalculus (high school, college level)</li>
-								<li>Trigonometry (high school)</li>
-								<li>Calculus (high school, AP, college level, including multivariable)</li>
-								<li>Linear Algebra (high school, college level)</li>
-								<li>Mathematical proofs / discrete mathematics (college level)</li>
+							<h4 class="ts-heading" style="margin-top: 0;">Mathematics</h4>
+							<ul class="ts-list">
+								<li>Middle school mathematics <span class="level-tag lvl-ms">Middle School</span></li>
+								<li>Geometry <span class="level-tag lvl-hs">High School</span></li>
+								<li>Algebra I <span class="level-tag lvl-hs">High School</span></li>
+								<li>Algebra II <span class="level-tag lvl-hs">High School</span></li>
+								<li>Trigonometry <span class="level-tag lvl-hs">High School</span></li>
+								<li>Precalculus <span class="level-tag lvl-hs">High School</span> <span class="level-tag lvl-college">College</span></li>
+								<li>Calculus 1&ndash;2 <span class="level-tag lvl-hs">High School</span> <span class="level-tag lvl-college">College</span></li>
+								<li>Calculus 3 (Multivariable) <span class="level-tag lvl-college">College</span></li>
+								<li>Linear Algebra <span class="level-tag lvl-hs">High School</span> <span class="level-tag lvl-college">College</span></li>
+								<li>Proofs, logic, and discrete mathematics <span class="level-tag lvl-college">College</span></li>
 							</ul>
+
+							<h4 class="ts-heading">Physics</h4>
+							<ul class="ts-list">
+								<li>High school physics (9th through 12th) <span class="level-tag lvl-hs">High School</span></li>
+								<li>Introductory physics <span class="level-tag lvl-college">College</span></li>
+							</ul>
+
+							<h4 class="ts-heading">Standardized Tests</h4>
+							<ul class="ts-list">
+								<li>SAT math <span class="level-tag lvl-hs">High School</span></li>
+								<li>ACT math <span class="level-tag lvl-hs">High School</span></li>
+								<li>ACT science <span class="level-tag lvl-hs">High School</span></li>
+							</ul>
+							<p style="margin: 8px 0 4px;"><strong>AP exams:</strong></p>
+							<ul class="ts-list">
+								<li>AP Precalculus <span class="level-tag lvl-hs">High School</span></li>
+								<li>AP Calculus AB <span class="level-tag lvl-hs">High School</span></li>
+								<li>AP Calculus BC <span class="level-tag lvl-hs">High School</span></li>
+								<li>AP Physics 1 <span class="level-tag lvl-hs">High School</span></li>
+								<li>AP Physics 2 <span class="level-tag lvl-hs">High School</span></li>
+								<li>AP Physics C: Mechanics <span class="level-tag lvl-hs">High School</span></li>
+								<li>AP Physics C: Electricity &amp; Magnetism <span class="level-tag lvl-hs">High School</span></li>
+							</ul>
+
 							<div style="color:red">Please note: I am currently NOT offering lessons in <strong>statistics</strong> nor <strong>chemistry</strong>. Please get in touch if you need a reference for a statistics or chemistry tutor.</div>
 						</div>
+						<style>
+							.ts-heading {
+								color: var(--color1);
+								font-family: "Freeman", sans-serif;
+								font-weight: normal;
+								font-size: 125%;
+								margin: 16px 0 6px;
+							}
+							.ts-list {
+								margin-top: 0;
+								list-style: none;
+								padding-left: 0;
+							}
+							.ts-list li {
+								margin: 4px 0;
+							}
+							.ts-list li::before {
+								content: "\2713\00a0";
+							}
+							.level-tag {
+								display: inline-block;
+								font-size: 72%;
+								font-weight: bold;
+								background: var(--tint-2);
+								color: var(--color1);
+								padding: 1px 9px;
+								border-radius: 100px;
+								vertical-align: middle;
+							}
+						</style>
 					</details>
 					<details>
 						<summary>My Education</summary>
@@ -120,13 +196,52 @@
 						<div>
 							<p>I love learning languages and am always spending time either practicing ones I've been learning for a while or exploring new ones.</p>
 
-							<p>Aside from being a native English speaker, my learned languages are Español (Spanish), Français (French), 汉语 (Mandarin), 日本語 (Japanese), 粵語 (Cantonese), Nederlands (Dutch), and ภาษาไทย (Thai), along with occasional dabbling in Tiếng Việt (Vietnamese) and Deutsch (German).</p>
+							<p>Aside from being a native English speaker, the languages I actively learn are:</p>
+							<p>
+								<span class="lang">Español (Spanish)</span>
+								<span class="lang">汉语 (Mandarin)</span>
+								<span class="lang">日本語 (Japanese)</span>
+								<span class="lang">Nederlands (Dutch)</span>
+								<span class="lang">ภาษาไทย (Thai)</span>
+							</p>
+							<p>I have also learned these in the past, though I no longer actively focus on them:</p>
+							<p>
+								<span class="lang">Français (French)</span>
+								<span class="lang">粵語 (Cantonese)</span>
+							</p>
+							<p>I also occasionally dabble in:</p>
+							<p>
+								<span class="lang">Tiếng Việt (Vietnamese)</span>
+								<span class="lang">Deutsch (German)</span>
+								<span class="lang"><span style="font-family: nasin-nanpa">toki+pona</span> (toki pona)</span>
+							</p>
 
-							<p>You can check out more information on my <a href="https://www.polyglotassociation.org/members/trevor-kafka">HYPIA profile</a>.</p>
+							<p>You can check out more information on my <a href="https://www.polyglotassociation.org/members/trevor-kafka">HYPIA (The International Association of Hyperpolyglots) profile</a>.</p>
 						</div>
 					</details>
 				</div>
 			</div>
+			<script>
+				// When the (long) Teaching Subjects panel is open and the visitor
+				// opens another panel in the same group, scroll the Teaching
+				// Subjects panel back to the top so they don't lose their place.
+				(function () {
+					var subjects = document.getElementById('teaching-subjects');
+					if (!subjects) return;
+					var group = subjects.closest('.FAQ');
+					if (!group) return;
+
+					group.querySelectorAll('details').forEach(function (panel) {
+						if (panel === subjects) return;
+						panel.addEventListener('toggle', function () {
+							if (panel.open && subjects.open) {
+								subjects.scrollIntoView({ behavior: 'smooth', block: 'start' });
+							}
+						});
+					});
+				})();
+			</script>
+
 			<div align="center" style="flex-grow: 1">
 				<img class="glow-shadow" src="media/TK indonesia.png" alt="Trevor Kafka headshot in Indonesia" style="width: min(225px, 90vw); border-radius:100%">
 				<div style="height:25px"></div>
@@ -134,6 +249,9 @@
 				<p><strong>Ready to make the change you've always dreamed of?</strong></p>
 				<a href="call.html" class="button">
 					<div align="center"><i class="fa-solid fa-video"></i> Schedule an intro call today!</div>
+				</a>
+				<a href="#FAQ" class="button subtle">
+					<div align="center"><i class="fa-solid fa-circle-question"></i> FAQ</div>
 				</a>
 				<!-- <a href="teaching-samples.html" class="button">
 					<div align="center"><i class="fa-solid fa-file-video"></i> Watch teaching samples</div>
@@ -354,6 +472,7 @@
 						<li><strong>Maximum possible scores received</strong> on <strong>AP Calculus BC</strong>, <strong>AP Physics C: Mechanics</strong>, <strong>AP Physics C: Electricity & Magnetism</strong>, and <strong>SAT Physics Subject Test</strong> during high school years.</li>
 						<li>Completion of <strong>Massachusetts Tests for Educator Licensure (MTEL)</strong> exams in <strong>mathematics</strong> and <strong>physics</strong>. </li>
 					</ul>
+					<p>Questions? Email me at <trevorkafka-email></trevorkafka-email>.</p>
 				</div>
 			</details>
 

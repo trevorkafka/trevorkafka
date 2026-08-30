@@ -6,7 +6,7 @@
     </filter>
   </defs>
 
-  <g filter="url(#sketch)" stroke="#FB7F64" stroke-width="5.5" stroke-linejoin="round" stroke-linecap="round" fill="none">
+  <g filter="url(#sketch)" stroke="#d46a53" stroke-width="5.5" stroke-linejoin="round" stroke-linecap="round" fill="none">
     <!-- Left arrow — tilted more counterclockwise -->
     <path transform="rotate(-14, 75, 74)"
       d="M 54,13 C 63,12 82,13 96,14 C 96,32 95,55 95,73 C 103,72 112,72 116,71 C 103,93 88,111 75,129 C 62,111 46,92 35,72 C 40,72 50,73 56,73 C 55,55 54,32 54,13 Z"/>
