@@ -1,4 +1,21 @@
 [
+	{"date": "2026-08-31",
+	"vocabulary": [
+		{"word": "temperature", "IPA": "/ˈtɛmprɪtʃər/", "translation": "温度；气温"},
+		{"word": "minus", "IPA": "/ˈmaɪnəs/", "translation": "零下；负"},
+		{"word": "degrees Celsius", "IPA": "/dɪˈɡriz ˈsɛlsiəs/", "translation": "摄氏度"},
+		{"word": "spend time", "IPA": "/spɛnd taɪm/", "translation": "花时间；度过时光"},
+		{"word": "read (现在)", "IPA": "/rid/", "translation": "读；阅读（现在时）", "audio": "reed"},
+		{"word": "read (过去)", "IPA": "/rɛd/", "translation": "读；阅读（过去时）", "audio": "red"},
+		{"word": "comfortable", "IPA": "/ˈkʌmftərbəl/", "translation": "舒适的；舒服的"},
+		{"word": "uncomfortable", "IPA": "/ʌnˈkʌmftərbəl/", "translation": "不舒适的；不舒服的"},
+		{"word": "downtown", "IPA": "/ˈdaʊnˌtaʊn/", "translation": "市中心；市区"},
+		{"word": "watched", "IPA": "/wɑtʃt/", "translation": "看了（watch的过去式）"},
+		{"word": "worked", "IPA": "/wɜrkt/", "translation": "工作了（work的过去式）"},
+		{"word": "please wait a moment", "IPA": "/pliz weɪt ə ˈmoʊmənt/", "translation": "请稍等"},
+		{"word": "just a moment", "IPA": "/dʒʌst ə ˈmoʊmənt/", "translation": "稍等一下"},
+		{"word": "go eat dinner", "IPA": "/ɡoʊ it ˈdɪnər/", "translation": "去吃晚饭"}
+	]},
 	{"date": "2026-08-27",
 	"vocabulary": [
 		{"word": "traffic", "IPA": "/ˈtræfɪk/", "translation": "交通；车流"},
