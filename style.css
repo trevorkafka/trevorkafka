@@ -617,7 +617,7 @@ div.hovertarget:hover .hoverdisplay-text {
    whole shell flips without per-component dark rules. */
 /* */
 :root[data-theme="dark"] {
-	--color1: #E1CEB4;        /* TEST: warm parchment cream (between #F2EADF and #C6B895) */
+	--color1: #C6B59E;        /* dimmed parchment for dark-mode text */
 	--color3: #110E14;        /* light tan bg  -> near-black (halfway from deep warm plum to black) */
 	--color4: #9C8AA0;        /* muted secondary */
 	--color4light: #ffffff14;
@@ -638,7 +638,7 @@ div.hovertarget:hover .hoverdisplay-text {
 }
 @media (prefers-color-scheme: dark) {
 	:root:not([data-theme="light"]) {
-		--color1: #E1CEB4;
+		--color1: #C6B59E;
 		--color3: #110E14;
 		--color4: #9C8AA0;
 		--color4light: #ffffff14;
