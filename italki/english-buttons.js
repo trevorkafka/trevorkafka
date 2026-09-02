@@ -129,25 +129,41 @@ async function loadNotes(entry, groupContainer) {
       controls.classList.add("note-audio");
 
       const playLabel = '<i class="fa-solid fa-play"></i> Play';
-      const stopLabel = '<i class="fa-solid fa-stop"></i> Stop';
+      const pauseLabel = '<i class="fa-solid fa-pause"></i> Pause';
+
       const playBtn = document.createElement("button");
       playBtn.innerHTML = playLabel;
+      const stopBtn = document.createElement("button");
+      stopBtn.innerHTML = '<i class="fa-solid fa-stop"></i> Stop';
+      stopBtn.disabled = true;
+
       let audio = null;
+
+      // Stop: halt playback and reset to the beginning.
+      function reset() {
+        if (audio) audio.pause();
+        audio = null;
+        playBtn.innerHTML = playLabel;
+        stopBtn.disabled = true;
+      }
+
+      // Play/Pause toggle: pausing keeps the position so Play resumes.
       playBtn.addEventListener("click", () => {
-        if (audio) {
-          audio.pause();
-          audio = null;
-          playBtn.innerHTML = playLabel;
-          return;
+        if (!audio) {
+          audio = new Audio(audioPath);
+          audio.addEventListener("ended", reset);
         }
-        audio = new Audio(audioPath);
-        playBtn.innerHTML = stopLabel;
-        audio.addEventListener("ended", () => {
-          audio = null;
+        if (audio.paused) {
+          audio.play();
+          playBtn.innerHTML = pauseLabel;
+          stopBtn.disabled = false;
+        } else {
+          audio.pause();
           playBtn.innerHTML = playLabel;
-        });
-        audio.play();
+        }
       });
+
+      stopBtn.addEventListener("click", reset);
 
       const downloadBtn = document.createElement("a");
       downloadBtn.innerHTML = '<i class="fa-solid fa-download"></i> Download';
@@ -155,6 +171,7 @@ async function loadNotes(entry, groupContainer) {
       downloadBtn.setAttribute("download", "");
 
       controls.appendChild(playBtn);
+      controls.appendChild(stopBtn);
       controls.appendChild(downloadBtn);
       box.appendChild(controls);
     }
@@ -187,6 +204,15 @@ noteStyle.textContent = `
   #word-container.translations-hidden .translation {
     display: none;
   }
+  /* Press feedback: while held down, a clickable vocabulary button sinks toward
+     its shadow (bottom-right) and the shadow tightens, springing back on release. */
+  .word-box.has-audio {
+    transition: transform 0.07s ease, box-shadow 0.07s ease, background-color 0.2s ease;
+  }
+  .word-box.has-audio:active {
+    transform: translate(2px, 2px);
+    box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.3);
+  }
   .note-box {
     display: block;
     background-color: #00000010;
@@ -198,9 +224,11 @@ noteStyle.textContent = `
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) .note-box { background-color: #ffffff18; }
     :root:not([data-theme="light"]) .word-box.has-audio { box-shadow: 2px 2px 5px rgba(255,255,255,0.2); }
+    :root:not([data-theme="light"]) .word-box.has-audio:active { box-shadow: 0px 0px 2px rgba(255,255,255,0.2); }
   }
   :root[data-theme="dark"] .note-box { background-color: #ffffff18; }
   :root[data-theme="dark"] .word-box.has-audio { box-shadow: 2px 2px 5px rgba(255,255,255,0.2); }
+  :root[data-theme="dark"] .word-box.has-audio:active { box-shadow: 0px 0px 2px rgba(255,255,255,0.2); }
   .note-box > *:first-child { margin-top: 0; }
   .note-box > *:last-child { margin-bottom: 0; }
   .note-audio {
@@ -224,6 +252,13 @@ noteStyle.textContent = `
   .note-audio button:hover,
   .note-audio a:hover {
     background-color: #00000030;
+  }
+  .note-audio button:disabled {
+    opacity: 0.45;
+    cursor: default;
+  }
+  .note-audio button:disabled:hover {
+    background-color: #00000018;
   }
 `;
 document.head.appendChild(noteStyle);
