@@ -12,7 +12,7 @@
 					<a href="/mynotes.html" id="mynotes"><i class="fa-solid fa-note-sticky fa-fw"></i> My Class Notes</a>
 					<a href="/ask.html" id="ask"><i class="fa-solid fa-circle-question fa-fw"></i> Questions &amp; Answers</a>
 					<a href="/resources.html" id="resources"><i class="fa-solid fa-folder-open fa-fw"></i> Resources</a>
-					<a href="/announcements/referral-discount.html" id="referral-discount"><i class="fa-solid fa-gift fa-fw"></i> Referral Discount</a>
+					<a href="/announcements/referral-discount.html" id="referral-discount"><i class="fa-solid fa-gift fa-fw"></i> Referral Discount <span class="nav-new">NEW</span></a>
 				</div>
 			</div>
 			<a href="/login.html" id="login">Login</a>
@@ -102,6 +102,26 @@
 		padding: 9px 16px;
 		margin: 1px 0;
 		border-radius: 10px;
+	}
+
+	/* "NEW" tag on a dropdown item: darkred in light mode, brighter red in dark
+	   (mirrors the announcement box's NEW tag). */
+	.nav-dropdown-menu .nav-new {
+		background: #f6d5d5;
+		color: #b02a1e;
+		font-size: 9px;
+		font-weight: bold;
+		letter-spacing: 0.05em;
+		padding: 1px 6px;
+		border-radius: 999px;
+		vertical-align: middle;
+		margin-left: 4px;
+	}
+
+	:root[data-theme="dark"] .nav-dropdown-menu .nav-new { background: #4d2320; color: #ff9a8c; }
+
+	@media (prefers-color-scheme: dark) {
+		:root:not([data-theme="light"]) .nav-dropdown-menu .nav-new { background: #4d2320; color: #ff9a8c; }
 	}
 
 	.nav-dropdown-menu {

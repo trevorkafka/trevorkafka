@@ -28,13 +28,41 @@
 
 		<trevorkafka-announcement></trevorkafka-announcement>
 
-		<h1>Referral Discount</h1>
+		<style>
+			/* "NEW" tag matching the announcement box (darkred, brighter red in dark mode). */
+			.page-new {
+				background: #f6d5d5;
+				color: #b02a1e;
+				font-family: Arial, sans-serif;
+				font-size: 32%;
+				font-weight: bold;
+				letter-spacing: 0.05em;
+				padding: 0.15em 0.6em;
+				border-radius: 999px;
+				vertical-align: middle;
+				position: relative;
+				top: -0.15em;
+			}
+			:root[data-theme="dark"] .page-new { background: #4d2320; color: #ff9a8c; }
+			@media (prefers-color-scheme: dark) {
+				:root:not([data-theme="light"]) .page-new { background: #4d2320; color: #ff9a8c; }
+			}
+
+			/* Anchor pills: darkened gradient in light mode for better contrast with the
+			   white text; the original brighter gradient reads fine on the dark ground. */
+			.referral-pill { background-image: linear-gradient(330deg, #E0603C, rgb(150, 0, 90)); }
+			:root[data-theme="dark"] .referral-pill { background-image: linear-gradient(330deg, #FB7F64, rgb(175, 0, 105)); }
+			@media (prefers-color-scheme: dark) {
+				:root:not([data-theme="light"]) .referral-pill { background-image: linear-gradient(330deg, #FB7F64, rgb(175, 0, 105)); }
+			}
+		</style>
+		<h1><i class="fa-solid fa-gift"></i> Referral Discount <span class="page-new">NEW</span></h1>
 
 		<p style="font-family: Freeman; font-size: 120%; color: var(--color1); margin-top: -0.5em;">A thank-you for my current students</p>
 
 		<p style="display: flex; flex-wrap: wrap; gap: 8px;">
-			<a href="#referrer" style="text-decoration: none;"><span style="background-image: linear-gradient(330deg, var(--color2), rgb(175, 0, 105)); color: white; font-family: Freeman; font-size: 110%; padding: 6px 16px; border-radius: 100px; display: inline-block;">You get a free lesson</span></a>
-			<a href="#referred" style="text-decoration: none;"><span style="background-image: linear-gradient(330deg, var(--color2), rgb(175, 0, 105)); color: white; font-family: Freeman; font-size: 110%; padding: 6px 16px; border-radius: 100px; display: inline-block;">Your friend's 3rd lesson is free</span></a>
+			<a href="#referrer" style="text-decoration: none;"><span class="referral-pill" style="color: white; font-family: Freeman; font-size: 110%; padding: 6px 16px; border-radius: 100px; display: inline-block;">You get a free lesson</span></a>
+			<a href="#referred" style="text-decoration: none;"><span class="referral-pill" style="color: white; font-family: Freeman; font-size: 110%; padding: 6px 16px; border-radius: 100px; display: inline-block;">Your friend's 3rd lesson is free</span></a>
 		</p>
 
 		<img class="glow-shadow" src="/media/TK indonesia.png" alt="Trevor Kafka headshot in Indonesia" style="float: right; width: min(180px, 38vw); border-radius: 100%; margin: 0 0 15px 25px;">

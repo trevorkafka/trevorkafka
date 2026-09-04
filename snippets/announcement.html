@@ -1,11 +1,10 @@
 <div class="announcement" id="announcement-box" style="background: var(--tint-1); padding: 15px 40px 0px 15px; border-radius: 10px; border: 1px solid var(--color1); margin-bottom: -20px; position: relative">
 	<button type="button" id="announcement-collapse" aria-label="Collapse announcement" title="Collapse"><i class="fa-solid fa-xmark"></i></button>
 	<p>
-		<strong><i class="fa-solid fa-bullhorn" style="margin-right: 0.5em"></i>Announcement (updated Friday August 28, 2026):</strong> 
+		<strong><i class="fa-solid fa-bullhorn" style="margin-right: 0.5em"></i>Announcement (updated Thursday September 03, 2026):</strong> 
 		<ul style="margin-bottom: -1em;">
-			<li>Intro calls and tutoring sessions have resumed on a <span class="date-chip">Monday–Thursday</span> schedule. Check my 14-day lesson availability <a href="/availability.html">here</a>. </li>
-			<li><span class="date-chip">Sunday</span> availability will resume on <span class="date-chip">September 13</span>.</li>
-			<li><strong class="announcement-new">NEW:</strong> A referral discount is now available for current students that refer new families to tutoring! Click <a href="/announcements/referral-discount.html">here</a> to learn more.</li>
+			<li>Intro calls and tutoring sessions will not be held from <span class="date-chip">Friday September 04</span> to <span class="date-chip">Monday September 07, 2026</span> due to the Labor Day holiday. Usual <span class="date-chip">Sunday–Thursday</span> <a href="/availability.html">availability</a> resumes thereafter.</li>
+			<li><span class="announcement-new">NEW</span> A referral discount is now available for current students that refer new families to tutoring! Click <a href="/announcements/referral-discount.html">here</a> to learn more.</li>
 		</ul>
 	</p>
 	<!-- <p>
@@ -23,18 +22,28 @@
 		-webkit-tap-highlight-color: transparent;
 	}
 
-	/* "NEW:" tag: darkred in light mode, brighter red in dark mode for contrast */
-	#announcement-box strong.announcement-new {
-		color: darkred;
+	/* "NEW" chip: light red pill in light mode, deeper pill in dark mode. */
+	#announcement-box .announcement-new {
+		background: #f6d5d5;
+		color: #b02a1e;
+		font-family: Arial, sans-serif;
+		font-size: 75%;
+		font-weight: bold;
+		letter-spacing: 0.05em;
+		padding: 1px 7px;
+		border-radius: 999px;
+		vertical-align: middle;
 	}
 
-	:root[data-theme="dark"] #announcement-box strong.announcement-new {
-		color: red;
+	:root[data-theme="dark"] #announcement-box .announcement-new {
+		background: #4d2320;
+		color: #ff9a8c;
 	}
 
 	@media (prefers-color-scheme: dark) {
-		:root:not([data-theme="light"]) #announcement-box strong.announcement-new {
-			color: red;
+		:root:not([data-theme="light"]) #announcement-box .announcement-new {
+			background: #4d2320;
+			color: #ff9a8c;
 		}
 	}
 

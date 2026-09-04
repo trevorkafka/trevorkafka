@@ -126,22 +126,81 @@ $(document).on("scroll", function() {
   }
 });
 
-// SUMMARY/DETAILS: Script that makes sure that only one FAQ details panel can be opened at a time.
-// Code source: https://stackoverflow.com/questions/16751345/automatically-close-all-the-other-details-tags-after-opening-a-specific-detai
+// SUMMARY/DETAILS: FAQ panels open/close with a smooth height+fade animation,
+// and only one panel stays open at a time.
+// (Native <details> can't be transitioned, so the summary click is intercepted
+// and the content div is animated via the Web Animations API before the open
+// state actually flips. Keyboard/other toggles fall back to an instant switch.)
 
 const All_Details = document.querySelectorAll('div.FAQ > details');
+const FAQ_ANIM_MS = 260;
+const FAQ_REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-All_Details.forEach(deet=>{
-  deet.addEventListener('toggle', toggleOpenOneOnly)
-})
-
-function toggleOpenOneOnly(e) {
-  if (this.open) {
-    All_Details.forEach(deet=>{
-      if (deet!=this && deet.open) deet.open = false
-    });
-  }
+function faqContent(det) {
+  const s = det.querySelector('summary');
+  return s ? s.nextElementSibling : null;
 }
+
+// The open/close STATE is driven by a timer (which always runs, even in a
+// backgrounded tab), so a panel can never get stuck; the Web Animations pass is
+// purely visual polish that plays when the page is actually being painted.
+function faqCleanup(det, c) {
+  c.style.overflow = '';
+  c.style.height = '';
+  delete det.dataset.faqBusy;
+}
+
+function faqOpen(det) {
+  const c = faqContent(det);
+  det.open = true;
+  if (!c || FAQ_REDUCED) return;
+  const end = c.scrollHeight;
+  det.dataset.faqBusy = 'open';
+  c.style.overflow = 'hidden';
+  c.animate(
+    [{ height: '0px', opacity: 0 }, { height: end + 'px', opacity: 1 }],
+    { duration: FAQ_ANIM_MS, easing: 'ease' }
+  );
+  clearTimeout(det._faqTimer);
+  det._faqTimer = setTimeout(() => faqCleanup(det, c), FAQ_ANIM_MS);
+}
+
+function faqClose(det) {
+  const c = faqContent(det);
+  if (!c || FAQ_REDUCED) { det.open = false; return; }
+  const start = c.offsetHeight;
+  det.dataset.faqBusy = 'close';
+  c.style.overflow = 'hidden';
+  c.animate(
+    [{ height: start + 'px', opacity: 1 }, { height: '0px', opacity: 0 }],
+    { duration: FAQ_ANIM_MS, easing: 'ease' }
+  );
+  clearTimeout(det._faqTimer);
+  det._faqTimer = setTimeout(() => { det.open = false; faqCleanup(det, c); }, FAQ_ANIM_MS);
+}
+
+All_Details.forEach(det => {
+  const summary = det.querySelector('summary');
+  if (!summary) return;
+
+  summary.addEventListener('click', function (e) {
+    e.preventDefault();
+    if (det.dataset.faqBusy) return;   // ignore clicks mid-animation
+    if (det.open) {
+      faqClose(det);
+    } else {
+      All_Details.forEach(other => { if (other !== det && other.open) faqClose(other); });
+      faqOpen(det);
+    }
+  });
+
+  // Keep "one open at a time" for opens that bypass the click handler
+  // (keyboard, or a link that sets .open directly).
+  det.addEventListener('toggle', function () {
+    if (det.dataset.faqBusy || !det.open) return;
+    All_Details.forEach(other => { if (other !== det && other.open) faqClose(other); });
+  });
+});
 
 //READ MORE: cript that makes "read more" links in the blockquote section
 

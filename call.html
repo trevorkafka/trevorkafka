@@ -30,6 +30,22 @@
 		<trevorkafka-announcement></trevorkafka-announcement>
 
 		<div class="content">
+		    <style>
+		        /* Brief left-right nudge on page load, drawing the eye from step 1 to step 2. */
+		        .arrow-jiggle {
+		            display: inline-block;
+		            animation: arrow-jiggle 0.55s ease-in-out 2;
+		        }
+		        @keyframes arrow-jiggle {
+		            0%, 100% { transform: translateX(0); }
+		            25%      { transform: translateX(-8px); }
+		            55%      { transform: translateX(6px); }
+		            80%      { transform: translateX(-3px); }
+		        }
+		        @media (prefers-reduced-motion: reduce) {
+		            .arrow-jiggle { animation: none; }
+		        }
+		    </style>
 		    <h1><i class="fa-solid fa-route"></i> Get Started with an Intro Call</h1>
 		    <div style="display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; align-items: center; margin: 30px 0;">
 
@@ -40,7 +56,7 @@
 		        </div>
 
 		        <div class="widescreen" style="font-size: 300%; color: var(--color4);">
-		            <i class="fa-solid fa-arrow-right"></i>
+		            <i class="fa-solid fa-arrow-right arrow-jiggle"></i>
 		        </div>
 		        <div class="narrowscreen" style="font-size: 300%; color: var(--color4); width: 100%; text-align: center;">
 		            <i class="fa-solid fa-arrow-down"></i>
@@ -112,6 +128,8 @@
 		</div>
 
 	<h2><i class="fa-solid fa-calendar-days"></i> Book Your Intro Call</h2>
+
+	<p>Select a date and time for your 20-minute intro call below to get started.</p>
 
 	</div>
 	<div style="margin:auto" class="full-width-media">
