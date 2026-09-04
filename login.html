@@ -82,12 +82,14 @@
 		</div> -->
 
 		<div style="max-width: 500px; margin: 0 auto 1em;">
+			<div class="tk-table-frame" style="border: solid 1px white; border-radius: 20px; overflow: hidden;">
 			<div class="invert-in-dark" style="background-color: white; border-radius: 20px; padding: 20px; position: relative; min-height: 120px;">
 				<div id="login-widget-spinner" class="widget-spinner"></div>
 				<!-- TUTORBIRD LOGIN WIDGET -->
 				<div id="login-widget-target" style="position: relative; z-index: 1;">
 					<script src="https://app.tutorbird.com/Widget/v4/Widget.ashx?settings=eyJTY2hvb2xJRCI6InNjaF9kMXhKMiIsIldlYnNpdGVJRCI6Indic19zSkpzIiwiV2Vic2l0ZUJsb2NrSUQiOiJ3YmJfekZ5TEpEIn0="></script>
 				</div>
+			</div>
 			</div>
 			<script>
 				// Hide the spinner once the TutorBird widget has rendered (gains
@@ -114,7 +116,7 @@
 
 		<h1><i class="fa-solid fa-circle-question"></i> Frequently Asked Questions</h1>
 		<div class="FAQ">
-			<details>
+			<details id="cancellation-policy">
 				<summary class="red">Please note that I hold a strict 24-hour cancellation policy (click for details)</summary>
 				<div style="background-color: var(--faq-red-surface); border-radius: 10px">
 					<ul>
@@ -146,7 +148,7 @@
 					<p>If you are having trouble logging in and you haven't taken class with me in over a year, your account may have been archived. Please email <trevorkafka-email></trevorkafka-email> to confirm availability and reactivate (I do this to prevent overbooking of appointments).</p>
 				</div>
 			</details>
-			<details>
+			<details id="lesson-lengths">
 				<summary>Information about lesson lengths</summary>
 				<div>
 					<ul>
@@ -160,11 +162,16 @@
 							Lesson fees are prorated based on the length of each lesson.
 						</li>
 						<li>
-							My recommended lesson schedules based on student ages are shown below.
+							My recommended lesson schedules by student level are shown below.
 						</li>
 					</ul>
-					<div style="width: fit-content; margin: 2em auto 2em auto; border-radius: 10px; overflow: hidden; box-shadow: 1px 1px 10px var(--tint-4); border: solid 1px white;">
-					<table style="border-collapse: collapse;">
+					<div class="tk-table-frame" style="width: fit-content; margin: 2em auto 2em auto; border-radius: 10px; overflow: hidden; border: solid 1px white;">
+					<style>
+						/* Direct (var-based) cell color so it switches instantly with the theme
+						   instead of animating through the background (which reads as a flash). */
+						.lesson-schedule td { color: var(--color1); }
+					</style>
+					<table class="lesson-schedule" style="border-collapse: collapse;">
 						<thead>
 							<tr style="background-color: var(--color1); color: var(--color3);">
 								<th style="padding: 14px 20px; text-align: left;">Student level</th>
@@ -174,7 +181,7 @@
 						<tbody>
 							<tr>                                               <td style="padding: 12px 20px;">Middle school</td><td style="padding: 12px 20px;">45-minute lessons, 1–2 times per week</td></tr>
 							<tr style="background-color: var(--color4light);"><td style="padding: 12px 20px;">High school</td><td style="padding: 12px 20px;">60-minute lessons, 1–2 times per week<br>(or 45-minute lessons, 2–3 times per week)</td></tr>
-							<tr>                                               <td style="padding: 12px 20px;">Adult</td><td style="padding: 12px 20px;">60- to 90-minute lessons, 1–2 times per week</td></tr>
+							<tr>                                               <td style="padding: 12px 20px;">College / Adult</td><td style="padding: 12px 20px;">60- to 90-minute lessons, 1–2 times per week</td></tr>
 						</tbody>
 					</table>
 					</div>
@@ -259,6 +266,12 @@
 				<div align="center"><img src="media/help - cancel lesson.png" style="width: min(500px, 100%); border-radius: 20px"></div>	
 				<p>Please note that students whose parent/guardian(s) haven't granted them calendar booking permissions will not be able to sign up for or cancel lessons on the calendar. This setting can be changed on the parent/guardian-side profile settings.</p>
 			<p>If in a pinch, you can also email me at <trevorkafka-email></trevorkafka-email> or text me in order to make a cancellation.</p>
+			</details>
+			<details>
+				<summary>Where can I find my class notes?</summary>
+				<div>
+					<p>Notes and materials from our tutoring sessions live on the <a href="/mynotes.html">My Class Notes</a> page. Head there and enter your first and last name to open your personal folder.</p>
+				</div>
 			</details>
 		</div>
 		<div style="padding-bottom: 20px"></div>

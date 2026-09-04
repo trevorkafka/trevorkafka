@@ -48,21 +48,17 @@
 				:root:not([data-theme="light"]) .page-new { background: #4d2320; color: #ff9a8c; }
 			}
 
-			/* Anchor pills: darkened gradient in light mode for better contrast with the
-			   white text; the original brighter gradient reads fine on the dark ground. */
+			/* Anchor pills: one gradient in both themes, with cream text (the light
+			   page background) held constant across light and dark. */
 			.referral-pill { background-image: linear-gradient(330deg, #E0603C, rgb(150, 0, 90)); }
-			:root[data-theme="dark"] .referral-pill { background-image: linear-gradient(330deg, #FB7F64, rgb(175, 0, 105)); }
-			@media (prefers-color-scheme: dark) {
-				:root:not([data-theme="light"]) .referral-pill { background-image: linear-gradient(330deg, #FB7F64, rgb(175, 0, 105)); }
-			}
 		</style>
 		<h1><i class="fa-solid fa-gift"></i> Referral Discount <span class="page-new">NEW</span></h1>
 
 		<p style="font-family: Freeman; font-size: 120%; color: var(--color1); margin-top: -0.5em;">A thank-you for my current students</p>
 
 		<p style="display: flex; flex-wrap: wrap; gap: 8px;">
-			<a href="#referrer" style="text-decoration: none;"><span class="referral-pill" style="color: white; font-family: Freeman; font-size: 110%; padding: 6px 16px; border-radius: 100px; display: inline-block;">You get a free lesson</span></a>
-			<a href="#referred" style="text-decoration: none;"><span class="referral-pill" style="color: white; font-family: Freeman; font-size: 110%; padding: 6px 16px; border-radius: 100px; display: inline-block;">Your friend's 3rd lesson is free</span></a>
+			<a href="#referrer" style="text-decoration: none;"><span class="referral-pill tk-table-frame" style="color: #F5EEE2; font-family: Freeman; font-size: 110%; padding: 6px 16px; border-radius: 100px; display: inline-block;">You get a free lesson</span></a>
+			<a href="#referred" style="text-decoration: none;"><span class="referral-pill tk-table-frame" style="color: #F5EEE2; font-family: Freeman; font-size: 110%; padding: 6px 16px; border-radius: 100px; display: inline-block;">Your friend's 3rd lesson is free</span></a>
 		</p>
 
 		<img class="glow-shadow" src="/media/TK indonesia.png" alt="Trevor Kafka headshot in Indonesia" style="float: right; width: min(180px, 38vw); border-radius: 100%; margin: 0 0 15px 25px;">
@@ -78,9 +74,9 @@
 
 		<h2 id="referrer" style="scroll-margin-top: 95px">You get a free lesson</h2>
 
-		<p>As a thank-you for the introduction, you receive <strong>one free lesson</strong> for each new student you refer.</p>
+		<p>As a thank-you for the introduction, you receive <strong>one free lesson</strong> for each new student you refer. Refer as many friends as you like; <strong>each successful referral earns you another free lesson</strong>.</p>
 
-		<div style="width: fit-content; margin: 2em auto 2em auto; border-radius: 10px; overflow: hidden; box-shadow: 1px 1px 10px var(--tint-4); border: solid 1px white;">
+		<div class="tk-table-frame" style="width: fit-content; margin: 2em auto 2em auto; border-radius: 10px; overflow: hidden; border: solid 1px white;">
 		<table style="border-collapse: collapse;">
 			<thead>
 				<tr style="background-color: var(--color1); color: var(--color3);">
@@ -97,13 +93,11 @@
 		</table>
 		</div>
 
-		<p>Refer as many friends as you like &mdash; <strong>each successful referral earns you another free lesson</strong>.</p>
-
 		<h2 id="referred" style="scroll-margin-top: 95px">Your friend's 3rd lesson is free</h2>
 
-		<p>A new student you refer pays full price for their first two lessons; their third lesson is on the house.</p>
+		<p>A new student you refer pays full price for their first two lessons; their third lesson is on the house. After the free third lesson, the regular rate resumes.</p>
 
-		<div style="width: fit-content; margin: 2em auto 2em auto; border-radius: 10px; overflow: hidden; box-shadow: 1px 1px 10px var(--tint-4); border: solid 1px white;">
+		<div class="tk-table-frame" style="width: fit-content; margin: 2em auto 2em auto; border-radius: 10px; overflow: hidden; border: solid 1px white;">
 		<table style="border-collapse: collapse;">
 			<thead>
 				<tr style="background-color: var(--color1); color: var(--color3);">
@@ -119,8 +113,6 @@
 		</table>
 		</div>
 
-		<p>After the free third lesson, the regular rate resumes.</p>
-
 		<h3>Important Details</h3>
 
 		<ul>
@@ -129,6 +121,7 @@
 			<li>The referrer&rsquo;s free lesson is credited only after the referred student completes and pays for their first two lessons.</li>
 			<li>There is no limit on how many friends you may refer.</li>
 			<li>Free lessons must be used within 90 days. This applies to both the referrer and the referred student.</li>
+			<li>A free lesson is an <strong>additional lesson credit</strong>. It does not trigger a refund of any prepaid lessons and does not replace or modify existing prepaid lessons (for example, lessons from a <a href="/announcements/package-discounts.html">package</a>).</li>
 		</ul>
 
 		<p>Questions? Feel free to reach out via email at any time at <trevorkafka-email></trevorkafka-email>.</p>

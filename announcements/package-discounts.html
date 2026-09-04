@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<head>
+<!-- Apply saved light/dark choice before paint (avoids a flash when the device default differs from the toggle) -->
+<script>try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+	<title>Package Discounts - Trevor Kafka</title>
+
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+
+	<link rel="stylesheet" href="/style.css">
+	<link rel="shortcut icon" href="/favicon.ico">
+
+	<!-- Google font stuff -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=block" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Freeman&display=block" rel="stylesheet">
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	<script type="text/javascript" src="/script.js" defer></script>
+
+	<!-- MathJax (SVG output) for the package-total formula -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js" id="MathJax-script" async></script>
+</head>
+
+<body>
+
+	<trevorkafka-nav></trevorkafka-nav>
+
+	<div class="content">
+
+		<trevorkafka-announcement></trevorkafka-announcement>
+
+		<style>
+			/* Anchor pills: one gradient in both themes, with cream text (the light
+			   page background) held constant across light and dark. */
+			.package-pill { background-image: linear-gradient(330deg, #E0603C, rgb(150, 0, 90)); }
+
+			/* "NEW" tag matching the announcement box (darkred, brighter red in dark mode). */
+			.page-new {
+				background: #f6d5d5;
+				color: #b02a1e;
+				font-family: Arial, sans-serif;
+				font-size: 32%;
+				font-weight: bold;
+				letter-spacing: 0.05em;
+				padding: 0.15em 0.6em;
+				border-radius: 999px;
+				vertical-align: middle;
+				position: relative;
+				top: -0.15em;
+			}
+			:root[data-theme="dark"] .page-new { background: #4d2320; color: #ff9a8c; }
+			@media (prefers-color-scheme: dark) {
+				:root:not([data-theme="light"]) .page-new { background: #4d2320; color: #ff9a8c; }
+			}
+		</style>
+		<h1><i class="fa-solid fa-layer-group"></i> Package Discounts <span class="page-new">NEW</span></h1>
+
+		<p style="font-family: Freeman; font-size: 120%; color: var(--color1); margin-top: -0.5em;">Prepay for lessons and save</p>
+
+		<p style="display: flex; flex-wrap: wrap; gap: 8px;">
+			<a href="#pricing" style="text-decoration: none;"><span class="package-pill tk-table-frame" style="color: #F5EEE2; font-family: Freeman; font-size: 110%; padding: 6px 16px; border-radius: 100px; display: inline-block;">10 lessons: 5% off</span></a>
+			<a href="#pricing" style="text-decoration: none;"><span class="package-pill tk-table-frame" style="color: #F5EEE2; font-family: Freeman; font-size: 110%; padding: 6px 16px; border-radius: 100px; display: inline-block;">20 lessons: 10% off</span></a>
+			<a href="#pricing" style="text-decoration: none;"><span class="package-pill tk-table-frame" style="color: #F5EEE2; font-family: Freeman; font-size: 110%; padding: 6px 16px; border-radius: 100px; display: inline-block;">40 lessons: 15% off</span></a>
+		</p>
+
+		<img class="glow-shadow" src="/media/TK indonesia.png" alt="Trevor Kafka headshot in Indonesia" style="float: right; width: min(180px, 38vw); border-radius: 100%; margin: 0 0 15px 25px;">
+
+		<p>Planning to work together for the long haul? Buy your lessons in a package and <strong>save on every lesson</strong>. The more lessons you purchase up front, the bigger your discount, up to <strong>15% off</strong>. Just email me at <trevorkafka-email></trevorkafka-email> to set up a package.</p>
+
+		<h2 id="pricing" style="scroll-margin-top: 95px">Package Options</h2>
+
+		<p>Buy your lessons in a package of <strong>10, 20, or 40</strong>, paid up front, and your per-lesson rate is discounted accordingly. The more lessons you buy, the bigger the discount, and you schedule the lessons at your own pace within the package's expiration window.</p>
+
+		<div class="tk-table-frame" style="width: fit-content; margin: 2em auto 2em auto; border-radius: 10px; overflow: hidden; border: solid 1px white;">
+		<table style="border-collapse: collapse;">
+			<thead>
+				<tr style="background-color: var(--color1); color: var(--color3);">
+					<th style="padding: 14px 20px; text-align: left;">Package</th>
+					<th style="padding: 14px 20px; text-align: left;">Discount</th>
+					<th style="padding: 14px 20px; text-align: left;">Expiration</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="padding: 12px 20px; white-space: nowrap;">10 lessons</td>
+					<td style="padding: 12px 20px;"><strong class="color" style="font-family: Freeman; font-size: 115%; line-height: 1;">5% off</strong></td>
+					<td style="padding: 12px 20px; white-space: nowrap;">90 days</td>
+				</tr>
+				<tr style="background-color: var(--color4light);">
+					<td style="padding: 12px 20px; white-space: nowrap;">20 lessons</td>
+					<td style="padding: 12px 20px;"><strong class="color" style="font-family: Freeman; font-size: 115%; line-height: 1;">10% off</strong></td>
+					<td style="padding: 12px 20px; white-space: nowrap;">180 days</td>
+				</tr>
+				<tr>
+					<td style="padding: 12px 20px; white-space: nowrap;">40 lessons</td>
+					<td style="padding: 12px 20px;"><strong class="color" style="font-family: Freeman; font-size: 115%; line-height: 1;">15% off</strong></td>
+					<td style="padding: 12px 20px; white-space: nowrap;">365 days</td>
+				</tr>
+			</tbody>
+		</table>
+		</div>
+
+		<p>The package price is determined by the following formula.</p>
+
+		<p style="text-align: center; overflow-x: auto;">\[ (\text{package price}) = (\text{package size}) \times (\text{lesson price}) \times \left(1 - \frac{\text{discount}}{100} \right) \]</p>
+
+		<p>As always, your lesson price is based on your chosen <a href="/login.html#lesson-lengths">lesson length</a> and <a href="/index.html#pricing-faq">lesson rate</a>.</p>
+
+		<h3>Important Details</h3>
+
+		<ul>
+			<li>Packages are sold on a <strong>per-student basis</strong> and cannot be shared between students.</li>
+			<li>Each package must be used within its <strong>expiration window</strong>, counted from the date of purchase.</li>
+			<li>Package lessons follow my standard <a href="/login.html#cancellation-policy">24-hour cancellation policy</a>.</li>
+			<li>To purchase a package, email me at <trevorkafka-email></trevorkafka-email> and I'll get you set up.</li>
+		</ul>
+
+		<p>Questions? Feel free to reach out via email at any time at <trevorkafka-email></trevorkafka-email>.</p>
+
+		<br>
+
+	</div>
+
+</body>
+
+<trevorkafka-footer></trevorkafka-footer>

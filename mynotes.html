@@ -50,7 +50,13 @@
 				<button onclick="lookup()" style="font-family: Freeman, serif; font-size: 1em;"><i class="fa-solid fa-magnifying-glass"></i> find my notes</button>
 			</p>
 			<p id="message" style="color: red; font-family: Freeman, serif; font-size: 130%;"></p>
+			<div id="notes-actions" style="display: none; justify-content: center; flex-wrap: wrap; gap: 12px; margin-top: 4px;">
+				<button type="button" id="copy-link-btn" style="font-family: Freeman, serif; font-size: 1em;"><i class="fa-solid fa-link"></i> Copy link</button>
+				<button type="button" id="open-folder-btn" style="font-family: Freeman, serif; font-size: 1em;"><i class="fa-brands fa-google-drive"></i> Open Google Drive folder</button>
+			</div>
 		</div>
+
+		<p>Does something seem missing or are you in need of any additional resources? Email me at <trevorkafka-email></trevorkafka-email>.</p>
 
 		<style>
 			/* 1. Define Theme Variables */
@@ -157,14 +163,37 @@
         return;
       }
 
+      const actions = document.getElementById("notes-actions");
+      actions.style.display = "none";
+      msg.style.color = "red";
       msg.textContent = "Checking...";
-      
+
       fetch(`${API_URL}?first=${encodeURIComponent(first)}&last=${encodeURIComponent(last)}`)
         .then(res => res.json())
         .then(data => {
           if (data.link) {
-          	msg.textContent = "Success! Redirecting now...";
-            window.location.href = data.link;
+            msg.style.color = "green";
+            msg.textContent = "Success! Your notes folder is ready.";
+
+            const copyBtn = document.getElementById("copy-link-btn");
+            const openBtn = document.getElementById("open-folder-btn");
+            const copyLabel = '<i class="fa-solid fa-link"></i> Copy link';
+
+            openBtn.onclick = () => window.open(data.link, "_blank", "noopener");
+            copyBtn.innerHTML = copyLabel;
+            copyBtn.onclick = () => {
+              const done = () => {
+                copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+                setTimeout(() => { copyBtn.innerHTML = copyLabel; }, 1500);
+              };
+              if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(data.link).then(done, done);
+              } else {
+                done();
+              }
+            };
+
+            actions.style.display = "flex";
           } else {
             msg.textContent = "No match found. If you input your name correctly, email me at tutor@trevorkafka.com and I will assist as soon as possible.";
             // removed this from the previous line: data.error ||

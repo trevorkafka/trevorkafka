@@ -31,19 +31,28 @@
 
 		<div class="content">
 		    <style>
-		        /* Brief left-right nudge on page load, drawing the eye from step 1 to step 2. */
-		        .arrow-jiggle {
+		        /* Brief nudge on page load, drawing the eye from step 1 to step 2:
+		           horizontal on wide screens (arrow points right), vertical on
+		           narrow screens (arrow points down). */
+		        .arrow-jiggle, .arrow-jiggle-v {
 		            display: inline-block;
-		            animation: arrow-jiggle 0.55s ease-in-out 2;
 		        }
+		        .arrow-jiggle { animation: arrow-jiggle 0.55s ease-in-out 2; }
+		        .arrow-jiggle-v { animation: arrow-jiggle-v 0.55s ease-in-out 2; }
 		        @keyframes arrow-jiggle {
 		            0%, 100% { transform: translateX(0); }
 		            25%      { transform: translateX(-8px); }
 		            55%      { transform: translateX(6px); }
 		            80%      { transform: translateX(-3px); }
 		        }
+		        @keyframes arrow-jiggle-v {
+		            0%, 100% { transform: translateY(0); }
+		            25%      { transform: translateY(-8px); }
+		            55%      { transform: translateY(6px); }
+		            80%      { transform: translateY(-3px); }
+		        }
 		        @media (prefers-reduced-motion: reduce) {
-		            .arrow-jiggle { animation: none; }
+		            .arrow-jiggle, .arrow-jiggle-v { animation: none; }
 		        }
 		    </style>
 		    <h1><i class="fa-solid fa-route"></i> Get Started with an Intro Call</h1>
@@ -59,7 +68,7 @@
 		            <i class="fa-solid fa-arrow-right arrow-jiggle"></i>
 		        </div>
 		        <div class="narrowscreen" style="font-size: 300%; color: var(--color4); width: 100%; text-align: center;">
-		            <i class="fa-solid fa-arrow-down"></i>
+		            <i class="fa-solid fa-arrow-down arrow-jiggle-v"></i>
 		        </div>
 
 		        <div style="flex: 1 1 280px; max-width: 400px; text-align: center;">

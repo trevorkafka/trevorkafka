@@ -301,6 +301,16 @@
 		font-style: italic;
 	}
 
+	/* Framed data tables: subtle drop shadow in light mode; none in dark, where
+	   the tint-based shadow would otherwise read as a white glow. */
+	.tk-table-frame {
+		box-shadow: 1px 1px 10px var(--tint-4);
+	}
+	:root[data-theme="dark"] .tk-table-frame { box-shadow: none; }
+	@media (prefers-color-scheme: dark) {
+		:root:not([data-theme="light"]) .tk-table-frame { box-shadow: none; }
+	}
+
 	.emphatic {
 		font-size:150%; 
 		font-weight:bold;
@@ -425,6 +435,7 @@
 
 	div.FAQ > details {
 		border-bottom: 2px solid var(--divider);
+		scroll-margin-top: 120px; /* clear the fixed nav (plus breathing room) when linked to via #hash */
 	}
 
 	div.FAQ > details > div {
@@ -631,7 +642,7 @@ div.hovertarget:hover .hoverdisplay-text {
 	--surface-border: #ffffff24;
 	--hover-surface:  #ffffff1f;
 	--divider:        #ffffff1f;
-	--footer-bg:      #1B1620;
+	--footer-bg:      #000000;
 	--footer-text:    #F2EADF;
 	--footer-muted:   #9C8AA0;
 	--button-text:    #E1CEB4;
@@ -652,7 +663,7 @@ div.hovertarget:hover .hoverdisplay-text {
 		--surface-border: #ffffff24;
 		--hover-surface:  #ffffff1f;
 		--divider:        transparent;
-		--footer-bg:      #1B1620;
+		--footer-bg:      #000000;
 		--footer-text:    #F2EADF;
 		--footer-muted:   #9C8AA0;
 		--button-text:    #E1CEB4;

@@ -102,7 +102,10 @@ $('trevorkafka-nav').load('/snippets/navigation.html', function() {
 
 //other replacements
 $('trevorkafka-email').load('/snippets/email.html')
-$('trevorkafka-footer').load('/snippets/footer.html')
+$('trevorkafka-footer').load('/snippets/footer.html', function() {
+        var y = document.getElementById('footer-year');
+        if (y) y.textContent = new Date().getFullYear();
+    })
 $('trevorkafka-announcement').load('/snippets/announcement.html')
 $(`trevorkafka-availability`).load('/snippets/availability.html')
 
@@ -136,47 +139,47 @@ const All_Details = document.querySelectorAll('div.FAQ > details');
 const FAQ_ANIM_MS = 260;
 const FAQ_REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-function faqContent(det) {
-  const s = det.querySelector('summary');
-  return s ? s.nextElementSibling : null;
-}
-
 // The open/close STATE is driven by a timer (which always runs, even in a
 // backgrounded tab), so a panel can never get stuck; the Web Animations pass is
 // purely visual polish that plays when the page is actually being painted.
-function faqCleanup(det, c) {
-  c.style.overflow = '';
-  c.style.height = '';
+// We animate the <details> element's own height (not a single content child),
+// so panels work regardless of how their content is structured — some have one
+// wrapper div, others have several loose children after the summary.
+function faqCleanup(det, anim) {
+  if (anim) anim.cancel();
+  det.style.overflow = '';
+  det.style.height = '';
   delete det.dataset.faqBusy;
 }
 
 function faqOpen(det) {
-  const c = faqContent(det);
+  if (FAQ_REDUCED) { det.open = true; return; }
+  const startH = det.offsetHeight;   // collapsed height (summary only)
   det.open = true;
-  if (!c || FAQ_REDUCED) return;
-  const end = c.scrollHeight;
+  const endH = det.offsetHeight;     // expanded height (summary + content)
   det.dataset.faqBusy = 'open';
-  c.style.overflow = 'hidden';
-  c.animate(
-    [{ height: '0px', opacity: 0 }, { height: end + 'px', opacity: 1 }],
-    { duration: FAQ_ANIM_MS, easing: 'ease' }
+  det.style.overflow = 'hidden';
+  const anim = det.animate(
+    [{ height: startH + 'px' }, { height: endH + 'px' }],
+    { duration: FAQ_ANIM_MS, easing: 'ease', fill: 'forwards' }
   );
   clearTimeout(det._faqTimer);
-  det._faqTimer = setTimeout(() => faqCleanup(det, c), FAQ_ANIM_MS);
+  det._faqTimer = setTimeout(() => faqCleanup(det, anim), FAQ_ANIM_MS);
 }
 
 function faqClose(det) {
-  const c = faqContent(det);
-  if (!c || FAQ_REDUCED) { det.open = false; return; }
-  const start = c.offsetHeight;
+  if (FAQ_REDUCED) { det.open = false; return; }
+  const summary = det.querySelector('summary');
+  const startH = det.offsetHeight;                       // expanded height
+  const endH = summary ? summary.offsetHeight : 0;       // collapsed target
   det.dataset.faqBusy = 'close';
-  c.style.overflow = 'hidden';
-  c.animate(
-    [{ height: start + 'px', opacity: 1 }, { height: '0px', opacity: 0 }],
-    { duration: FAQ_ANIM_MS, easing: 'ease' }
+  det.style.overflow = 'hidden';
+  const anim = det.animate(
+    [{ height: startH + 'px' }, { height: endH + 'px' }],
+    { duration: FAQ_ANIM_MS, easing: 'ease', fill: 'forwards' }
   );
   clearTimeout(det._faqTimer);
-  det._faqTimer = setTimeout(() => { det.open = false; faqCleanup(det, c); }, FAQ_ANIM_MS);
+  det._faqTimer = setTimeout(() => { det.open = false; faqCleanup(det, anim); }, FAQ_ANIM_MS);
 }
 
 All_Details.forEach(det => {
@@ -201,6 +204,57 @@ All_Details.forEach(det => {
     All_Details.forEach(other => { if (other !== det && other.open) faqClose(other); });
   });
 });
+
+// If the page is loaded with a #hash pointing at an FAQ panel (e.g. a cross-page
+// link to a specific question), open that panel and bring it into view.
+function openFaqFromHash() {
+  const id = decodeURIComponent(location.hash.slice(1));
+  if (!id) return null;
+  const el = document.getElementById(id);
+  if (!el || el.tagName !== 'DETAILS' || !el.closest('div.FAQ')) return null;
+  if (!el.open) faqOpen(el);
+  el.scrollIntoView({ block: 'start' });   // respects scroll-margin-top; instant so re-pins don't drift
+  return el;
+}
+
+// Content above the FAQ (nav, announcement, the availability calendar, the
+// TutorBird widget) loads asynchronously and pushes the target down after the
+// first scroll. Re-pin every 200ms until the target's position holds steady,
+// but stop immediately if the visitor starts scrolling themselves.
+let faqPinTimer = null;
+function pinFaqFromHash() {
+  if (faqPinTimer) { clearInterval(faqPinTimer.iv); faqPinTimer.stop(); }
+  const first = openFaqFromHash();
+  if (!first) return;
+
+  let last = -1, stable = 0, ticks = 0;
+  function stop() {
+    window.removeEventListener('wheel', stop);
+    window.removeEventListener('touchmove', stop);
+    window.removeEventListener('keydown', onKey);
+    if (faqPinTimer) { clearInterval(faqPinTimer.iv); faqPinTimer = null; }
+  }
+  function onKey(e) {
+    if (['ArrowUp','ArrowDown','PageUp','PageDown','Home','End',' ','Spacebar'].indexOf(e.key) !== -1) stop();
+  }
+  window.addEventListener('wheel', stop, { passive: true });
+  window.addEventListener('touchmove', stop, { passive: true });
+  window.addEventListener('keydown', onKey);
+
+  const iv = setInterval(function () {
+    const el = openFaqFromHash();
+    if (!el) { stop(); return; }
+    const top = Math.round(el.getBoundingClientRect().top);
+    if (top === last) { if (++stable >= 3) stop(); }
+    else { stable = 0; last = top; }
+    if (++ticks > 25) stop();   // ~5s hard cap
+  }, 200);
+  faqPinTimer = { iv: iv, stop: stop };
+}
+
+pinFaqFromHash();
+window.addEventListener('hashchange', pinFaqFromHash);
+window.addEventListener('load', pinFaqFromHash);
 
 //READ MORE: cript that makes "read more" links in the blockquote section
 
