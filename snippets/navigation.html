@@ -10,8 +10,8 @@
 				<div class="nav-dropdown-menu">
 					<a href="/availability.html" id="availability"><i class="fa-solid fa-calendar-days fa-fw"></i> Tutoring Availability</a>
 					<a href="/mynotes.html" id="mynotes"><i class="fa-solid fa-note-sticky fa-fw"></i> My Class Notes</a>
-					<a href="/ask.html" id="ask"><i class="fa-solid fa-circle-question fa-fw"></i> Questions &amp; Answers</a>
-					<a href="/resources.html" id="resources"><i class="fa-solid fa-folder-open fa-fw"></i> Resources</a>
+					<a href="/ask.html" id="ask"><i class="fa-solid fa-circle-question fa-fw"></i> Ask Trevor Q&amp;A</a>
+					<a href="/resources.html" id="resources"><i class="fa-solid fa-folder-open fa-fw"></i> Additional Resources</a>
 					<a href="/announcements/referral-discount.html" id="referral-discount"><i class="fa-solid fa-gift fa-fw"></i> Referral Discount <span class="nav-new">NEW</span></a>
 					<a href="/announcements/package-discounts.html" id="package-discounts"><i class="fa-solid fa-layer-group fa-fw"></i> Package Discounts <span class="nav-new">NEW</span></a>
 				</div>
@@ -38,20 +38,58 @@
 			if (a === 'dark' || a === 'light') return a;
 			return mq.matches ? 'dark' : 'light';
 		}
-		function updateIcon() {
-			var dark = effective() === 'dark';
-			btn.innerHTML = dark
-				? '<i class="fa-solid fa-sun fa-fw"></i>'
-				: '<i class="fa-solid fa-moon fa-fw"></i>';
+		function iconEl() {
+			var w = btn.querySelector('.tt-icon');
+			if (!w) {
+				btn.textContent = '';   // remove the hardcoded pre-JS icon so we don't double up
+				w = document.createElement('span');
+				w.className = 'tt-icon';
+				btn.appendChild(w);
+			}
+			return w;
+		}
+		function glyph(dark) {
+			return '<i class="fa-solid ' + (dark ? 'fa-sun' : 'fa-moon') + ' fa-fw"></i>';
+		}
+		function setLabel(dark) {
 			var label = dark ? 'Switch to light mode' : 'Switch to dark mode';
 			btn.setAttribute('aria-label', label);
 			btn.setAttribute('title', label);
 		}
+		function updateIcon() {
+			var dark = effective() === 'dark';
+			var host = iconEl();
+			var g = host.querySelector('.tt-glyph');
+			if (!g) { g = document.createElement('span'); g.className = 'tt-glyph'; host.appendChild(g); }
+			g.innerHTML = glyph(dark);
+			setLabel(dark);
+		}
+		var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+		// Rotation increments 180° per click. Parity is anchored so the moon (light
+		// mode) always rests upright at even multiples of 180°; the sun is radially
+		// symmetric, so odd multiples look identical.
+		var rot = effective() === 'dark' ? 180 : 0;
 		function toggle() {
 			var next = effective() === 'dark' ? 'light' : 'dark';
 			root.setAttribute('data-theme', next);
 			try { localStorage.setItem('theme', next); } catch (e) {}
-			updateIcon();
+			var dark = next === 'dark';
+			if (reduceMotion) { updateIcon(); return; }
+			// Spin the icon 180° and cross-fade the outgoing/incoming glyphs.
+			rot += 180;
+			var host = iconEl();
+			host.style.transform = 'rotate(' + rot + 'deg)';
+			var old = host.querySelector('.tt-glyph');
+			var g = document.createElement('span');
+			g.className = 'tt-glyph';
+			g.style.opacity = '0';
+			g.innerHTML = glyph(dark);
+			host.appendChild(g);
+			void g.offsetWidth;   // reflow so the opacity transition runs
+			g.style.opacity = '1';
+			if (old) old.style.opacity = '0';
+			setTimeout(function () { if (old && old.parentNode) old.parentNode.removeChild(old); }, 400);
+			setLabel(dark);
 		}
 		btn.addEventListener('click', toggle);
 		btn.addEventListener('keydown', function (e) {
@@ -62,6 +100,15 @@
 			if (!root.getAttribute('data-theme')) updateIcon();
 		});
 		updateIcon();
+		// Apply the initial rotation without animating, so the parity is set for
+		// the first click (invisible for the symmetric sun).
+		if (!reduceMotion && rot) {
+			var w = iconEl();
+			w.style.transition = 'none';
+			w.style.transform = 'rotate(' + rot + 'deg)';
+			void w.offsetWidth;
+			w.style.transition = '';
+		}
 	})();
 </script>
 
@@ -78,6 +125,24 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: center;
+	}
+	/* Only the icon spins on toggle, not the button's hover background. The two
+	   glyphs stack in one grid cell so they can cross-fade into each other. */
+	#theme-toggle .tt-icon {
+		display: inline-grid;
+		transition: transform 0.4s ease;
+	}
+	#theme-toggle .tt-glyph {
+		grid-area: 1 / 1;
+		transition: opacity 0.35s ease;
+	}
+	/* The global icon-space reservation adds vertical-align:-0.125em to every FA
+	   icon, which pushes the sun/moon low inside this flex/grid-centered button.
+	   Reset it here so the flexbox centering lines the icon up with the links. */
+	#theme-toggle .tt-glyph i { vertical-align: 0; }
+	@media (prefers-reduced-motion: reduce) {
+		#theme-toggle .tt-icon,
+		#theme-toggle .tt-glyph { transition: none; }
 	}
 
 	/* allow the Students dropdown to escape the rounded pill */
@@ -134,19 +199,20 @@
 		padding: 6px;
 		background-color: var(--color3);
 		border-radius: 20px;
-		box-shadow: 0px 4px 15px var(--shadow);
+		/* match the announcement box's frame: hairline border + subtle glow in
+		   light mode, and just the border (no shadow) in dark mode */
+		border: solid 1.5px var(--surface-border);
+		box-shadow: 1px 1px 10px var(--tint-4);
 		z-index: 101;
 	}
 
-	/* On dark backgrounds a drop shadow is nearly invisible, so add a faint
-	   ring to keep the dropdown visually separated from the page. */
 	:root[data-theme="dark"] .nav-dropdown-menu {
-		box-shadow: 0px 4px 15px var(--shadow), 0 0 0 1px #ffffff26;
+		box-shadow: none;
 	}
 
 	@media (prefers-color-scheme: dark) {
 		:root:not([data-theme="light"]) .nav-dropdown-menu {
-			box-shadow: 0px 4px 15px var(--shadow), 0 0 0 1px #ffffff26;
+			box-shadow: none;
 		}
 	}
 

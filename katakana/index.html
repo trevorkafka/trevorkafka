@@ -2,18 +2,20 @@
 
 <head>
 <!-- Apply saved light/dark choice before paint (avoids a flash when the device default differs from the toggle) -->
-<script>try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<script>
+try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}
+try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElement.classList.add('ann-collapsed');}catch(e){}
+(function(){var d=document.documentElement;d.classList.add('fonts-loading');var done=false;function fin(){if(done)return;done=true;d.classList.remove('fonts-loading');}setTimeout(fin,500);try{if(document.fonts&&document.fonts.load){Promise.all([document.fonts.load('1em Freeman'),document.fonts.load('1em "Great Vibes"')]).then(fin,fin);}else{fin();}}catch(e){fin();}})();
+</script>
 	<title>Katakana Reader by Trevor Kafka</title>
 	<meta name="robots" content="noindex, nofollow">
 	<meta charset="utf-8"/> <!--ensures that there aren't any issues with the display of emojis -->
 	<meta content="width=device-width" name="viewport"/> <!-- essential for making sure that the ACTUAL screen width is interpreted by the CSS as opposed to some idealized number presented by smartphones (980px+) -->
+	<link rel="preload" href="/fonts/freeman-latin.woff2" as="font" type="font/woff2" crossorigin>
+	<link rel="preload" href="/fonts/greatvibes-latin.woff2" as="font" type="font/woff2" crossorigin>
 	<link href="../style.css" rel="stylesheet"/>
 	<link href="../favicon.ico" rel="shortcut icon"/>
 <!-- Google font stuff -->
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&amp;display=block" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Freeman&amp;display=block" rel="stylesheet"/>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> <!-- use JQuery -->
 <script type="text/javascript" src="script.js" defer></script> <!-- defer means to wait to run the script until the whole page is ready -->
 
@@ -59,7 +61,6 @@
 		table-layout: fixed;
 		width: 330px;
 	}
-
 
 	#word-container {
 		text-align: center;
@@ -318,7 +319,7 @@
 	}
 
 	.inline-title {
-		font-family: freeman;
+		font-family: freeman, sans-serif;
 	}
 
 </style>
@@ -331,7 +332,7 @@
 	<div class="topbar-gradient" style="background: var(--cycle-gradient);">
 		<div class="top-bar toolbar" tag-mode="allow" id="top-toolbar">
 			<div class="top content" style="display: flex; align-items: center; justify-content: center;">
-				<span class="top-bar title" style="font-family: Freeman; font-size: 150%;">Tag Mode:</span>
+				<span class="top-bar title" style="font-family: Freeman, sans-serif; font-size: 150%;">Tag Mode:</span>
 				<span class="top-bar button" data-state="none" style="background-color: var(--color3);" id="none">clear</span>
 				<span class="top-bar button require" data-state="require" id="require">require</span>
 				<span class="top-bar button emphasize" data-state="emphasize" id="emphasize">emphasize</span>
@@ -347,7 +348,7 @@
 		<a href="#tag1-start"><div class="fixed-bottom-button" id="tag1">edit<br>basic<br>katkana</div></a>
 		<a href="#tag2-start"><div class="fixed-bottom-button" id="tag2">edit<br>consonant<br>modifiers</span></div></a>
 		<a href="#tag3-start"><div class="fixed-bottom-button" id="tag3">edit<br>vowel<br>modifiers</div></a>
-		<a href="#read-start"><div class="fixed-bottom-button" id="read"><div style="display: block">read<br><span class="word-count" style="font-size: 150%; font-family: Freeman"></span><br>words</div></div></a>
+		<a href="#read-start"><div class="fixed-bottom-button" id="read"><div style="display: block">read<br><span class="word-count" style="font-size: 150%; font-family: Freeman, sans-serif"></span><br>words</div></div></a>
 	</div>
 
 	<div class="bottom-bar toolbar" id="bottom-toolbar" style="background-color: white; display: flex; align-items: center">

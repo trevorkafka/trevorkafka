@@ -1,4 +1,23 @@
 /* */
+/* SELF-HOSTED FONTS (latin subset, downloaded from Google Fonts) */
+/* */
+
+	@font-face {
+		font-family: 'Freeman';
+		font-style: normal;
+		font-weight: 400;
+		font-display: swap;
+		src: url('/fonts/freeman-latin.woff2') format('woff2');
+	}
+	@font-face {
+		font-family: 'Great Vibes';
+		font-style: normal;
+		font-weight: 400;
+		font-display: swap;
+		src: url('/fonts/greatvibes-latin.woff2') format('woff2');
+	}
+
+/* */
 /* GLOBAL DEFAULTS AND VARIABLES */
 /* */
 
@@ -124,6 +143,40 @@
 		box-shadow: 1px 1px 10px var(--shadow);
 	}
 
+	/* Reserve height for the announcement box while its snippet is still loading,
+	   so its arrival doesn't shove the page down. :empty only applies before the
+	   content is injected, so there's no leftover gap once it loads. Values are
+	   approximate — tune to the current announcement's rendered height. */
+	trevorkafka-announcement { display: block; }
+	/* Reservations measured against the current 3-bullet announcement's rendered
+	   height (box height minus its -20px bottom margin). The expanded box grows
+	   as bullets wrap on narrower screens, so it steps up at breakpoints; the
+	   collapsed pill is a fixed small height at every width. Re-measure if the
+	   announcement's text length changes. */
+	trevorkafka-announcement:empty { min-height: 188px; }              /* expanded (default) */
+	html.ann-collapsed trevorkafka-announcement:empty { min-height: 16px; }  /* collapsed pill */
+	@media (max-width: 700px) { trevorkafka-announcement:empty { min-height: 190px; } }
+	@media (max-width: 540px) { trevorkafka-announcement:empty { min-height: 215px; } }
+	@media (max-width: 400px) { trevorkafka-announcement:empty { min-height: 270px; } }
+
+	/* Hold page titles until Freeman / Great Vibes are ready (capped at 0.5s by
+	   the inline head script), so they don't flash the fallback and reflow. */
+	.fonts-loading h1,
+	.fonts-loading [style*="Great Vibes"] { visibility: hidden; }
+
+	/* Reserve the box a Font Awesome icon will occupy before the kit swaps the
+	   <i> placeholder for its <svg>, so text neither shifts sideways nor hops
+	   vertically when the icons appear. The width, height and baseline offset
+	   here match FA's default .svg-inline--fa metrics (1em tall, -0.125em
+	   baseline; ~1em wide, or 1.25em for fixed-width fa-fw icons). */
+	i.fa-solid, i.fa-regular, i.fa-brands {
+		display: inline-block;
+		min-width: 1em;
+		height: 1em;
+		vertical-align: -0.125em;
+	}
+	i.fa-fw { min-width: 1.25em; }
+
 /* */
 /* TOP NAVIGATION BAR */
 /* */
@@ -155,7 +208,7 @@
 		font-weight: bold;
 		font-size: 170%; /* has narrowscreen override */
 		color: var(--color1);
-		font-family: Freeman;
+		font-family: Freeman, sans-serif;
 	}
 
 	.nav-spacer {
@@ -218,7 +271,7 @@
 	h1, h2 {
 		margin-top: 50px;  /* has narrowscreen override */
 		margin-bottom: 20px;
-		font-family: freeman;
+		font-family: freeman, sans-serif;
 		color: var(--color1);
 	}
 
@@ -309,6 +362,30 @@
 	:root[data-theme="dark"] .tk-table-frame { box-shadow: none; }
 	@media (prefers-color-scheme: dark) {
 		:root:not([data-theme="light"]) .tk-table-frame { box-shadow: none; }
+	}
+
+	/* italki pronunciation buttons in dark mode: match the announcement box
+	   (page-colored fill, hairline border, no drop shadow) instead of the
+	   light-mode tint + shadow. Scoped with :not(.japanese) so the katakana
+	   page's .japanese.word-box buttons keep their own styling. Hover keeps its
+	   tint feedback. */
+	:root[data-theme="dark"] .word-box:not(.japanese) {
+		background-color: var(--color3);
+		border: solid 1.5px var(--surface-border);
+		box-shadow: none;
+	}
+	:root[data-theme="dark"] .word-box.has-audio:not(.japanese):hover {
+		background-color: var(--tint-5);
+	}
+	@media (prefers-color-scheme: dark) {
+		:root:not([data-theme="light"]) .word-box:not(.japanese) {
+			background-color: var(--color3);
+			border: solid 1.5px var(--surface-border);
+			box-shadow: none;
+		}
+		:root:not([data-theme="light"]) .word-box.has-audio:not(.japanese):hover {
+			background-color: var(--tint-5);
+		}
 	}
 
 	.emphatic {

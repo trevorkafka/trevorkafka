@@ -97,7 +97,18 @@
 
 //navigation bar HTML insertion and addition of "active-link" class to current page for styling purposes
 $('trevorkafka-nav').load('/snippets/navigation.html', function() {
-        $("#" + window.location.pathname.split("/").pop().split(".")[0]).addClass("active-link");
+        // Bare "/" (e.g. www.trevorkafka.com with no /index.html) yields an empty
+        // page name, so treat that as the homepage.
+        var id = window.location.pathname.split("/").pop().split(".")[0] || "index";
+        if (id) {
+            var $active = $("#" + id);
+            $active.addClass("active-link");
+            // If the current page lives in the Students dropdown, also highlight
+            // the top-level "Students" trigger, like the other navbar links.
+            if ($active.closest(".nav-dropdown-menu").length) {
+                $(".nav-dropdown-trigger").addClass("active-link");
+            }
+        }
     });
 
 //other replacements

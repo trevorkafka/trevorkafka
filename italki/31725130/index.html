@@ -2,17 +2,21 @@
 
 <head>
 <!-- Apply saved light/dark choice before paint (avoids a flash when the device default differs from the toggle) -->
-<script>try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<script>
+try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}
+try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElement.classList.add('ann-collapsed');}catch(e){}
+(function(){var d=document.documentElement;d.classList.add('fonts-loading');var done=false;function fin(){if(done)return;done=true;d.classList.remove('fonts-loading');}setTimeout(fin,500);try{if(document.fonts&&document.fonts.load){Promise.all([document.fonts.load('1em Freeman'),document.fonts.load('1em "Great Vibes"')]).then(fin,fin);}else{fin();}}catch(e){fin();}})();
+</script>
 	<title>William S | Pronunciation List</title>
 	<meta charset="utf-8"/> <!--ensures that there aren't any issues with the display of emojis -->
 	<meta content="width=device-width" name="viewport"/> <!-- essential for making sure that the ACTUAL screen width is interpreted by the CSS as opposed to some idealized number presented by smartphones (980px+) -->
+	<link rel="preload" href="/fonts/freeman-latin.woff2" as="font" type="font/woff2" crossorigin>
+	<link rel="preload" href="/fonts/greatvibes-latin.woff2" as="font" type="font/woff2" crossorigin>
 	<link href="/style.css" rel="stylesheet"/>
 	<link href="/favicon.ico" rel="shortcut icon"/>
 <!-- Google font stuff -->
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&amp;display=block" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Freeman&amp;display=block" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai+Looped:wght@100..900&display=swap" rel="stylesheet">
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> <!-- use JQuery -->
 <script type="text/javascript" src="script.js" defer></script> <!-- defer means to wait to run the script until the whole page is ready -->

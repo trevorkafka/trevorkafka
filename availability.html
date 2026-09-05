@@ -1,23 +1,24 @@
 <!DOCTYPE HTML>
 <head>
 <!-- Apply saved light/dark choice before paint (avoids a flash when the device default differs from the toggle) -->
-<script>try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<script>
+try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}
+try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElement.classList.add('ann-collapsed');}catch(e){}
+(function(){var d=document.documentElement;d.classList.add('fonts-loading');var done=false;function fin(){if(done)return;done=true;d.classList.remove('fonts-loading');}setTimeout(fin,500);try{if(document.fonts&&document.fonts.load){Promise.all([document.fonts.load('1em Freeman'),document.fonts.load('1em "Great Vibes"')]).then(fin,fin);}else{fin();}}catch(e){fin();}})();
+</script>
 	<title>Trevor Kafka - Availability for Tutoring</title>
 	<meta name="robots" content="noindex, nofollow">
 
 	<meta charset="utf-8"> <!--ensures that there aren't any issues with the display of emojis -->
 	<meta name="viewport" content="width=device-width"> <!-- essential for making sure that the ACTUAL screen width is interpreted by the CSS as opposed to some idealized number presented by smartphones (980px+) -->
 
+	<link rel="preload" href="/fonts/freeman-latin.woff2" as="font" type="font/woff2" crossorigin>
+	<link rel="preload" href="/fonts/greatvibes-latin.woff2" as="font" type="font/woff2" crossorigin>
 	<link rel="stylesheet" href="style.css">
 	<link rel="shortcut icon" href="favicon.ico">
 
 	<!-- Google font stuff -->
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=block" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css2?family=Freeman&display=block" rel="stylesheet">
-
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> <!-- use JQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> <!-- use JQuery -->
 	<script type="text/javascript" src="script.js" defer></script> <!-- defer means to wait to run the script until the whole page is ready -->
 
 	<!-- Font Awesome loaded directly so the calendar's icons are ready immediately (the nav also loads it, but asynchronously) -->
@@ -31,7 +32,7 @@
 
 <div class="content">
 	<trevorkafka-announcement></trevorkafka-announcement>
-	<h1 id="availability" style="font-size: 40px">Trevor<span class="widescreen"> Kafka</span>'s<span class="widescreen"> 14-Day</span> Availability</h1>
+	<h1 id="availability" style="font-size: 40px"><i class="fa-solid fa-calendar-days" style="margin-right: 0.35em"></i>Trevor<span class="widescreen"> Kafka</span>'s<span class="widescreen"> 14-Day</span> Availability</h1>
 </div>
 
 <div class="full-width-media" style="margin: 0 auto; padding-bottom: 40px">

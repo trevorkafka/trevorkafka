@@ -1,22 +1,23 @@
 <head>
 <!-- Apply saved light/dark choice before paint (avoids a flash when the device default differs from the toggle) -->
-<script>try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<script>
+try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}
+try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElement.classList.add('ann-collapsed');}catch(e){}
+(function(){var d=document.documentElement;d.classList.add('fonts-loading');var done=false;function fin(){if(done)return;done=true;d.classList.remove('fonts-loading');}setTimeout(fin,500);try{if(document.fonts&&document.fonts.load){Promise.all([document.fonts.load('1em Freeman'),document.fonts.load('1em "Great Vibes"')]).then(fin,fin);}else{fin();}}catch(e){fin();}})();
+</script>
 	<title>Class Notes Lookup | Trevor Kafka Tutoring</title>
 	<meta name="description" content="Look up and download your class notes from lessons with Trevor Kafka — search by name to find handwritten notes, Zoom screenshots, and lesson materials.">
 
 	<meta charset="utf-8"> <!--ensures that there aren't any issues with the display of emojis -->
 	<meta name="viewport" content="width=device-width"> <!-- essential for making sure that the ACTUAL screen width is interpreted by the CSS as opposed to some idealized number presented by smartphones (980px+) -->	
 
+	<link rel="preload" href="/fonts/freeman-latin.woff2" as="font" type="font/woff2" crossorigin>
+	<link rel="preload" href="/fonts/greatvibes-latin.woff2" as="font" type="font/woff2" crossorigin>
 	<link rel="stylesheet" href="style.css">
 	<link rel="shortcut icon" href="favicon.ico">
 
 	<!-- Google font stuff -->
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=block" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css2?family=Freeman&display=block" rel="stylesheet">
-
-	<style>
+<style>
 		#firstName:-webkit-autofill,
 		#lastName:-webkit-autofill {
 			-webkit-box-shadow: 0 0 0px 1000px #E8DCCA inset;
@@ -37,22 +38,22 @@
 
 		<trevorkafka-announcement></trevorkafka-announcement>
 
-		<h1><i class="fa-solid fa-pencil"></i> My Class Notes</h1>
+		<h1><i class="fa-solid fa-note-sticky"></i> My Class Notes</h1>
 		
 		<p>This page is for current and past tutoring students. Comprehensive notes and class materials from our tutoring sessions are online for access at any time. To find the link to your folder, type your first and last name below.</p>
 
 		<div style="text-align: center;">
-			<p style="font-family: Freeman, serif; font-size: clamp(0.85em, 3.5vw, 1.6em);">
+			<p style="font-family: Freeman, sans-serif; font-size: clamp(0.85em, 3.5vw, 1.6em);">
 				<span style="white-space: nowrap;">
-					<input type="text" id="firstName" placeholder="first name" style="font-family: Freeman, serif; font-size: 1em; width: 8em;"/>
-					<input type="text" id="lastName" placeholder="last name" style="font-family: Freeman, serif; font-size: 1em; width: 8em;"/>
+					<input type="text" id="firstName" placeholder="first name" style="font-family: Freeman, sans-serif; font-size: 1em; width: 8em;"/>
+					<input type="text" id="lastName" placeholder="last name" style="font-family: Freeman, sans-serif; font-size: 1em; width: 8em;"/>
 				</span>
-				<button onclick="lookup()" style="font-family: Freeman, serif; font-size: 1em;"><i class="fa-solid fa-magnifying-glass"></i> find my notes</button>
+				<button onclick="lookup()" style="font-family: Freeman, sans-serif; font-size: 1em;"><i class="fa-solid fa-magnifying-glass"></i> find my notes</button>
 			</p>
-			<p id="message" style="color: red; font-family: Freeman, serif; font-size: 130%;"></p>
+			<p id="message" style="color: red; font-family: Freeman, sans-serif; font-size: 130%;"></p>
 			<div id="notes-actions" style="display: none; justify-content: center; flex-wrap: wrap; gap: 12px; margin-top: 4px;">
-				<button type="button" id="copy-link-btn" style="font-family: Freeman, serif; font-size: 1em;"><i class="fa-solid fa-link"></i> Copy link</button>
-				<button type="button" id="open-folder-btn" style="font-family: Freeman, serif; font-size: 1em;"><i class="fa-brands fa-google-drive"></i> Open Google Drive folder</button>
+				<button type="button" id="copy-link-btn" style="font-family: Freeman, sans-serif; font-size: 1em;"><i class="fa-solid fa-link"></i> Copy link</button>
+				<button type="button" id="open-folder-btn" style="font-family: Freeman, sans-serif; font-size: 1em;"><i class="fa-brands fa-google-drive"></i> Open Google Drive folder</button>
 			</div>
 		</div>
 

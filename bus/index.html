@@ -1,21 +1,25 @@
 <head>
-<!-- Apply saved light/dark choice before paint (avoids a flash when the device default differs from the toggle) -->
-<script>try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<script>
+/* This page always follows the system light/dark setting, so the saved-theme
+   line is intentionally omitted here (the toggle button is commented out below).
+   To restore a manual toggle, re-add:
+   try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){} */
+try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElement.classList.add('ann-collapsed');}catch(e){}
+(function(){var d=document.documentElement;d.classList.add('fonts-loading');var done=false;function fin(){if(done)return;done=true;d.classList.remove('fonts-loading');}setTimeout(fin,500);try{if(document.fonts&&document.fonts.load){Promise.all([document.fonts.load('1em Freeman'),document.fonts.load('1em "Great Vibes"')]).then(fin,fin);}else{fin();}}catch(e){fin();}})();
+</script>
 	<title>Bus Arrival Times</title>
 
 	<meta charset="utf-8"> <!--ensures that there aren't any issues with the display of emojis -->
 	<meta name="viewport" content="width=device-width"> <!-- essential for making sure that the ACTUAL screen width is interpreted by the CSS as opposed to some idealized number presented by smartphones (980px+) -->
 	<meta name="robots" content="noindex, nofollow"> <!-- excludes page from web browser search results -->
 
+	<link rel="preload" href="/fonts/freeman-latin.woff2" as="font" type="font/woff2" crossorigin>
+	<link rel="preload" href="/fonts/greatvibes-latin.woff2" as="font" type="font/woff2" crossorigin>
 	<link rel="stylesheet" href="../style.css">
 	<link rel="shortcut icon" href="../favicon.ico">
 
 	<!-- Google font stuff -->
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Freeman&display=block" rel="stylesheet">
-
-	<!-- icon library -->
+<!-- icon library -->
 	<script src="https://kit.fontawesome.com/157b2a3980.js" crossorigin="anonymous"></script>
 	
 </head>
@@ -54,8 +58,9 @@
 
 	.bus-number {
 		background-color: var(--color1);
-		color: var(--color3); 
-		border-radius: 6vw; 
+		color: var(--color3);
+		font-weight: bold;
+		border-radius: 6vw;
 		padding-left: 3vw; 
 		padding-right: 3vw;
 	}
@@ -168,7 +173,11 @@
 </style>
 
 <body>
+	<!-- Light/dark toggle disabled for now; page follows the system setting.
+	     Uncomment (along with the setupThemeToggle script below and the saved-theme
+	     line in the <head> script) to bring the manual toggle back.
 	<button type="button" id="theme-toggle-float" role="button" aria-label="Toggle dark mode" title="Toggle dark mode"><i class="fa-solid fa-moon"></i></button>
+	-->
 
 	<div id="page"> <!-- this div makes sure that the body's flexbox layout doesn't rearrange overall webpage content -->
 		<h1 style="
@@ -179,7 +188,7 @@
 		<table style="
 			table-layout: fixed; 
 			margin: 0 auto 1vw auto; 
-			font-family: freeman; 
+			font-family: freeman, sans-serif; 
 			font-size: 6vw; 
 			text-align: center; 
 			padding: 0px; 
@@ -256,6 +265,8 @@
 	</div>
 </body>
 
+<!-- Light/dark toggle script disabled for now; page follows the system setting.
+     Uncomment this block (with the button and the head saved-theme line) to restore it.
 <script>
 	// Floating light/dark toggle. The theme is applied before paint by the
 	// inline <head> script; this only flips the choice and syncs the icon.
@@ -306,6 +317,7 @@
 		updateIcon();
 	})();
 </script>
+-->
 
 <script type="text/javascript">
 	const urlWest = "https://api-v3.mbta.com/predictions?filter[stop]=12759"
@@ -321,9 +333,16 @@
 	document.getElementById("walk-time-east").innerHTML = walkTimeEast;
 
 	function fetchTimes(url, direction, walkTime) {
-		fetch(url)
+		return fetch(url)
 			.then(response => response.json())
 			.then(data => {
+				// Count predictions per route with a local tally, NOT a shared key on
+				// timeTable. The two directions run concurrently and write into the
+				// same timeTable; a shared counter let whichever fetch ran second see
+				// an already-exhausted count and skip filling its cells. A local
+				// counter keeps each direction independent (they write disjoint E/W
+				// cells, so there's no other shared state to race on).
+				const counts = {};
 				data.data.forEach(prediction => {
 					const depTime = new Date(prediction.attributes.departure_time); // extract the arrival time string from the API and turn it into a number via the built-in Date() function
 					const now = new Date();
@@ -332,36 +351,27 @@
 						waitTime = 0;
 					};
 
-					let route = prediction.relationships.route.data.id;
+					if (waitTime < -1) return; // bus already too far gone to catch
 
-					if(!timeTable[route]) {
+					const route = prediction.relationships.route.data.id;
+					const n = (counts[route] || 0) + 1;
+					counts[route] = n;
+
+					if (n > 3) return; // only the next three arrivals per direction
+
+					if (!timeTable[route]) {
 						timeTable[route] = {};
 					};
-
-					if (!("counter" in timeTable[route])) {
-						timeTable[route]["counter"] = 1;
-					};
-
-					if (waitTime >= -1) {
-
-						if (timeTable[route]["counter"] <= 3) {
-							timeTable[route][route + "-" + direction + timeTable[route]["counter"]] = waitTime;
-						};
-						
-						timeTable[route]["counter"] += 1;
-
-					};
+					timeTable[route][route + "-" + direction + n] = waitTime;
 				});
 			})
-			.then( () => {
-				for (const route in timeTable) {
-					delete timeTable[route]["counter"]; // clear the counter keys so they can restart for the other direction
-				};
-			})
-			.then(updateTable);
+			.catch(() => {}); // network/API error: treat as "no data" for this cycle
 	};
 
 	function updateTable() {
+		// Blank every arrival cell first, so routes that dropped out of the data
+		// (or an empty cycle with no cached fallback) don't keep stale numbers.
+		document.querySelectorAll(".countdown-time").forEach(cell => { cell.innerHTML = ""; });
 		for (const route in timeTable) {
 			for (const prediction in timeTable[route]) {
 				const value = timeTable[route][prediction];
@@ -379,9 +389,36 @@
 		};
 	};
 
+	// Cache the last set of arrival times (with a timestamp) so a refresh that
+	// hits an empty API response can keep showing recent data instead of going
+	// blank. Data older than this window is considered stale.
+	const CACHE_KEY = "bus-lastTimes";
+	const STALE_MS = 60 * 1000; // 60 seconds
+
+	function renderCycle() {
+		const hasData = Object.values(timeTable).some(route => Object.keys(route).length > 0);
+		if (hasData) {
+			// Fresh predictions: show them and remember them.
+			try { localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), table: timeTable })); } catch (e) {}
+		} else {
+			// No predictions this cycle: reuse the most recent cached data, but
+			// only if it's under 60 seconds old. Otherwise leave the table empty
+			// so the cells blank out as usual.
+			let cached = null;
+			try { cached = JSON.parse(localStorage.getItem(CACHE_KEY) || "null"); } catch (e) {}
+			if (cached && cached.table && (Date.now() - cached.ts) <= STALE_MS) {
+				timeTable = cached.table;
+			}
+		}
+		updateTable();
+	}
+
 	function refreshTimes() {
-		fetchTimes(urlWest, "W", walkTimeWest);
-		fetchTimes(urlEast, "E", walkTimeEast);
+		timeTable = {}; // start each cycle clean so dropped routes don't linger
+		Promise.all([
+			fetchTimes(urlWest, "W", walkTimeWest),
+			fetchTimes(urlEast, "E", walkTimeEast)
+		]).then(renderCycle);
 		lastRefresh = new Date();
 	}
 
@@ -401,7 +438,9 @@
 	}, 100);
 
 	// ===== Current weather (Somerville, MA) via Open-Meteo (no API key) =====
-	const weatherUrl = "https://api.open-meteo.com/v1/forecast?latitude=42.3876&longitude=-71.0995&current=temperature_2m,weather_code,is_day&daily=temperature_2m_max,temperature_2m_min&forecast_days=1&timezone=auto";
+	// Pull hourly temps (2 days so a 12-hour window can cross midnight) plus the
+	// current conditions; the high/low is computed over the next 12 hours below.
+	const weatherUrl = "https://api.open-meteo.com/v1/forecast?latitude=42.3876&longitude=-71.0995&current=temperature_2m,weather_code,is_day&hourly=temperature_2m&forecast_days=2&timezone=auto";
 
 	// Map WMO weather codes to Font Awesome (free, solid) icons.
 	function weatherIcon(code, isDay) {
@@ -426,9 +465,20 @@
 				document.getElementById("weather-temp-num").innerHTML = Math.round(c.temperature_2m);
 				document.getElementById("weather-icon").className =
 					"fa-solid " + weatherIcon(c.weather_code, c.is_day) + " weather-icon";
-				if (data.daily) {
-					document.getElementById("weather-high").innerHTML = Math.round(data.daily.temperature_2m_max[0]);
-					document.getElementById("weather-low").innerHTML = Math.round(data.daily.temperature_2m_min[0]);
+				if (data.hourly && data.hourly.time && data.hourly.temperature_2m) {
+					// Find the first hourly slot at or after the current hour, then
+					// take the high/low across that hour and the following 11 (a
+					// rolling 12-hour window rather than the calendar day).
+					const times = data.hourly.time;
+					const temps = data.hourly.temperature_2m;
+					const nowHour = (c.time || "").slice(0, 13); // "YYYY-MM-DDTHH"
+					let start = times.findIndex(t => t.slice(0, 13) >= nowHour);
+					if (start < 0) start = 0;
+					const window = temps.slice(start, start + 12).filter(t => t != null);
+					if (window.length) {
+						document.getElementById("weather-high").innerHTML = Math.round(Math.max(...window));
+						document.getElementById("weather-low").innerHTML = Math.round(Math.min(...window));
+					}
 				}
 				document.querySelector(".weather").style.visibility = "visible";
 			})

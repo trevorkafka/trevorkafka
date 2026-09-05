@@ -2,20 +2,23 @@
 <html lang="en">
 <head>
 <!-- Apply saved light/dark choice before paint (avoids a flash when the device default differs from the toggle) -->
-<script>try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<script>
+try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}
+try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElement.classList.add('ann-collapsed');}catch(e){}
+(function(){var d=document.documentElement;d.classList.add('fonts-loading');var done=false;function fin(){if(done)return;done=true;d.classList.remove('fonts-loading');}setTimeout(fin,500);try{if(document.fonts&&document.fonts.load){Promise.all([document.fonts.load('1em Freeman'),document.fonts.load('1em "Great Vibes"')]).then(fin,fin);}else{fin();}}catch(e){fin();}})();
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Math &amp; Physics Q&amp;A — Ask a Question | Trevor Kafka</title>
 	<meta name="description" content="Free answers to real math and physics questions from tutor Trevor Kafka. Browse a growing Q&amp;A library — or ask your own and see it answered here.">
 
+	<link rel="preload" href="/fonts/freeman-latin.woff2" as="font" type="font/woff2" crossorigin>
+	<link rel="preload" href="/fonts/greatvibes-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="style.css">
 <link rel="shortcut icon" href="favicon.ico">
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> <!-- use JQuery -->
 <script type="text/javascript" src="script.js" defer></script> <!-- injects site nav/announcement/footer; respects this page's window.MathJax config -->
-
-<link href="https://fonts.googleapis.com/css2?family=Freeman&display=swap" rel="stylesheet">
-
 <!-- MathJax (SVG output) renders the questions and answers -->
 <script>
   window.MathJax = {
@@ -226,11 +229,13 @@
 
 	<trevorkafka-announcement></trevorkafka-announcement>
 
-	<h1><i class="fa-solid fa-comments" style="margin-right: 0.35em"></i>Questions &amp; Answers</h1>
+	<h1><i class="fa-solid fa-circle-question" style="margin-right: 0.35em"></i>Ask Trevor Q&amp;A</h1>
 
 	<p>These are real math and physics questions from students and site visitors, and I write every answer myself. I teach this material every day, so my goal is always to get at the <em>why</em> behind things, not just the steps.</p>
 
 	<p>Have a question of your own? I'd love to hear it. Anyone is welcome to ask, not just my current students, and I answer most questions within 24 hours.</p>
+
+	<p>This page is new as of fall 2026, so it's just getting started. Please don't hesitate to ask a question and help me build it up.</p>
 
 	<p style="margin: 26px 0 34px"><a class="qa-cta" href="/ask-a-question.html"><i class="fa-solid fa-pencil" style="margin-right: 0.5em"></i>Ask a Question</a></p>
 

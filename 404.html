@@ -1,21 +1,23 @@
 <head>
 <!-- Apply saved light/dark choice before paint (avoids a flash when the device default differs from the toggle) -->
-<script>try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<script>
+try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}
+try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElement.classList.add('ann-collapsed');}catch(e){}
+(function(){var d=document.documentElement;d.classList.add('fonts-loading');var done=false;function fin(){if(done)return;done=true;d.classList.remove('fonts-loading');}setTimeout(fin,500);try{if(document.fonts&&document.fonts.load){Promise.all([document.fonts.load('1em Freeman'),document.fonts.load('1em "Great Vibes"')]).then(fin,fin);}else{fin();}}catch(e){fin();}})();
+</script>
 	<title>Page not found | Trevor Kafka</title>
 
 	<meta charset="utf-8"> <!--ensures that there aren't any issues with the display of emojis -->
 	<meta name="viewport" content="width=device-width"> <!-- essential for making sure that the ACTUAL screen width is interpreted by the CSS as opposed to some idealized number presented by smartphones (980px+) -->
 	<meta name="robots" content="noindex, nofollow"> <!-- excludes page from web browser search results -->
 
+	<link rel="preload" href="/fonts/freeman-latin.woff2" as="font" type="font/woff2" crossorigin>
+	<link rel="preload" href="/fonts/greatvibes-latin.woff2" as="font" type="font/woff2" crossorigin>
 	<link rel="stylesheet" href="/style.css">
 	<link rel="shortcut icon" href="/favicon.ico">
 
 	<!-- Google font stuff -->
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Freeman&display=block" rel="stylesheet">
-
-	<!-- icon library -->
+<!-- icon library -->
 	<script src="https://kit.fontawesome.com/157b2a3980.js" crossorigin="anonymous"></script>
 
 	<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "389e2db315b8432fbe6d5844de5f490e"}'></script><!-- End Cloudflare Web Analytics -->
@@ -31,7 +33,7 @@
 		padding: 25px;
 	">
 		<div>
-			<span style="font-size: 1000%; font-family: freeman;">404</span>
+			<span style="font-size: 1000%; font-family: freeman, sans-serif;">404</span>
 			<p><strong>File not found</strong></p>
 			<p>The site configured at this address does not contain the requested file.</p>
 			<a href="http://www.trevorkafka.com" class="button"><div style="width: fit-content; margin: auto; padding-left: 20px; padding-right: 20px"><p style="margin: 0px;">Return to trevorkafka.com</p></div></a>

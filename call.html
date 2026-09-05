@@ -1,22 +1,23 @@
 <head>
 <!-- Apply saved light/dark choice before paint (avoids a flash when the device default differs from the toggle) -->
-<script>try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<script>
+try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}
+try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElement.classList.add('ann-collapsed');}catch(e){}
+(function(){var d=document.documentElement;d.classList.add('fonts-loading');var done=false;function fin(){if(done)return;done=true;d.classList.remove('fonts-loading');}setTimeout(fin,500);try{if(document.fonts&&document.fonts.load){Promise.all([document.fonts.load('1em Freeman'),document.fonts.load('1em "Great Vibes"')]).then(fin,fin);}else{fin();}}catch(e){fin();}})();
+</script>
 	<title>Book a Free Tutoring Intro Call | Trevor Kafka</title>
 	<meta name="description" content="New to tutoring with Trevor Kafka? Book a free 20-min intro video call to discuss your goals, then schedule your first math or physics lesson — no commitment.">
 
 	<meta charset="utf-8"> <!--ensures that there aren't any issues with the display of emojis -->
 	<meta name="viewport" content="width=device-width"> <!-- essential for making sure that the ACTUAL screen width is interpreted by the CSS as opposed to some idealized number presented by smartphones (980px+) -->
 
+	<link rel="preload" href="/fonts/freeman-latin.woff2" as="font" type="font/woff2" crossorigin>
+	<link rel="preload" href="/fonts/greatvibes-latin.woff2" as="font" type="font/woff2" crossorigin>
 	<link rel="stylesheet" href="style.css">
 	<link rel="shortcut icon" href="favicon.ico">
 
 	<!-- Google font stuff -->
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=block" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css2?family=Freeman&display=block" rel="stylesheet">
-
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> <!-- use JQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> <!-- use JQuery -->
 	<script type="text/javascript" src="script.js" defer></script> <!-- defer means to wait to run the script until the whole page is ready -->
 
 </head>
@@ -59,8 +60,8 @@
 		    <div style="display: flex; gap: 30px; flex-wrap: wrap; justify-content: center; align-items: center; margin: 30px 0;">
 
 		        <div style="flex: 1 1 280px; max-width: 400px; text-align: center;">
-		            <div style="font-family: freeman; font-size: 500%; color: var(--defaultlink); line-height: 1;">1</div>
-		            <div style="font-family: freeman; font-size: 180%; margin: 15px 0 10px;">20-minute free intro video call</div>
+		            <div style="font-family: freeman, sans-serif; font-size: 500%; color: var(--defaultlink); line-height: 1;">1</div>
+		            <div style="font-family: freeman, sans-serif; font-size: 180%; margin: 15px 0 10px;">20-minute free intro video call</div>
 		            <p>Let's meet as soon as 12 hours from now, talk about your goals, and figure out if we're a good fit. Introductory calls are non-binding.</p>
 		        </div>
 
@@ -72,8 +73,8 @@
 		        </div>
 
 		        <div style="flex: 1 1 280px; max-width: 400px; text-align: center;">
-		            <div style="font-family: freeman; font-size: 500%; color: var(--defaultlink); line-height: 1;">2</div>
-		            <div style="font-family: freeman; font-size: 180%; margin: 15px 0 10px;">Register for your first lesson</div>
+		            <div style="font-family: freeman, sans-serif; font-size: 500%; color: var(--defaultlink); line-height: 1;">2</div>
+		            <div style="font-family: freeman, sans-serif; font-size: 180%; margin: 15px 0 10px;">Register for your first lesson</div>
 		            <p>Once we've connected, pick a time on my calendar in as little as 12 hours after our intro call, and we're good to go! (Already finished? Click <a href="/login.html">here</a> to login.)</p>
 		        </div>
 
@@ -153,7 +154,7 @@
 	</div>
 
 	<div style="text-align: center">
-		<img src="media/breakthrough.jpg" alt="Make your breakthrough" class="full-width-media glow-shadow">
+		<img src="media/breakthrough.jpg" alt="Make your breakthrough" width="1067" height="800" class="full-width-media glow-shadow" style="height: auto">
 	</div>
 
 	<div class="content">

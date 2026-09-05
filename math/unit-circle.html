@@ -4,7 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- Apply a saved light/dark choice before paint (device default handled by CSS). -->
-<script>try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<script>
+try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}
+try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElement.classList.add('ann-collapsed');}catch(e){}
+(function(){var d=document.documentElement;d.classList.add('fonts-loading');var done=false;function fin(){if(done)return;done=true;d.classList.remove('fonts-loading');}setTimeout(fin,500);try{if(document.fonts&&document.fonts.load){Promise.all([document.fonts.load('1em Freeman'),document.fonts.load('1em "Great Vibes"')]).then(fin,fin);}else{fin();}}catch(e){fin();}})();
+</script>
 <title>Unit Circle Quiz - Tutoring with Trevor Kafka</title>
 <script>
 window.MathJax = {
@@ -14,10 +18,9 @@ window.MathJax = {
 };
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.js" async></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Freeman&display=block" rel="stylesheet">
 <script src="https://kit.fontawesome.com/157b2a3980.js" crossorigin="anonymous"></script>
+	<link rel="preload" href="/fonts/freeman-latin.woff2" as="font" type="font/woff2" crossorigin>
+	<link rel="preload" href="/fonts/greatvibes-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="/style.css">
 <style>
 
@@ -232,7 +235,6 @@ details.options[open] > .options-body{
 .preset-btn.active{background:var(--chip);border-color:var(--chip-line);color:var(--accent)}
 .undo-preset{cursor:pointer;color:var(--muted);font-size:.85rem;padding:0 2px;align-self:center;user-select:none;-webkit-tap-highlight-color:transparent}
 .undo-preset:hover{color:var(--ink)}
-
 
 /* history */
 details.hist{margin-top:26px;border-top:1px solid var(--line);padding-top:8px}

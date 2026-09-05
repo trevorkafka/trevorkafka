@@ -1,22 +1,23 @@
 <!DOCTYPE html>
 <head>
 <!-- Apply saved light/dark choice before paint (avoids a flash when the device default differs from the toggle) -->
-<script>try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<script>
+try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}
+try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElement.classList.add('ann-collapsed');}catch(e){}
+(function(){var d=document.documentElement;d.classList.add('fonts-loading');var done=false;function fin(){if(done)return;done=true;d.classList.remove('fonts-loading');}setTimeout(fin,500);try{if(document.fonts&&document.fonts.load){Promise.all([document.fonts.load('1em Freeman'),document.fonts.load('1em "Great Vibes"')]).then(fin,fin);}else{fin();}}catch(e){fin();}})();
+</script>
 	<title>Referral Discount - Trevor Kafka</title>
 
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width">
 
+	<link rel="preload" href="/fonts/freeman-latin.woff2" as="font" type="font/woff2" crossorigin>
+	<link rel="preload" href="/fonts/greatvibes-latin.woff2" as="font" type="font/woff2" crossorigin>
 	<link rel="stylesheet" href="/style.css">
 	<link rel="shortcut icon" href="/favicon.ico">
 
 	<!-- Google font stuff -->
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=block" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css2?family=Freeman&display=block" rel="stylesheet">
-
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 	<script type="text/javascript" src="/script.js" defer></script>
 </head>
 
@@ -54,14 +55,14 @@
 		</style>
 		<h1><i class="fa-solid fa-gift"></i> Referral Discount <span class="page-new">NEW</span></h1>
 
-		<p style="font-family: Freeman; font-size: 120%; color: var(--color1); margin-top: -0.5em;">A thank-you for my current students</p>
+		<p style="font-family: Freeman, sans-serif; font-size: 120%; color: var(--color1); margin-top: -0.5em;">A thank-you for my current students</p>
 
 		<p style="display: flex; flex-wrap: wrap; gap: 8px;">
-			<a href="#referrer" style="text-decoration: none;"><span class="referral-pill tk-table-frame" style="color: #F5EEE2; font-family: Freeman; font-size: 110%; padding: 6px 16px; border-radius: 100px; display: inline-block;">You get a free lesson</span></a>
-			<a href="#referred" style="text-decoration: none;"><span class="referral-pill tk-table-frame" style="color: #F5EEE2; font-family: Freeman; font-size: 110%; padding: 6px 16px; border-radius: 100px; display: inline-block;">Your friend's 3rd lesson is free</span></a>
+			<a href="#referrer" style="text-decoration: none;"><span class="referral-pill tk-table-frame" style="color: #F5EEE2; font-family: Freeman, sans-serif; font-size: 110%; padding: 6px 16px; border-radius: 100px; display: inline-block;">You get a free lesson</span></a>
+			<a href="#referred" style="text-decoration: none;"><span class="referral-pill tk-table-frame" style="color: #F5EEE2; font-family: Freeman, sans-serif; font-size: 110%; padding: 6px 16px; border-radius: 100px; display: inline-block;">Your friend's 3rd lesson is free</span></a>
 		</p>
 
-		<img class="glow-shadow" src="/media/TK indonesia.png" alt="Trevor Kafka headshot in Indonesia" style="float: right; width: min(180px, 38vw); border-radius: 100%; margin: 0 0 15px 25px;">
+		<img class="glow-shadow" src="/media/TK indonesia.png" alt="Trevor Kafka headshot in Indonesia" width="1939" height="1939" style="float: right; width: min(180px, 38vw); height: auto; border-radius: 100%; margin: 0 0 15px 25px;">
 
 		<p>Already a student and loving your lessons with me? Share them! When you refer a new student, <strong>you both earn a free lesson</strong>. Just email me at <trevorkafka-email></trevorkafka-email> to let me know that one student was referred by another before the new student's first lesson takes place.</p>
 
@@ -87,7 +88,7 @@
 			<tbody>
 				<tr>
 					<td style="padding: 12px 20px;">Your referred friend completes their first two paid lessons</td>
-					<td style="padding: 12px 20px;"><strong class="color" style="font-family: Freeman; font-size: 115%; line-height: 1;">1 FREE lesson</strong></td>
+					<td style="padding: 12px 20px;"><strong class="color" style="font-family: Freeman, sans-serif; font-size: 115%; line-height: 1;">1 FREE lesson</strong></td>
 				</tr>
 			</tbody>
 		</table>
@@ -108,7 +109,7 @@
 			<tbody>
 				<tr>                                               <td style="padding: 12px 20px;">1</td><td style="padding: 12px 20px; white-space: nowrap;">Full rate</td></tr>
 				<tr style="background-color: var(--color4light);"><td style="padding: 12px 20px;">2</td><td style="padding: 12px 20px; white-space: nowrap;">Full rate</td></tr>
-				<tr>                                               <td style="padding: 12px 20px;">3</td><td style="padding: 12px 20px;"><strong class="color" style="font-family: Freeman; font-size: 115%; line-height: 1;">FREE</strong></td></tr>
+				<tr>                                               <td style="padding: 12px 20px;">3</td><td style="padding: 12px 20px;"><strong class="color" style="font-family: Freeman, sans-serif; font-size: 115%; line-height: 1;">FREE</strong></td></tr>
 			</tbody>
 		</table>
 		</div>

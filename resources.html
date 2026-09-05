@@ -1,22 +1,23 @@
 <head>
 <!-- Apply saved light/dark choice before paint (avoids a flash when the device default differs from the toggle) -->
-<script>try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<script>
+try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}
+try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElement.classList.add('ann-collapsed');}catch(e){}
+(function(){var d=document.documentElement;d.classList.add('fonts-loading');var done=false;function fin(){if(done)return;done=true;d.classList.remove('fonts-loading');}setTimeout(fin,500);try{if(document.fonts&&document.fonts.load){Promise.all([document.fonts.load('1em Freeman'),document.fonts.load('1em "Great Vibes"')]).then(fin,fin);}else{fin();}}catch(e){fin();}})();
+</script>
 	<title>Math &amp; Physics Learning Tools | Trevor Kafka</title>
 	<meta name="description" content="Free math and physics learning tools from tutor Trevor Kafka, including an interactive Unit Circle Quiz and lesson notes — with more on the way.">
 
 	<meta charset="utf-8"> <!--ensures that there aren't any issues with the display of emojis -->
 	<meta name="viewport" content="width=device-width"> <!-- essential for making sure that the ACTUAL screen width is interpreted by the CSS as opposed to some idealized number presented by smartphones (980px+) -->
 
+	<link rel="preload" href="/fonts/freeman-latin.woff2" as="font" type="font/woff2" crossorigin>
+	<link rel="preload" href="/fonts/greatvibes-latin.woff2" as="font" type="font/woff2" crossorigin>
 	<link rel="stylesheet" href="style.css">
 	<link rel="shortcut icon" href="favicon.ico">
 
 	<!-- Google font stuff -->
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=block" rel="stylesheet">
-	<link href="https://fonts.googleapis.com/css2?family=Freeman&display=block" rel="stylesheet">
-
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> <!-- use JQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> <!-- use JQuery -->
 	<script type="text/javascript" src="script.js" defer></script> <!-- defer means to wait to run the script until the whole page is ready -->
 
 	<style>
@@ -56,7 +57,7 @@
 
 		<trevorkafka-announcement></trevorkafka-announcement>
 
-		<h1><i class="fa-solid fa-wrench" style="margin-right: 0.35em"></i>Resources</h1>
+		<h1><i class="fa-solid fa-folder-open" style="margin-right: 0.35em"></i>Trevor's Online Resources</h1>
 
 		<p>Below is a collection of resources I am building up to help with learning and practice. More are on the way!</p>
 
@@ -64,6 +65,23 @@
 			<a class="tool-card" href="https://trevorkafka.github.io/notes/" target="_blank">Trevor's Notes</a>
 			<a class="tool-card" href="/math/unit-circle.html" target="_blank">Unit Circle Quiz</a>
 		</div>
+
+		<p>Looking for the notes and materials from our tutoring sessions? Those live on the <a href="/mynotes.html">My Class Notes</a> page.</p>
+
+		<h1><i class="fa-solid fa-handshake-angle" style="margin-right: 0.35em"></i>Additional Help</h1>
+
+		<p>I stick to the subjects I teach well and sometimes narrow my teaching offerings in order to make sure that I am offering quality instruction in the subjects that I am the sharpest in, but I don't want you stuck if you need help with something I don't cover. For a few of those subjects I keep a running list of tutors I trust, so I can point you to someone good instead of leaving you to guess.</p>
+
+		<p>I currently keep referrals on hand for these subjects that I don't teach:</p>
+
+		<ul>
+			<li>Chemistry</li>
+			<li>Statistics</li>
+			<li>Intermediate-to-advanced college mathematics (anything beyond proof-writing courses)</li>
+			<li>Private college guidance services</li>
+		</ul>
+
+		<p>If you need help with one of these, email me at <trevorkafka-email></trevorkafka-email> and I'll share who I'd recommend.</p>
 
 	</div>
 
