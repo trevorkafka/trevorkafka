@@ -164,16 +164,14 @@
 	.fonts-loading h1,
 	.fonts-loading [style*="Great Vibes"] { visibility: hidden; }
 
-	/* Reserve the box a Font Awesome icon will occupy before the kit swaps the
-	   <i> placeholder for its <svg>, so text neither shifts sideways nor hops
-	   vertically when the icons appear. The width, height and baseline offset
-	   here match FA's default .svg-inline--fa metrics (1em tall, -0.125em
-	   baseline; ~1em wide, or 1.25em for fixed-width fa-fw icons). */
+	/* Reserve ~1 character of horizontal space for a Font Awesome icon before the
+	   kit renders it, so text doesn't shift sideways when the icon appears. Only
+	   width is reserved: setting height/vertical-align here would override Font
+	   Awesome's own icon alignment and push icons off the text baseline (visible
+	   on large titles and the nav toggle). */
 	i.fa-solid, i.fa-regular, i.fa-brands {
 		display: inline-block;
 		min-width: 1em;
-		height: 1em;
-		vertical-align: -0.125em;
 	}
 	i.fa-fw { min-width: 1.25em; }
 
@@ -209,6 +207,7 @@
 		font-size: 170%; /* has narrowscreen override */
 		color: var(--color1);
 		font-family: Freeman, sans-serif;
+		-webkit-tap-highlight-color: transparent; /* no grey flash on mobile tap */
 	}
 
 	.nav-spacer {
@@ -363,6 +362,9 @@
 	@media (prefers-color-scheme: dark) {
 		:root:not([data-theme="light"]) .tk-table-frame { box-shadow: none; }
 	}
+
+	/* No grey flash when a pronunciation button is tapped on mobile. */
+	.word-box { -webkit-tap-highlight-color: transparent; }
 
 	/* italki pronunciation buttons in dark mode: match the announcement box
 	   (page-colored fill, hairline border, no drop shadow) instead of the

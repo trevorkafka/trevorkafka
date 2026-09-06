@@ -110,6 +110,31 @@
 			w.style.transition = '';
 		}
 	})();
+
+	// Keep the Students dropdown menu on-screen. It's anchored left:0 to its
+	// trigger and opens rightward, so on narrow screens it can run off the right
+	// edge. When the menu opens (hover or keyboard/tap focus), or on resize while
+	// it's open, nudge its left offset so it stays within the viewport.
+	(function setupDropdownClamp() {
+		var dd = document.querySelector('.nav-dropdown');
+		var menu = document.querySelector('.nav-dropdown-menu');
+		if (!dd || !menu) return;
+		var MARGIN = 8;
+		function clamp() {
+			menu.style.left = '';   // reset to the CSS default before measuring
+			var r = menu.getBoundingClientRect();
+			var shift = 0;
+			var overRight = r.right - (window.innerWidth - MARGIN);
+			if (overRight > 0) shift = -overRight;          // pull left off the right edge
+			if (r.left + shift < MARGIN) shift = MARGIN - r.left; // but never past the left edge
+			if (shift) menu.style.left = Math.round(shift) + 'px';
+		}
+		dd.addEventListener('mouseenter', clamp);
+		dd.addEventListener('focusin', clamp);
+		window.addEventListener('resize', function () {
+			if (dd.matches(':hover') || dd.contains(document.activeElement)) clamp();
+		});
+	})();
 </script>
 
 <style>
@@ -136,10 +161,6 @@
 		grid-area: 1 / 1;
 		transition: opacity 0.35s ease;
 	}
-	/* The global icon-space reservation adds vertical-align:-0.125em to every FA
-	   icon, which pushes the sun/moon low inside this flex/grid-centered button.
-	   Reset it here so the flexbox centering lines the icon up with the links. */
-	#theme-toggle .tt-glyph i { vertical-align: 0; }
 	@media (prefers-reduced-motion: reduce) {
 		#theme-toggle .tt-icon,
 		#theme-toggle .tt-glyph { transition: none; }
