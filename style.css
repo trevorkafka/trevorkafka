@@ -282,6 +282,12 @@
 		font-size: 200%;
 	}
 
+	/* Major homepage section headings: semantically h2 (only one h1 per page),
+	   but kept at the h1 display size so the page design is unchanged. */
+	h2.section-heading {
+		font-size: 300%;
+	}
+
 	li, p {
 		line-height: 1.5;
 		margin-top: 0px;
