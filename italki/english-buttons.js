@@ -223,11 +223,11 @@ noteStyle.textContent = `
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) .note-box { background-color: #ffffff18; }
-    :root:not([data-theme="light"]) .word-box.has-audio { box-shadow: 2px 2px 5px rgba(255,255,255,0.2); }
+    :root:not([data-theme="light"]) .word-box.has-audio { box-shadow: inset 2px 2px 0 rgba(255,255,255,0.32), 0 1px 3px rgba(0,0,0,0.12); }
     :root:not([data-theme="light"]) .word-box.has-audio:active { box-shadow: 0px 0px 2px rgba(255,255,255,0.2); }
   }
   :root[data-theme="dark"] .note-box { background-color: #ffffff18; }
-  :root[data-theme="dark"] .word-box.has-audio { box-shadow: 2px 2px 5px rgba(255,255,255,0.2); }
+  :root[data-theme="dark"] .word-box.has-audio { box-shadow: inset 2px 2px 0 rgba(255,255,255,0.32), 0 1px 3px rgba(0,0,0,0.12); }
   :root[data-theme="dark"] .word-box.has-audio:active { box-shadow: 0px 0px 2px rgba(255,255,255,0.2); }
   .note-box > *:first-child { margin-top: 0; }
   .note-box > *:last-child { margin-bottom: 0; }
