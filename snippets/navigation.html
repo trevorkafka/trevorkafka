@@ -6,7 +6,7 @@
 			<a href="/index.html" id="index">Trevor Kafka</a>
 			<a href="/call.html" id="call">Get Started</a>
 			<div class="nav-dropdown">
-				<a href="javascript:void(0)" class="nav-dropdown-trigger" tabindex="0">Students <i class="fa-solid fa-caret-down" style="font-size: 60%; transform: translateY(-0.15ex)"></i></a>
+				<a href="javascript:void(0)" class="nav-dropdown-trigger" tabindex="0">Students <i class="fa-solid fa-caret-down" style="font-size: 60%; transform: translateY(-0.15ex)"></i> <span class="nav-new">NEW</span></a>
 				<div class="nav-dropdown-menu">
 					<a href="/availability.html" id="availability"><i class="fa-solid fa-calendar-days fa-fw"></i> Tutoring Availability</a>
 					<a href="/mynotes.html" id="mynotes"><i class="fa-solid fa-note-sticky fa-fw"></i> My Class Notes</a>
@@ -191,9 +191,9 @@
 		border-radius: 10px;
 	}
 
-	/* "NEW" tag on a dropdown item: darkred in light mode, brighter red in dark
-	   (mirrors the announcement box's NEW tag). */
-	.nav-dropdown-menu .nav-new {
+	/* "NEW" tag on a dropdown item or on the Students trigger: darkred in light
+	   mode, brighter red in dark (mirrors the announcement box's NEW tag). */
+	.nav-new {
 		background: #f6d5d5;
 		color: #b02a1e;
 		font-size: 9px;
@@ -205,10 +205,25 @@
 		margin-left: 4px;
 	}
 
-	:root[data-theme="dark"] .nav-dropdown-menu .nav-new { background: #4d2320; color: #ff9a8c; }
+	/* The chip on the "Students" trigger sits next to large nav text, so make it
+	   bigger than the small chips inside the dropdown menu. */
+	.nav-dropdown-trigger .nav-new {
+		font-size: 13px;
+		padding: 2px 9px;
+	}
+
+	/* On narrow screens keep the trigger chip small, like the dropdown chips. */
+	@media (width < 900px) {
+		.nav-dropdown-trigger .nav-new {
+			font-size: 9px;
+			padding: 1px 6px;
+		}
+	}
+
+	:root[data-theme="dark"] .nav-new { background: #4d2320; color: #ff9a8c; }
 
 	@media (prefers-color-scheme: dark) {
-		:root:not([data-theme="light"]) .nav-dropdown-menu .nav-new { background: #4d2320; color: #ff9a8c; }
+		:root:not([data-theme="light"]) .nav-new { background: #4d2320; color: #ff9a8c; }
 	}
 
 	.nav-dropdown-menu {
