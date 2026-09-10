@@ -385,7 +385,9 @@
 	}
 
 	/* No grey flash when a pronunciation button is tapped on mobile. */
-	.word-box { -webkit-tap-highlight-color: transparent; }
+	/* Transparent border reserves the same 1.5px space that dark mode makes visible,
+	   preventing a layout shift when switching themes. */
+	.word-box { -webkit-tap-highlight-color: transparent; border: solid 1.5px transparent; }
 
 	/* italki pronunciation buttons in dark mode: match the announcement box
 	   (page-colored fill, hairline border, no drop shadow) instead of the
