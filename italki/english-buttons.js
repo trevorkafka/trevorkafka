@@ -231,6 +231,26 @@ noteStyle.textContent = `
   :root[data-theme="dark"] .word-box.has-audio:active { box-shadow: 0px 0px 2px rgba(255,255,255,0.2); }
   .note-box > *:first-child { margin-top: 0; }
   .note-box > *:last-child { margin-bottom: 0; }
+  /* Annotation lines (blockquote) show reduced-pronunciation echoes in grey;
+     bold marks (ə sounds) appear dark red in light mode, red in dark mode. */
+  .note-box blockquote {
+    margin: 0;
+    padding: 0 0 0.3em 0;
+    border: none;
+    border-radius: 0;
+    background: none;
+    color: #999;
+  }
+  .note-box blockquote:before { content: none; }
+  .note-box blockquote p { margin: 0; }
+  .note-box blockquote strong { color: #8b1a1a; }
+  .note-box p { margin-top: 0; margin-bottom: 0; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) .note-box blockquote { color: #666; }
+    :root:not([data-theme="light"]) .note-box blockquote strong { color: #e05252; }
+  }
+  :root[data-theme="dark"] .note-box blockquote { color: #666; }
+  :root[data-theme="dark"] .note-box blockquote strong { color: #e05252; }
   .note-audio {
     margin-top: 12px;
     text-align: center;
