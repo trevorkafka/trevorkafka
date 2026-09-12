@@ -6,7 +6,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 (function(){var d=document.documentElement;d.classList.add('fonts-loading');var done=false;function fin(){if(done)return;done=true;d.classList.remove('fonts-loading');}setTimeout(fin,500);try{if(document.fonts&&document.fonts.load){Promise.all([document.fonts.load('1em Freeman'),document.fonts.load('1em "Great Vibes"')]).then(fin,fin);}else{fin();}}catch(e){fin();}})();
 </script>
 	<title>New Student Registration | Trevor Kafka Tutoring</title>
-	<meta name="description" content="Register for a tutoring account with Trevor Kafka after your intro call to book and manage your math and physics lessons online.">
+	<meta name="description" content="Register for a tutoring account with Trevor Kafka after your free intro call to book and manage your math and physics lessons online.">
 
 	<meta charset="utf-8"> <!--ensures that there aren't any issues with the display of emojis -->
 	<meta name="viewport" content="width=device-width"> <!-- essential for making sure that the ACTUAL screen width is interpreted by the CSS as opposed to some idealized number presented by smartphones (980px+) -->
@@ -28,21 +28,25 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 
 	<div class="content">
 
-		<!-- <trevorkafka-announcement></trevorkafka-announcement> -->
+		<trevorkafka-announcement></trevorkafka-announcement>
 
 		<h1>New Student Registration</h1>
 		<!-- <ul>
 			<li>As of December 2021 it is now required to input billing details in order to submit a registration form. </li>
 			<li>Sign-up is free and your card will NOT be charged in order to sign-up. This only serves to make it easier in the future for families to make payments once payments are due.</li>
 			<li>Payments will NOT be automatically charged to your card unless you enroll in automatic payments in your profile settings after submitting your registration form. You are in control of when payments are made.</li>
-			<li>Please do not fill out the registration form unless you have reached out to me first via email at <trevorkafka-email></trevorkafka-email> or through an <a href="call.html">intro call</a> to ensure an appropriate fit.</li>
+			<li>Please do not fill out the registration form unless you have reached out to me first via email at <trevorkafka-email></trevorkafka-email> or through a <a href="call.html">free intro call</a> to ensure an appropriate fit.</li>
 		</ul> -->
 
-		<p>Please do not fill out the registration form unless you have reached out to me first via email at <trevorkafka-email></trevorkafka-email> or through an <a href="call.html">intro call</a> to ensure an appropriate fit.</p>
-
-		<script type='text/javascript' src='https://app.tutorbird.com/Widget/v3/Registration.ashx?id=sch_d1xJ2' class='sb_registration'></script>
-		<div style="padding-bottom: 20px"></div>
+		<p>Please do not fill out the registration form unless you have reached out to me first via email at <trevorkafka-email></trevorkafka-email> or through a <a href="call.html">free intro call</a> to ensure an appropriate fit.</p>
 	</div>
+
+	<div style="margin:auto" class="full-width-media">
+		<div class="invert-in-dark" style="position: relative; z-index: 1">
+			<script type='text/javascript' src='https://app.tutorbird.com/Widget/v3/Registration.ashx?id=sch_d1xJ2' class='sb_registration'></script>
+		</div>
+	</div>
+
 	<div style="padding-bottom: 20px"></div>
 </body>
 

@@ -28,6 +28,10 @@
     flex-wrap: wrap;
     color: var(--cal-text);
   }
+  /* On wide screens the three legend keys sit inline in the legend row (the
+     wrapper is transparent to layout); on narrow screens they stack vertically
+     to save horizontal space (see the container query below). */
+  .legend-keys { display: contents; }
   .subtitle {
     max-width: 1000px;
     margin: 16px auto 0;
@@ -125,7 +129,9 @@
   .book-menu.open { display: block; }
   .book-menu a:hover { background: var(--cal-surface); }
 
-  .cal-week-nav {
+  /* Segmented 3-state vertical toggle, shared by the week and lesson-length
+     selectors. The active option is tracked with data-active="0|1|2". */
+  .cal-seg {
     position: relative;
     display: inline-flex;
     flex-direction: column;
@@ -136,7 +142,7 @@
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
   }
-  .cal-week-label {
+  .cal-seg-label {
     position: relative;
     z-index: 1;
     flex: 1;
@@ -150,10 +156,21 @@
     transition: color 0.2s ease;
     user-select: none;
   }
-  .cal-week-nav[data-week="0"] .cal-week-label:nth-child(1),
-  .cal-week-nav[data-week="1"] .cal-week-label:nth-child(2),
-  .cal-week-nav[data-week="2"] .cal-week-label:nth-child(3) { color: var(--button-text, #E1CEB4); }
-  .cal-week-indicator {
+  .cal-seg[data-active="0"] .cal-seg-label:nth-child(1),
+  .cal-seg[data-active="1"] .cal-seg-label:nth-child(2),
+  .cal-seg[data-active="2"] .cal-seg-label:nth-child(3) { color: var(--button-text, #E1CEB4); font-weight: bold; }
+  /* The active row is bold, which is wider. Reserve the bold width for every
+     label/cell up front with an invisible zero-height bold copy of its text, so
+     the toggle's width doesn't change when the active row moves. */
+  .cal-seg [data-text]::after {
+    content: attr(data-text);
+    display: block;
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+    font-weight: bold;
+  }
+  .cal-seg-indicator {
     position: absolute;
     left: 0;
     right: 0;
@@ -163,8 +180,8 @@
     transition: top 0.2s ease;
     pointer-events: none;
   }
-  .cal-week-nav[data-week="1"] .cal-week-indicator { top: 33.3333%; }
-  .cal-week-nav[data-week="2"] .cal-week-indicator { top: 66.6667%; }
+  .cal-seg[data-active="1"] .cal-seg-indicator { top: 33.3333%; }
+  .cal-seg[data-active="2"] .cal-seg-indicator { top: 66.6667%; }
 
   #root { overflow: hidden; }
 
@@ -390,7 +407,17 @@
   }
 
   @container (max-width: 700px) {
-      .legend { gap: 10px 20px; }
+      /* Spread the legend keys and the two toggles evenly across the width:
+         equal space at both edges and between each element (|e|e|e|). The
+         full-width Book button sits on its own line, so it's unaffected. */
+      .legend { gap: 10px 0; justify-content: space-evenly; } /* column-gap 0 so space-evenly alone sets the 4 equal gaps */
+      /* Stack Available / Unavailable / Booked vertically on narrow screens. */
+      .legend-keys {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 6px;
+      }
       .book-cta {
           order: -1;
           width: 100%;
@@ -471,14 +498,22 @@
 </style>
 <div class="cal-container">
 <div class="legend">
-  <span><span class="legend-swatch available"></span>Available</span>
-  <span><span class="legend-swatch unavailable"></span>Unavailable</span>
-  <span><span class="legend-swatch busy"></span>Booked</span>
-  <div class="cal-week-nav" id="cal-week-nav" data-week="0" tabindex="0" role="button" aria-label="Switch week">
-    <span class="cal-week-label">this week</span>
-    <span class="cal-week-label">next week</span>
-    <span class="cal-week-label">in 2 weeks</span>
-    <span class="cal-week-indicator" aria-hidden="true"></span>
+  <div class="legend-keys">
+    <span><span class="legend-swatch available"></span>Available</span>
+    <span><span class="legend-swatch unavailable"></span>Unavailable</span>
+    <span><span class="legend-swatch busy"></span>Booked</span>
+  </div>
+  <div class="cal-seg" id="cal-week-nav" data-active="0" tabindex="0" role="button" aria-label="Switch week">
+    <span class="cal-seg-label" data-text="this week">this week</span>
+    <span class="cal-seg-label" data-text="next week">next week</span>
+    <span class="cal-seg-label" data-text="in 2 weeks">in 2 weeks</span>
+    <span class="cal-seg-indicator" aria-hidden="true"></span>
+  </div>
+  <div class="cal-seg" id="cal-length-nav" data-active="2" tabindex="0" role="button" aria-label="Switch lesson length">
+    <span class="cal-seg-label" data-text="30-min intro call">30-min intro call</span>
+    <span class="cal-seg-label" data-text="45-min tutoring">45-min tutoring</span>
+    <span class="cal-seg-label" data-text="60-min tutoring">60-min tutoring</span>
+    <span class="cal-seg-indicator" aria-hidden="true"></span>
   </div>
   <div class="book-cta">
     <button class="book-button" id="book-button" type="button" aria-has="true" aria-expanded="false">
@@ -494,7 +529,8 @@
 <div id="status" class="status"></div>
 <div class="subtitle"><i class="fa-solid fa-clock fa-fw"></i><span class="tz-info" id="tz-info"></span></div>
 <div class="subtitle"><i class="fa-solid fa-right-to-bracket fa-fw"></i><span>Current students can <a href="/login.html">login</a> to view more availability and register up to 90 days in advance.</span></div>
-<div class="subtitle"><i class="fa-solid fa-calendar-week fa-fw"></i><span>Availability typically spans mornings, afternoons, and evenings on Sundays through Thursdays (Boston time<span class="boston-offset"></span>). Deviations from this general pattern may occur during holidays and school breaks, as well as over the summer.</span></div>
+<div class="subtitle"><i class="fa-solid fa-calendar-week fa-fw"></i><span>Availability typically spans mornings, afternoons, and evenings on Sundays through Thursdays (Boston time<span class="boston-offset"></span>). Deviations from this general pattern may occur during holidays and school breaks, such as over the summer.</span></div>
+<div class="subtitle"><i class="fa-solid fa-bell fa-fw"></i><span>If there is a time on the calendar that is currently booked and you would like to be waitlisted for that time, please email me at <span class="tooltip"><a onclick="copyEmail()" onmouseout="outFunc()">tutor@trevorkafka.com</a><span class="tooltiptext">Copy to clipboard</span></span>.</span></div>
 <br>
 <trevorkafka-availability-announcement></trevorkafka-availability-announcement>
 </div>
@@ -521,6 +557,12 @@
 
   const FIFTEEN_MIN = 15 * 60 * 1000;
   const SLOTS_PER_DAY = 96;
+
+  // Lesson-length toggle: index 0/1/2 maps to these durations (minutes). Only
+  // available runs at least this long are shown as bookable. Default is 60-min.
+  const LESSON_MINUTES = [30, 45, 60];
+  let lessonIdx = 2;
+  function currentMinRun() { return LESSON_MINUTES[lessonIdx] / 15; } // slots (15 min each)
 
   let weekOffset = 0;
   let cachedEvents = null;
@@ -565,9 +607,9 @@
     const root = document.getElementById('root');
     if (!cachedEvents) return;
     const nav = document.getElementById('cal-week-nav');
-    if (nav) nav.setAttribute('data-week', weekOffset);
+    if (nav) nav.setAttribute('data-active', weekOffset);
     const days = buildWeek(new Date(), weekOffset);
-    const grid = classify(cachedEvents, days);
+    const grid = classify(cachedEvents, days, currentMinRun());
     render(root, days, grid);
   }
 
@@ -586,7 +628,7 @@
 
   // States: 0 default, 1 available, 2 unavailable, 3 busy.
   // Higher wins. After event passes, every neighbor of a 3 is bumped to >=2.
-  function classify(events, days) {
+  function classify(events, days, minRun) {
     const grid = days.map(() => new Array(SLOTS_PER_DAY).fill(0));
     const dayStarts = days.map(d => d.getTime());
     const dayEnds = days.map(d => d.getTime() + 24 * 60 * 60 * 1000);
@@ -662,9 +704,9 @@
         }
       }
 
-    // Drop visible "available" runs shorter than 45 min (3 contiguous slots).
-    // Runs are measured across day boundaries.
-      const MIN_RUN = 3;
+    // Drop visible "available" runs too short to fit the selected lesson length
+    // (minRun contiguous 15-min slots). Runs are measured across day boundaries.
+      const MIN_RUN = minRun;
       const flat2 = grid.flat();
       let i = 0;
       while (i < flat2.length) {
@@ -699,7 +741,9 @@
     let earliest = SLOTS_PER_DAY, latest = -1;
     if (!loading && cachedEvents) {
       for (let wk = 0; wk <= 2; wk++) {
-        const wkGrid = classify(cachedEvents, buildWeek(new Date(), wk));
+        // Use the most permissive length (30-min = 2 slots) so the hour axis is
+        // stable regardless of which week or lesson length is selected.
+        const wkGrid = classify(cachedEvents, buildWeek(new Date(), wk), 2);
         for (let di = 0; di < wkGrid.length; di++) {
           for (let si = 0; si < SLOTS_PER_DAY; si++) {
             const s = wkGrid[di][si];
@@ -1099,7 +1143,7 @@ function makeDemoEvents() {
   const el = document.getElementById('tz-info');
   if (!el) return;
   const tzName = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  el.textContent = `Showing available times for 45-min+ lessons over the next 21 days in ${tzName} (${formatTZOffset(new Date())}).`;
+  el.textContent = `Showing available times over the next 21 days in ${tzName} (${formatTZOffset(new Date())}).`;
 })();
 
   // Fill in Boston's live UTC offset (accounts for daylight saving).
@@ -1162,6 +1206,18 @@ $('trevorkafka-availability-announcement').load('/snippets/availability-announce
   const nav = document.getElementById('cal-week-nav');
   if (!nav) return;
   function toggle() { weekOffset = (weekOffset + 1) % 3; renderWeek(); }
+  nav.addEventListener('click', toggle);
+  nav.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+})();
+
+(function setupLengthButtons() {
+  const nav = document.getElementById('cal-length-nav');
+  if (!nav) return;
+  function toggle() {
+    lessonIdx = (lessonIdx + 1) % LESSON_MINUTES.length;
+    nav.setAttribute('data-active', lessonIdx);
+    renderWeek();
+  }
   nav.addEventListener('click', toggle);
   nav.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
 })();
