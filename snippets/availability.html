@@ -510,7 +510,7 @@
     <span class="cal-seg-indicator" aria-hidden="true"></span>
   </div>
   <div class="cal-seg" id="cal-length-nav" data-active="2" tabindex="0" role="button" aria-label="Switch lesson length">
-    <span class="cal-seg-label" data-text="30-min intro call">30-min intro call</span>
+    <span class="cal-seg-label" data-text="20-min intro call">20-min intro call</span>
     <span class="cal-seg-label" data-text="45-min tutoring">45-min tutoring</span>
     <span class="cal-seg-label" data-text="60-min tutoring">60-min tutoring</span>
     <span class="cal-seg-indicator" aria-hidden="true"></span>
@@ -558,8 +558,10 @@
   const FIFTEEN_MIN = 15 * 60 * 1000;
   const SLOTS_PER_DAY = 96;
 
-  // Lesson-length toggle: index 0/1/2 maps to these durations (minutes). Only
-  // available runs at least this long are shown as bookable. Default is 60-min.
+  // Lesson-length toggle: index 0/1/2 maps to the minimum available window
+  // (minutes) needed for each option. Only runs at least this long are shown
+  // as bookable. The intro call is 20 min, but slots are 15 min, so it needs a
+  // 30-min (2-slot) window. Default is 60-min.
   const LESSON_MINUTES = [30, 45, 60];
   let lessonIdx = 2;
   function currentMinRun() { return LESSON_MINUTES[lessonIdx] / 15; } // slots (15 min each)
