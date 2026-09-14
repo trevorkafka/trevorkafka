@@ -176,7 +176,11 @@
 	/* Some pages (e.g. call.html) wrap their content in a nested .content div, so
 	   the first heading isn't a direct sibling of the announcement — cover that. */
 	trevorkafka-announcement:not(:has(#announcement-box)) + .content > h1,
-	trevorkafka-announcement:not(:has(#announcement-box)) + .content > h2 { margin-top: 0; }
+	trevorkafka-announcement:not(:has(#announcement-box)) + .content > h2,
+	/* Some pages put an inline <style> block between the announcement and the
+	   heading (e.g. the discount pages); skip over it. */
+	trevorkafka-announcement:not(:has(#announcement-box)) + style + h1,
+	trevorkafka-announcement:not(:has(#announcement-box)) + style + h2 { margin-top: 0; }
 
 	/* Hold page titles until Freeman / Great Vibes are ready (capped at 0.5s by
 	   the inline head script), so they don't flash the fallback and reflow. */

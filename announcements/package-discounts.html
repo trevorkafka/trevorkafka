@@ -55,24 +55,161 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			@media (prefers-color-scheme: dark) {
 				:root:not([data-theme="light"]) .page-new { background: #4d2320; color: #ff9a8c; }
 			}
+
+			/* ---- Limited-time promotion (ends September 30, 2026) ----
+			   Remove this block, the .promo-box markup, and the .pkg-was spans
+			   in the table to return the page to the standard rates. */
+			.promo-box {
+				position: relative;
+				overflow: hidden;
+				margin: 2em 0 1.5em 0;
+				padding: 16px 22px 16px 26px;
+				border-radius: 12px;
+				background: var(--tint-1);
+				border: 1.5px solid var(--surface-border);
+				/* plays once on page load */
+				animation: promo-in 0.55s ease-out both;
+			}
+			/* gradient accent bar down the left edge */
+			.promo-box::before {
+				content: "";
+				position: absolute;
+				left: 0; top: 0; bottom: 0;
+				width: 7px;
+				background-image: linear-gradient(330deg, #E0603C, rgb(150, 0, 90));
+			}
+			/* a single soft sheen that sweeps across once, then is gone */
+			.promo-box::after {
+				content: "";
+				position: absolute;
+				inset: 0;
+				pointer-events: none;
+				background: linear-gradient(105deg, transparent 38%, var(--tint-3) 50%, transparent 62%);
+				transform: translateX(-130%);
+				animation: promo-sheen 1.4s ease-out 0.5s both;
+			}
+			@keyframes promo-in {
+				from { opacity: 0; transform: translateY(8px); }
+				to   { opacity: 1; transform: none; }
+			}
+			@keyframes promo-sheen {
+				to { transform: translateX(130%); }
+			}
+			@media (prefers-reduced-motion: reduce) {
+				.promo-box { animation: none; }
+				.promo-box::after { display: none; }
+			}
+			.promo-head {
+				font-family: Freeman, sans-serif;
+				font-size: 125%;
+				color: var(--color1);
+				margin: 0 0 0.4em 0;
+			}
+			.promo-box p:last-child { margin-bottom: 0; }
+			.promo-tag {
+				background-image: linear-gradient(330deg, #E0603C, rgb(150, 0, 90));
+				color: #F5EEE2;
+				font-family: Arial, sans-serif;
+				font-size: 11px;
+				font-weight: bold;
+				letter-spacing: 0.08em;
+				text-transform: uppercase;
+				padding: 3px 10px;
+				border-radius: 999px;
+				margin-right: 10px;
+				white-space: nowrap;
+				vertical-align: middle;
+			}
+			/* superseded rate/expiration, shown beside the new one */
+			.pkg-was {
+				color: var(--color1);
+				opacity: 0.45;
+				margin-right: 0.5em;
+				font-weight: normal;
+				white-space: nowrap;
+			}
+			.pkg-now { white-space: nowrap; }
+			/* On narrow screens stack the old value above the new one so the
+			   three-column table doesn't outgrow the viewport. width: fit-content
+			   keeps each box hugging its text, so the diagonal strike bar below
+			   stays the width of the text rather than the whole cell. */
+			@media (max-width: 560px) {
+				td .pkg-was, td .pkg-now {
+					display: block;
+					width: fit-content;
+				}
+				td .pkg-was {
+					margin-right: 0;
+					margin-bottom: 0.15em;
+				}
+			}
+			/* superseded value inside a gradient pill (cream text, not --color1) */
+			.pill-was {
+				opacity: 0.6;
+				margin-right: 0.35em;
+				white-space: nowrap;
+				--strike-w: 3px;
+			}
+			/* Prominent email call-to-action. Plain text + the site's standard
+			   copy-to-clipboard email snippet, so it works for everyone (a
+			   mailto: link silently does nothing without a mail handler). */
+			.cta-email {
+				max-width: 640px;
+				margin: 2em auto;
+				padding: 20px 28px;
+				text-align: center;
+				font-family: Freeman, sans-serif;
+				font-size: 135%;
+				line-height: 1.45;
+				color: var(--color1);
+				background: var(--tint-1);
+				border: 1.5px solid var(--surface-border);
+				border-radius: 12px;
+			}
+			.cta-email i { margin-right: 0.4em; }
+
+			/* Slightly diagonal strikethrough. text-decoration can only draw a
+			   flat line, so this is a thin rotated bar laid over the text;
+			   currentColor keeps it matched to whatever the text color is. */
+			.pkg-was, .pill-was {
+				position: relative;
+				text-decoration: none;
+			}
+			.pkg-was::after, .pill-was::after {
+				content: "";
+				position: absolute;
+				left: -1px;
+				right: -1px;
+				top: 50%;
+				height: var(--strike-w, 1.5px);
+				background: currentColor;
+				border-radius: 1px;
+				transform: translateY(-50%) rotate(-8deg);
+				pointer-events: none;
+			}
 		</style>
 		<h1><i class="fa-solid fa-layer-group"></i> Package Discounts <span class="page-new">NEW</span></h1>
 
 		<p style="font-family: Freeman, sans-serif; font-size: 120%; color: var(--color1); margin-top: -0.5em;">Prepay for lessons and save</p>
 
 		<p style="display: flex; flex-wrap: wrap; gap: 8px;">
-			<a href="#pricing" style="text-decoration: none;"><span class="package-pill tk-table-frame" style="color: #F5EEE2; font-family: Freeman, sans-serif; font-size: 110%; padding: 6px 16px; border-radius: 100px; display: inline-block;">10 lessons: 5% off</span></a>
-			<a href="#pricing" style="text-decoration: none;"><span class="package-pill tk-table-frame" style="color: #F5EEE2; font-family: Freeman, sans-serif; font-size: 110%; padding: 6px 16px; border-radius: 100px; display: inline-block;">20 lessons: 10% off</span></a>
-			<a href="#pricing" style="text-decoration: none;"><span class="package-pill tk-table-frame" style="color: #F5EEE2; font-family: Freeman, sans-serif; font-size: 110%; padding: 6px 16px; border-radius: 100px; display: inline-block;">40 lessons: 15% off</span></a>
+			<a href="#pricing" style="text-decoration: none;"><span class="package-pill tk-table-frame" style="color: #F5EEE2; font-family: Freeman, sans-serif; font-size: 110%; padding: 6px 16px; border-radius: 100px; display: inline-block;">10 lessons: <span class="pill-was">5%</span>10% off</span></a>
+			<a href="#pricing" style="text-decoration: none;"><span class="package-pill tk-table-frame" style="color: #F5EEE2; font-family: Freeman, sans-serif; font-size: 110%; padding: 6px 16px; border-radius: 100px; display: inline-block;">20 lessons: <span class="pill-was">10%</span>15% off</span></a>
+			<a href="#pricing" style="text-decoration: none;"><span class="package-pill tk-table-frame" style="color: #F5EEE2; font-family: Freeman, sans-serif; font-size: 110%; padding: 6px 16px; border-radius: 100px; display: inline-block;">40 lessons: <span class="pill-was">15%</span>20% off</span></a>
 		</p>
 
 		<img class="glow-shadow" src="/media/TK indonesia.png" alt="Trevor Kafka headshot in Indonesia" width="1939" height="1939" style="float: right; width: min(180px, 38vw); height: auto; border-radius: 100%; margin: 0 0 15px 25px;">
 
-		<p>Planning to work together for the long haul? Buy your lessons in a package and <strong>save on every lesson</strong>. The more lessons you purchase up front, the bigger your discount, up to <strong>15% off</strong>. Just email me at <trevorkafka-email></trevorkafka-email> to set up a package.</p>
+		<p>Planning to work together for the long haul? Buy your lessons in a package and <strong>save on every lesson</strong>. The more lessons you purchase up front, the bigger your discount, up to <span class="pkg-was">15% off</span><strong>20% off</strong>. Just email me at <trevorkafka-email></trevorkafka-email> to set up a package.</p>
 
 		<h2 id="pricing" style="scroll-margin-top: 95px">Package Options</h2>
 
 		<p>Buy your lessons in a package of <strong>10, 20, or 40</strong>, paid up front, and your per-lesson rate is discounted accordingly. The more lessons you buy, the bigger the discount, and you schedule the lessons at your own pace within the package's expiration window.</p>
+
+		<div class="promo-box tk-table-frame">
+			<p class="promo-head"><span class="promo-tag">Limited time</span>Bigger discounts, more time to use your lessons</p>
+			<p>Through <strong>Tuesday, September 30, 2026</strong>, every package discount is increased and every expiration window is extended by about half. Buy a package on or before September 30 and these boosted terms apply for the full life of the package. The standard rates shown in grey return on October 1.</p>
+		</div>
 
 		<div class="tk-table-frame" style="width: fit-content; margin: 2em auto 2em auto; border-radius: 10px; overflow: hidden; border: solid 1px white;">
 		<table style="border-collapse: collapse;">
@@ -86,18 +223,18 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			<tbody>
 				<tr>
 					<td style="padding: 12px 20px; white-space: nowrap;">10 lessons</td>
-					<td style="padding: 12px 20px;"><strong class="color" style="font-family: Freeman, sans-serif; font-size: 115%; line-height: 1;">5% off</strong></td>
-					<td style="padding: 12px 20px; white-space: nowrap;">90 days</td>
+					<td style="padding: 12px 20px;"><span class="pkg-was">5% off</span><strong class="color pkg-now" style="font-family: Freeman, sans-serif; font-size: 115%; line-height: 1;">10% off</strong></td>
+					<td style="padding: 12px 20px;"><span class="pkg-was">90 days</span><strong class="pkg-now">140 days</strong></td>
 				</tr>
 				<tr style="background-color: var(--color4light);">
 					<td style="padding: 12px 20px; white-space: nowrap;">20 lessons</td>
-					<td style="padding: 12px 20px;"><strong class="color" style="font-family: Freeman, sans-serif; font-size: 115%; line-height: 1;">10% off</strong></td>
-					<td style="padding: 12px 20px; white-space: nowrap;">180 days</td>
+					<td style="padding: 12px 20px;"><span class="pkg-was">10% off</span><strong class="color pkg-now" style="font-family: Freeman, sans-serif; font-size: 115%; line-height: 1;">15% off</strong></td>
+					<td style="padding: 12px 20px;"><span class="pkg-was">180 days</span><strong class="pkg-now">270 days</strong></td>
 				</tr>
 				<tr>
 					<td style="padding: 12px 20px; white-space: nowrap;">40 lessons</td>
-					<td style="padding: 12px 20px;"><strong class="color" style="font-family: Freeman, sans-serif; font-size: 115%; line-height: 1;">15% off</strong></td>
-					<td style="padding: 12px 20px; white-space: nowrap;">365 days</td>
+					<td style="padding: 12px 20px;"><span class="pkg-was">15% off</span><strong class="color pkg-now" style="font-family: Freeman, sans-serif; font-size: 115%; line-height: 1;">20% off</strong></td>
+					<td style="padding: 12px 20px;"><span class="pkg-was">365 days</span><strong class="pkg-now">550 days</strong></td>
 				</tr>
 			</tbody>
 		</table>
@@ -107,7 +244,11 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 
 		<p style="text-align: center; overflow-x: auto;">\[ \text{package price} = \text{package size} \times \text{lesson price} \times \left(1 - \frac{\text{discount}}{100} \right) \]</p>
 		
-		<p>As always, your lesson price is based on your chosen <a href="/login.html#lesson-lengths">lesson length</a> and <a href="/index.html#pricing-faq">lesson rate</a>.</p>
+		<p>As always, your lesson price is based on your chosen <a href="/index.html#lesson-lengths">lesson length</a> and <a href="/index.html#pricing-faq">lesson rate</a>.</p>
+
+		<div class="cta-email tk-table-frame">
+			<i class="fa-solid fa-envelope"></i>Email <trevorkafka-email></trevorkafka-email> to request a package discount
+		</div>
 
 		<h3>Important Details</h3>
 
@@ -115,7 +256,6 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			<li>Packages are sold on a <strong>per-student basis</strong> and cannot be shared between students.</li>
 			<li>Each package must be used within its <strong>expiration window</strong>, counted from the date of purchase.</li>
 			<li>Package lessons follow my standard <a href="/login.html#cancellation-policy">24-hour cancellation policy</a>.</li>
-			<li>To purchase a package, email me at <trevorkafka-email></trevorkafka-email> and I'll get you set up.</li>
 		</ul>
 
 		<p>Questions? Feel free to reach out via email at any time at <trevorkafka-email></trevorkafka-email>.</p>
