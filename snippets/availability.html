@@ -185,10 +185,13 @@
   .cal-seg[data-active="1"] .cal-seg-indicator { top: 33.3333%; }
   .cal-seg[data-active="2"] .cal-seg-indicator { top: 66.6667%; }
 
-  /* Week pager: previous / next buttons around a label showing the visible
-     week's date range. Styled to match the segmented toggle beside it. */
+  /* Week pager: Today / previous / next buttons on one row, with the visible
+     week's date range on its own full-width row beneath them. Styled to match
+     the segmented toggle beside it. An inline-grid (not wrapping flex) keeps
+     the pager only as wide as its widest row. */
   .cal-weeknav {
-    display: inline-flex;
+    display: inline-grid;
+    grid-template-columns: repeat(3, auto);
     align-items: stretch;
     border: 1px solid var(--cal-border);
     border-radius: 8px;
@@ -201,62 +204,35 @@
     all: unset;
     display: inline-flex;
     align-items: center;
-    padding: 0 9px;
+    justify-content: center;
+    padding: 4px 9px;
+    font-size: 14px;
     color: var(--cal-accent);
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     transition: background-color 0.15s ease;
   }
+  .cal-weeknav-btn + .cal-weeknav-btn { border-left: 1px solid var(--cal-border); }
   .cal-weeknav-btn:hover { background: var(--cal-surface); }
   .cal-weeknav-btn:focus-visible { outline: 2px solid var(--cal-accent); outline-offset: -2px; }
   .cal-weeknav-btn:disabled { color: var(--cal-border); cursor: default; background: none; }
+  .cal-weeknav-today {
+    font-family: Freeman, sans-serif;
+    font-size: 13px;
+  }
   .cal-weeknav-label {
+    order: 10;             /* placed after all three buttons */
+    grid-column: 1 / -1;   /* spans the full width: its own row */
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 2px 12px;
-    min-width: 8em;
-    border-left: 1px solid var(--cal-border);
-    border-right: 1px solid var(--cal-border);
+    padding: 3px 10px;
+    border-top: 1px solid var(--cal-border);
     white-space: nowrap;
     user-select: none;
-    /* The week's date range is the main orientation cue now that the header
-       row shows day numbers only, so give it real presence. */
     font-family: Freeman, sans-serif;
-    font-size: 19px;
+    font-size: 15px;
     color: var(--cal-text);
-  }
-  .cal-weeknav-btn { font-size: 16px; }
-  .cal-weeknav-today {
-    font-family: Freeman, sans-serif;
-    font-size: 14px;
-    padding: 0 10px;
-    border-right: 1px solid var(--cal-border);
-  }
-  /* Narrow screens: stack the pager so the legend keys, pager and lesson-
-     length toggle all fit on one row. The three buttons sit on top and the
-     date label drops to its own full-width row beneath them. */
-  @container (max-width: 700px) {
-    /* inline-grid (not wrapping flex) so the pager is only as wide as its
-       widest row, rather than the sum of every item as if on one line */
-    .cal-weeknav { display: inline-grid; grid-template-columns: repeat(3, auto); }
-    .cal-weeknav-btn {
-      justify-content: center;
-      font-size: 14px;
-      padding: 4px 9px;
-    }
-    .cal-weeknav-today { font-size: 13px; border-right: none; }
-    .cal-weeknav-btn + .cal-weeknav-btn { border-left: 1px solid var(--cal-border); }
-    .cal-weeknav-label {
-      order: 10;             /* placed after all three buttons */
-      grid-column: 1 / -1;   /* spans the full width: its own row */
-      min-width: 0;
-      padding: 3px 10px;
-      font-size: 15px;
-      border-left: none;
-      border-right: none;
-      border-top: 1px solid var(--cal-border);
-    }
   }
 
   #root { overflow: hidden; }
