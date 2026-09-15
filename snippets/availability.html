@@ -23,15 +23,18 @@
     padding: 0 16px;
     display: flex;
     align-items: center;
+    justify-content: space-between; /* key | controls | button */
     gap: 12px 24px;
     font-size: 14px;
     flex-wrap: wrap;
     color: var(--cal-text);
   }
-  /* On wide screens the three legend keys sit inline in the legend row (the
-     wrapper is transparent to layout); on narrow screens they stack vertically
-     to save horizontal space (see the container query below). */
-  .legend-keys { display: contents; }
+  /* Three balanced zones on wide screens: the color key on the left, the week
+     pager + lesson-length toggle together in the middle, the Book button on
+     the right. On narrow screens the groups dissolve so the individual items
+     spread evenly (see the container query below). */
+  .legend-keys { display: flex; align-items: center; gap: 12px 24px; }
+  .legend-controls { display: flex; align-items: stretch; gap: 14px; } /* pager matches the toggle's height */
   .subtitle {
     max-width: 1000px;
     margin: 20px auto 0;
@@ -86,7 +89,6 @@
   /* Book-a-lesson CTA — matches site .button style (terracotta, shadowed). */
   .book-cta {
     position: relative;
-    margin-left: auto;
   }
   .book-button {
     background: var(--cal-accent);
@@ -192,6 +194,7 @@
   .cal-weeknav {
     display: inline-grid;
     grid-template-columns: repeat(3, auto);
+    grid-template-rows: 1fr 1fr; /* buttons row and label row share the height */
     align-items: stretch;
     border: 1px solid var(--cal-border);
     border-radius: 8px;
@@ -439,13 +442,37 @@
   .error {
     max-width: 1000px;
     margin: 16px auto;
-    padding: 16px;
+    padding: 12px 16px;
     background: #FFE7E0;
     border: 1px solid #E8B5A5;
     border-radius: 10px;
     color: #8a3a26;
     font-size: 14px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px 16px;
   }
+  /* Manual retry for a failed fetch (the Apps Script endpoint occasionally
+     returns an error; a second request usually succeeds). */
+  .error-retry {
+    all: unset;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 14px;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    font: inherit;
+    font-weight: bold;
+    color: inherit;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background-color 0.15s ease;
+  }
+  .error-retry:hover { background: rgba(138, 58, 38, 0.1); }
+  .error-retry:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
 
   @container (max-width: 500px) {
       .calendar-head-date {
@@ -462,7 +489,7 @@
       /* Spread the legend keys and the two toggles evenly across the width:
          equal space at both edges and between each element (|e|e|e|). The
          full-width Book button sits on its own line, so it's unaffected. */
-      .legend { gap: 10px 0; justify-content: space-evenly; } /* column-gap 0 so space-evenly alone sets the 4 equal gaps */
+      .legend { gap: 10px 0; justify-content: space-evenly; align-items: stretch; } /* column-gap 0 so space-evenly alone sets the 4 equal gaps; stretch so the key, pager and toggle share one height */
       /* Stack Available / Unavailable / Booked vertically on narrow screens. */
       .legend-keys {
           display: flex;
@@ -470,6 +497,7 @@
           align-items: flex-start;
           gap: 6px;
       }
+      .legend-controls { display: contents; }
       .book-cta {
           order: -1;
           width: 100%;
@@ -555,6 +583,7 @@
     <span><span class="legend-swatch unavailable"></span>Unavailable</span>
     <span><span class="legend-swatch busy"></span>Booked</span>
   </div>
+  <div class="legend-controls">
   <div class="cal-weeknav" id="cal-week-nav" role="group" aria-label="Change week">
     <button type="button" class="cal-weeknav-btn cal-weeknav-today" id="cal-week-today">Today</button>
     <button type="button" class="cal-weeknav-btn" id="cal-week-prev" aria-label="Previous week"><i class="fa-solid fa-chevron-left"></i></button>
@@ -566,6 +595,7 @@
     <span class="cal-seg-label" data-text="45-min tutoring">45-min tutoring</span>
     <span class="cal-seg-label" data-text="60-min tutoring">60-min tutoring</span>
     <span class="cal-seg-indicator" aria-hidden="true"></span>
+  </div>
   </div>
   <div class="book-cta">
     <button class="book-button" id="book-button" type="button" aria-has="true" aria-expanded="false">
@@ -606,6 +636,16 @@
   const REFRESH_INTERVAL_MS = 5 * 60 * 1000;
   const WEEKS = 13;                    // 13 weeks = 91 days including today (the "90-day" view)
   const HORIZON_DAYS = WEEKS * 7;      // fetch exactly the days we can display
+  // The Apps Script's response time grows with the number of days requested,
+  // and past a point Google times the execution out (served as an HTTP 404
+  // "unable to open the file" page). So each load fires two requests at once:
+  // a short one the script answers quickly, so the calendar is usable right
+  // away, and the full range, which upgrades the view in place when it lands.
+  // If the full range fails, the short one stays up with a note and the
+  // periodic refresh keeps trying.
+  const QUICK_DAYS = 21;
+  let loadedDays = 0;                  // range covered by cachedEvents
+  function loadedWeeks() { return Math.max(1, Math.floor((loadedDays || HORIZON_DAYS) / 7)); }
 
   const FIFTEEN_MIN = 15 * 60 * 1000;
   const SLOTS_PER_DAY = 96;
@@ -665,28 +705,67 @@
       status.textContent = '';
     }
 
-    try {
-      let events;
-      if (!API_URL || API_URL.startsWith('PASTE_')) {
-        events = makeDemoEvents();
-        status.textContent = 'Demo data — set API_URL in the source.';
-      } else {
-        const res = await fetch(API_URL + '?days=' + HORIZON_DAYS);
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        const data = await res.json();
-        events = data.events.map(e => ({
-          start: new Date(e.start),
-          end:   new Date(e.end),
-          title: e.title,
-        }));
-        // status.textContent = 'Updated ' + new Date().toLocaleString();
+    if (!API_URL || API_URL.startsWith('PASTE_')) {
+      cachedEvents = makeDemoEvents();
+      loadedDays = HORIZON_DAYS;
+      status.textContent = 'Demo data — set API_URL in the source.';
+      renderWeek();
+      return;
+    }
+
+    // Both requests in flight together (see QUICK_DAYS above).
+    const quick = fetchEvents(QUICK_DAYS);
+    const full  = fetchEvents(HORIZON_DAYS);
+
+    // Show the quick result as soon as it arrives, unless a full range is
+    // already on screen (never downgrade what the visitor is looking at).
+    quick.then(events => {
+      if (loadedDays < HORIZON_DAYS) {
+        cachedEvents = events;
+        loadedDays = QUICK_DAYS;
+        renderWeek();
       }
+    }).catch(() => {});
+
+    try {
+      const events = await full;
       cachedEvents = events;
+      loadedDays = HORIZON_DAYS;
+      status.textContent = '';
       renderWeek();
     } catch (err) {
-      root.innerHTML = '<div class="error">Could not load availability: ' + escapeHTML(err.message) + '</div>';
-      status.textContent = '';
+      try { await quick; } catch (e) {}   // let the quick request settle first
+      if (!cachedEvents) {
+        showLoadError(root, status, err);
+        return;
+      }
+      if (loadedDays < HORIZON_DAYS) {
+        status.innerHTML = 'Only the next ' + QUICK_DAYS + ' days could be loaded right now; the rest will appear once it can. '
+          + '<a href="#" id="cal-retry-full">Try again</a>';
+        const a = document.getElementById('cal-retry-full');
+        if (a) a.addEventListener('click', e => { e.preventDefault(); loadAndRender(); });
+      }
+      // else: an older full load is still on screen; the next refresh will retry quietly.
     }
+  }
+
+  async function fetchEvents(days) {
+    const res = await fetch(API_URL + '?days=' + days);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    return data.events.map(e => ({
+      start: new Date(e.start),
+      end:   new Date(e.end),
+      title: e.title,
+    }));
+  }
+
+  function showLoadError(root, status, err) {
+    root.innerHTML = '<div class="error"><span>Could not load availability: ' + escapeHTML(err.message) + '</span>'
+      + '<button type="button" class="error-retry" id="cal-retry"><i class="fa-solid fa-rotate-right"></i>Try again</button></div>';
+    status.textContent = '';
+    const retry = document.getElementById('cal-retry');
+    if (retry) retry.addEventListener('click', () => loadAndRender());
   }
 
   function renderWeek() {
@@ -819,7 +898,7 @@
     // 4 slots = 1 hour.
     let earliest = SLOTS_PER_DAY, latest = -1;
     if (!loading && cachedEvents) {
-      for (let wk = 0; wk < WEEKS; wk++) {
+      for (let wk = 0; wk < loadedWeeks(); wk++) {
         // Use the most permissive length (30-min = 2 slots) so the hour axis is
         // stable regardless of which week or lesson length is selected.
         const wkGrid = classify(cachedEvents, buildWeek(new Date(), wk), 2);
@@ -1111,14 +1190,15 @@ function renderPauseNotice(root, days) {
   today0.setHours(0, 0, 0, 0);
 
   // teaching[d] = true if day d (0 = today) has any available or booked time.
-  const teaching = new Array(HORIZON_DAYS).fill(false);
+  const N = loadedDays || HORIZON_DAYS;   // only judge days we actually have data for
+  const teaching = new Array(N).fill(false);
   for (const ev of cachedEvents) {
     const title = (ev.title || '').toLowerCase().trim();
     if (title !== 'available' && title !== 'busy') continue;
     let s = dayIndexFrom(today0, ev.start.getTime());
     let e = dayIndexFrom(today0, ev.end.getTime() - 1);
     s = Math.max(0, s);
-    e = Math.min(HORIZON_DAYS - 1, e);
+    e = Math.min(N - 1, e);
     for (let d = s; d <= e; d++) teaching[d] = true;
   }
 
@@ -1127,11 +1207,11 @@ function renderPauseNotice(root, days) {
   const fmt = new Intl.DateTimeFormat(undefined, { month: 'long', day: 'numeric' });
 
   let d = 0;
-  while (d < HORIZON_DAYS) {
+  while (d < N) {
     if (teaching[d]) { d++; continue; }
     let j = d;
-    while (j < HORIZON_DAYS && !teaching[j]) j++;
-    const runStart = d, runEndIncl = j - 1, endKnown = j < HORIZON_DAYS;
+    while (j < N && !teaching[j]) j++;
+    const runStart = d, runEndIncl = j - 1, endKnown = j < N;
     const runLen = runEndIncl - runStart + 1;
     d = j;
 
@@ -1295,7 +1375,7 @@ function updateWeekNav(days) {
   const sameMonth = first.getMonth() === last.getMonth();
   label.textContent = md.format(first) + ' \u2013 ' + (sameMonth ? dd.format(last) : md.format(last));
   prev.disabled = weekOffset <= 0;
-  next.disabled = weekOffset >= WEEKS - 1;
+  next.disabled = weekOffset >= loadedWeeks() - 1;
   if (today) today.disabled = weekOffset === 0;
 }
 
@@ -1304,7 +1384,7 @@ function updateWeekNav(days) {
   const next = document.getElementById('cal-week-next');
   if (!prev || !next) return;
   prev.addEventListener('click', () => { if (weekOffset > 0) { weekOffset--; renderWeek(); } });
-  next.addEventListener('click', () => { if (weekOffset < WEEKS - 1) { weekOffset++; renderWeek(); } });
+  next.addEventListener('click', () => { if (weekOffset < loadedWeeks() - 1) { weekOffset++; renderWeek(); } });
   const today = document.getElementById('cal-week-today');
   if (today) today.addEventListener('click', () => { if (weekOffset !== 0) { weekOffset = 0; renderWeek(); } });
   updateWeekNav(buildWeek(new Date(), weekOffset)); // initial label while data loads
