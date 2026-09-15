@@ -34,17 +34,19 @@
   .legend-keys { display: contents; }
   .subtitle {
     max-width: 1000px;
-    margin: 16px auto 0;
+    margin: 20px auto 0;
     padding: 0 16px;
     font-size: 13px;
+    line-height: 1.55;
     color: var(--cal-muted);
     display: flex;
     align-items: flex-start;
-    gap: 6px;
+    gap: 8px;
   }
-  .subtitle i {
+  .subtitle > i {
     color: var(--cal-muted);
-    margin-top: 2px;
+    line-height: inherit; /* same line box as the text, so it centers on the first line */
+    margin-top: 0;
     flex-shrink: 0;
   }
   trevorkafka-availability-announcement {
@@ -182,6 +184,80 @@
   }
   .cal-seg[data-active="1"] .cal-seg-indicator { top: 33.3333%; }
   .cal-seg[data-active="2"] .cal-seg-indicator { top: 66.6667%; }
+
+  /* Week pager: previous / next buttons around a label showing the visible
+     week's date range. Styled to match the segmented toggle beside it. */
+  .cal-weeknav {
+    display: inline-flex;
+    align-items: stretch;
+    border: 1px solid var(--cal-border);
+    border-radius: 8px;
+    overflow: hidden;
+    flex-shrink: 0;
+    font-size: 12px;
+    color: var(--cal-text);
+  }
+  .cal-weeknav-btn {
+    all: unset;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 9px;
+    color: var(--cal-accent);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.15s ease;
+  }
+  .cal-weeknav-btn:hover { background: var(--cal-surface); }
+  .cal-weeknav-btn:focus-visible { outline: 2px solid var(--cal-accent); outline-offset: -2px; }
+  .cal-weeknav-btn:disabled { color: var(--cal-border); cursor: default; background: none; }
+  .cal-weeknav-label {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 12px;
+    min-width: 8em;
+    border-left: 1px solid var(--cal-border);
+    border-right: 1px solid var(--cal-border);
+    white-space: nowrap;
+    user-select: none;
+    /* The week's date range is the main orientation cue now that the header
+       row shows day numbers only, so give it real presence. */
+    font-family: Freeman, sans-serif;
+    font-size: 19px;
+    color: var(--cal-text);
+  }
+  .cal-weeknav-btn { font-size: 16px; }
+  .cal-weeknav-today {
+    font-family: Freeman, sans-serif;
+    font-size: 14px;
+    padding: 0 10px;
+    border-right: 1px solid var(--cal-border);
+  }
+  /* Narrow screens: stack the pager so the legend keys, pager and lesson-
+     length toggle all fit on one row. The three buttons sit on top and the
+     date label drops to its own full-width row beneath them. */
+  @container (max-width: 700px) {
+    /* inline-grid (not wrapping flex) so the pager is only as wide as its
+       widest row, rather than the sum of every item as if on one line */
+    .cal-weeknav { display: inline-grid; grid-template-columns: repeat(3, auto); }
+    .cal-weeknav-btn {
+      justify-content: center;
+      font-size: 14px;
+      padding: 4px 9px;
+    }
+    .cal-weeknav-today { font-size: 13px; border-right: none; }
+    .cal-weeknav-btn + .cal-weeknav-btn { border-left: 1px solid var(--cal-border); }
+    .cal-weeknav-label {
+      order: 10;             /* placed after all three buttons */
+      grid-column: 1 / -1;   /* spans the full width: its own row */
+      min-width: 0;
+      padding: 3px 10px;
+      font-size: 15px;
+      border-left: none;
+      border-right: none;
+      border-top: 1px solid var(--cal-border);
+    }
+  }
 
   #root { overflow: hidden; }
 
@@ -503,11 +579,11 @@
     <span><span class="legend-swatch unavailable"></span>Unavailable</span>
     <span><span class="legend-swatch busy"></span>Booked</span>
   </div>
-  <div class="cal-seg" id="cal-week-nav" data-active="0" tabindex="0" role="button" aria-label="Switch week">
-    <span class="cal-seg-label" data-text="this week">this week</span>
-    <span class="cal-seg-label" data-text="next week">next week</span>
-    <span class="cal-seg-label" data-text="in 2 weeks">in 2 weeks</span>
-    <span class="cal-seg-indicator" aria-hidden="true"></span>
+  <div class="cal-weeknav" id="cal-week-nav" role="group" aria-label="Change week">
+    <button type="button" class="cal-weeknav-btn cal-weeknav-today" id="cal-week-today">Today</button>
+    <button type="button" class="cal-weeknav-btn" id="cal-week-prev" aria-label="Previous week"><i class="fa-solid fa-chevron-left"></i></button>
+    <span class="cal-weeknav-label" id="cal-week-label" aria-live="polite"></span>
+    <button type="button" class="cal-weeknav-btn" id="cal-week-next" aria-label="Next week"><i class="fa-solid fa-chevron-right"></i></button>
   </div>
   <div class="cal-seg" id="cal-length-nav" data-active="2" tabindex="0" role="button" aria-label="Switch lesson length">
     <span class="cal-seg-label" data-text="20-min intro call">20-min intro call</span>
@@ -528,7 +604,6 @@
 <div id="root"></div>
 <div id="status" class="status"></div>
 <div class="subtitle"><i class="fa-solid fa-clock fa-fw"></i><span class="tz-info" id="tz-info"></span></div>
-<div class="subtitle"><i class="fa-solid fa-right-to-bracket fa-fw"></i><span>Current students can <a href="/login.html">login</a> to view more availability and register up to 90 days in advance.</span></div>
 <div class="subtitle"><i class="fa-solid fa-calendar-week fa-fw"></i><span>Availability typically spans mornings, afternoons, and evenings on Sundays through Thursdays (Boston time<span class="boston-offset"></span>). Deviations from this general pattern may occur during holidays and school breaks, such as over the summer.</span></div>
 <div class="subtitle"><i class="fa-solid fa-bell fa-fw"></i><span>If there is a time on the calendar that is currently booked and you would like to be waitlisted for that time, please email me at <span class="tooltip"><a onclick="copyEmail()" onmouseout="outFunc()">tutor@trevorkafka.com</a><span class="tooltiptext">Copy to clipboard</span></span>.</span></div>
 <br>
@@ -553,10 +628,43 @@
   // ====== CONFIG ======
   const API_URL = 'https://script.google.com/macros/s/AKfycbz4gutA0-2Z5Ilg4AJZnXIivAMgCzcA1NURvKle-KGCmK0peSORGyrkcxBforiRokJN/exec';
   const REFRESH_INTERVAL_MS = 5 * 60 * 1000;
-  const HORIZON_DAYS = 90; // how far ahead to fetch, so extended pauses & return dates are known
+  const WEEKS = 13;                    // 13 weeks = 91 days including today (the "90-day" view)
+  const HORIZON_DAYS = WEEKS * 7;      // fetch exactly the days we can display
 
   const FIFTEEN_MIN = 15 * 60 * 1000;
   const SLOTS_PER_DAY = 96;
+
+  // ---- DST-safe date helpers ----
+  // Days are not always 24 hours: the day DST ends is 25 hours and the day it
+  // starts is 23. So "midnight + 24h" and "elapsed ms since midnight / 15 min"
+  // both drift by an hour on those days. Everything below works in local
+  // wall-clock terms instead (setDate / getHours), which the browser keeps
+  // DST-correct for us.
+  function nextMidnight(day) {            // local midnight of the following day
+    const n = new Date(day); n.setDate(n.getDate() + 1); n.setHours(0, 0, 0, 0); return n.getTime();
+  }
+  function wallMinutes(ts) {              // minutes past local midnight, by the wall clock
+    const t = new Date(ts); return t.getHours() * 60 + t.getMinutes() + t.getSeconds() / 60;
+  }
+  function slotTime(day, si) {            // timestamp of 15-min slot si on a given day
+    const t = new Date(day); t.setHours(Math.floor(si / 4), (si % 4) * 15, 0, 0); return t.getTime();
+  }
+  function dayIndexFrom(base0, ts) {      // whole days from local midnight base0 to the day containing ts
+    const m = new Date(ts); m.setHours(0, 0, 0, 0);
+    return Math.round((m.getTime() - base0.getTime()) / (24 * 60 * 60 * 1000));
+  }
+  function addDays(day, n) {              // local midnight n days after day
+    const d = new Date(day); d.setDate(d.getDate() + n); d.setHours(0, 0, 0, 0); return d;
+  }
+  // Overlap of an event with one day, as wall-clock slot indices [sSlot, eSlot).
+  function overlapSlots(ev, dayStart, dayEnd) {
+    const ovStart = Math.max(ev.start.getTime(), dayStart);
+    const ovEnd   = Math.min(ev.end.getTime(),   dayEnd);
+    const sSlot   = Math.floor(wallMinutes(ovStart) / 15);
+    const endWall = (ovEnd === dayEnd) ? SLOTS_PER_DAY * 15 : wallMinutes(ovEnd);
+    const eSlot   = Math.ceil(endWall / 15);
+    return { ovStart, ovEnd, sSlot, eSlot, endWall };
+  }
 
   // Lesson-length toggle: index 0/1/2 maps to the minimum available window
   // (minutes) needed for each option. Only runs at least this long are shown
@@ -608,9 +716,8 @@
   function renderWeek() {
     const root = document.getElementById('root');
     if (!cachedEvents) return;
-    const nav = document.getElementById('cal-week-nav');
-    if (nav) nav.setAttribute('data-active', weekOffset);
     const days = buildWeek(new Date(), weekOffset);
+    updateWeekNav(days);
     const grid = classify(cachedEvents, days, currentMinRun());
     render(root, days, grid);
   }
@@ -633,7 +740,7 @@
   function classify(events, days, minRun) {
     const grid = days.map(() => new Array(SLOTS_PER_DAY).fill(0));
     const dayStarts = days.map(d => d.getTime());
-    const dayEnds = days.map(d => d.getTime() + 24 * 60 * 60 * 1000);
+    const dayEnds = days.map(d => nextMidnight(d)); // DST-safe (not midnight + 24h)
 
     for (const ev of events) {
       const title = (ev.title || '').toLowerCase().trim();
@@ -645,10 +752,7 @@
 
       for (let di = 0; di < days.length; di++) {
         if (ev.end.getTime() <= dayStarts[di] || ev.start.getTime() >= dayEnds[di]) continue;
-        const ovStart = Math.max(ev.start.getTime(), dayStarts[di]);
-        const ovEnd   = Math.min(ev.end.getTime(),   dayEnds[di]);
-        const sSlot = Math.floor((ovStart - dayStarts[di]) / FIFTEEN_MIN);
-        const eSlot = Math.ceil ((ovEnd   - dayStarts[di]) / FIFTEEN_MIN);
+        const { sSlot, eSlot } = overlapSlots(ev, dayStarts[di], dayEnds[di]);
         for (let i = Math.max(0, sSlot); i < Math.min(SLOTS_PER_DAY, eSlot); i++) {
           if (state > grid[di][i]) grid[di][i] = state;
         }
@@ -658,10 +762,10 @@
     // Per-event unavailability buffers for busy events.
     // Before a busy block: always add a 15-min unavailability slot.
     // After a busy block: skip the buffer when ceil-rounding already built in
-    // >= 10 min of padding (e.g. a 50-min lesson ceiled to 60 min leaves 10 min
+    // >= 5 min of padding (e.g. a 55-min lesson ceiled to 60 min leaves 5 min
     // of dead "busy" time, so no extra buffer is needed after the displayed block).
     const flat = grid.flat();
-    const TEN_MIN_MS = 10 * 60 * 1000;
+    const FIVE_MIN_MS = 5 * 60 * 1000;
 
     for (const ev of events) {
       const title = (ev.title || '').toLowerCase().trim();
@@ -670,20 +774,17 @@
       for (let di = 0; di < days.length; di++) {
         if (ev.end.getTime() <= dayStarts[di] || ev.start.getTime() >= dayEnds[di]) continue;
 
-        const ovStart = Math.max(ev.start.getTime(), dayStarts[di]);
-        const ovEnd   = Math.min(ev.end.getTime(),   dayEnds[di]);
-        const sSlot   = Math.floor((ovStart - dayStarts[di]) / FIFTEEN_MIN);
-        const eSlot   = Math.ceil ((ovEnd   - dayStarts[di]) / FIFTEEN_MIN);
+        const { sSlot, eSlot, endWall } = overlapSlots(ev, dayStarts[di], dayEnds[di]);
 
         // Before-buffer: always mark the slot just before the busy block.
         const beforeIdx = di * SLOTS_PER_DAY + sSlot - 1;
         if (beforeIdx >= 0 && flat[beforeIdx] < 2) flat[beforeIdx] = 2;
 
-        // After-buffer: skip when ceil-rounding provides >= 10 min of padding.
-        const ceilEndMs = dayStarts[di] + eSlot * FIFTEEN_MIN;
-        const builtInPadding = ceilEndMs - ovEnd;
+        // After-buffer: skip when ceil-rounding provides >= 5 min of padding.
+        // (Measured on the wall clock so it's right across a DST change.)
+        const builtInPadding = (eSlot * 15 - endWall) * 60 * 1000;
 
-        if (builtInPadding < TEN_MIN_MS) {
+        if (builtInPadding < FIVE_MIN_MS) {
           const afterIdx = di * SLOTS_PER_DAY + eSlot;
           if (afterIdx < flat.length && flat[afterIdx] < 2) flat[afterIdx] = 2;
         }
@@ -700,7 +801,7 @@
       const cutoff = Date.now() + 12 * 60 * 60 * 1000;
       for (let di = 0; di < days.length; di++) {
         for (let si = 0; si < SLOTS_PER_DAY; si++) {
-          if (grid[di][si] === 1 && dayStarts[di] + si * FIFTEEN_MIN < cutoff) {
+          if (grid[di][si] === 1 && slotTime(days[di], si) < cutoff) {
             grid[di][si] = 0;
           }
         }
@@ -737,12 +838,12 @@
     const timeFmt = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' });
 
     // Determine the visible hour range from the earliest & latest available or
-    // booked slots. Consider all three visible weeks so the axis doesn't resize
-    // when toggling between them. Unavailable/empty slots don't count.
+    // booked slots. Consider every week in the range so the axis doesn't resize
+    // when paging between them. Unavailable/empty slots don't count.
     // 4 slots = 1 hour.
     let earliest = SLOTS_PER_DAY, latest = -1;
     if (!loading && cachedEvents) {
-      for (let wk = 0; wk <= 2; wk++) {
+      for (let wk = 0; wk < WEEKS; wk++) {
         // Use the most permissive length (30-min = 2 slots) so the hour axis is
         // stable regardless of which week or lesson length is selected.
         const wkGrid = classify(cachedEvents, buildWeek(new Date(), wk), 2);
@@ -1038,8 +1139,8 @@ function renderPauseNotice(root, days) {
   for (const ev of cachedEvents) {
     const title = (ev.title || '').toLowerCase().trim();
     if (title !== 'available' && title !== 'busy') continue;
-    let s = Math.floor((ev.start.getTime() - today0.getTime()) / DAY_MS);
-    let e = Math.floor((ev.end.getTime() - 1 - today0.getTime()) / DAY_MS);
+    let s = dayIndexFrom(today0, ev.start.getTime());
+    let e = dayIndexFrom(today0, ev.end.getTime() - 1);
     s = Math.max(0, s);
     e = Math.min(HORIZON_DAYS - 1, e);
     for (let d = s; d <= e; d++) teaching[d] = true;
@@ -1063,10 +1164,10 @@ function renderPauseNotice(root, days) {
     const iEnd = Math.min(runEndIncl, visEnd);
     if (iEnd - iStart + 1 < MIN_VISIBLE) continue;
 
-    const startDate = new Date(today0.getTime() + runStart * DAY_MS);
+    const startDate = addDays(today0, runStart);
     let msg = `I'm unavailable starting ${fmt.format(startDate)}`;
     if (endKnown) {
-      const returnDate = new Date(today0.getTime() + j * DAY_MS);
+      const returnDate = addDays(today0, j);
       let durTxt;
       if (runLen > 14) {
         const w = Math.floor(runLen / 7), rem = runLen % 7;
@@ -1145,7 +1246,7 @@ function makeDemoEvents() {
   const el = document.getElementById('tz-info');
   if (!el) return;
   const tzName = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  el.textContent = `Showing available times over the next 21 days in ${tzName} (${formatTZOffset(new Date())}).`;
+  el.textContent = `Showing available times over the next 90 days in ${tzName} (${formatTZOffset(new Date())}).`;
 })();
 
   // Fill in Boston's live UTC offset (accounts for daylight saving).
@@ -1204,12 +1305,33 @@ function makeDemoEvents() {
 
 $('trevorkafka-availability-announcement').load('/snippets/availability-announcement.html');
 
+// Keep the week pager's label and button states in sync with weekOffset.
+function updateWeekNav(days) {
+  const label = document.getElementById('cal-week-label');
+  const prev = document.getElementById('cal-week-prev');
+  const next = document.getElementById('cal-week-next');
+  const today = document.getElementById('cal-week-today');
+  if (!label || !prev || !next) return;
+  const first = days[0], last = days[days.length - 1];
+  const md = new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' });
+  const dd = new Intl.DateTimeFormat(undefined, { day: 'numeric' });
+  // "Sep 14 - 20" within one month, "Sep 28 - Oct 4" across a boundary.
+  const sameMonth = first.getMonth() === last.getMonth();
+  label.textContent = md.format(first) + ' \u2013 ' + (sameMonth ? dd.format(last) : md.format(last));
+  prev.disabled = weekOffset <= 0;
+  next.disabled = weekOffset >= WEEKS - 1;
+  if (today) today.disabled = weekOffset === 0;
+}
+
 (function setupNavButtons() {
-  const nav = document.getElementById('cal-week-nav');
-  if (!nav) return;
-  function toggle() { weekOffset = (weekOffset + 1) % 3; renderWeek(); }
-  nav.addEventListener('click', toggle);
-  nav.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+  const prev = document.getElementById('cal-week-prev');
+  const next = document.getElementById('cal-week-next');
+  if (!prev || !next) return;
+  prev.addEventListener('click', () => { if (weekOffset > 0) { weekOffset--; renderWeek(); } });
+  next.addEventListener('click', () => { if (weekOffset < WEEKS - 1) { weekOffset++; renderWeek(); } });
+  const today = document.getElementById('cal-week-today');
+  if (today) today.addEventListener('click', () => { if (weekOffset !== 0) { weekOffset = 0; renderWeek(); } });
+  updateWeekNav(buildWeek(new Date(), weekOffset)); // initial label while data loads
 })();
 
 (function setupLengthButtons() {

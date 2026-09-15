@@ -6,7 +6,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 (function(){var d=document.documentElement;d.classList.add('fonts-loading');var done=false;function fin(){if(done)return;done=true;d.classList.remove('fonts-loading');}setTimeout(fin,500);try{if(document.fonts&&document.fonts.load){Promise.all([document.fonts.load('1em Freeman'),document.fonts.load('1em "Great Vibes"')]).then(fin,fin);}else{fin();}}catch(e){fin();}})();
 </script>
 	<title>Student Login · Schedule Lessons | Trevor Kafka</title>
-	<meta name="description" content="Log in to book and manage your math, physics, and test-prep lessons with Trevor Kafka. View 21-day availability and schedule sessions up to 90 days ahead.">
+	<meta name="description" content="Log in to book and manage your math, physics, and test-prep lessons with Trevor Kafka. View 90-day availability and schedule sessions up to 90 days ahead.">
 
 	<meta charset="utf-8"> <!--ensures that there aren't any issues with the display of emojis -->
 	<meta name="viewport" content="width=device-width"> <!-- essential for making sure that the ACTUAL screen width is interpreted by the CSS as opposed to some idealized number presented by smartphones (980px+) -->	
@@ -110,7 +110,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			</script>
 			<div style="text-align: center; margin: 0.75em 0 0.25em;">
 				<a href="availability.html" class="button subtle" style="display: inline-block;">
-					<div align="center"><i class="fa-solid fa-calendar-days"></i> Preview my 21-day availability</div>
+					<div align="center"><i class="fa-solid fa-calendar-days"></i> Preview my 90-day availability</div>
 				</a>
 			</div>
 			<ul class="login-notes">
