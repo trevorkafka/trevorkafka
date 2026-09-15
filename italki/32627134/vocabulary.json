@@ -162,7 +162,7 @@
 		{"word": "bag", "IPA": "/bæɡ/", "translation": "包；袋子"},
 		{"word": "before eating", "IPA": "/bɪˈfɔr ˈitɪŋ/", "translation": "吃饭前"},
 		{"word": "after checking in", "IPA": "/ˈæftər ˈtʃɛkɪŋ ɪn/", "translation": "办理入住后"},
-		{"word": "How many times...?", "IPA": "/haʊ ˈmɛni taɪmz/", "translation": "多少次？"},
+		{"word": "How many times...?", "audio": "How many times", "IPA": "/haʊ ˈmɛni taɪmz/", "translation": "多少次？"},
 		{"word": "many times", "IPA": "/ˈmɛni taɪmz/", "translation": "很多次"},
 		{"word": "often", "IPA": "/ˈɔfən/", "translation": "经常；时常"},
 		{"word": "cutlery", "IPA": "/ˈkʌtləri/", "translation": "餐具（刀叉勺的统称）"},
