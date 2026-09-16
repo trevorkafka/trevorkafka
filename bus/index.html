@@ -336,7 +336,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 	const refreshTime = 5 /* refresh time in seconds */
 	let timeTable = {};
 	// Raw departure times from the latest successful cycle, kept so cached
-	// data can be re-counted against the clock: { route: { E: [ms, ...], W: [ms, ...] } }
+	// data can be re-counted against the clock: { E: { route: [ms, ...] }, W: { ... } }
 	let departures = {};
 
 	// display walk times
@@ -370,9 +370,9 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 
 					if (n > 3) return; // only the next three arrivals per direction
 
-					if (!departures[route]) departures[route] = {};
-					if (!departures[route][direction]) departures[route][direction] = [];
-					departures[route][direction].push(depTime.getTime());
+					if (!departures[direction]) departures[direction] = {};
+					if (!departures[direction][route]) departures[direction][route] = [];
+					departures[direction][route].push(depTime.getTime());
 
 					if (!timeTable[route]) {
 						timeTable[route] = {};
@@ -383,12 +383,13 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			.catch(() => {}); // network/API error: treat as "no data" for this cycle
 	};
 
-	function updateTable(fromCache) {
+	function updateTable(cachedDirections) {
 		// Blank every arrival cell first, so routes that dropped out of the data
 		// (or an empty cycle with no cached fallback) don't keep stale numbers.
 		document.querySelectorAll(".countdown-time").forEach(cell => {
 			cell.innerHTML = "";
-			cell.classList.toggle("cached", !!fromCache);
+			const direction = cell.id.indexOf("-E") !== -1 ? "E" : "W";
+			cell.classList.toggle("cached", cachedDirections.indexOf(direction) !== -1);
 		});
 		for (const route in timeTable) {
 			for (const prediction in timeTable[route]) {
@@ -427,44 +428,46 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 		return waitTime === -0 ? 0 : waitTime;
 	}
 
-	// Rebuild timeTable from cached departures: drop buses that can no longer
-	// be caught and renumber the remaining ones so they fill cells 1..3.
-	function tableFromDepartures(deps) {
-		const table = {};
+	// Add one direction's cached departures to timeTable: drop buses that can
+	// no longer be caught and renumber the remaining ones to fill cells 1..3.
+	function addDirectionFromDepartures(direction, deps) {
+		const walkTime = direction === "W" ? walkTimeWest : walkTimeEast;
 		for (const route in deps) {
-			for (const direction in deps[route]) {
-				const walkTime = direction === "W" ? walkTimeWest : walkTimeEast;
-				let n = 0;
-				deps[route][direction].forEach(depMs => {
-					const waitTime = minutesToLeave(depMs, walkTime);
-					if (waitTime < -1) return;
-					n++;
-					if (!table[route]) table[route] = {};
-					table[route][route + "-" + direction + n] = waitTime;
-				});
-			}
+			let n = 0;
+			deps[route].forEach(depMs => {
+				const waitTime = minutesToLeave(depMs, walkTime);
+				if (waitTime < -1) return;
+				n++;
+				if (!timeTable[route]) timeTable[route] = {};
+				timeTable[route][route + "-" + direction + n] = waitTime;
+			});
 		}
-		return table;
 	}
 
+	// The two directions are fetched separately and either can fail or come
+	// back empty on its own, so the cache is kept and applied per direction:
+	// a live side is shown live while the other side falls back to its cache.
 	function renderCycle() {
-		const hasData = Object.values(timeTable).some(route => Object.keys(route).length > 0);
-		let fromCache = false;
-		if (hasData) {
-			// Fresh predictions: show them and remember their departure times.
-			try { localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), departures })); } catch (e) {}
-		} else {
-			// No predictions this cycle: reuse the most recent cached departures,
-			// recounted against the clock, as long as they aren't too old.
-			// Otherwise leave the table empty so the cells blank out as usual.
-			let cached = null;
-			try { cached = JSON.parse(localStorage.getItem(CACHE_KEY) || "null"); } catch (e) {}
-			if (cached && cached.departures && (Date.now() - cached.ts) <= STALE_MS) {
-				timeTable = tableFromDepartures(cached.departures);
-				fromCache = true;
+		let cache = {};
+		try { cache = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}") || {}; } catch (e) {}
+		const cachedDirections = [];
+		["W", "E"].forEach(direction => {
+			const live = departures[direction];
+			if (live && Object.keys(live).length > 0) {
+				// Fresh predictions for this direction: remember their departure times.
+				cache[direction] = { ts: Date.now(), departures: live };
+			} else {
+				// Nothing live for this direction: reuse its cached departures,
+				// recounted against the clock, as long as they aren't too old.
+				const c = cache[direction];
+				if (c && c.departures && (Date.now() - c.ts) <= STALE_MS) {
+					addDirectionFromDepartures(direction, c.departures);
+					cachedDirections.push(direction);
+				}
 			}
-		}
-		updateTable(fromCache);
+		});
+		try { localStorage.setItem(CACHE_KEY, JSON.stringify(cache)); } catch (e) {}
+		updateTable(cachedDirections);
 	}
 
 	function refreshTimes() {
