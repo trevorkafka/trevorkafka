@@ -1,4 +1,21 @@
 [
+	{"date": "2026-09-15",
+	"vocabulary": [
+		{"word": "woke up", "IPA": "/woʊk ʌp/", "translation": "醒了"},
+		{"word": "bun", "IPA": "/bʌn/", "translation": "包子；馒头"},
+		{"word": "snack", "IPA": "/snæk/", "translation": "零食"},
+		{"word": "filling", "IPA": "/ˈfɪlɪŋ/", "translation": "馅儿"},
+		{"word": "tea egg", "IPA": "/ti ɛɡ/", "translation": "茶叶蛋"},
+		{"word": "painful", "IPA": "/ˈpeɪnfəl/", "translation": "疼痛的"},
+		{"word": "hurt", "IPA": "/hɜrt/", "translation": "疼；受伤"},
+		{"word": "was", "IPA": "/wʌz/", "translation": "是（过去）"},
+		{"word": "vegetables", "IPA": "/ˈvɛdʒtəbəlz/", "translation": "蔬菜"},
+		{"word": "garlic", "IPA": "/ˈɡɑrlɪk/", "translation": "大蒜"},
+		{"word": "stomach", "IPA": "/ˈstʌmək/", "translation": "胃；肚子"},
+		{"word": "cancelled", "IPA": "/ˈkænsəld/", "translation": "取消了"},
+		{"word": "tastes like", "IPA": "/teɪsts laɪk/", "translation": "尝起来像"},
+		{"word": "sweating", "IPA": "/ˈswɛtɪŋ/", "translation": "出汗"}
+	]},
 	{"date": "2026-09-14",
 	"vocabulary": [
 		{"word": "rice noodles", "IPA": "/raɪs ˈnudəlz/", "translation": "米粉"},
