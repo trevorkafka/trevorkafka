@@ -22,19 +22,18 @@
     margin: 0 auto 8px;
     padding: 0 16px;
     display: flex;
-    align-items: center;
-    justify-content: space-between; /* key | controls | button */
+    align-items: stretch;           /* pager matches the toggle's height */
+    justify-content: space-between; /* key | pager | toggle | button, evenly spaced */
     gap: 12px 24px;
     font-size: 14px;
     flex-wrap: wrap;
     color: var(--cal-text);
   }
-  /* Three balanced zones on wide screens: the color key on the left, the week
-     pager + lesson-length toggle together in the middle, the Book button on
-     the right. On narrow screens the groups dissolve so the individual items
-     spread evenly (see the container query below). */
-  .legend-keys { display: flex; align-items: center; gap: 12px 24px; }
-  .legend-controls { display: flex; align-items: stretch; gap: 14px; } /* pager matches the toggle's height */
+  /* Four evenly spaced items: the color key, the week pager, the lesson-length
+     toggle and the Book button. The wrapper around the pager and toggle is
+     transparent to layout (it only groups them in the markup). */
+  .legend-keys { display: flex; align-items: center; align-self: center; gap: 12px 24px; }
+  .legend-controls { display: contents; }
   .subtitle {
     max-width: 1000px;
     margin: 20px auto 0;
@@ -89,6 +88,7 @@
   /* Book-a-lesson CTA — matches site .button style (terracotta, shadowed). */
   .book-cta {
     position: relative;
+    align-self: center;
   }
   .book-button {
     background: var(--cal-accent);
@@ -133,8 +133,8 @@
   .book-menu.open { display: block; }
   .book-menu a:hover { background: var(--cal-surface); }
 
-  /* Segmented 3-state vertical toggle, shared by the week and lesson-length
-     selectors. The active option is tracked with data-active="0|1|2". */
+  /* Segmented 4-state vertical toggle for the lesson length. The active
+     option is tracked with data-active="0|1|2|3". */
   .cal-seg {
     position: relative;
     display: inline-flex;
@@ -162,7 +162,8 @@
   }
   .cal-seg[data-active="0"] .cal-seg-label:nth-child(1),
   .cal-seg[data-active="1"] .cal-seg-label:nth-child(2),
-  .cal-seg[data-active="2"] .cal-seg-label:nth-child(3) { color: var(--button-text, #E1CEB4); font-weight: bold; }
+  .cal-seg[data-active="2"] .cal-seg-label:nth-child(3),
+  .cal-seg[data-active="3"] .cal-seg-label:nth-child(4) { color: var(--button-text, #E1CEB4); font-weight: bold; }
   /* The active row is bold, which is wider. Reserve the bold width for every
      label/cell up front with an invisible zero-height bold copy of its text, so
      the toggle's width doesn't change when the active row moves. */
@@ -179,13 +180,14 @@
     left: 0;
     right: 0;
     top: 0;
-    height: 33.3333%;
+    height: 25%;
     background: var(--cal-accent);
     transition: top 0.2s ease;
     pointer-events: none;
   }
-  .cal-seg[data-active="1"] .cal-seg-indicator { top: 33.3333%; }
-  .cal-seg[data-active="2"] .cal-seg-indicator { top: 66.6667%; }
+  .cal-seg[data-active="1"] .cal-seg-indicator { top: 25%; }
+  .cal-seg[data-active="2"] .cal-seg-indicator { top: 50%; }
+  .cal-seg[data-active="3"] .cal-seg-indicator { top: 75%; }
 
   /* Week pager. Visually: previous / next chevrons on one row and the visible
      week's date range on a row beneath. Functionally: the entire left half of
@@ -618,6 +620,7 @@
     <span class="cal-seg-label" data-text="20-min intro call">20-min intro call</span>
     <span class="cal-seg-label" data-text="45-min tutoring">45-min tutoring</span>
     <span class="cal-seg-label" data-text="60-min tutoring">60-min tutoring</span>
+    <span class="cal-seg-label" data-text="90-min tutoring">90-min tutoring</span>
     <span class="cal-seg-indicator" aria-hidden="true"></span>
   </div>
   </div>
@@ -722,7 +725,7 @@
   // (minutes) needed for each option. Only runs at least this long are shown
   // as bookable. The intro call is 20 min, but slots are 15 min, so it needs a
   // 30-min (2-slot) window. Default is 60-min.
-  const LESSON_MINUTES = [30, 45, 60];
+  const LESSON_MINUTES = [30, 45, 60, 90];
   let lessonIdx = 2;
   function currentMinRun() { return LESSON_MINUTES[lessonIdx] / 15; } // slots (15 min each)
 
