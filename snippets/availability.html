@@ -187,15 +187,18 @@
   .cal-seg[data-active="1"] .cal-seg-indicator { top: 33.3333%; }
   .cal-seg[data-active="2"] .cal-seg-indicator { top: 66.6667%; }
 
-  /* Week pager: Today / previous / next buttons on one row, with the visible
-     week's date range on its own full-width row beneath them. Styled to match
-     the segmented toggle beside it. An inline-grid (not wrapping flex) keeps
-     the pager only as wide as its widest row. */
+  /* Week pager. Visually: previous / next chevrons on one row and the visible
+     week's date range on a row beneath. Functionally: the entire left half of
+     the box goes back a week and the entire right half goes forward, via two
+     invisible absolutely-positioned buttons; the visual layer sits above them
+     with pointer-events: none so clicks fall through. Styled to match the
+     segmented toggle beside it. */
   .cal-weeknav {
-    display: inline-grid;
-    grid-template-columns: repeat(3, auto);
-    grid-template-rows: 1fr 1fr; /* buttons row and label row share the height */
-    align-items: stretch;
+    position: relative;
+    display: inline-grid;          /* one cell: the visual layer fills it */
+    box-sizing: border-box;
+    width: 114px;                  /* fixed: a roomy click target that doesn't
+                                      shift as the date label's length changes */
     border: 1px solid var(--cal-border);
     border-radius: 8px;
     overflow: hidden;
@@ -203,30 +206,45 @@
     font-size: 12px;
     color: var(--cal-text);
   }
-  .cal-weeknav-btn {
+  .cal-weeknav-half {
     all: unset;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4px 9px;
-    font-size: 14px;
-    color: var(--cal-accent);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%;
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
     transition: background-color 0.15s ease;
   }
-  .cal-weeknav-btn + .cal-weeknav-btn { border-left: 1px solid var(--cal-border); }
-  .cal-weeknav-btn:hover { background: var(--cal-surface); }
-  .cal-weeknav-btn:focus-visible { outline: 2px solid var(--cal-accent); outline-offset: -2px; }
-  .cal-weeknav-btn:disabled { color: var(--cal-border); cursor: default; background: none; }
-  .cal-weeknav-today {
-    font-family: Freeman, sans-serif;
-    font-size: 13px;
+  .cal-weeknav-half-prev { left: 0; }
+  .cal-weeknav-half-next { right: 0; }
+  .cal-weeknav-half:hover { background: var(--cal-surface); }
+  .cal-weeknav-half:focus-visible { outline: 2px solid var(--cal-accent); outline-offset: -2px; }
+  .cal-weeknav-half:disabled { cursor: default; background: none; }
+  .cal-weeknav-visual {
+    position: relative;            /* paints above the hit areas ... */
+    z-index: 1;
+    pointer-events: none;          /* ... but never intercepts their clicks */
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;   /* chevron row and label row share the height */
   }
+  .cal-weeknav-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 14px;
+    font-size: 14px;
+    color: var(--cal-accent);
+    transition: color 0.15s ease;
+  }
+  .cal-weeknav-arrow-next { border-left: 1px solid var(--cal-border); }
+  /* dim a chevron when its half is disabled (at either end of the range) */
+  .cal-weeknav-half-prev:disabled ~ .cal-weeknav-visual .cal-weeknav-arrow-prev,
+  .cal-weeknav-half-next:disabled ~ .cal-weeknav-visual .cal-weeknav-arrow-next { color: var(--cal-border); }
   .cal-weeknav-label {
-    order: 10;             /* placed after all three buttons */
-    grid-column: 1 / -1;   /* spans the full width: its own row */
-    display: inline-flex;
+    grid-column: 1 / -1;           /* spans the full width: its own row */
+    display: flex;
     align-items: center;
     justify-content: center;
     padding: 3px 10px;
@@ -299,18 +317,18 @@
     border-top: 8px solid var(--cal-accent);
   }
   .calendar-head-cell-weekday {
-    font-size: 12px;
+    font-family: Freeman, sans-serif;
+    font-size: 14px;
     text-transform: uppercase;
     color: var(--cal-muted);
-    font-weight: bold;
-    line-height: 1.4;
+    line-height: 1.3;
     letter-spacing: 0.04em;
   }
   .calendar-head-cell-date {
-    font-size: 13px;
+    font-family: Freeman, sans-serif;
+    font-size: 16px;
     color: var(--cal-text);
-    font-weight: bold;
-    line-height: 1.4;
+    line-height: 1.3;
   }
   .calendar-body-wrap {
     border: 1px solid var(--cal-border);
@@ -584,11 +602,17 @@
     <span><span class="legend-swatch busy"></span>Booked</span>
   </div>
   <div class="legend-controls">
+  <!-- Week pager. The two buttons are invisible hit areas covering the left
+       and right halves of the whole box (a large click target); the layer
+       after them is purely visual and lets clicks pass through. -->
   <div class="cal-weeknav" id="cal-week-nav" role="group" aria-label="Change week">
-    <button type="button" class="cal-weeknav-btn cal-weeknav-today" id="cal-week-today">Today</button>
-    <button type="button" class="cal-weeknav-btn" id="cal-week-prev" aria-label="Previous week"><i class="fa-solid fa-chevron-left"></i></button>
-    <span class="cal-weeknav-label" id="cal-week-label" aria-live="polite"></span>
-    <button type="button" class="cal-weeknav-btn" id="cal-week-next" aria-label="Next week"><i class="fa-solid fa-chevron-right"></i></button>
+    <button type="button" class="cal-weeknav-half cal-weeknav-half-prev" id="cal-week-prev" aria-label="Previous week"></button>
+    <button type="button" class="cal-weeknav-half cal-weeknav-half-next" id="cal-week-next" aria-label="Next week"></button>
+    <div class="cal-weeknav-visual" aria-hidden="true">
+      <span class="cal-weeknav-arrow cal-weeknav-arrow-prev"><i class="fa-solid fa-chevron-left"></i></span>
+      <span class="cal-weeknav-arrow cal-weeknav-arrow-next"><i class="fa-solid fa-chevron-right"></i></span>
+      <span class="cal-weeknav-label" id="cal-week-label"></span>
+    </div>
   </div>
   <div class="cal-seg" id="cal-length-nav" data-active="2" tabindex="0" role="button" aria-label="Switch lesson length">
     <span class="cal-seg-label" data-text="20-min intro call">20-min intro call</span>
@@ -645,6 +669,18 @@
   // periodic refresh keeps trying.
   const QUICK_DAYS = 21;
   let loadedDays = 0;                  // range covered by cachedEvents
+  // The Apps Script endpoint is also just flaky: identical requests take
+  // anywhere from 1 s to over 30 s depending on how busy Google's side is, and
+  // the slow ones are killed and served as a 404 page. Two mitigations:
+  //  1. Each request is retried a few times with a growing pause, since most
+  //     failures are transient.
+  //  2. The last good schedule is kept in localStorage and shown right away on
+  //     the next visit, then replaced when fresh data arrives. If the fetch
+  //     fails, the remembered schedule stays up with a note instead of an error.
+  const RETRY_DELAYS_MS = [3000, 8000];        // pauses before attempts 2 and 3
+  const SAVED_KEY = 'tk-availability';
+  const SAVED_MAX_AGE_MS = 24 * 60 * 60 * 1000; // ignore anything older
+  let savedAt = 0;                             // when the on-screen data was fetched (0 = unknown)
   function loadedWeeks() { return Math.max(1, Math.floor((loadedDays || HORIZON_DAYS) / 7)); }
 
   const FIFTEEN_MIN = 15 * 60 * 1000;
@@ -692,8 +728,15 @@
 
   let weekOffset = 0;
   let cachedEvents = null;
+  let loadInFlight = false;
 
   async function loadAndRender() {
+    if (loadInFlight) return;          // retries can outlast the refresh interval
+    loadInFlight = true;
+    try { await loadAndRenderInner(); } finally { loadInFlight = false; }
+  }
+
+  async function loadAndRenderInner() {
     const root = document.getElementById('root');
     const status = document.getElementById('status');
     const days = buildWeek(new Date(), weekOffset);
@@ -704,6 +747,9 @@
       render(root, days, emptyGrid, true);
       status.textContent = '';
     }
+
+    // Show the schedule remembered from the last visit while fresh data loads.
+    if (!cachedEvents) restoreSaved();
 
     if (!API_URL || API_URL.startsWith('PASTE_')) {
       cachedEvents = makeDemoEvents();
@@ -731,6 +777,8 @@
       const events = await full;
       cachedEvents = events;
       loadedDays = HORIZON_DAYS;
+      savedAt = Date.now();
+      saveEvents(events, HORIZON_DAYS);
       status.textContent = '';
       renderWeek();
     } catch (err) {
@@ -739,9 +787,14 @@
         showLoadError(root, status, err);
         return;
       }
+      let note;
       if (loadedDays < HORIZON_DAYS) {
-        status.innerHTML = 'Only the next ' + QUICK_DAYS + ' days could be loaded right now; the rest will appear once it can. '
-          + '<a href="#" id="cal-retry-full">Try again</a>';
+        note = 'Only the next ' + QUICK_DAYS + ' days could be loaded right now; the rest will appear once it can. ';
+      } else if (savedAt) {
+        note = 'Could not refresh just now, so this is the schedule from ' + describeAge(savedAt) + '. ';
+      }
+      if (note) {
+        status.innerHTML = note + '<a href="#" id="cal-retry-full">Try again</a>';
         const a = document.getElementById('cal-retry-full');
         if (a) a.addEventListener('click', e => { e.preventDefault(); loadAndRender(); });
       }
@@ -750,6 +803,19 @@
   }
 
   async function fetchEvents(days) {
+    let lastErr;
+    for (let attempt = 0; attempt <= RETRY_DELAYS_MS.length; attempt++) {
+      if (attempt > 0) await new Promise(r => setTimeout(r, RETRY_DELAYS_MS[attempt - 1]));
+      try {
+        return await fetchEventsOnce(days);
+      } catch (err) {
+        lastErr = err;
+      }
+    }
+    throw lastErr;
+  }
+
+  async function fetchEventsOnce(days) {
     const res = await fetch(API_URL + '?days=' + days);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
@@ -760,6 +826,39 @@
     }));
   }
 
+  // ---- remembered schedule (localStorage) ----
+  function saveEvents(events, days) {
+    try {
+      localStorage.setItem(SAVED_KEY, JSON.stringify({
+        saved: Date.now(),
+        days,
+        events: events.map(e => [e.start.getTime(), e.end.getTime(), e.title]),
+      }));
+    } catch (e) { /* private mode, quota, disabled storage: fine without it */ }
+  }
+
+  function restoreSaved() {
+    try {
+      const raw = localStorage.getItem(SAVED_KEY);
+      if (!raw) return;
+      const data = JSON.parse(raw);
+      if (!data || !Array.isArray(data.events)) return;
+      if (Date.now() - data.saved > SAVED_MAX_AGE_MS) { localStorage.removeItem(SAVED_KEY); return; }
+      cachedEvents = data.events.map(([s, e, title]) => ({ start: new Date(s), end: new Date(e), title }));
+      loadedDays = data.days || HORIZON_DAYS;
+      savedAt = data.saved;
+      renderWeek();
+    } catch (e) { /* corrupt or unavailable storage: load normally */ }
+  }
+
+  function describeAge(ts) {
+    const mins = Math.round((Date.now() - ts) / 60000);
+    if (mins < 2) return 'a moment ago';
+    if (mins < 60) return mins + ' minutes ago';
+    const hrs = Math.round(mins / 60);
+    return hrs === 1 ? 'an hour ago' : hrs + ' hours ago';
+  }
+
   function showLoadError(root, status, err) {
     root.innerHTML = '<div class="error"><span>Could not load availability: ' + escapeHTML(err.message) + '</span>'
       + '<button type="button" class="error-retry" id="cal-retry"><i class="fa-solid fa-rotate-right"></i>Try again</button></div>';
@@ -768,7 +867,15 @@
     if (retry) retry.addEventListener('click', () => loadAndRender());
   }
 
+  // "90 days" wording on the page (subtitle, page title, intro) follows the
+  // range actually loaded, so a 21-day fallback isn't described as 90 days.
+  function updateHorizonText() {
+    const n = (loadedDays && loadedDays < HORIZON_DAYS) ? loadedDays : 90;
+    document.querySelectorAll('.cal-horizon-days').forEach(el => { el.textContent = String(n); });
+  }
+
   function renderWeek() {
+    updateHorizonText();
     const root = document.getElementById('root');
     if (!cachedEvents) return;
     const days = buildWeek(new Date(), weekOffset);
@@ -1302,7 +1409,7 @@ function makeDemoEvents() {
   const el = document.getElementById('tz-info');
   if (!el) return;
   const tzName = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  el.textContent = `Showing available times over the next 90 days in ${tzName} (${formatTZOffset(new Date())}).`;
+  el.innerHTML = `Showing available times over the next <span class="cal-horizon-days">90</span> days in ${escapeHTML(tzName)} (${escapeHTML(formatTZOffset(new Date()))}).`;
 })();
 
   // Fill in Boston's live UTC offset (accounts for daylight saving).
@@ -1366,7 +1473,6 @@ function updateWeekNav(days) {
   const label = document.getElementById('cal-week-label');
   const prev = document.getElementById('cal-week-prev');
   const next = document.getElementById('cal-week-next');
-  const today = document.getElementById('cal-week-today');
   if (!label || !prev || !next) return;
   const first = days[0], last = days[days.length - 1];
   const md = new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric' });
@@ -1376,7 +1482,6 @@ function updateWeekNav(days) {
   label.textContent = md.format(first) + ' \u2013 ' + (sameMonth ? dd.format(last) : md.format(last));
   prev.disabled = weekOffset <= 0;
   next.disabled = weekOffset >= loadedWeeks() - 1;
-  if (today) today.disabled = weekOffset === 0;
 }
 
 (function setupNavButtons() {
@@ -1385,8 +1490,6 @@ function updateWeekNav(days) {
   if (!prev || !next) return;
   prev.addEventListener('click', () => { if (weekOffset > 0) { weekOffset--; renderWeek(); } });
   next.addEventListener('click', () => { if (weekOffset < loadedWeeks() - 1) { weekOffset++; renderWeek(); } });
-  const today = document.getElementById('cal-week-today');
-  if (today) today.addEventListener('click', () => { if (weekOffset !== 0) { weekOffset = 0; renderWeek(); } });
   updateWeekNav(buildWeek(new Date(), weekOffset)); // initial label while data loads
 })();
 
