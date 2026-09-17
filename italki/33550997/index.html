@@ -1,0 +1,95 @@
+<!DOCTYPE HTML>
+
+<head>
+<!-- Apply saved light/dark choice before paint (avoids a flash when the device default differs from the toggle) -->
+<script>
+try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}
+try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElement.classList.add('ann-collapsed');}catch(e){}
+(function(){var d=document.documentElement;d.classList.add('fonts-loading');var done=false;function fin(){if(done)return;done=true;d.classList.remove('fonts-loading');}setTimeout(fin,500);try{if(document.fonts&&document.fonts.load){Promise.all([document.fonts.load('1em Freeman'),document.fonts.load('1em "Great Vibes"')]).then(fin,fin);}else{fin();}}catch(e){fin();}})();
+</script>
+	<title>Shanshan | Pronunciation List</title>
+	<meta charset="utf-8"/> <!--ensures that there aren't any issues with the display of emojis -->
+	<meta content="width=device-width" name="viewport"/> <!-- essential for making sure that the ACTUAL screen width is interpreted by the CSS as opposed to some idealized number presented by smartphones (980px+) -->
+	<link rel="preload" href="/fonts/freeman-latin.woff2" as="font" type="font/woff2" crossorigin>
+	<link rel="preload" href="/fonts/greatvibes-latin.woff2" as="font" type="font/woff2" crossorigin>
+	<link href="/style.css" rel="stylesheet"/>
+	<link href="/favicon.ico" rel="shortcut icon"/>
+<!-- Google font stuff -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai+Looped:wght@100..900&display=swap" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> <!-- use JQuery -->
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script> <!-- markdown parser for note boxes -->
+<script src="https://kit.fontawesome.com/157b2a3980.js" crossorigin="anonymous"></script> <!-- Font Awesome icons -->
+<script src="../english-buttons.js" defer></script>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "389e2db315b8432fbe6d5844de5f490e"}'></script><!-- End Cloudflare Web Analytics -->
+	
+</head>
+<style>
+	.word-box {
+		display: inline-block;
+		background-color: var(--tint-2);
+		margin: 10px;
+		padding: 10px;
+		border-radius: 10px;
+		transition: background-color 0.2s ease;
+	}
+
+	h2.has-audio {
+		cursor: pointer;
+		padding: 5px 10px;
+		border-radius: 10px;
+		transition: background-color 0.2s ease;
+	}
+
+	h2.has-audio:hover {
+		background-color: var(--tint-5);
+	}
+
+	.word-box.has-audio {
+		cursor: pointer;
+		box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+	}
+
+	.word-box.has-audio:hover {
+		background-color: var(--tint-5);
+	}
+
+	#word-container {
+		text-align: center;
+	}
+
+	.english {
+		font-weight: bold;
+	}
+
+	.IPA {
+		color: grey;
+		font-size: 90%;
+	}
+</style>
+
+<body>
+
+	<div style="padding-bottom: 50px; padding-top: 50px">
+
+		<div class="content">
+			<p>Before clicking on a word, try to recall the pronunciation on your own. Then, listen click the word to listen to the audio to hear my pronunciation. After that, repeat the word aloud and try to imitate my pronunciation as best as possible.</p>
+			<p>在点击单词之前，先试着自己回忆它的发音。然后，点击单词聆听音频，听我的发音。之后，大声重复这个单词，尽量模仿我的发音。</p>
+
+			<label><input type="checkbox" id="ipa-toggle" checked style="width: auto"> Show IPA 显示国际音标</label>
+			<a href="../IPA/" class="button" style="display:inline-block">
+				<div align="center">IPA vowels</div>
+			</a>
+			<br>
+			<label><input type="checkbox" id="translation-toggle" style="width: auto"> Show translation 显示翻译</label>
+			
+		</div>
+
+		<div class="content" id="word-container" style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; align-content: center; min-height: 100vh;">
+
+		</div>
+
+	</div>
+
+</body>
