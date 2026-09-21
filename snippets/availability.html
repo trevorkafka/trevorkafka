@@ -92,7 +92,7 @@
   }
   .book-button {
     background: var(--cal-accent);
-    color: var(--button-text, #E1CEB4);
+    color: var(--button-text, #FFF6EC);
     border: none;
     border-radius: 10px;
     padding: 10px 16px;
@@ -163,7 +163,7 @@
   .cal-seg[data-active="0"] .cal-seg-label:nth-child(1),
   .cal-seg[data-active="1"] .cal-seg-label:nth-child(2),
   .cal-seg[data-active="2"] .cal-seg-label:nth-child(3),
-  .cal-seg[data-active="3"] .cal-seg-label:nth-child(4) { color: var(--button-text, #E1CEB4); font-weight: bold; }
+  .cal-seg[data-active="3"] .cal-seg-label:nth-child(4) { color: var(--button-text, #FFF6EC); font-weight: bold; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.35); /* same lift as the Book button */ }
   /* The active row is bold, which is wider. Reserve the bold width for every
      label/cell up front with an invisible zero-height bold copy of its text, so
      the toggle's width doesn't change when the active row moves. */
@@ -333,18 +333,32 @@
     color: var(--cal-text);
     line-height: 1.3;
   }
-  /* Federal holiday chip under the date. The header grows to make room for it
-     only in weeks that contain one. On narrow screens the columns are too
-     slim for a name, so the chip collapses to just the flag icon. */
-  .calendar-head-date:has(.holiday-chip) { height: 68px; }
+  /* Federal holiday chip. It floats in front of the grid, centered on the
+     line between the header and the first body row, and takes no space in
+     the header, so the row's height and the dates' positions are unaffected.
+     On narrow screens the columns are too slim for a name, so the chip
+     collapses to just the flag icon. */
+  .calendar-head-date:has(.holiday-chip) {
+    overflow: visible;             /* let the chip hang below the header */
+    position: relative;
+    z-index: 2;                    /* ... in front of the body grid */
+  }
+  /* overflow: visible drops the corner clipping, so round the corner cells
+     themselves in case the today tint lands on one */
+  .calendar-head-date:has(.holiday-chip) .calendar-head-cell:first-child { border-top-left-radius: inherit; }
+  .calendar-head-date:has(.holiday-chip) .calendar-head-cell:last-child { border-top-right-radius: inherit; }
+  .calendar-head-cell:not(.calendar-head-cell-blank) { position: relative; }
   .holiday-chip {
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translate(-50%, 50%);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 4px;
-    align-self: center;
     max-width: calc(100% - 6px);
-    margin-top: 3px;
+    box-sizing: border-box;
     padding: 1px 7px;
     border-radius: 100px;
     background: var(--cal-surface);
@@ -356,11 +370,29 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .holiday-chip i { font-size: 9px; color: var(--cal-accent); }
+  .holiday-chip i { font-size: 9px; color: var(--cal-accent); flex-shrink: 0; }
   .holiday-chip span { overflow: hidden; text-overflow: ellipsis; }
+  /* Hovered (or tapped on touch screens, which toggles .open) the chip grows
+     to show its whole name, wrapping onto more lines if it has to. It floats
+     over the grid, so it may spill past its own column. */
+  .holiday-chip:hover,
+  .holiday-chip:focus-visible,
+  .holiday-chip.open {
+    max-width: 150px;
+    width: max-content;
+    white-space: normal;
+    text-align: center;
+    border-radius: 10px;
+    z-index: 3;
+  }
+  .holiday-chip:hover span,
+  .holiday-chip:focus-visible span,
+  .holiday-chip.open span { display: inline; overflow: visible; }
+  .holiday-chip:focus-visible { outline: 2px solid var(--cal-accent); outline-offset: 1px; }
   @container (max-width: 700px) {
     .holiday-chip { padding: 2px 6px; }
     .holiday-chip span { display: none; }
+    .holiday-chip:hover, .holiday-chip:focus-visible, .holiday-chip.open { padding: 1px 7px; }
   }
   .calendar-body-wrap {
     border: 1px solid var(--cal-border);
@@ -1075,7 +1107,7 @@
       const today = d.toDateString() === todayKey;
       const holiday = federalHoliday(d);
       const chip = holiday
-        ? `<span class="holiday-chip" title="${escapeHTML(holiday)}"><i class="fa-solid fa-flag-usa"></i><span>${escapeHTML(holiday)}</span></span>`
+        ? `<span class="holiday-chip" tabindex="0" role="note" aria-label="${escapeHTML(holiday)}"><i class="fa-solid fa-flag-usa" aria-hidden="true"></i><span>${escapeHTML(holiday)}</span></span>`
         : '';
       return `<div class="calendar-head-cell${today ? ' calendar-head-cell-today' : ''}">
         <div class="calendar-head-cell-weekday">${weekdayFmt.format(d)}</div>
@@ -1576,6 +1608,16 @@ function updateWeekNav(days) {
   prev.addEventListener('click', () => { if (weekOffset > 0) { weekOffset--; renderWeek(); } });
   next.addEventListener('click', () => { if (weekOffset < loadedWeeks() - 1) { weekOffset++; renderWeek(); } });
   updateWeekNav(buildWeek(new Date(), weekOffset)); // initial label while data loads
+})();
+
+// Holiday chips: a tap toggles the expanded name (hover does it on pointer
+// devices via CSS); tapping anywhere else closes it.
+(function setupHolidayChips() {
+  document.addEventListener('click', e => {
+    const chip = e.target.closest && e.target.closest('.holiday-chip');
+    document.querySelectorAll('.holiday-chip.open').forEach(c => { if (c !== chip) c.classList.remove('open'); });
+    if (chip) chip.classList.toggle('open');
+  });
 })();
 
 (function setupLengthButtons() {
