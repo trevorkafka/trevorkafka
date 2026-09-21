@@ -137,6 +137,28 @@ async function loadNotes(entry, groupContainer) {
       stopBtn.innerHTML = '<i class="fa-solid fa-stop"></i> Stop';
       stopBtn.disabled = true;
 
+      // Speed toggle: slow = slowed down, normal = full speed. Pitch is
+      // preserved by default, so slow playback still sounds natural.
+      const SLOW_RATE = 0.7;
+      let rate = 1;
+      const speed = document.createElement("button");
+      speed.type = "button";
+      speed.classList.add("note-speed");
+      speed.setAttribute("role", "switch");
+      speed.setAttribute("aria-checked", "false");
+      speed.setAttribute("aria-label", "Slow playback");
+      speed.title = "Speed: normal 正常速度 (click for slow 慢速)";
+      speed.innerHTML = '<span class="thumb"></span><span class="opt">Slow</span><span class="opt">Normal</span>';
+      function setRate(r) {
+        rate = r;
+        const slow = r !== 1;
+        speed.classList.toggle("slow", slow);
+        speed.setAttribute("aria-checked", String(slow));
+        speed.title = slow ? "Speed: slow 慢速 (click for normal 正常速度)" : "Speed: normal 正常速度 (click for slow 慢速)";
+        if (audio) audio.playbackRate = r;
+      }
+      speed.addEventListener("click", () => setRate(rate === 1 ? SLOW_RATE : 1));
+
       let audio = null;
 
       // Stop: halt playback and reset to the beginning.
@@ -154,6 +176,7 @@ async function loadNotes(entry, groupContainer) {
           audio.addEventListener("ended", reset);
         }
         if (audio.paused) {
+          audio.playbackRate = rate;
           audio.play();
           playBtn.innerHTML = pauseLabel;
           stopBtn.disabled = false;
@@ -170,6 +193,7 @@ async function loadNotes(entry, groupContainer) {
       downloadBtn.href = audioPath;
       downloadBtn.setAttribute("download", "");
 
+      controls.appendChild(speed);
       controls.appendChild(playBtn);
       controls.appendChild(stopBtn);
       controls.appendChild(downloadBtn);
@@ -280,6 +304,46 @@ noteStyle.textContent = `
   .note-audio button:disabled:hover {
     background-color: #00000018;
   }
+  /* Speed switch: one pill with SLOW | NORMAL and a thumb that slides to
+     whichever is active (normal by default). */
+  .note-audio .note-speed {
+    position: relative;
+    display: inline-grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 3px;
+    gap: 0;
+    line-height: 1;
+    overflow: hidden;
+  }
+  .note-speed .thumb {
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    left: 3px;
+    width: calc(50% - 3px);
+    border-radius: 6px;
+    background-color: #00000030;
+    transform: translateX(100%);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .note-speed.slow .thumb {
+    transform: translateX(0);
+  }
+  .note-speed .opt {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 12px;
+    font-family: Freeman, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    opacity: 0.4;
+    transition: opacity 0.25s ease;
+  }
+  .note-speed .opt:last-child { opacity: 1; }
+  .note-speed.slow .thumb + .opt { opacity: 1; }
+  .note-speed.slow .opt:last-child { opacity: 0.4; }
 `;
 document.head.appendChild(noteStyle);
 

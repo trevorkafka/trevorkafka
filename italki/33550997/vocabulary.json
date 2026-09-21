@@ -1,4 +1,22 @@
 [
+	{"date": "2026-09-21",
+	"vocabulary": [
+		{"word": "permanent", "IPA": "/ˈpɜrmənənt/", "translation": "永久的"},
+		{"word": "transplantation", "IPA": "/ˌtrænsplænˈteɪʃən/", "translation": "移植"},
+		{"word": "immunological", "IPA": "/ˌɪmjənəˈlɑdʒɪkəl/", "translation": "免疫学的"},
+		{"word": "cardiovascular", "IPA": "/ˌkɑrdioʊˈvæskjələr/", "translation": "心血管的"},
+		{"word": "3D", "audio": "three D", "IPA": "/ˌθri ˈdi/", "translation": "三维"},
+		{"word": "three-dimensional", "IPA": "/ˌθri dəˈmɛnʃənəl/", "translation": "三维的"},
+		{"word": "National Day", "IPA": "/ˈnæʃənəl deɪ/", "translation": "国庆节"},
+		{"word": "solar calendar", "IPA": "/ˈsoʊlər ˈkæləndər/", "translation": "阳历"},
+		{"word": "lunar calendar", "IPA": "/ˈlunər ˈkæləndər/", "translation": "阴历；农历"},
+		{"word": "in a rush", "IPA": "/ɪn ə rʌʃ/", "translation": "匆忙"},
+		{"word": "in a hurry", "IPA": "/ɪn ə ˈhɜri/", "translation": "匆忙"},
+		{"word": "kindergarten", "IPA": "/ˈkɪndərˌɡɑrtən/", "translation": "幼儿园"},
+		{"word": "adjust", "IPA": "/əˈdʒʌst/", "translation": "调整"},
+		{"word": "rest", "IPA": "/rɛst/", "translation": "休息"},
+		{"word": "Got it!", "audio": "got it", "IPA": "/ˈɡɑt ɪt/", "translation": "明白了！"}
+	]},
 	{"date": "2026-09-16",
 	"vocabulary": [
 		{"word": "engineering", "IPA": "/ˌɛndʒəˈnɪrɪŋ/", "translation": "工程学"},
