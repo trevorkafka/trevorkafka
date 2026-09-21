@@ -755,7 +755,7 @@ div.hovertarget:hover .hoverdisplay-text {
 	--footer-bg:      #000000;
 	--footer-text:    #F2EADF;
 	--footer-muted:   #9C8AA0;
-	--button-text:    #E1CEB4;
+	--button-text:    #FFF6EC; /* near-white warm: parchment (#E1CEB4) read too low-contrast on the terracotta */
 }
 @media (prefers-color-scheme: dark) {
 	:root:not([data-theme="light"]) {
@@ -776,7 +776,7 @@ div.hovertarget:hover .hoverdisplay-text {
 		--footer-bg:      #000000;
 		--footer-text:    #F2EADF;
 		--footer-muted:   #9C8AA0;
-		--button-text:    #E1CEB4;
+		--button-text:    #FFF6EC; /* near-white warm: parchment (#E1CEB4) read too low-contrast on the terracotta */
 	}
 }
 
