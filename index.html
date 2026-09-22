@@ -31,7 +31,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 
 		<trevorkafka-announcement></trevorkafka-announcement>
 
-		<h1 class="smaller-for-narrow-screen">Online <span class="color">Math &amp; Physics Tutoring</span> with Trevor Kafka</h1>
+		<h1 class="smaller-for-narrow-screen" id="overview">Online <span class="color">Math &amp; Physics Tutoring</span> with Trevor Kafka</h1>
 
 		<div style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 16px;">
 			<span class="subject-chip"><i class="fa-solid fa-location-dot"></i> Based in Somerville, MA</span>
@@ -65,7 +65,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 	<!-- YouTube video, which "pops out" of the usual content width when the screen is sufficiently narrow -->
 	<div style="text-align: center">
 
-		<iframe class="full-width-media" style="overflow-y: hidden; aspect-ratio:1.7765; margin-bottom: 20px" src="https://www.youtube.com/embed/Dcrelp-pO2U?autoplay=1&mute=1&rel=0&modestbranding=1&hd=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+		<iframe id="video" class="full-width-media" style="overflow-y: hidden; aspect-ratio:1.7765; margin-bottom: 20px" src="https://www.youtube.com/embed/Dcrelp-pO2U?autoplay=1&mute=1&rel=0&modestbranding=1&hd=1" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 	</div>
 	
@@ -261,7 +261,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			</div>
 		</div>
 
-		<h2 class="fade section-heading"><i class="fa-solid fa-address-card"></i> About Me</h2>
+		<h2 class="fade section-heading" id="about"><i class="fa-solid fa-address-card"></i> About Me</h2>
 
 		<div class="fade">
 			<img class="widescreen glow-shadow" src="media/TK whiteboard.png" alt="Trevor Kafka in front of a whiteboard with equations and a physics diagram." width="402" height="187" style="float: left; margin: 0px 20px 10px 0px; border-radius: 50px;">
@@ -276,7 +276,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 		</div>
 
 		<a id="availability" style="position: relative; top: -60px"></a>
-		<h2 class="fade section-heading" id="availability"><i class="fa-solid fa-calendar-days"></i> My Availability </h2>
+		<h2 class="fade section-heading" id="availability-heading"><i class="fa-solid fa-calendar-days"></i> My Availability </h2>
 
 		<style>
 		    @media (max-width: 900px) {
@@ -328,7 +328,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 
 	<div class="content">
 
-		<h2 class="fade section-heading"><i class="fa-solid fa-comments"></i> Client Reviews</h2>
+		<h2 class="fade section-heading" id="reviews"><i class="fa-solid fa-comments"></i> Client Reviews</h2>
 
 		<table class="top-align blockquote fade">
 			<tr>
@@ -396,7 +396,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			</tr>
 		</table>
 
-		<a id="FAQ" style="position: relative; top: -60px"></a><h2 class="fade section-heading"><i class="fa-solid fa-circle-question"></i> Frequently Asked Questions</h2>
+		<a id="FAQ" style="position: relative; top: -60px"></a><h2 class="fade section-heading" id="faq-heading"><i class="fa-solid fa-circle-question"></i> Frequently Asked Questions</h2>
 
 		<div class="FAQ fade">
 			<details id="pricing-faq">
@@ -547,7 +547,8 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			</div>
 		</div>
 
-		<div class="flexcontainer fade">
+		<a id="get-started" style="position: relative; top: -60px"></a>
+		<div class="flexcontainer fade" id="get-started-section">
 			<div style="width: 225px; height: 225px"> <!-- sets a container for both images -->
 				<img class="glow-shadow" src="media/TK headshot 2.jpg" style="width: 225px; height:225px; margin-bottom: 10px; border-radius: 100%; position: absolute">
 				<img class="hoverdisplay" src="media/TK headshot 2 smile.jpg" style="width: 225px; height:225px; margin-bottom: 10px; border-radius: 100%; position: absolute; border: solid 1px white"> <!-- smile easter egg photo made with https://www.media.io/lab/ai-face-editor/ -->
@@ -578,6 +579,200 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 		</div>
 
 	</div>
+
+	<!-- Section table of contents: fixed in the left margin on wide screens only
+	     (hidden whenever there isn't spare room beside the 1000px content column).
+	     Highlights whichever section currently occupies most of the viewport. -->
+	<nav class="page-toc" id="page-toc" aria-label="On this page">
+		<span class="page-toc-rail" aria-hidden="true"><span class="page-toc-thumb"></span></span>
+		<ol>
+			<li><a href="#" data-section="overview" data-top><i class="fa-solid fa-house"></i>Trevor Kafka</a></li>
+			<li><a href="#video" data-section="video"><i class="fa-solid fa-video"></i>Video</a></li>
+			<li><a href="#about" data-section="about"><i class="fa-solid fa-address-card"></i>About me</a></li>
+			<li><a href="#availability" data-section="availability-heading"><i class="fa-solid fa-calendar-days"></i>Availability</a></li>
+			<li><a href="#reviews" data-section="reviews"><i class="fa-solid fa-comments"></i>Reviews</a></li>
+			<li><a href="#FAQ" data-section="faq-heading"><i class="fa-solid fa-circle-question"></i>FAQ</a></li>
+			<li><a href="#get-started" data-section="get-started-section"><i class="fa-solid fa-flag-checkered"></i>Get started</a></li>
+		</ol>
+	</nav>
+
+	<style>
+		.page-toc {
+			display: none;
+			position: fixed;
+			top: 120px; /* overwritten by script: aligned with the announcement box's top */
+			/* sit in the gap left of the centered 1000px content column */
+			left: calc((100vw - 1000px) / 2 - 190px);
+			width: 150px;
+			z-index: 50;
+			font-family: Freeman, sans-serif;
+			font-size: 15px;
+			letter-spacing: 0.02em;
+			opacity: 0;
+			transition: opacity 0.6s ease;
+		}
+		.page-toc.ready { opacity: 1; }
+		/* content is 1000px wide; show the TOC only when there is room for it beside that */
+		@media (min-width: 1400px) {
+			.page-toc { display: block; }
+		}
+		.page-toc ol {
+			list-style: none;
+			margin: 0;
+			padding: 0 0 0 18px;
+			display: flex;
+			flex-direction: column;
+			gap: 2px;
+		}
+		.page-toc a {
+			display: block;
+			padding: 6px 0;
+			color: var(--color4);
+			text-decoration: none;
+			line-height: 1.3;
+			white-space: nowrap;
+			transition: color 0.35s ease, transform 0.35s ease;
+		}
+		.page-toc a i {
+			display: inline-block;
+			width: 1.2em;
+			margin-right: 8px;
+			text-align: center;
+			font-size: 13px;
+			transition: color 0.35s ease;
+		}
+		.page-toc a.active i { color: var(--button-bg); }
+		.page-toc a:hover { color: var(--color1); }
+		.page-toc a.active {
+			color: var(--color1);
+			transform: translateX(3px);
+		}
+		/* thin rail with a sliding accent thumb marking the active entry */
+		.page-toc-rail {
+			position: absolute;
+			left: 0;
+			top: 0;
+			bottom: 0;
+			width: 2px;
+			border-radius: 2px;
+			background: var(--tint-3);
+		}
+		.page-toc-thumb {
+			position: absolute;
+			left: 0;
+			width: 2px;
+			border-radius: 2px;
+			background: var(--button-bg);
+			top: 0;
+			height: 0;
+			transition: top 0.35s ease, height 0.35s ease, opacity 0.35s ease;
+		}
+		@media (prefers-reduced-motion: reduce) {
+			.page-toc, .page-toc a, .page-toc-thumb { transition: none; }
+		}
+	</style>
+
+	<script>
+	(function () {
+		var toc = document.getElementById('page-toc');
+		if (!toc) return;
+		var links = Array.prototype.slice.call(toc.querySelectorAll('a[data-section]'));
+		var thumb = toc.querySelector('.page-toc-thumb');
+		var rail = toc.querySelector('.page-toc-rail');
+		var current = null;
+
+		function setActive(link) {
+			if (link === current) return;
+			links.forEach(function (a) { a.classList.toggle('active', a === link); });
+			current = link;
+			if (link) {
+				var r = rail.getBoundingClientRect(), l = link.getBoundingClientRect();
+				thumb.style.top = (l.top - r.top) + 'px';
+				thumb.style.height = l.height + 'px';
+				thumb.style.opacity = '1';
+			} else {
+				thumb.style.opacity = '0';
+			}
+		}
+
+		// The navbar floats over the top of the viewport; measure how far down
+		// it reaches so both the scroll targets and the "what's visible"
+		// calculation treat that strip as covered.
+		function navBottom() {
+			var bar = document.querySelector('.navbar');
+			return bar ? bar.getBoundingClientRect().bottom : 70;
+		}
+
+		// Document-space top of an element via the offsetParent chain. Unlike
+		// getBoundingClientRect this ignores CSS transforms, which matters here:
+		// the .fade headings sit 10vh lower until they animate in, so measuring
+		// their on-screen box would land them 10vh too high (under the navbar).
+		function pageTop(el) {
+			var y = 0;
+			while (el) { y += el.offsetTop; el = el.offsetParent; }
+			return y;
+		}
+
+		// Line the TOC up with the top of the announcement box (or the page
+		// title when there is no announcement) as it sits when scrolled to the top.
+		function alignTop() {
+			var anchor = document.getElementById('announcement-box') || document.getElementById('overview');
+			if (anchor) toc.style.top = pageTop(anchor) + 'px';
+		}
+
+		// Clicking an entry scrolls its section heading to just below the
+		// navbar (rather than under it, which is where a plain #hash jump
+		// would put it).
+		links.forEach(function (a) {
+			if (a.hasAttribute('data-top')) return;
+			a.addEventListener('click', function (e) {
+				var el = document.getElementById(a.getAttribute('data-section'));
+				if (!el) return;                              // fall back to the plain hash jump
+				e.preventDefault();
+				var y = pageTop(el) - navBottom() - 16;
+				window.scrollTo({ top: Math.max(0, y), behavior: 'smooth' });
+				if (history.replaceState) history.replaceState(null, '', a.getAttribute('href'));
+			});
+		});
+
+		// Each section runs from its heading to the next heading (the last one
+		// runs to the end of the document). The active section is the one with
+		// the most of itself inside the viewport, below the fixed navbar.
+		function update() {
+			var vh = window.innerHeight, navH = navBottom();
+			var tops = links.map(function (a) {
+				var el = document.getElementById(a.getAttribute('data-section'));
+				return el ? el.getBoundingClientRect().top : null;
+			});
+			var best = null, bestVis = 0;
+			for (var i = 0; i < links.length; i++) {
+				if (tops[i] === null) continue;
+				var start = tops[i];
+				var end = (i + 1 < tops.length && tops[i + 1] !== null) ? tops[i + 1] : document.documentElement.scrollHeight - window.scrollY;
+				var vis = Math.min(end, vh) - Math.max(start, navH);
+				if (vis > bestVis) { bestVis = vis; best = links[i]; }
+			}
+			// At the very top of the page, always mark the first entry.
+			if (window.scrollY < 10) best = links[0];
+			setActive(best);
+		}
+
+		var ticking = false;
+		function onScroll() {
+			if (ticking) return;
+			ticking = true;
+			requestAnimationFrame(function () { update(); ticking = false; });
+		}
+		var topLink = toc.querySelector('a[data-top]');
+		if (topLink) topLink.addEventListener('click', function (e) { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); });
+		window.addEventListener('scroll', onScroll, { passive: true });
+		window.addEventListener('resize', function () { alignTop(); onScroll(); });
+		// Headings fade in and content loads asynchronously (the announcement is
+		// injected after load), so re-measure a few times early on.
+		[0, 300, 1200, 3000].forEach(function (t) { setTimeout(function () { alignTop(); update(); }, t); });
+		requestAnimationFrame(function () { toc.classList.add('ready'); });
+	})();
+	</script>
 
 </body>
 
