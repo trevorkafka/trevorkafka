@@ -1,4 +1,24 @@
 [
+	{"date": "2026-09-22",
+	"vocabulary": [
+		{"word": "go back", "IPA": "/ɡoʊ bæk/", "translation": "回去"},
+		{"word": "exhibition", "IPA": "/ˌɛksəˈbɪʃən/", "translation": "展览"},
+		{"word": "exhibition hall", "IPA": "/ˌɛksəˈbɪʃən hɔl/", "translation": "展厅；展览馆"},
+		{"word": "outside", "IPA": "/ˌaʊtˈsaɪd/", "translation": "外面"},
+		{"word": "temperature", "IPA": "/ˈtɛmprɪtʃər/", "translation": "温度；气温"},
+		{"word": "°C", "audio": "degrees Celsius", "IPA": "/dɪˈɡriz ˈsɛlsiəs/", "translation": "摄氏度"},
+		{"word": "at school", "IPA": "/æt skul/", "translation": "在学校"},
+		{"word": "at work", "IPA": "/æt wɜrk/", "translation": "在上班"},
+		{"word": "at a restaurant", "IPA": "/æt ə ˈrɛstərɑnt/", "translation": "在餐厅"},
+		{"word": "at the grocery store", "IPA": "/æt ðə ˈɡroʊsəri stɔr/", "translation": "在超市"},
+		{"word": "read a book", "IPA": "/rid ə bʊk/", "translation": "看书"},
+		{"word": "cook", "IPA": "/kʊk/", "translation": "做饭"},
+		{"word": "the day before yesterday", "IPA": "/ðə deɪ bɪˈfɔr ˈjɛstərdeɪ/", "translation": "前天"},
+		{"word": "the day after tomorrow", "IPA": "/ðə deɪ ˈæftər təˈmɑroʊ/", "translation": "后天"},
+		{"word": "on Monday", "IPA": "/ɑn ˈmʌndeɪ/", "translation": "在星期一"},
+		{"word": "on Tuesday", "IPA": "/ɑn ˈtuzdeɪ/", "translation": "在星期二"},
+		{"word": "on Wednesday", "IPA": "/ɑn ˈwɛnzdeɪ/", "translation": "在星期三"}
+	]},
 	{"date": "2026-09-15",
 	"vocabulary": [
 		{"word": "woke up", "IPA": "/woʊk ʌp/", "translation": "醒了"},
