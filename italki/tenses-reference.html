@@ -246,7 +246,7 @@ try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.docu
 
 		<div class="subtitle-row">
 			<a class="tk-button" href="tenses.html"><i class="fa-solid fa-arrow-left"></i> <span>Practice page</span><span class="zh chinese">练习页</span></a>
-			<button type="button" class="tk-button" id="toggle-zh" aria-pressed="true">
+			<button type="button" class="tk-button" id="toggle-zh" aria-pressed="false">
 				<i class="fa-solid fa-language"></i>
 				<span id="toggle-zh-label">隐藏中文</span>
 			</button>
@@ -473,9 +473,10 @@ try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.docu
 		try { hidden = localStorage.getItem('tenses-hide-zh') === '1'; } catch (e) {}
 
 		function apply() {
+			// the button reads 隐藏中文, so it lights up while it is hiding
 			document.body.classList.toggle('hide-zh', hidden);
-			btn.classList.toggle('on', !hidden);
-			btn.setAttribute('aria-pressed', hidden ? 'false' : 'true');
+			btn.classList.toggle('on', hidden);
+			btn.setAttribute('aria-pressed', hidden ? 'true' : 'false');
 		}
 		btn.addEventListener('click', function () {
 			hidden = !hidden;

@@ -668,7 +668,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 				<i class="fa-solid fa-book"></i>
 				<span>Reference Material</span><span class="zh chinese">参考资料</span>
 			</a>
-			<button type="button" class="tk-button secondary" id="toggle-zh" aria-pressed="true">
+			<button type="button" class="tk-button secondary" id="toggle-zh" aria-pressed="false">
 				<i class="fa-solid fa-language"></i>
 				<span id="toggle-zh-label">隐藏中文</span>
 			</button>
@@ -2112,9 +2112,10 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 
 		function apply() {
 			// lit like the read-aloud button when the Chinese is showing
+			// the button reads 隐藏中文, so it lights up while it is hiding
 			document.body.classList.toggle('hide-zh', hidden);
-			btn.classList.toggle('on', !hidden);
-			btn.setAttribute('aria-pressed', hidden ? 'false' : 'true');
+			btn.classList.toggle('on', hidden);
+			btn.setAttribute('aria-pressed', hidden ? 'true' : 'false');
 			document.dispatchEvent(new CustomEvent('zh-toggled'));
 		}
 		btn.addEventListener('click', function () {
