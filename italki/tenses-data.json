@@ -1,0 +1,1225 @@
+{
+  "_comment": "Sentence building blocks for the English tenses practice page. Vocabulary is kept to A1 words and phrases on purpose: the exercise is about grammar, so nothing here should make a student stop to look up a word. Verbs store every English form explicitly (English is irregular), and each verb carries the objects that make sense with it. Time expressions declare which tenses they may appear in.",
+  "subjects": [
+    {
+      "en": "I",
+      "zh": "我",
+      "person": 1,
+      "number": "sg"
+    },
+    {
+      "en": "you",
+      "zh": "你",
+      "person": 2,
+      "number": "sg"
+    },
+    {
+      "en": "he",
+      "zh": "他",
+      "person": 3,
+      "number": "sg"
+    },
+    {
+      "en": "she",
+      "zh": "她",
+      "person": 3,
+      "number": "sg"
+    },
+    {
+      "en": "my sister",
+      "zh": "我妹妹",
+      "person": 3,
+      "number": "sg"
+    },
+    {
+      "en": "my brother",
+      "zh": "我哥哥",
+      "person": 3,
+      "number": "sg"
+    },
+    {
+      "en": "the teacher",
+      "zh": "老师",
+      "person": 3,
+      "number": "sg"
+    },
+    {
+      "en": "my friend",
+      "zh": "我的朋友",
+      "person": 3,
+      "number": "sg"
+    },
+    {
+      "en": "we",
+      "zh": "我们",
+      "person": 1,
+      "number": "pl"
+    },
+    {
+      "en": "they",
+      "zh": "他们",
+      "person": 3,
+      "number": "pl"
+    },
+    {
+      "en": "my parents",
+      "zh": "我父母",
+      "person": 3,
+      "number": "pl"
+    },
+    {
+      "en": "the students",
+      "zh": "学生们",
+      "person": 3,
+      "number": "pl"
+    }
+  ],
+  "verbs": [
+    {
+      "base": "eat",
+      "s": "eats",
+      "past": "ate",
+      "ing": "eating",
+      "pp": "eaten",
+      "zh": "吃",
+      "objects": [
+        {
+          "en": "an apple",
+          "zh": "苹果"
+        },
+        {
+          "en": "breakfast",
+          "zh": "早饭"
+        },
+        {
+          "en": "noodles",
+          "zh": "面条"
+        },
+        {
+          "en": "dumplings",
+          "zh": "饺子"
+        }
+      ]
+    },
+    {
+      "base": "drink",
+      "s": "drinks",
+      "past": "drank",
+      "ing": "drinking",
+      "pp": "drunk",
+      "zh": "喝",
+      "objects": [
+        {
+          "en": "coffee",
+          "zh": "咖啡"
+        },
+        {
+          "en": "tea",
+          "zh": "茶"
+        },
+        {
+          "en": "water",
+          "zh": "水"
+        }
+      ]
+    },
+    {
+      "base": "read",
+      "s": "reads",
+      "past": "read",
+      "ing": "reading",
+      "pp": "read",
+      "zh": "看",
+      "_comment": "base and past are spelled alike, so each is labelled with its pronunciation in the dropdown",
+      "ipaBase": "/rid/",
+      "ipaPast": "/rɛd/",
+      "objects": [
+        {
+          "en": "a book",
+          "zh": "书"
+        },
+        {
+          "en": "a newspaper",
+          "zh": "报纸"
+        }
+      ]
+    },
+    {
+      "base": "watch",
+      "s": "watches",
+      "past": "watched",
+      "ing": "watching",
+      "pp": "watched",
+      "zh": "看",
+      "objects": [
+        {
+          "en": "a movie",
+          "zh": "电影"
+        },
+        {
+          "en": "TV",
+          "zh": "电视"
+        },
+        {
+          "en": "a video",
+          "zh": "视频"
+        }
+      ]
+    },
+    {
+      "base": "study",
+      "s": "studies",
+      "past": "studied",
+      "ing": "studying",
+      "pp": "studied",
+      "zh": "学习",
+      "objects": [
+        {
+          "en": "English",
+          "zh": "英语"
+        },
+        {
+          "en": "math",
+          "zh": "数学"
+        },
+        {
+          "en": "Chinese",
+          "zh": "中文"
+        }
+      ]
+    },
+    {
+      "base": "write",
+      "s": "writes",
+      "past": "wrote",
+      "ing": "writing",
+      "pp": "written",
+      "zh": "写",
+      "objects": [
+        {
+          "en": "a letter",
+          "zh": "信"
+        },
+        {
+          "en": "an email",
+          "zh": "邮件"
+        },
+        {
+          "en": "a story",
+          "zh": "故事"
+        }
+      ]
+    },
+    {
+      "base": "buy",
+      "s": "buys",
+      "past": "bought",
+      "ing": "buying",
+      "pp": "bought",
+      "zh": "买",
+      "objects": [
+        {
+          "en": "a new phone",
+          "zh": "新手机"
+        },
+        {
+          "en": "some fruit",
+          "zh": "水果"
+        },
+        {
+          "en": "a ticket",
+          "zh": "票"
+        }
+      ]
+    },
+    {
+      "base": "cook",
+      "s": "cooks",
+      "past": "cooked",
+      "ing": "cooking",
+      "pp": "cooked",
+      "zh": "做",
+      "objects": [
+        {
+          "en": "dinner",
+          "zh": "晚饭"
+        },
+        {
+          "en": "breakfast",
+          "zh": "早饭"
+        },
+        {
+          "en": "noodles",
+          "zh": "面条",
+          "zhVerb": "煮"
+        }
+      ]
+    },
+    {
+      "base": "play",
+      "s": "plays",
+      "past": "played",
+      "ing": "playing",
+      "pp": "played",
+      "zh": "打",
+      "objects": [
+        {
+          "en": "basketball",
+          "zh": "篮球"
+        },
+        {
+          "en": "the piano",
+          "zh": "钢琴",
+          "zhVerb": "弹"
+        },
+        {
+          "en": "a game",
+          "zh": "游戏",
+          "zhVerb": "玩"
+        }
+      ]
+    },
+    {
+      "base": "clean",
+      "s": "cleans",
+      "past": "cleaned",
+      "ing": "cleaning",
+      "pp": "cleaned",
+      "zh": "打扫",
+      "objects": [
+        {
+          "en": "the kitchen",
+          "zh": "厨房"
+        },
+        {
+          "en": "the room",
+          "zh": "房间"
+        }
+      ]
+    },
+    {
+      "base": "sleep",
+      "s": "sleeps",
+      "past": "slept",
+      "ing": "sleeping",
+      "pp": "slept",
+      "zh": "睡觉",
+      "objects": []
+    },
+    {
+      "base": "work",
+      "s": "works",
+      "past": "worked",
+      "ing": "working",
+      "pp": "worked",
+      "zh": "工作",
+      "objects": []
+    },
+    {
+      "base": "run",
+      "s": "runs",
+      "past": "ran",
+      "ing": "running",
+      "pp": "run",
+      "zh": "跑步",
+      "objects": []
+    },
+    {
+      "base": "swim",
+      "s": "swims",
+      "past": "swam",
+      "ing": "swimming",
+      "pp": "swum",
+      "zh": "游泳",
+      "objects": []
+    },
+    {
+      "base": "like",
+      "s": "likes",
+      "past": "liked",
+      "ing": "liking",
+      "pp": "liked",
+      "zh": "喜欢",
+      "stative": true,
+      "objects": [
+        {
+          "en": "coffee",
+          "zh": "咖啡"
+        },
+        {
+          "en": "noodles",
+          "zh": "面条"
+        },
+        {
+          "en": "English",
+          "zh": "英语"
+        },
+        {
+          "en": "basketball",
+          "zh": "篮球"
+        },
+        {
+          "en": "fish",
+          "zh": "鱼"
+        }
+      ]
+    },
+    {
+      "base": "want",
+      "s": "wants",
+      "past": "wanted",
+      "ing": "wanting",
+      "pp": "wanted",
+      "zh": "想要",
+      "stative": true,
+      "objects": [
+        {
+          "en": "water",
+          "zh": "水"
+        },
+        {
+          "en": "a ticket",
+          "zh": "票"
+        },
+        {
+          "en": "a new phone",
+          "zh": "新手机"
+        },
+        {
+          "en": "dinner",
+          "zh": "晚饭"
+        }
+      ]
+    },
+    {
+      "base": "have",
+      "s": "has",
+      "past": "had",
+      "ing": "having",
+      "pp": "had",
+      "zh": "有",
+      "stative": true,
+      "objects": [
+        {
+          "en": "a book",
+          "zh": "书"
+        },
+        {
+          "en": "a ticket",
+          "zh": "票"
+        },
+        {
+          "en": "a new phone",
+          "zh": "新手机"
+        },
+        {
+          "en": "a cake",
+          "zh": "蛋糕"
+        }
+      ]
+    },
+    {
+      "base": "know",
+      "s": "knows",
+      "past": "knew",
+      "ing": "knowing",
+      "pp": "known",
+      "zh": "认识",
+      "stative": true,
+      "objects": [
+        {
+          "en": "the teacher",
+          "zh": "老师"
+        },
+        {
+          "en": "my friend",
+          "zh": "我的朋友"
+        }
+      ]
+    }
+  ],
+  "_beComment": "Complements for sentences whose main verb is be. kind 'adj' takes 很 in Chinese, kind 'place' takes 在.",
+  "beComplements": [
+    {
+      "en": "hungry",
+      "zh": "饿",
+      "kind": "adj",
+      "forThings": false
+    },
+    {
+      "en": "thirsty",
+      "zh": "渴",
+      "kind": "adj",
+      "forThings": false
+    },
+    {
+      "en": "happy",
+      "zh": "开心",
+      "kind": "adj",
+      "forThings": false
+    },
+    {
+      "en": "tired",
+      "zh": "累",
+      "kind": "adj",
+      "forThings": false
+    },
+    {
+      "en": "busy",
+      "zh": "忙",
+      "kind": "adj",
+      "forThings": false
+    },
+    {
+      "en": "cold",
+      "zh": "冷",
+      "kind": "adj",
+      "forThings": true
+    },
+    {
+      "en": "hot",
+      "zh": "热",
+      "kind": "adj",
+      "forThings": true
+    },
+    {
+      "en": "sad",
+      "zh": "难过",
+      "kind": "adj",
+      "forThings": false
+    },
+    {
+      "en": "at home",
+      "zh": "家",
+      "kind": "place",
+      "forThings": false
+    },
+    {
+      "en": "at school",
+      "zh": "学校",
+      "kind": "place",
+      "forThings": false
+    }
+  ],
+  "times": [
+    {
+      "en": "yesterday",
+      "zh": "昨天",
+      "tenses": [
+        "past-simple"
+      ],
+      "group": "past-general"
+    },
+    {
+      "en": "last night",
+      "zh": "昨天晚上",
+      "tenses": [
+        "past-simple"
+      ],
+      "group": "past-general"
+    },
+    {
+      "en": "last week",
+      "zh": "上周",
+      "tenses": [
+        "past-simple"
+      ],
+      "group": "past-span"
+    },
+    {
+      "en": "two days ago",
+      "zh": "两天前",
+      "tenses": [
+        "past-simple"
+      ],
+      "group": "past-general"
+    },
+    {
+      "en": "the day before yesterday",
+      "zh": "前天",
+      "tenses": [
+        "past-simple"
+      ],
+      "group": "past-general"
+    },
+    {
+      "en": "every day",
+      "zh": "每天",
+      "tenses": [
+        "present-simple"
+      ],
+      "group": "every-day"
+    },
+    {
+      "en": "every morning",
+      "zh": "每天早上",
+      "tenses": [
+        "present-simple"
+      ],
+      "group": "every-part"
+    },
+    {
+      "en": "right now",
+      "zh": "现在",
+      "tenses": [
+        "present-continuous"
+      ],
+      "group": "now"
+    },
+    {
+      "en": "today",
+      "zh": "今天",
+      "tenses": [
+        "present-continuous",
+        "present-perfect"
+      ],
+      "group": "now"
+    },
+    {
+      "en": "tomorrow",
+      "zh": "明天",
+      "tenses": [
+        "future-simple"
+      ],
+      "group": "future-general"
+    },
+    {
+      "en": "tonight",
+      "zh": "今天晚上",
+      "tenses": [
+        "future-simple"
+      ],
+      "group": "future-general"
+    },
+    {
+      "en": "next week",
+      "zh": "下周",
+      "tenses": [
+        "future-simple"
+      ],
+      "group": "future-span"
+    },
+    {
+      "en": "next month",
+      "zh": "下个月",
+      "tenses": [
+        "future-simple"
+      ],
+      "group": "future-span"
+    },
+    {
+      "en": "the day after tomorrow",
+      "zh": "后天",
+      "tenses": [
+        "future-simple"
+      ],
+      "group": "future-general"
+    },
+    {
+      "en": "last Monday",
+      "zh": "上周一",
+      "tenses": [
+        "past-simple"
+      ],
+      "group": "last-weekday"
+    },
+    {
+      "en": "last Tuesday",
+      "zh": "上周二",
+      "tenses": [
+        "past-simple"
+      ],
+      "group": "last-weekday"
+    },
+    {
+      "en": "last Wednesday",
+      "zh": "上周三",
+      "tenses": [
+        "past-simple"
+      ],
+      "group": "last-weekday"
+    },
+    {
+      "en": "last Thursday",
+      "zh": "上周四",
+      "tenses": [
+        "past-simple"
+      ],
+      "group": "last-weekday"
+    },
+    {
+      "en": "last Friday",
+      "zh": "上周五",
+      "tenses": [
+        "past-simple"
+      ],
+      "group": "last-weekday"
+    },
+    {
+      "en": "last Saturday",
+      "zh": "上周六",
+      "tenses": [
+        "past-simple"
+      ],
+      "group": "last-weekday"
+    },
+    {
+      "en": "last Sunday",
+      "zh": "上周日",
+      "tenses": [
+        "past-simple"
+      ],
+      "group": "last-weekday"
+    },
+    {
+      "en": "on Mondays",
+      "zh": "每周一",
+      "tenses": [
+        "present-simple"
+      ],
+      "group": "on-weekdays"
+    },
+    {
+      "en": "on Tuesdays",
+      "zh": "每周二",
+      "tenses": [
+        "present-simple"
+      ],
+      "group": "on-weekdays"
+    },
+    {
+      "en": "on Wednesdays",
+      "zh": "每周三",
+      "tenses": [
+        "present-simple"
+      ],
+      "group": "on-weekdays"
+    },
+    {
+      "en": "on Thursdays",
+      "zh": "每周四",
+      "tenses": [
+        "present-simple"
+      ],
+      "group": "on-weekdays"
+    },
+    {
+      "en": "on Fridays",
+      "zh": "每周五",
+      "tenses": [
+        "present-simple"
+      ],
+      "group": "on-weekdays"
+    },
+    {
+      "en": "on Saturdays",
+      "zh": "每周六",
+      "tenses": [
+        "present-simple"
+      ],
+      "group": "on-weekdays"
+    },
+    {
+      "en": "on Sundays",
+      "zh": "每周日",
+      "tenses": [
+        "present-simple"
+      ],
+      "group": "on-weekdays"
+    },
+    {
+      "en": "next Monday",
+      "zh": "下周一",
+      "tenses": [
+        "future-simple"
+      ],
+      "group": "next-weekday"
+    },
+    {
+      "en": "next Tuesday",
+      "zh": "下周二",
+      "tenses": [
+        "future-simple"
+      ],
+      "group": "next-weekday"
+    },
+    {
+      "en": "next Wednesday",
+      "zh": "下周三",
+      "tenses": [
+        "future-simple"
+      ],
+      "group": "next-weekday"
+    },
+    {
+      "en": "next Thursday",
+      "zh": "下周四",
+      "tenses": [
+        "future-simple"
+      ],
+      "group": "next-weekday"
+    },
+    {
+      "en": "next Friday",
+      "zh": "下周五",
+      "tenses": [
+        "future-simple"
+      ],
+      "group": "next-weekday"
+    },
+    {
+      "en": "next Saturday",
+      "zh": "下周六",
+      "tenses": [
+        "future-simple"
+      ],
+      "group": "next-weekday"
+    },
+    {
+      "en": "next Sunday",
+      "zh": "下周日",
+      "tenses": [
+        "future-simple"
+      ],
+      "group": "next-weekday"
+    },
+    {
+      "en": "in January",
+      "zh": "一月",
+      "tenses": [
+        "past-simple",
+        "future-simple"
+      ],
+      "group": "month"
+    },
+    {
+      "en": "in February",
+      "zh": "二月",
+      "tenses": [
+        "past-simple",
+        "future-simple"
+      ],
+      "group": "month"
+    },
+    {
+      "en": "in March",
+      "zh": "三月",
+      "tenses": [
+        "past-simple",
+        "future-simple"
+      ],
+      "group": "month"
+    },
+    {
+      "en": "in April",
+      "zh": "四月",
+      "tenses": [
+        "past-simple",
+        "future-simple"
+      ],
+      "group": "month"
+    },
+    {
+      "en": "in May",
+      "zh": "五月",
+      "tenses": [
+        "past-simple",
+        "future-simple"
+      ],
+      "group": "month"
+    },
+    {
+      "en": "in June",
+      "zh": "六月",
+      "tenses": [
+        "past-simple",
+        "future-simple"
+      ],
+      "group": "month"
+    },
+    {
+      "en": "in July",
+      "zh": "七月",
+      "tenses": [
+        "past-simple",
+        "future-simple"
+      ],
+      "group": "month"
+    },
+    {
+      "en": "in August",
+      "zh": "八月",
+      "tenses": [
+        "past-simple",
+        "future-simple"
+      ],
+      "group": "month"
+    },
+    {
+      "en": "in September",
+      "zh": "九月",
+      "tenses": [
+        "past-simple",
+        "future-simple"
+      ],
+      "group": "month"
+    },
+    {
+      "en": "in October",
+      "zh": "十月",
+      "tenses": [
+        "past-simple",
+        "future-simple"
+      ],
+      "group": "month"
+    },
+    {
+      "en": "in November",
+      "zh": "十一月",
+      "tenses": [
+        "past-simple",
+        "future-simple"
+      ],
+      "group": "month"
+    },
+    {
+      "en": "in December",
+      "zh": "十二月",
+      "tenses": [
+        "past-simple",
+        "future-simple"
+      ],
+      "group": "month"
+    },
+    {
+      "en": "on Monday",
+      "zh": "周一",
+      "tenses": [
+        "past-simple",
+        "future-simple"
+      ],
+      "group": "on-weekday"
+    },
+    {
+      "en": "on Tuesday",
+      "zh": "周二",
+      "tenses": [
+        "past-simple",
+        "future-simple"
+      ],
+      "group": "on-weekday"
+    },
+    {
+      "en": "on Wednesday",
+      "zh": "周三",
+      "tenses": [
+        "past-simple",
+        "future-simple"
+      ],
+      "group": "on-weekday"
+    },
+    {
+      "en": "on Thursday",
+      "zh": "周四",
+      "tenses": [
+        "past-simple",
+        "future-simple"
+      ],
+      "group": "on-weekday"
+    },
+    {
+      "en": "on Friday",
+      "zh": "周五",
+      "tenses": [
+        "past-simple",
+        "future-simple"
+      ],
+      "group": "on-weekday"
+    },
+    {
+      "en": "on Saturday",
+      "zh": "周六",
+      "tenses": [
+        "past-simple",
+        "future-simple"
+      ],
+      "group": "on-weekday"
+    },
+    {
+      "en": "on Sunday",
+      "zh": "周日",
+      "tenses": [
+        "past-simple",
+        "future-simple"
+      ],
+      "group": "on-weekday"
+    },
+    {
+      "en": "yesterday morning",
+      "zh": "昨天早上",
+      "tenses": [
+        "past-simple"
+      ],
+      "group": "yesterday-part"
+    },
+    {
+      "en": "yesterday afternoon",
+      "zh": "昨天下午",
+      "tenses": [
+        "past-simple"
+      ],
+      "group": "yesterday-part"
+    },
+    {
+      "en": "yesterday evening",
+      "zh": "昨天晚上",
+      "tenses": [
+        "past-simple"
+      ],
+      "group": "yesterday-part"
+    },
+    {
+      "en": "this morning",
+      "zh": "今天早上",
+      "tenses": [
+        "past-simple",
+        "future-simple",
+        "present-perfect"
+      ],
+      "group": "this-part"
+    },
+    {
+      "en": "this afternoon",
+      "zh": "今天下午",
+      "tenses": [
+        "past-simple",
+        "future-simple",
+        "present-perfect"
+      ],
+      "group": "this-part"
+    },
+    {
+      "en": "this evening",
+      "zh": "今天晚上",
+      "tenses": [
+        "past-simple",
+        "future-simple",
+        "present-perfect"
+      ],
+      "group": "this-part"
+    },
+    {
+      "en": "tomorrow morning",
+      "zh": "明天早上",
+      "tenses": [
+        "future-simple"
+      ],
+      "group": "tomorrow-part"
+    },
+    {
+      "en": "tomorrow afternoon",
+      "zh": "明天下午",
+      "tenses": [
+        "future-simple"
+      ],
+      "group": "tomorrow-part"
+    },
+    {
+      "en": "tomorrow evening",
+      "zh": "明天晚上",
+      "tenses": [
+        "future-simple"
+      ],
+      "group": "tomorrow-part"
+    },
+    {
+      "en": "every afternoon",
+      "zh": "每天下午",
+      "tenses": [
+        "present-simple"
+      ],
+      "group": "every-part"
+    },
+    {
+      "en": "every evening",
+      "zh": "每天晚上",
+      "tenses": [
+        "present-simple"
+      ],
+      "group": "every-part"
+    },
+    {
+      "en": "recently",
+      "zh": "最近",
+      "tenses": [
+        "present-perfect"
+      ],
+      "group": "perfect-recent"
+    },
+    {
+      "en": "this week",
+      "zh": "这周",
+      "tenses": [
+        "present-perfect",
+        "present-continuous"
+      ],
+      "group": "perfect-span"
+    },
+    {
+      "en": "this month",
+      "zh": "这个月",
+      "tenses": [
+        "present-perfect"
+      ],
+      "group": "perfect-span"
+    },
+    {
+      "en": "since Monday",
+      "zh": "从周一开始",
+      "tenses": [
+        "present-perfect"
+      ],
+      "group": "since"
+    },
+    {
+      "en": "since Tuesday",
+      "zh": "从周二开始",
+      "tenses": [
+        "present-perfect"
+      ],
+      "group": "since"
+    },
+    {
+      "en": "since Wednesday",
+      "zh": "从周三开始",
+      "tenses": [
+        "present-perfect"
+      ],
+      "group": "since"
+    },
+    {
+      "en": "since Thursday",
+      "zh": "从周四开始",
+      "tenses": [
+        "present-perfect"
+      ],
+      "group": "since"
+    },
+    {
+      "en": "since Friday",
+      "zh": "从周五开始",
+      "tenses": [
+        "present-perfect"
+      ],
+      "group": "since"
+    },
+    {
+      "en": "since Saturday",
+      "zh": "从周六开始",
+      "tenses": [
+        "present-perfect"
+      ],
+      "group": "since"
+    },
+    {
+      "en": "since Sunday",
+      "zh": "从周日开始",
+      "tenses": [
+        "present-perfect"
+      ],
+      "group": "since"
+    },
+    {
+      "en": "since last week",
+      "zh": "从上周开始",
+      "tenses": [
+        "present-perfect"
+      ],
+      "group": "since"
+    },
+    {
+      "en": "since last month",
+      "zh": "从上个月开始",
+      "tenses": [
+        "present-perfect"
+      ],
+      "group": "since"
+    },
+    {
+      "en": "since yesterday",
+      "zh": "从昨天开始",
+      "tenses": [
+        "present-perfect"
+      ],
+      "group": "since"
+    },
+    {
+      "en": "these days",
+      "zh": "这几天",
+      "tenses": [
+        "present-continuous"
+      ],
+      "group": "temporary"
+    }
+  ],
+  "_timesComment": "group: time words are picked by choosing a group first and then a word inside it, so a family like on Monday...on Sunday counts once against 'yesterday', rather than seven times.",
+  "genericSubjects": [
+    {
+      "en": "the sun",
+      "zh": "太阳",
+      "person": 3,
+      "number": "sg",
+      "kind": "thing",
+      "complements": [
+        "hot"
+      ]
+    },
+    {
+      "en": "ice",
+      "zh": "冰",
+      "person": 3,
+      "number": "sg",
+      "kind": "thing",
+      "complements": [
+        "cold"
+      ]
+    },
+    {
+      "en": "water",
+      "zh": "水",
+      "person": 3,
+      "number": "sg",
+      "kind": "thing",
+      "complements": [
+        "cold"
+      ]
+    },
+    {
+      "en": "cats",
+      "zh": "猫",
+      "person": 3,
+      "number": "pl",
+      "kind": "animal",
+      "complements": [
+        "happy",
+        "hungry",
+        "tired",
+        "sad"
+      ]
+    },
+    {
+      "en": "dogs",
+      "zh": "狗",
+      "person": 3,
+      "number": "pl",
+      "kind": "animal",
+      "complements": [
+        "happy",
+        "hungry",
+        "tired",
+        "sad"
+      ]
+    }
+  ],
+  "_genericComment": "genericSubjects state general truths, so they are only used with the simple present."
+}

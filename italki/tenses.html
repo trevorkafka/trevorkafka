@@ -1,0 +1,1866 @@
+<!DOCTYPE HTML>
+
+<head>
+<!-- Apply saved light/dark choice before paint (avoids a flash when the device default differs from the toggle) -->
+<script>
+try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}
+try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElement.classList.add('ann-collapsed');}catch(e){}
+(function(){var d=document.documentElement;d.classList.add('fonts-loading');var done=false;function fin(){if(done)return;done=true;d.classList.remove('fonts-loading');}setTimeout(fin,500);try{if(document.fonts&&document.fonts.load){Promise.all([document.fonts.load('1em Freeman'),document.fonts.load('1em "Great Vibes"')]).then(fin,fin);}else{fin();}}catch(e){fin();}})();
+</script>
+	<title>Trevor's English Tenses Practice Page</title>
+	<meta name="robots" content="noindex, nofollow">
+	<meta charset="utf-8"> <!--ensures that there aren't any issues with the display of emojis -->
+	<meta name="viewport" content="width=device-width"> <!-- essential for making sure that the ACTUAL screen width is interpreted by the CSS as opposed to some idealized number presented by smartphones (980px+) -->
+	<link rel="preload" href="/fonts/freeman-latin.woff2" as="font" type="font/woff2" crossorigin>
+	<link rel="preload" href="/fonts/greatvibes-latin.woff2" as="font" type="font/woff2" crossorigin>
+	<link href="/style.css" rel="stylesheet">
+	<link href="/favicon.ico" rel="shortcut icon">
+<!-- Google font stuff -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@100..900&display=swap" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> <!-- use JQuery -->
+<script src="https://kit.fontawesome.com/157b2a3980.js" crossorigin="anonymous"></script> <!-- Font Awesome icons -->
+
+<style>
+	:root[data-theme="dark"] { color-scheme: dark; }
+	:root[data-theme="light"] { color-scheme: light; }
+	@media (prefers-color-scheme: dark) {
+		:root:not([data-theme="light"]) { color-scheme: dark; }
+	}
+
+	.chinese {
+		font-family: "Noto Sans SC", sans-serif;
+	}
+
+	/* Boxes (grids, buttons, question cards) are centered in the column; all
+	   text stays left-aligned so it reads normally. */
+
+	.page-subtitle {
+		font-family: "Noto Sans SC", sans-serif;
+		font-size: 130%;
+		color: var(--color4);
+		margin-top: -10px;
+	}
+
+	/* Tense picker: a 3-wide grid (past / present / future) x 4 aspects, with
+	   no headers. Each card names its own tense, so the axes don't need labels. */
+	.tense-grid {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 10px;
+		max-width: 620px;
+		margin: 18px auto 20px;
+	}
+
+	.tense-cell {
+		position: relative;
+		display: block;
+		padding: 12px 14px;
+		border: 1px solid var(--divider);
+		border-radius: 12px;
+		background: var(--tint-1);
+		cursor: pointer;
+		user-select: none;
+		-webkit-tap-highlight-color: transparent;
+		transition: background-color 0.18s ease, border-color 0.18s ease, transform 0.18s ease;
+	}
+
+	.tense-cell:hover { border-color: var(--color1); }
+	.tense-cell:active { transform: scale(0.98); }
+
+	/* the checkbox itself is hidden; the whole card is the control */
+	.tense-cell input {
+		position: absolute;
+		opacity: 0;
+		width: 0;
+		height: 0;
+	}
+
+	.tense-cell .label-en {
+		display: block;
+		font-family: Freeman, sans-serif;
+		font-size: 15px;
+		line-height: 1.25;
+		color: var(--color1);
+		transition: color 0.18s ease;
+	}
+
+	.tense-cell .label-zh {
+		display: block;
+		margin-top: 2px;
+		font-family: "Noto Sans SC", sans-serif;
+		font-size: 13px;
+		line-height: 1.3;
+		color: var(--color4);
+		transition: color 0.18s ease;
+	}
+
+	/* selected: filled with the site's terracotta, with a small check in the corner */
+	.tense-cell:has(input:checked) {
+		background: var(--button-bg);
+		border-color: var(--button-bg);
+	}
+
+	.tense-cell:has(input:checked) .label-en,
+	.tense-cell:has(input:checked) .label-zh {
+		color: var(--button-text, #FFF6EC);
+		text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.35);
+	}
+
+	.tense-cell::after {
+		content: "00c";                 /* Font Awesome check */
+		font-family: "Font Awesome 6 Free";
+		font-weight: 900;
+		position: absolute;
+		top: 8px;
+		right: 10px;
+		font-size: 10px;
+		color: var(--button-text, #FFF6EC);
+		opacity: 0;
+		transform: scale(0.6);
+		transition: opacity 0.18s ease, transform 0.18s ease;
+	}
+
+	.tense-cell:has(input:checked)::after { opacity: 1; transform: scale(1); }
+
+	.tense-cell:has(input:focus-visible) { outline: 2px solid var(--color1); outline-offset: 2px; }
+
+	/* not built yet: shown for context, but not selectable */
+	.tense-cell.unavailable {
+		background: transparent;
+		border-style: dashed;
+		border-color: var(--divider);
+		opacity: 0.4;
+		cursor: not-allowed;
+	}
+
+	.tense-cell.unavailable:hover { border-color: var(--divider); }
+	.tense-cell.unavailable:active { transform: none; }
+
+	/* Question types reuse the tense cards, two to a row. */
+	.qtype-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.section-label {
+		margin: 26px 0 0;
+		font-family: Freeman, sans-serif;
+		font-size: 17px;
+		color: var(--color1);
+	}
+
+	.advice {
+		color: var(--color4);
+		font-size: 15px;
+	}
+
+	.section-label .zh {
+		font-family: "Noto Sans SC", sans-serif;
+		font-size: 90%;
+		color: var(--color4);
+		margin-left: 6px;
+	}
+
+	/* ---- toolbar (generate + Chinese toggle) ---- */
+	.toolbar {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: center;
+		gap: 10px;
+		margin: 26px 0 6px;
+	}
+
+	.tk-button {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		padding: 10px 18px;
+		border: none;
+		border-radius: 10px;
+		background: var(--button-bg);
+		color: var(--button-text, #FFF6EC);
+		font-family: Freeman, sans-serif;
+		font-size: 15px;
+		cursor: pointer;
+		text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.35);
+		box-shadow: 3px 3px 3px var(--shadow);
+		transition: background-color 0.2s ease;
+	}
+
+	.tk-button:hover { background: var(--button-bg-hover); }
+	.tk-button:active { transform: translateY(1px); }
+
+	.tk-button.secondary {
+		background: transparent;
+		border: 1px solid var(--color1);
+		color: var(--color1);
+		text-shadow: none;
+		box-shadow: none;
+	}
+
+	.tk-button.secondary:hover { background: var(--tint-1); }
+	a.tk-button { text-decoration: none; }
+
+	/* ---- practice list ---- */
+	.practice-list {
+		display: flex;
+		flex-direction: column;
+		gap: 12px;
+		margin: 18px auto 40px;
+		max-width: 620px;
+		width: 100%;
+	}
+
+	.question {
+		display: flex;
+		align-items: baseline;
+		gap: 10px;
+		border: 1px solid var(--divider);
+		border-radius: 12px;
+		padding: 14px 16px;
+		background: var(--tint-1);
+	}
+
+	.question-body { flex: 1; min-width: 0; }
+
+	.question-head {
+		display: flex;
+		align-items: baseline;
+		flex-wrap: wrap;
+		gap: 4px 10px;
+		margin-bottom: 8px;
+	}
+
+	/* "Name the tense" puts the sentence on the number's line to save height. */
+	.sentence.inline { flex: 1; }
+
+	.question-number {
+		flex: 0 0 auto;
+		min-width: 22px;
+		font-family: Freeman, sans-serif;
+		font-size: 14px;
+		color: var(--color4);
+	}
+
+	.tense-chip {
+		display: inline-flex;
+		align-items: baseline;
+		gap: 6px;
+		padding: 4px 12px;
+		border-radius: 100px;
+		background: var(--button-bg);
+		color: var(--button-text, #FFF6EC);
+		font-family: Freeman, sans-serif;
+		font-size: 13px;
+		text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.35);
+	}
+
+	/* On questions that do not hand the tense over, the chip appears once the
+	   student has worked it out. The space is reserved, so nothing jumps. */
+	/* The sentence pattern, revealed with the answer. Quieter than the tense
+	   chip: an outline rather than a fill. */
+	.structure-line {
+		margin-top: 10px;
+		opacity: 0;
+		transition: opacity 0.25s ease;
+	}
+
+	.question.revealed .structure-line { opacity: 1; }
+
+	.structure-chip {
+		display: inline-flex;
+		flex-direction: column;   /* English pattern above, Chinese below */
+		align-items: flex-start;
+		gap: 2px;
+		padding: 4px 12px;
+		border: 1px solid var(--divider);
+		border-radius: 100px;
+		color: var(--color4);
+		font-size: 13px;
+		line-height: 1.5;
+	}
+
+	.structure-chip .zh { font-family: "Noto Sans SC", sans-serif; }
+
+	.reveal-chip {
+		opacity: 0;
+		transition: opacity 0.25s ease;
+	}
+
+	.question.revealed .reveal-chip { opacity: 1; }
+
+	.tense-chip .zh {
+		font-family: "Noto Sans SC", sans-serif;
+		font-size: 92%;
+		opacity: 0.9;
+	}
+
+	/* A question is the finished English sentence with the verb replaced by a
+	   dropdown of candidate forms; the student picks the one the rest of the
+	   sentence calls for. */
+	.sentence {
+		font-size: 17px;
+		line-height: 2;
+	}
+
+	.verb-select {
+		padding: 5px 8px;
+		border: 2px solid var(--color1);
+		border-radius: 8px;
+		background: var(--color3);
+		color: var(--color1);
+		font-family: inherit;
+		font-size: 16px;
+		cursor: pointer;
+		transition: border-color 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+	}
+
+	.verb-select:focus { outline: none; border-color: var(--button-bg); }
+
+	/* The open option list is drawn by the browser, so tell it which scheme to
+	   use (otherwise a dark page gets a light popup with pale text) and give the
+	   options their own colors, independent of the green/red state above. */
+	.verb-select option {
+		background-color: var(--color3);
+		color: var(--color1);
+		font-weight: normal;
+		text-shadow: none;
+	}
+
+	.verb-select option:disabled { color: var(--color4); }
+
+	.verb-select.right {
+		border-color: #2f9e4f;
+		background: #2f9e4f;
+		color: #ffffff;
+		font-weight: bold;
+	}
+
+	/* A quick shake on a wrong pick, and a green glow that spreads outwards on
+	   a right one. Both are short enough not to slow anybody down. */
+	@keyframes tk-shake {
+		0%, 100% { transform: translateX(0); }
+		15% { transform: translateX(-5px); }
+		30% { transform: translateX(5px); }
+		45% { transform: translateX(-4px); }
+		60% { transform: translateX(4px); }
+		75% { transform: translateX(-2px); }
+		90% { transform: translateX(2px); }
+	}
+
+	@keyframes tk-glow {
+		0%   { box-shadow: 0 0 0 0 rgba(47, 158, 79, 0.7); }
+		70%  { box-shadow: 0 0 14px 10px rgba(47, 158, 79, 0); }
+		100% { box-shadow: 0 0 0 0 rgba(47, 158, 79, 0); }
+	}
+
+	.verb-select.shake { animation: tk-shake 0.35s ease; }
+	.verb-select.glow { animation: tk-glow 0.55s ease-out; }
+
+	@media (prefers-reduced-motion: reduce) {
+		.verb-select.shake, .verb-select.glow { animation: none; }
+	}
+
+	.verb-select.wrong {
+		border-color: #c8372d;
+		background: #c8372d;
+		color: #ffffff;
+		font-weight: bold;
+	}
+
+	/* The Chinese sentence shown as the prompt for "write English from Chinese". */
+	.zh-prompt {
+		font-family: "Noto Sans SC", sans-serif;
+		font-size: 17px;
+		line-height: 1.6;
+		color: var(--color1);
+	}
+
+	.tense-select { min-width: 190px; }
+
+	/* the two blanks in a question start empty, so give them a clickable width */
+	.verb-select[data-slot="aux"] { min-width: 80px; }
+	.verb-select[data-slot="main"] { min-width: 110px; }
+
+	/* The Chinese prompt sits on the number's line, like the English one does. */
+	.zh-prompt.inline { flex: 1; }
+
+	/* Reveals the Chinese for an English-only question, on its own line. */
+	.translate-btn {
+		margin-left: 8px;
+		width: 26px;
+		height: 26px;
+		padding: 0;
+		border: 1px solid var(--divider);
+		border-radius: 50%;
+		background: transparent;
+		color: var(--color4);
+		font-size: 14px;
+		line-height: 1;
+		vertical-align: middle;
+		cursor: pointer;
+		transition: border-color 0.15s ease, color 0.15s ease;
+	}
+
+	.translate-btn:hover,
+	.translate-btn.on { border-color: var(--color1); color: var(--color1); }
+
+	/* Once the tense has been worked out, the words that gave it away are bolded
+	   (only where the tense was not handed to the student in the first place). */
+	.question.revealed .time-clue {
+		font-weight: bold;
+		color: var(--color1);
+	}
+
+	/* Where the verb form was given rather than chosen, underline it too: it is
+	   the other half of what shows the tense. */
+	.question.revealed .verb-clue {
+		text-decoration: underline;
+		text-decoration-thickness: 2px;
+		text-underline-offset: 3px;
+		color: var(--color1);
+	}
+
+	.zh-line {
+		margin: 2px 0 10px;
+		font-family: "Noto Sans SC", sans-serif;
+		font-size: 15px;
+		color: var(--color4);
+	}
+
+	.en-line {
+		margin: 2px 0 10px;
+		font-size: 15px;
+		color: var(--color4);
+	}
+
+	.prompt-words {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		gap: 6px 10px;
+		margin-bottom: 10px;
+		font-size: 16px;
+	}
+
+	.prompt-word {
+		padding: 3px 10px;
+		border: 1px solid var(--divider);
+		border-radius: 8px;
+		background: var(--color3);
+	}
+
+	.prompt-word .zh {
+		font-family: "Noto Sans SC", sans-serif;
+		font-size: 85%;
+		color: var(--color4);
+		margin-left: 5px;
+	}
+
+	.answer-row {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 8px;
+	}
+
+	.answer-input {
+		flex: 1 1 260px;
+		padding: 9px 12px;
+		border: 1px solid var(--divider);
+		border-radius: 8px;
+		background: var(--color3);
+		color: var(--color1);
+		font-family: inherit;
+		font-size: 15px;
+	}
+
+	.answer-input:focus {
+		outline: none;
+		border-color: var(--button-bg);
+	}
+
+	.question.correct .answer-input { border-color: #3f9b56; }
+	.question.incorrect .answer-input { border-color: var(--button-bg); }
+
+	.feedback {
+		margin-top: 9px;
+		font-size: 14px;
+		line-height: 1.5;
+	}
+
+	.feedback .correct-mark { color: #3f9b56; }
+	.feedback .answer { font-weight: bold; }
+
+	.feedback .zh {
+		display: block;
+		font-family: "Noto Sans SC", sans-serif;
+		color: var(--color4);
+		margin-top: 2px;
+	}
+
+	/* Chinese hidden: the page-wide toggle sets this on <body>. */
+	body.hide-zh .zh,
+	body.hide-zh .chinese,
+	body.hide-zh .label-zh { display: none; }
+
+	/* the toggle button is the way back, so its own Chinese label always shows */
+	body.hide-zh #toggle-zh-label { display: inline; }
+
+	.subtitle-row {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 14px;
+		margin: -10px 0 6px;
+		min-height: 40px;
+	}
+
+	.subtitle-row .page-subtitle { margin: 0; }
+	.subtitle-row .tk-button { padding: 7px 14px; font-size: 14px; }
+
+	/* "Read aloud" fills in when it is on, so its state is visible at a glance. */
+	.tk-button.secondary.on {
+		background: var(--button-bg);
+		border-color: var(--button-bg);
+		color: var(--button-text, #FFF6EC);
+		text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.35);
+	}
+
+	.tk-button.secondary.on:hover { background: var(--button-bg-hover); }
+
+	@media (max-width: 560px) {
+		.tense-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+		.qtype-grid { grid-template-columns: minmax(0, 1fr); }
+		.tense-cell { padding: 10px 12px; }
+	}
+
+</style>
+
+</head>
+
+<body>
+
+	<div class="content">
+
+		<h1>Trevor's English Tenses Practice Page</h1>
+		<div class="subtitle-row">
+			<a class="tk-button secondary" href="tenses-reference.html">
+				<i class="fa-solid fa-book"></i>
+				<span>Reference Material</span><span class="zh chinese">参考资料</span>
+			</a>
+			<button type="button" class="tk-button secondary" id="toggle-zh">
+				<i class="fa-solid fa-language"></i>
+				<span id="toggle-zh-label">隐藏中文</span>
+			</button>
+			<button type="button" class="tk-button secondary" id="toggle-tts" aria-pressed="false">
+				<i class="fa-solid fa-volume-xmark" id="toggle-tts-icon"></i>
+				<span>Read aloud</span><span class="zh chinese">朗读</span>
+			</button>
+			<p class="page-subtitle zh">康明的英语时态练习网页</p>
+		</div>
+
+		<p class="section-label">Tenses<span class="zh">时态</span></p>
+		<p>Choose the tenses you would like to practice. <span class="chinese">请选择你想练习的时态。</span></p>
+		<p class="advice">Start with one tense at a time, and add more as you feel comfortable.<span class="zh chinese"> 建议先练习一种时态，熟悉以后再慢慢加。</span></p>
+
+		<div class="tense-grid">
+			<label class="tense-cell">
+				<input type="checkbox" name="tense" value="past-simple" checked>
+				<span class="label-en">Simple past</span>
+				<span class="label-zh">一般过去时</span>
+			</label>
+			<label class="tense-cell">
+				<input type="checkbox" name="tense" value="present-simple" checked>
+				<span class="label-en">Simple present</span>
+				<span class="label-zh">一般现在时</span>
+			</label>
+			<label class="tense-cell">
+				<input type="checkbox" name="tense" value="future-simple" checked>
+				<span class="label-en">Simple future</span>
+				<span class="label-zh">一般未来时</span>
+			</label>
+			<label class="tense-cell unavailable">
+				<input type="checkbox" name="tense" value="past-continuous" disabled>
+				<span class="label-en">Past continuous</span>
+				<span class="label-zh">过去进行时</span>
+			</label>
+			<label class="tense-cell">
+				<input type="checkbox" name="tense" value="present-continuous" checked>
+				<span class="label-en">Present continuous</span>
+				<span class="label-zh">现在进行时</span>
+			</label>
+			<label class="tense-cell unavailable">
+				<input type="checkbox" name="tense" value="future-continuous" disabled>
+				<span class="label-en">Future continuous</span>
+				<span class="label-zh">未来进行时</span>
+			</label>
+			<label class="tense-cell unavailable">
+				<input type="checkbox" name="tense" value="past-perfect" disabled>
+				<span class="label-en">Past perfect</span>
+				<span class="label-zh">过去完成时</span>
+			</label>
+			<label class="tense-cell">
+				<input type="checkbox" name="tense" value="present-perfect">
+				<span class="label-en">Present perfect</span>
+				<span class="label-zh">现在完成时</span>
+			</label>
+			<label class="tense-cell unavailable">
+				<input type="checkbox" name="tense" value="future-perfect" disabled>
+				<span class="label-en">Future perfect</span>
+				<span class="label-zh">未来完成时</span>
+			</label>
+			<label class="tense-cell unavailable">
+				<input type="checkbox" name="tense" value="past-perfect-continuous" disabled>
+				<span class="label-en">Past perfect continuous</span>
+				<span class="label-zh">过去完成进行时</span>
+			</label>
+			<label class="tense-cell unavailable">
+				<input type="checkbox" name="tense" value="present-perfect-continuous" disabled>
+				<span class="label-en">Present perfect continuous</span>
+				<span class="label-zh">现在完成进行时</span>
+			</label>
+			<label class="tense-cell unavailable">
+				<input type="checkbox" name="tense" value="future-perfect-continuous" disabled>
+				<span class="label-en">Future perfect continuous</span>
+				<span class="label-zh">未来完成进行时</span>
+			</label>
+		</div>
+
+		<p style="color: var(--color4)">The greyed-out tenses are not available yet.<span class="zh chinese"> 灰色的时态暂时还不能练习，以后会加上。</span></p>
+
+		<p class="section-label">Question types<span class="zh">题型</span></p>
+		<p>Choose one question type. <span class="chinese">请选择一种题型。</span></p>
+		<p class="advice">The two "determine the tense" types need at least two tenses selected.<span class="zh chinese"> 「判断时态」的题型需要选择两种以上的时态。</span></p>
+
+		<div class="tense-grid qtype-grid">
+			<label class="tense-cell">
+				<input type="radio" name="qtype" value="tense-from-english" checked>
+				<span class="label-en">Determine English tense from English sentence</span>
+				<span class="label-zh">从英语句子判断时态</span>
+			</label>
+			<label class="tense-cell">
+				<input type="radio" name="qtype" value="tense-from-chinese">
+				<span class="label-en">Determine English tense from Chinese sentence</span>
+				<span class="label-zh">从中文句子判断时态</span>
+			</label>
+			<label class="tense-cell">
+				<input type="radio" name="qtype" value="english-from-tense">
+				<span class="label-en">Write English sentence from English tense</span>
+				<span class="label-zh">根据时态写英语句子</span>
+			</label>
+			<label class="tense-cell">
+				<input type="radio" name="qtype" value="english-from-chinese">
+				<span class="label-en">Write English sentence from Chinese sentence</span>
+				<span class="label-zh">根据中文句子写英语句子</span>
+			</label>
+		</div>
+
+		<p class="section-label">Sentence types<span class="zh">句型</span></p>
+		<p>Choose the kinds of sentences you would like. <span class="chinese">请选择你想练习的句型。</span></p>
+
+		<div class="tense-grid qtype-grid">
+			<label class="tense-cell">
+				<input type="checkbox" name="sform" value="statement" checked>
+				<span class="label-en">Statements</span>
+				<span class="label-zh">陈述句</span>
+			</label>
+			<label class="tense-cell">
+				<input type="checkbox" name="sform" value="yesno">
+				<span class="label-en">Yes-or-no questions</span>
+				<span class="label-zh">一般疑问句</span>
+			</label>
+			<label class="tense-cell">
+				<input type="checkbox" name="sform" value="wh">
+				<span class="label-en">Wh- questions</span>
+				<span class="label-zh">特殊疑问句</span>
+			</label>
+			<label class="tense-cell">
+				<input type="checkbox" name="sform" value="wh-subject">
+				<span class="label-en">Wh- questions (subject)</span>
+				<span class="label-zh">特殊疑问句（主语）</span>
+			</label>
+		</div>
+
+		<div class="toolbar">
+			<button type="button" class="tk-button" id="generate">
+				<i class="fa-solid fa-shuffle"></i>
+				<span>New questions</span><span class="zh chinese">出题</span>
+			</button>
+			<button type="button" class="tk-button secondary" id="reset">
+				<i class="fa-solid fa-rotate-left"></i>
+				<span>Reset answers</span><span class="zh chinese">清空答案</span>
+			</button>
+		</div>
+
+		<div class="practice-list" id="practice"></div>
+
+	</div>
+
+	<script>
+	// ---------------------------------------------------------------------
+	// Sentence generator. Elements (subjects, verbs, objects, times) come from
+	// tenses-data.json; the tense decides how they are assembled in English and
+	// in Chinese, since Chinese marks tense with aspect particles and time
+	// words rather than by changing the verb.
+	// ---------------------------------------------------------------------
+	(function practiceSetup() {
+		var DATA = null;
+		// 12 divides evenly by 1, 2, 3 and 4, so every combination of the four
+		// tenses can be handed out in equal shares.
+		var QUESTION_COUNT = 12;
+
+		var TENSE_NAMES = {
+			'past-simple':        { en: 'Simple past',        zh: '一般过去时' },
+			'present-simple':     { en: 'Simple present',     zh: '一般现在时' },
+			'future-simple':      { en: 'Simple future',      zh: '一般未来时' },
+			'present-continuous': { en: 'Present continuous', zh: '现在进行时' },
+			'present-perfect':    { en: 'Present perfect',    zh: '现在完成时' }
+		};
+
+		function pick(list) { return list[Math.floor(Math.random() * list.length)]; }
+
+		// "be" as the main verb ("She is hungry.") behaves differently enough to
+		// be worth its own pseudo-verb: it needs no do-support in questions, and
+		// its complement is an adjective or a place rather than an object.
+		var BE = { base: 'be', s: 'is', past: 'was', ing: 'being', pp: 'been', zh: '', isBe: true, objects: [] };
+		var BE_SHARE = 0.3;       // roughly a third of the sentences
+
+		// "Who cooks dinner?" asks about the subject, so the wh- word stands in
+		// the subject's place and the verb keeps its ordinary form: no do-support
+		// and nothing between the two blanks. Who always counts as third-person
+		// singular.
+		var WHO = { en: 'who', zh: '谁', person: 3, number: 'sg', isWho: true };
+		// A subject question about a thing asks "What ...?" instead: What is hot?
+		var WHAT = { en: 'what', zh: '什么', person: 3, number: 'sg', isWho: true };
+
+		// Time words are picked by group first, then by word inside the group, so
+		// a big family (the twelve months, the seven weekdays) is no likelier to
+		// turn up than a small one like "yesterday".
+		function pickTime(candidates) {
+			if (!candidates.length) return null;
+			var byGroup = {};
+			var names = [];
+			candidates.forEach(function (t) {
+				var g = t.group || t.en;
+				if (!byGroup[g]) { byGroup[g] = []; names.push(g); }
+				byGroup[g].push(t);
+			});
+			return pick(byGroup[pick(names)]);
+		}
+
+		function beForms(subject) {
+			var singular = !(subject.number === 'pl' || subject.person === 2);
+			return {
+				present: subject.person === 1 && subject.number === 'sg' ? 'am' : (singular ? 'is' : 'are'),
+				past: singular ? 'was' : 'were'
+			};
+		}
+
+		function beForm(subject) {
+			if (subject.person === 1 && subject.number === 'sg') return 'am';
+			return (subject.number === 'pl' || subject.person === 2) ? 'are' : 'is';
+		}
+
+		// English: one arrangement per tense, plus the other wordings a student
+		// might reasonably write (contractions, "going to", a moved time phrase).
+		function buildEnglish(tense, subject, verb, object, time) {
+			var subj = subject.en;
+			var obj = object ? ' ' + object.en : '';
+			var t = time ? ' ' + time.en : '';
+			var third = subject.person === 3 && subject.number === 'sg';
+			var forms = [];
+
+			if (tense === 'past-simple') {
+				forms.push(subj + ' ' + verb.past + obj);
+			} else if (tense === 'present-simple') {
+				forms.push(subj + ' ' + (third ? verb.s : verb.base) + obj);
+			} else if (tense === 'future-simple') {
+				forms.push(subj + ' will ' + verb.base + obj);
+				forms.push(subj + "'ll " + verb.base + obj);
+				forms.push(subj + ' ' + beForm(subject) + ' going to ' + verb.base + obj);
+			} else if (tense === 'present-continuous') {
+				forms.push(subj + ' ' + beForm(subject) + ' ' + verb.ing + obj);
+			}
+
+			var accepted = [];
+			forms.forEach(function (f) {
+				accepted.push(f);
+				if (time) {
+					accepted.push(f + t);
+					accepted.push(time.en + ', ' + f);
+					accepted.push(time.en + ' ' + f);
+				}
+			});
+			return { sentence: forms[0] + t, accepted: accepted };
+		}
+
+		// Chinese: no conjugation, so the tense shows up as 了 / 在 / 会 plus a
+		// time word. Word order stays subject + (time) + verb + object.
+		// be sentences: Chinese uses 很 with an adjective and 在 with a place, and
+		// no aspect marker; the future takes 会.
+		function buildChineseBe(tense, subject, complement, time, form) {
+			var core = complement.kind === 'place' ? '在' + complement.zh : '很' + complement.zh;
+			var marker = tense === 'future-simple' ? '会' : (tense === 'present-perfect' ? '已经' : '');
+			var timeZh = time ? time.zh : '';
+			var end = form === 'yesno' ? '吗？' : (form === 'wh-subject' ? '？' : '。');
+			var markerHTML = marker ? '<span class="time-clue">' + marker + '</span>' : '';
+			var timeHTML = time ? '<span class="time-clue">' + timeZh + '</span>' : '';
+			return {
+				text: subject.zh + timeZh + marker + core + end,
+				html: subject.zh + timeHTML + markerHTML + '<span class="verb-clue">' + core + '</span>' + end
+			};
+		}
+
+		function buildChinese(tense, subject, verb, object, time, form, target, experience) {
+			var zhVerb = (object && object.zhVerb) ? object.zhVerb : verb.zh;
+			var obj = object ? object.zh : '';
+			var timeZh = time ? time.zh : '';
+			var timeIsClue = !!time;
+
+			// a wh- question replaces whatever it asks about with a question word
+			if (form === 'wh') {
+				if (target === 'object') obj = '什么';
+				else { timeZh = '什么时候'; timeIsClue = false; }
+			}
+
+			// the aspect marker is what shows the tense, so it is marked the way
+			// the English verb form is; the simple present simply has none
+			// 已经 ... 了 is how the present perfect is usually put across
+			var marker = '';
+			var suffix = '';
+			if (tense === 'past-simple') marker = '了';
+			else if (tense === 'future-simple') marker = '会';
+			else if (tense === 'present-continuous') marker = '在';
+			else if (tense === 'present-perfect') {
+				// 过 for a life experience, 已经 ... 了 for something just done
+				if (experience) { marker = ''; suffix = '过'; }
+				else { marker = '已经'; suffix = '了'; }
+			}
+
+			// The verb is underlined like the English verb; the aspect marker is
+			// bolded, since it does the job the English time word does.
+			var verbHTML = '<span class="verb-clue">' + zhVerb + '</span>';
+			var markerHTML = '<span class="time-clue">' + marker + '</span>';
+			var suffixHTML = suffix ? '<span class="time-clue">' + suffix + '</span>' : '';
+			var core, coreHTML;
+			if (tense === 'present-perfect') {
+				core = marker + zhVerb + suffix + obj;
+				coreHTML = (marker ? markerHTML : '') + verbHTML + suffixHTML + obj;
+			} else if (tense === 'past-simple') {
+				core = zhVerb + marker + obj;
+				coreHTML = verbHTML + markerHTML + obj;
+			} else if (marker) {
+				core = marker + zhVerb + obj;
+				coreHTML = markerHTML + verbHTML + obj;
+			} else {
+				core = zhVerb + obj;
+				coreHTML = verbHTML + obj;
+			}
+
+			var end = form === 'yesno' ? '吗？' : (form === 'wh' || form === 'wh-subject' ? '？' : '。');
+			var timeHTML = timeIsClue ? '<span class="time-clue">' + timeZh + '</span>' : timeZh;
+
+			return {
+				text: subject.zh + timeZh + core + end,
+				html: subject.zh + timeHTML + coreHTML + end
+			};
+		}
+
+		function capitalize(str) { return str.charAt(0).toUpperCase() + str.slice(1); }
+
+		// Loose comparison: ignore case, punctuation and extra spaces, and treat
+		// contractions as equal to their full forms.
+		function normalize(str) {
+			return String(str)
+				.toLowerCase()
+				.replace(/[.!?,]/g, ' ')
+				.replace(/’/g, "'")
+				.replace(/\bi'm\b/g, 'i am')
+				.replace(/\b(he|she|it)'s\b/g, '$1 is')
+				.replace(/\b(you|we|they)'re\b/g, '$1 are')
+				.replace(/\b(i|you|he|she|it|we|they)'ll\b/g, '$1 will')
+				.replace(/\bgonna\b/g, 'going to')
+				.replace(/\s+/g, ' ')
+				.trim();
+		}
+
+		function makeQuestion(tense, form) {
+			var subject = pick(DATA.subjects);
+
+			// Roughly a third of the sentences use be as the main verb. The
+			// continuous is skipped there ("is being hungry" is not English), and
+			// so are wh- questions, which would need a different question word.
+			var complements = DATA.beComplements || [];
+			var beAllowed = tense !== 'present-continuous' && form !== 'wh';
+			if (complements.length && beAllowed && Math.random() < BE_SHARE) {
+				var genericsBe = DATA.genericSubjects || [];
+				if (tense === 'present-simple' && genericsBe.length && Math.random() < 0.25) {
+					subject = pick(genericsBe);
+				}
+				// a general truth uses only what is true of its subject; everyone
+				// else can be anything on the list
+				var usable = complements;
+				if (subject.complements) {
+					usable = complements.filter(function (c) { return subject.complements.indexOf(c.en) !== -1; });
+				} else if (subject.kind === 'thing') {
+					usable = complements.filter(function (c) { return c.forThings; });
+				}
+				var complement = pick(usable.length ? usable : complements);
+				if (form === 'wh-subject') {
+					var thingy = complements.filter(function (c) { return c.forThings; });
+					if (thingy.length && Math.random() < 0.5) {
+						subject = WHAT;
+						usable = thingy;
+						complement = pick(usable);
+					} else {
+						subject = WHO;
+					}
+				}
+				var beTimes = DATA.times.filter(function (t) { return t.tenses.indexOf(tense) !== -1; });
+				// the past needs a time word: Chinese marks it no other way here
+				// being something is a state, so it takes no habitual time phrase:
+				// "She is hungry every morning" is not a sentence anybody says
+				var needTime = tense === 'past-simple' && !subject.kind;
+				var wantBeTime = !subject.kind && tense !== 'present-simple' &&
+					(needTime || Math.random() < 0.5);
+				var beTime = wantBeTime ? pickTime(beTimes) : null;
+				var zhBe = buildChineseBe(tense, subject, complement, beTime, form);
+				return {
+					tense: tense, form: form || 'statement', target: null,
+					subject: subject, verb: BE, object: null, complement: complement,
+					time: beTime, chinese: zhBe.text, chineseHTML: zhBe.html
+				};
+			}
+
+			// General truths ("The sun is hot.", "Cats like fish.") are stated in
+			// the simple present, so a generic subject only appears there.
+			var generics = (DATA.genericSubjects || []).filter(function (g) { return g.kind === 'animal'; });
+			if (tense === 'present-simple' && generics.length && Math.random() < 0.2) {
+				subject = pick(generics);
+			}
+
+			// Stative verbs describe a state rather than an action, so they never
+			// take the continuous ("is liking" is not English).
+			var pool = DATA.verbs;
+			if (tense !== 'present-simple') {
+				pool = DATA.verbs.filter(function (v) { return !v.stative; });
+			}
+			// "Cats like fish." is a general truth; "Cats write letters." is not
+			if (subject.kind === 'animal') {
+				var animalVerbs = pool.filter(function (v) {
+					return ['like', 'eat', 'drink', 'sleep', 'run', 'swim', 'want'].indexOf(v.base) !== -1;
+				});
+				if (animalVerbs.length) pool = animalVerbs;
+			}
+			var verb = pick(pool);
+			// verbs that take an object always get one, so no sentence reads oddly bare
+			var objectPool = verb.objects || [];
+			if (subject.kind === 'animal' && objectPool.length) {
+				var animalSafe = objectPool.filter(function (o) {
+					return ['water', 'fish', 'noodles', 'breakfast', 'dinner'].indexOf(o.en) !== -1;
+				});
+				if (animalSafe.length) objectPool = animalSafe;
+			}
+			var object = objectPool.length ? pick(objectPool) : null;
+			var candidates = DATA.times.filter(function (t) { return t.tenses.indexOf(tense) !== -1; });
+			// The continuous and the simple present read better with a time word,
+			// so include one more often for those.
+			var wantTime = (tense === 'present-continuous' || tense === 'present-simple') ? Math.random() < 0.75 : Math.random() < 0.6;
+			if (verb.stative && tense === 'present-simple') wantTime = false;
+			if (subject.kind) wantTime = false;   // general truths: "Cats like fish."
+			var time = wantTime ? pickTime(candidates) : null;
+
+			// A wh- question needs something to ask about: the object if there is
+			// one, otherwise a time expression, which is then always included.
+			var target = null;
+			if (form === 'wh-subject') subject = WHO;
+			if (form === 'wh') {
+				if (object) target = 'object';
+				else if (candidates.length && tense !== 'present-perfect') {
+					time = time || pickTime(candidates);
+					target = 'time';
+				} else {
+					form = 'yesno';   // nothing sensible to ask about
+				}
+			}
+
+			// Have you ever ...? asks about a life experience; Chinese marks it
+			// with 过 rather than 已经 ... 了.
+			var experience = tense === 'present-perfect' && !time &&
+				(form === 'yesno' || form === 'statement' || !form) && Math.random() < 0.45;
+
+			return {
+				tense: tense,
+				form: form || 'statement',
+				experience: experience,
+				target: target,
+				subject: subject,
+				verb: verb,
+				object: object,
+				time: time,
+				chinese: buildChinese(tense, subject, verb, object, time, form, target, experience).text,
+				chineseHTML: buildChinese(tense, subject, verb, object, time, form, target, experience).html
+			};
+		}
+
+		function selectedForms() {
+			var out = Array.prototype.slice
+				.call(document.querySelectorAll('input[name="sform"]:checked'))
+				.map(function (i) { return i.value; })
+				.filter(function (v) { return ['statement', 'yesno', 'wh', 'wh-subject'].indexOf(v) !== -1; });
+			return out.length ? out : ['statement'];
+		}
+
+		function selectedTenses() {
+			return Array.prototype.slice
+				.call(document.querySelectorAll('input[name="tense"]:checked'))
+				.map(function (i) { return i.value; })
+				.filter(function (v) { return TENSE_NAMES[v]; });
+		}
+
+		function escapeHTML(str) {
+			return String(str).replace(/[&<>"]/g, function (c) {
+				return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+			});
+		}
+
+		// The verb slot's options: every form the selected tenses could call for,
+		// so the student has to read the subject and the time words to choose.
+		// With only the simple present selected this is just eat / eats.
+		// Always listed in the same order (present, past, future, continuous), so
+		// a student can find the form they are looking for without hunting.
+		var OPTION_ORDER = ['present-simple', 'past-simple', 'future-simple', 'present-continuous', 'present-perfect'];
+
+		// Options are keyed by form ('base', 's', 'past', 'will', 'am', ...) rather
+		// than by their text, so forms that are spelled alike (read / read) stay
+		// separate answers. Their labels then carry a pronunciation to tell them
+		// apart, e.g. read (/rid/) and read (/rɛd/).
+		function formLabel(verb, key) {
+			var alike = verb.past === verb.base;
+			if (key === 'base') return verb.base + (alike && verb.ipaBase ? '  ' + verb.ipaBase : '');
+			if (key === 'past') return verb.past + (alike && verb.ipaPast ? '  ' + verb.ipaPast : '');
+			if (key === 's') return verb.s;
+			if (key === 'will') return 'will ' + verb.base;
+			if (key === 'have' || key === 'has') return key + ' ' + verb.pp;
+			return key + ' ' + verb.ing;   // am / is / are
+		}
+
+		function verbOptions(verb, tenses) {
+			var out = [];
+			OPTION_ORDER.forEach(function (t) {
+				if (tenses.indexOf(t) === -1) return;
+				if (t === 'present-simple') { out.push('base', 's'); }
+				else if (t === 'past-simple') { out.push('past'); }
+				else if (t === 'future-simple') { out.push('will'); }
+				else if (t === 'present-continuous') { out.push('am', 'is', 'are'); }
+				else if (t === 'present-perfect') { out.push('have', 'has'); }
+			});
+			return out;
+		}
+
+		function correctVerbForm(q) {
+			if (q.form === 'wh-subject') {
+				// only the future and the continuous need a word in front of the
+				// verb; the rest leave the first slot empty
+				if (q.tense === 'future-simple') return 'will-q';
+				if (q.tense === 'present-continuous') return 'is-q';
+				if (q.tense === 'present-perfect') return 'has-q';
+				return 'none';
+			}
+			if (q.verb.isBe) {
+				var f = beForms(q.subject);
+				var thirdBe = q.subject.person === 3 && q.subject.number === 'sg';
+				if (q.form === 'statement') {
+					if (q.tense === 'past-simple') return f.past;
+					if (q.tense === 'future-simple') return 'will be';
+					if (q.tense === 'present-perfect') return thirdBe ? 'has been' : 'have been';
+					return f.present;
+				}
+				if (q.tense === 'past-simple') return f.past + '-q';
+				if (q.tense === 'future-simple') return 'will-q';
+				if (q.tense === 'present-perfect') return thirdBe ? 'has-q' : 'have-q';
+				return f.present + '-q';
+			}
+			var third = q.subject.person === 3 && q.subject.number === 'sg';
+			if (q.form && q.form !== 'statement') {
+				if (q.tense === 'present-simple') return third ? 'does' : 'do';
+				if (q.tense === 'past-simple') return 'did';
+				if (q.tense === 'future-simple') return 'will-q';
+				if (q.tense === 'present-perfect') return third ? 'has-q' : 'have-q';
+				return beForm(q.subject) + '-q';
+			}
+			if (q.tense === 'present-simple') return third ? 's' : 'base';
+			if (q.tense === 'past-simple') return 'past';
+			if (q.tense === 'future-simple') return 'will';
+			if (q.tense === 'present-perfect') return third ? 'has' : 'have';
+			return beForm(q.subject);      // am / is / are
+		}
+
+		// In a question the blank swallows the auxiliary, the subject and the
+		// verb ("Does she eat"), so the word order stays natural.
+		var AUX_ORDER = { 'present-simple': ['do', 'does'], 'past-simple': ['did'],
+			'future-simple': ['will-q'], 'present-continuous': ['am-q', 'is-q', 'are-q'],
+			'present-perfect': ['have-q', 'has-q'] };
+
+		function auxText(q, key) {
+			var aux = key.replace('-q', '');
+			var main = q.verb.base;
+			if (key === 'am-q' || key === 'is-q' || key === 'are-q') main = q.verb.ing;
+			else if (key === 'have-q' || key === 'has-q') main = q.verb.pp;
+			var ever = (q.experience && q.form !== 'statement') ? 'ever ' : '';
+			return aux + ' ' + q.subject.en + ' ' + ever + main;
+		}
+
+		// In a question the auxiliary and the main verb are chosen separately,
+		// with the subject fixed between them: [do/does/did/…] we [run/running].
+		// The first slot always offers a blank as well: a subject question needs
+		// no auxiliary at all ("Who cooks dinner?"), and elsewhere the blank is a
+		// distractor.
+		function slot1Keys(q, tenses) {
+			return ['none'].concat(auxKeys(tenses, q));
+		}
+
+		function slot1Label(q, key) {
+			return key === 'none' ? '\u2014' : auxLabel(q, key);
+		}
+
+		function auxKeys(tenses, q) {
+			if (q && q.verb.isBe) return beAuxKeys(tenses);
+			var out = [];
+			OPTION_ORDER.forEach(function (t) {
+				if (tenses.indexOf(t) === -1) return;
+				out = out.concat(AUX_ORDER[t]);
+			});
+			return out;
+		}
+
+		function auxLabel(q, key) {
+			var aux = key.replace('-q', '');
+			return q.form === 'yesno' ? capitalize(aux) : aux;
+		}
+
+		function correctAuxKey(q) { return correctVerbForm(q); }
+
+		// The forms that could follow an auxiliary, in the usual order. "did eat"
+		// versus "did ate" is a real beginner decision, so the simple past and the
+		// -s form stay in the list as distractors.
+		// The blank option is always offered: with be it is the right answer in the
+		// present and past ("Is she hungry?"), and elsewhere it is a distractor.
+		function mainKeys(verb) {
+			// with be, the finite forms are the tempting wrong answers ("Is she is
+			// hungry?"), so they sit alongside the blank, the bare infinitive and
+			// the past participle
+			if (verb.isBe) return ['none', 'be', 'been', 'am', 'is', 'are', 'was', 'were'];
+			if (verb.pp === verb.past) return ['none', 'base', 's', 'past', 'ing'];
+			return ['none', 'base', 's', 'past', 'pp', 'ing'];
+		}
+
+		function mainLabel(verb, key) {
+			if (key === 'none') return '\u2014';   // an em dash: nothing goes here
+			if (['be', 'been', 'am', 'is', 'are', 'was', 'were'].indexOf(key) !== -1) return key;
+			if (key === 'ing') return verb.ing;
+			if (key === 'pp') return verb.pp + (verb.pp === verb.base && verb.ipaPast ? '  ' + verb.ipaPast : '');
+			return formLabel(verb, key);
+		}
+
+		function correctMainKey(q) {
+			if (q.form === 'wh-subject') {
+				if (q.verb.isBe) {
+					if (q.tense === 'future-simple') return 'be';
+					if (q.tense === 'present-perfect') return 'been';
+					return q.tense === 'past-simple' ? 'was' : 'is';   // who is / who was
+				}
+				if (q.tense === 'future-simple') return 'base';
+				if (q.tense === 'present-continuous') return 'ing';
+				if (q.tense === 'present-perfect') return q.verb.pp === q.verb.past ? 'past' : 'pp';
+				return q.tense === 'past-simple' ? 'past' : 's';       // who cooks / who cooked
+			}
+			var k = correctVerbForm(q);
+			if (q.verb.isBe) {
+				if (k === 'will-q') return 'be';
+				return (k === 'have-q' || k === 'has-q') ? 'been' : 'none';
+			}
+			if (k === 'am-q' || k === 'is-q' || k === 'are-q') return 'ing';
+			if (k === 'have-q' || k === 'has-q') return q.verb.pp === q.verb.past ? 'past' : 'pp';
+			return 'base';
+		}
+
+		// be: the statement blank holds the whole verb, so the options are the be
+		// forms the selected tenses allow.
+		function beStatementKeys(tenses) {
+			var out = [];
+			if (tenses.indexOf('present-simple') !== -1) out.push('am', 'is', 'are');
+			if (tenses.indexOf('past-simple') !== -1) out.push('was', 'were');
+			if (tenses.indexOf('future-simple') !== -1) out.push('will be');
+			if (tenses.indexOf('present-perfect') !== -1) out.push('have been', 'has been');
+			return out.length ? out : ['am', 'is', 'are'];
+		}
+
+		// The do-support forms stay in the list: "Does she hungry?" is one of the
+		// commonest mistakes a Chinese speaker makes with be.
+		function beAuxKeys(tenses) {
+			var out = [];
+			if (tenses.indexOf('present-simple') !== -1) out.push('do', 'does');
+			if (tenses.indexOf('past-simple') !== -1) out.push('did');
+			if (tenses.indexOf('future-simple') !== -1) out.push('will-q');
+			if (tenses.indexOf('present-simple') !== -1) out.push('am-q', 'is-q', 'are-q');
+			if (tenses.indexOf('past-simple') !== -1) out.push('was-q', 'were-q');
+			if (tenses.indexOf('present-perfect') !== -1) out.push('have-q', 'has-q');
+			return out.length ? out : ['do', 'does', 'am-q', 'is-q', 'are-q'];
+		}
+
+		function phraseKeys(q, tenses) {
+			if (q.verb.isBe) return beStatementKeys(tenses);
+			if (q.form === 'statement') return verbOptions(q.verb, tenses);
+			var out = [];
+			OPTION_ORDER.forEach(function (t) {
+				if (tenses.indexOf(t) === -1) return;
+				out = out.concat(AUX_ORDER[t]);
+			});
+			return out;
+		}
+
+		function phraseLabel(q, key) {
+			if (q.verb.isBe) return key;
+			if (q.form === 'statement') return formLabel(q.verb, key);
+			var text = auxText(q, key);
+			return q.form === 'yesno' ? capitalize(text) : text;
+		}
+
+		function phraseText(q, key) {
+			if (q.form === 'wh-subject') {
+				var second = correctMainKey(q);
+				var first = key === 'none' ? '' : slot1Label(q, key) + ' ';
+				return first + (second === 'none' ? '' : mainLabel(q.verb, second));
+			}
+			if (q.verb.isBe) {
+				if (q.form === 'statement') return key;
+				var auxBe = key.replace('-q', '');
+				var mainBe = (key === 'will-q') ? ' be'
+					: ((key === 'have-q' || key === 'has-q') ? ' been' : '');
+				var textBe = auxBe + ' ' + q.subject.en + mainBe;
+				return q.form === 'yesno' ? capitalize(textBe) : textBe;
+			}
+			if (q.form === 'statement') return verbText(q.verb, key);
+			var text = auxText(q, key);
+			return q.form === 'yesno' ? capitalize(text) : text;
+		}
+
+		// The same phrase as HTML, with only the words that carry the tense
+		// marked: in a question that is the auxiliary and the main verb, not the
+		// subject sitting between them.
+		function phraseHTML(q, key) {
+			if (q.form === 'wh-subject') {
+				var second2 = correctMainKey(q);
+				var firstHTML = key === 'none' ? ''
+					: '<span class="verb-clue">' + escapeHTML(slot1Label(q, key)) + '</span> ';
+				return firstHTML + (second2 === 'none' ? ''
+					: '<span class="verb-clue">' + escapeHTML(mainLabel(q.verb, second2)) + '</span>');
+			}
+			if (q.verb.isBe) {
+				if (q.form === 'statement') {
+					return '<span class="verb-clue">' + escapeHTML(key) + '</span>';
+				}
+				var auxB = key.replace('-q', '');
+				if (q.form === 'yesno') auxB = capitalize(auxB);
+				var afterBe = key === 'will-q' ? 'be' : ((key === 'have-q' || key === 'has-q') ? 'been' : '');
+				return '<span class="verb-clue">' + escapeHTML(auxB) + '</span> ' +
+					escapeHTML(q.subject.en) +
+					(afterBe ? ' <span class="verb-clue">' + afterBe + '</span>' : '');
+			}
+			if (q.form === 'statement') {
+				return '<span class="verb-clue">' + escapeHTML(verbText(q.verb, key)) + '</span>';
+			}
+			var aux = key.replace('-q', '');
+			if (q.form === 'yesno') aux = capitalize(aux);
+			var main = q.verb.base;
+			if (key === 'am-q' || key === 'is-q' || key === 'are-q') main = q.verb.ing;
+			else if (key === 'have-q' || key === 'has-q') main = q.verb.pp;
+			var everHTML = (q.experience && q.form !== 'statement')
+				? '<span class="time-clue">ever</span> ' : '';
+			return '<span class="verb-clue">' + escapeHTML(aux) + '</span> ' +
+				escapeHTML(q.subject.en) + ' ' + everHTML +
+				'<span class="verb-clue">' + escapeHTML(main) + '</span>';
+		}
+
+		// The form as it appears in a finished sentence (no pronunciation hint).
+		function verbText(verb, key) {
+			if (key === 'base') return verb.base;
+			if (key === 's') return verb.s;
+			if (key === 'past') return verb.past;
+			if (key === 'will') return 'will ' + verb.base;
+			if (key === 'have' || key === 'has') return key + ' ' + verb.pp;
+			return key + ' ' + verb.ing;
+		}
+
+		// Read the finished sentence aloud, when the student has it right and the
+		// "Read aloud" toggle is on. Falls back silently where the browser has no
+		// speech synthesis.
+		function speak(text) {
+			if (!document.body.classList.contains('tts-on')) return;
+			if (!('speechSynthesis' in window) || !text) return;
+			try {
+				window.speechSynthesis.cancel();
+				var u = new SpeechSynthesisUtterance(text);
+				u.lang = 'en-US';
+				u.rate = 0.95;
+				window.speechSynthesis.speak(u);
+			} catch (e) {}
+		}
+
+		// Color the dropdown as soon as a choice is made; reopening it clears
+		// the previous result, so the color always refers to the current choice.
+		// A question may have more than one blank (a question sentence splits into
+		// auxiliary and main verb); it counts as solved only when they are all
+		// right, and only then does the sentence get read aloud.
+		function wireGroup(pairs, sayOnCorrect, revealOn) {
+			function allRight() {
+				return pairs.every(function (p) { return p.select.__lastRight === true; });
+			}
+			pairs.forEach(function (p) {
+				wireSelect(p.select, p.answer, function () {
+					if (!allRight()) return null;
+					return sayOnCorrect ? sayOnCorrect() : null;
+				}, revealOn, allRight);
+			});
+		}
+
+		function wireSelect(select, answer, sayOnCorrect, revealOn, solved) {
+			select.__lastRight = null;   // no answer chosen yet
+
+			function paint(right, animate) {
+				select.classList.toggle('right', right);
+				select.classList.toggle('wrong', !right);
+				if (!animate) return;
+				// restart the animation even when the same result repeats
+				select.classList.remove('shake', 'glow');
+				void select.offsetWidth;
+				select.classList.add(right ? 'glow' : 'shake');
+			}
+
+			// While the list is open the color is dropped, so it always refers to
+			// the choice being made. Closing it without picking anything new puts
+			// the previous result back.
+			function clearMark() { select.classList.remove('right', 'wrong', 'shake', 'glow'); }
+			function restoreMark() { if (select.__lastRight !== null) paint(select.__lastRight, false); }
+
+			select.addEventListener('mousedown', clearMark);
+			select.addEventListener('keydown', clearMark);
+			select.addEventListener('blur', restoreMark);
+			select.addEventListener('keyup', function (e) {
+				if (e.key === 'Escape' || e.key === 'Tab') restoreMark();
+			});
+			select.addEventListener('change', function () {
+				var right = select.value === answer;
+				select.__lastRight = right;
+				paint(right, true);
+				var done = solved ? solved() : right;
+				if (revealOn) revealOn.classList.toggle('revealed', done);
+				if (done && sayOnCorrect) {
+					var line = sayOnCorrect();
+					if (line) speak(line);
+				}
+			});
+		}
+
+		function optionsHTML(placeholder, values, labelFor) {
+			var html = ['<option value="" selected disabled>' + escapeHTML(placeholder) + '</option>'];
+			values.forEach(function (v) {
+				html.push('<option value="' + escapeHTML(v) + '">' +
+					escapeHTML(labelFor ? labelFor(v) : v) + '</option>');
+			});
+			return html.join('');
+		}
+
+		// The English sentence with the verb phrase left out, as head and tail
+		// strings. Statements keep the subject in the head; questions put subject
+		// and auxiliary inside the blank, so the head is empty or the wh- word.
+		function sentenceParts(q) {
+			if (q.form === 'wh-subject') {
+				return {
+					head: capitalize(q.subject.en) + ' ',
+					tail: (q.verb.isBe ? ' ' + q.complement.en : (q.object ? ' ' + q.object.en : '')) +
+						(q.time ? ' ' + q.time.en : '') + '?',
+					tailHTML: (q.verb.isBe ? ' ' + escapeHTML(q.complement.en) : (q.object ? ' ' + escapeHTML(q.object.en) : '')) +
+						(q.time ? ' <span class="time-clue">' + escapeHTML(q.time.en) + '</span>' : '') + '?'
+				};
+			}
+			if (q.verb.isBe) {
+				var endBe = q.form === 'statement' ? '.' : '?';
+				return {
+					head: q.form === 'statement' ? capitalize(q.subject.en) + ' ' : '',
+					tail: ' ' + q.complement.en + (q.time ? ' ' + q.time.en : '') + endBe,
+					tailHTML: ' ' + escapeHTML(q.complement.en) +
+						(q.time ? ' <span class="time-clue">' + escapeHTML(q.time.en) + '</span>' : '') + endBe
+				};
+			}
+			var showObject = q.object && !(q.form === 'wh' && q.target === 'object');
+			var showTime = q.time && !(q.form === 'wh' && q.target === 'time');
+			var end = q.form === 'statement' ? '.' : '?';
+			var before = (q.experience && q.form === 'statement') ? ' before' : '';
+			var head = q.form === 'statement' ? capitalize(q.subject.en) + ' '
+				: (q.form === 'wh' ? (q.target === 'object' ? 'What ' : 'When ') : '');
+
+			return {
+				head: head,
+				tail: (showObject ? ' ' + q.object.en : '') + (showTime ? ' ' + q.time.en : '') + before + end,
+				// the same tail as HTML, with the time expression wrapped so it can
+				// be bolded once the student has the answer right
+				tailHTML: (showObject ? ' ' + escapeHTML(q.object.en) : '') +
+					(showTime ? ' <span class="time-clue">' + escapeHTML(q.time.en) + '</span>' : '') +
+					(before ? ' <span class="time-clue">before</span>' : '') + end
+			};
+		}
+
+		// English-only questions get a small 翻译 button that reveals the Chinese
+		// on its own line. It lives inside .zh, so it disappears along with the
+		// other Chinese when the top toggle is off.
+		function translateHTML(toEnglish) {
+			// The Chinese-to-English button is not part of the Chinese layer, so it
+			// survives the 隐藏中文 toggle; the other direction hides with it.
+			return '<button type="button" class="translate-btn' + (toEnglish ? '' : ' zh') +
+				'" title="翻译" aria-label="翻译"><i class="fa-solid fa-language"></i></button>';
+		}
+
+		function zhLineHTML(toEnglish) {
+			return '<div class="reveal-line ' + (toEnglish ? 'en-line' : 'zh-line zh') + '" hidden></div>';
+		}
+
+		function wireTranslate(el, text, isHTML) {
+			var btn = el.querySelector('.translate-btn');
+			var line = el.querySelector('.reveal-line');
+			if (!btn || !line) return;
+			btn.addEventListener('click', function () {
+				var show = line.hidden;
+				line.hidden = !show;
+				if (isHTML) line.innerHTML = show ? text : '';
+				else line.textContent = show ? text : '';
+				btn.classList.toggle('on', show);
+				btn.setAttribute('title', show ? '隐藏翻译' : '翻译');
+				btn.setAttribute('aria-label', show ? '隐藏翻译' : '翻译');
+			});
+		}
+
+		// The pattern the sentence follows, revealed once it is answered. Written
+		// in both languages, since that is how the grammar table is written.
+		function structureParts(q) {
+			var be = q.verb.isBe;
+			var tense = q.tense;
+			var slot, slotZh;          // what follows the subject
+
+			if (be) {
+				slot = tense === 'past-simple' ? 'was/were'
+					: (tense === 'future-simple' ? 'will be'
+					: (tense === 'present-perfect' ? 'have/has been' : 'is/am/are'));
+				slotZh = slot;
+			} else if (tense === 'present-simple') {
+				slot = 'base verb (+s)'; slotZh = '动词原形(s)';
+			} else if (tense === 'past-simple') {
+				slot = 'past form'; slotZh = '动词过去式';
+			} else if (tense === 'future-simple') {
+				slot = 'will + base verb'; slotZh = 'will + 动词原形';
+			} else if (tense === 'present-perfect') {
+				slot = 'have/has + past participle'; slotZh = 'have/has + 动词过去分词';
+			} else {
+				slot = 'is/am/are + present participle'; slotZh = 'is/am/are + 动词现在分词';
+			}
+
+			if (q.form === 'statement') {
+				var tailEn = be ? ' + object' : '';
+				var tailZh = be ? ' + 宾语' : '';
+				return {
+					en: 'subject + ' + slot + tailEn,
+					zh: '主语 + ' + slotZh + tailZh
+				};
+			}
+
+			// a subject question has no auxiliary to move: the wh- word takes the
+			// subject's place and the verb keeps the form it would have anyway
+			if (q.form === 'wh-subject') {
+				if (be) {
+					var beSlot = tense === 'past-simple' ? 'was' : (tense === 'future-simple' ? 'will be' : (tense === 'present-perfect' ? 'has been' : 'is'));
+					return {
+						en: 'wh- word (subject) + ' + beSlot + ' + object + …?',
+						zh: '疑问词（主语）+ ' + beSlot + ' + 宾语 + …?'
+					};
+				}
+				var vSlot, vSlotZh;
+				if (tense === 'present-simple') { vSlot = 'base verb (+s)'; vSlotZh = '动词原形(s)'; }
+				else if (tense === 'past-simple') { vSlot = 'past form'; vSlotZh = '动词过去式'; }
+				else if (tense === 'future-simple') { vSlot = 'will + base verb'; vSlotZh = 'will + 动词原形'; }
+				else if (tense === 'present-perfect') { vSlot = 'has + past participle'; vSlotZh = 'has + 动词过去分词'; }
+				else { vSlot = 'is + present participle'; vSlotZh = 'is + 动词现在分词'; }
+				return {
+					en: 'wh- word (subject) + ' + vSlot + ' + …?',
+					zh: '疑问词（主语）+ ' + vSlotZh + ' + …?'
+				};
+			}
+
+			// questions: the auxiliary moves to the front, and with an ordinary
+			// verb the main verb drops back to its base form
+			var aux, rest, restZh;
+			if (be) {
+				aux = tense === 'past-simple' ? 'Was/Were'
+					: (tense === 'future-simple' ? 'Will'
+					: (tense === 'present-perfect' ? 'Have/Has' : 'Is/Am/Are'));
+				rest = ' + object';
+				restZh = ' + 宾语';
+				if (tense === 'future-simple') { rest = ' + be + object'; restZh = ' + be + 宾语'; }
+				if (tense === 'present-perfect') { rest = ' + been + object'; restZh = ' + been + 宾语'; }
+			} else if (tense === 'present-simple') {
+				aux = 'Do(es)'; rest = ' + base verb'; restZh = ' + 动词原形';
+			} else if (tense === 'past-simple') {
+				aux = 'Did'; rest = ' + base verb'; restZh = ' + 动词原形';
+			} else if (tense === 'future-simple') {
+				aux = 'Will'; rest = ' + base verb'; restZh = ' + 动词原形';
+			} else if (tense === 'present-perfect') {
+				aux = 'Have/Has'; rest = ' + past participle'; restZh = ' + 动词过去分词';
+			} else {
+				aux = 'Is/Am/Are'; rest = ' + present participle'; restZh = ' + 动词现在分词';
+			}
+
+			if (q.form === 'wh') {
+				return {
+					en: 'wh- word + ' + aux.toLowerCase() + ' + subject' + rest + ' + …?',
+					zh: '疑问词 + ' + aux.toLowerCase() + ' + 主语' + restZh + ' + …?'
+				};
+			}
+			return {
+				en: aux + ' + subject' + rest + ' + …?',
+				zh: aux + ' + 主语' + restZh + ' + …?'
+			};
+		}
+
+		function structureHTML(q) {
+			var st = structureParts(q);
+			return '<div class="structure-line"><span class="structure-chip">' +
+				escapeHTML(st.en) + '<span class="zh">' + escapeHTML(st.zh) + '</span></span></div>';
+		}
+
+		function questionShell(index, headHTML, bodyHTML) {
+			var el = document.createElement('div');
+			el.className = 'question';
+			el.innerHTML =
+				'<span class="question-number">' + (index + 1) + '.</span>' +
+				'<div class="question-body">' +
+					(headHTML ? '<div class="question-head">' + headHTML + '</div>' : '') +
+					bodyHTML +
+				'</div>';
+			return el;
+		}
+
+		// Tense names for the tense dropdown, in the fixed OPTION_ORDER. The
+		// Chinese half is appended only while Chinese labels are showing, since
+		// <option> text cannot carry a separately hideable element.
+		function tenseLabel(tense) {
+			var name = TENSE_NAMES[tense];
+			return document.body.classList.contains('hide-zh')
+				? name.en
+				: name.en + '  ' + name.zh;
+		}
+
+		function orderedTenses(tenses) {
+			return OPTION_ORDER.filter(function (t) { return tenses.indexOf(t) !== -1; });
+		}
+
+		// The blank (or blanks) a student fills in, plus the answers that go with
+		// them, for the two "write the English" question types.
+		function blankHTML(q, tenses) {
+			if (q.form === 'statement') {
+				return '<select class="verb-select" data-slot="verb">' +
+					optionsHTML('(' + q.verb.base + ')', phraseKeys(q, tenses), function (k) { return phraseLabel(q, k); }) +
+					'</select>';
+			}
+			// Both blanks in a question start empty: naming one of them would give
+			// away half of what the student is working out.
+			// a subject question has nothing between the two blanks; the others
+			// keep the subject there
+			var everWord = (q.experience && q.form !== 'statement' && q.form !== 'wh-subject')
+				? '<span class="time-clue">ever</span> ' : '';
+			var middle = q.form === 'wh-subject' ? ' ' : ' ' + escapeHTML(q.subject.en) + ' ' + everWord;
+			return '<select class="verb-select" data-slot="aux">' +
+					optionsHTML('', slot1Keys(q, tenses), function (k) { return slot1Label(q, k); }) +
+				'</select>' + middle +
+				'<select class="verb-select" data-slot="main">' +
+					optionsHTML('', mainKeys(q.verb), function (k) { return mainLabel(q.verb, k); }) +
+				'</select>';
+		}
+
+		function blankPairs(el, q) {
+			if (q.form === 'statement') {
+				return [{ select: el.querySelector('[data-slot="verb"]'), answer: correctVerbForm(q) }];
+			}
+			return [
+				{ select: el.querySelector('[data-slot="aux"]'), answer: correctAuxKey(q) },
+				{ select: el.querySelector('[data-slot="main"]'), answer: correctMainKey(q) }
+			];
+		}
+
+		function renderQuestion(q, index, tenses, qtype) {
+			var parts = sentenceParts(q);
+
+			// Choose the verb form, prompted by the tense chip.
+			if (qtype === 'english-from-tense') {
+				var name = TENSE_NAMES[q.tense];
+				var head = '<span class="tense-chip">' + escapeHTML(name.en) +
+					'<span class="zh">' + escapeHTML(name.zh) + '</span></span>';
+				var el = questionShell(index, head,
+					'<div class="sentence">' + escapeHTML(parts.head) + blankHTML(q, tenses) +
+						parts.tailHTML + translateHTML() + '</div>' + zhLineHTML() + structureHTML(q));
+				wireTranslate(el, q.chineseHTML, true);
+				wireGroup(blankPairs(el, q), function () {
+					return parts.head + phraseText(q, correctVerbForm(q)) + parts.tail;
+				}, el);
+				return el;
+			}
+
+			// Choose the verb form, prompted by the Chinese translation.
+			if (qtype === 'english-from-chinese') {
+				var nameC = TENSE_NAMES[q.tense];
+				// With a single tense selected there is nothing to work out, so the
+				// chip is shown from the start instead of waiting for the answer.
+				var chipClass = tenses.length > 1 ? 'tense-chip reveal-chip' : 'tense-chip';
+				var elc = questionShell(index,
+					'<span class="zh-prompt">' + q.chineseHTML + '</span>' +
+					'<span class="' + chipClass + '">' + escapeHTML(nameC.en) +
+						'<span class="zh">' + escapeHTML(nameC.zh) + '</span></span>',
+					'<div class="sentence">' + escapeHTML(parts.head) + blankHTML(q, tenses) +
+						parts.tailHTML + '</div>' + structureHTML(q));
+				wireGroup(blankPairs(elc, q), function () {
+					return parts.head + phraseText(q, correctVerbForm(q)) + parts.tail;
+				}, elc);
+				return elc;
+			}
+
+			// Read the Chinese sentence and name the tense the English would use.
+			if (qtype === 'tense-from-chinese') {
+				var english = parts.head + phraseText(q, correctVerbForm(q)) + parts.tail;
+				var englishHTML = escapeHTML(parts.head) + phraseHTML(q, correctVerbForm(q)) + parts.tailHTML;
+				var elz = questionShell(index,
+					'<span class="zh-prompt inline">' + q.chineseHTML + translateHTML(true) + '</span>',
+					zhLineHTML(true) +
+					'<div class="answer-row">' +
+						'<select class="verb-select tense-select">' +
+							optionsHTML('时态', orderedTenses(tenses), tenseLabel) +
+						'</select>' +
+					'</div>' + structureHTML(q));
+				wireTranslate(elz, englishHTML, true);
+				wireGroup([{ select: elz.querySelector('.tense-select'), answer: q.tense }], function () { return english; }, elz);
+				return elz;
+			}
+
+			// Read the finished English sentence and name its tense.
+			var sentence = parts.head + phraseText(q, correctVerbForm(q)) + parts.tail;
+			var elt = questionShell(index,
+				'<span class="sentence inline">' + escapeHTML(parts.head) +
+					phraseHTML(q, correctVerbForm(q)) + parts.tailHTML + translateHTML() + '</span>',
+				zhLineHTML() +
+				'<div class="answer-row">' +
+					'<select class="verb-select tense-select">' +
+						optionsHTML('时态', orderedTenses(tenses), tenseLabel) +
+					'</select>' +
+				'</div>' + structureHTML(q));
+			wireTranslate(elt, q.chineseHTML, true);
+			wireGroup([{ select: elt.querySelector('.tense-select'), answer: q.tense }], function () { return sentence; }, elt);
+			return elt;
+		}
+
+		// Keep the tense dropdowns' labels in step with the Chinese toggle.
+		document.addEventListener('zh-toggled', function () {
+			Array.prototype.forEach.call(document.querySelectorAll('.tense-select'), function (sel) {
+				Array.prototype.forEach.call(sel.options, function (opt) {
+					if (opt.value) opt.textContent = tenseLabel(opt.value);
+				});
+			});
+		});
+
+		function generate() {
+			var list = document.getElementById('practice');
+			list.innerHTML = '';
+			if (!DATA) return;
+
+			var BUILT = ['english-from-tense', 'english-from-chinese', 'tense-from-english', 'tense-from-chinese'];
+			var checked = document.querySelector('input[name="qtype"]:checked');
+			var qtype = checked ? checked.value : '';
+			if (BUILT.indexOf(qtype) === -1) {
+				list.innerHTML = '<p>This question type is not available yet.' +
+					'<span class="zh chinese"> 这种题型还没有做好。</span></p>';
+				return;
+			}
+			var tenses = selectedTenses();
+			if (!tenses.length) {
+				list.innerHTML = '<p>Please choose at least one tense above.' +
+					'<span class="zh chinese"> 请至少选择一种时态。</span></p>';
+				return;
+			}
+			// Deal the tenses out in equal shares rather than picking at random,
+			// so a set never happens to be mostly one tense. Any remainder goes
+			// to tenses chosen at random, then the whole run is shuffled.
+			var plan = [];
+			var per = Math.floor(QUESTION_COUNT / tenses.length);
+			tenses.forEach(function (t) {
+				for (var k = 0; k < per; k++) plan.push(t);
+			});
+			var spare = tenses.slice();
+			while (plan.length < QUESTION_COUNT) {
+				if (!spare.length) spare = tenses.slice();
+				plan.push(spare.splice(Math.floor(Math.random() * spare.length), 1)[0]);
+			}
+			for (var j = plan.length - 1; j > 0; j--) {
+				var m = Math.floor(Math.random() * (j + 1));
+				var tmp = plan[j]; plan[j] = plan[m]; plan[m] = tmp;
+			}
+
+			var forms = selectedForms();
+			for (var i = 0; i < QUESTION_COUNT; i++) {
+				list.appendChild(renderQuestion(makeQuestion(plan[i], pick(forms)), i, tenses, qtype));
+			}
+		}
+
+		// Naming the tense is no exercise at all when only one tense is on the
+		// table, so those two question types grey out until a second is picked.
+		function updateQuestionTypes() {
+			var few = selectedTenses().length < 2;
+			['tense-from-english', 'tense-from-chinese'].forEach(function (value) {
+				var input = document.querySelector('input[name="qtype"][value="' + value + '"]');
+				if (!input) return;
+				var card = input.closest('.tense-cell');
+				var built = value === 'tense-from-english' || value === 'tense-from-chinese';
+				input.disabled = few || !built;
+				card.classList.toggle('unavailable', input.disabled);
+				if (input.disabled && input.checked) {
+					var fallback = document.querySelector('input[name="qtype"][value="english-from-tense"]');
+					if (fallback) { fallback.checked = true; }
+				}
+			});
+		}
+
+		Array.prototype.forEach.call(document.querySelectorAll('input[name="tense"]'), function (c) {
+			c.addEventListener('change', function () {
+				// there is nothing to practice with no tense at all, so the last
+				// one cannot be switched off
+				if (!c.checked && selectedTenses().length === 0) { c.checked = true; return; }
+				updateQuestionTypes();
+				generate();
+			});
+		});
+
+		document.getElementById('generate').addEventListener('click', generate);
+		document.getElementById('reset').addEventListener('click', function () {
+			Array.prototype.forEach.call(document.querySelectorAll('.verb-select'), function (sel) {
+				sel.selectedIndex = 0;
+				sel.__lastRight = null;
+				sel.classList.remove('right', 'wrong', 'shake', 'glow');
+			});
+			Array.prototype.forEach.call(document.querySelectorAll('.question.revealed'), function (q) {
+				q.classList.remove('revealed');
+			});
+		});
+		Array.prototype.forEach.call(document.querySelectorAll('input[name="qtype"], input[name="sform"]'), function (r) {
+			r.addEventListener('change', generate);
+		});
+
+		fetch('tenses-data.json')
+			.then(function (res) { return res.json(); })
+			.then(function (data) { DATA = data; updateQuestionTypes(); generate(); })
+			.catch(function () {
+				document.getElementById('practice').innerHTML =
+					'<p>The sentence list could not be loaded. Please refresh the page.</p>';
+			});
+	})();
+
+	// Read-aloud on/off. Off by default; the choice is remembered afterwards.
+	(function ttsSetup() {
+		var btn = document.getElementById('toggle-tts');
+		var icon = document.getElementById('toggle-tts-icon');
+		var on = false;
+		try { on = localStorage.getItem('tenses-tts') === '1'; } catch (e) {}
+		if (!('speechSynthesis' in window)) { btn.hidden = true; return; }
+
+		function apply() {
+			document.body.classList.toggle('tts-on', on);
+			btn.classList.toggle('on', on);
+			btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+			icon.className = on ? 'fa-solid fa-volume-high' : 'fa-solid fa-volume-xmark';
+			if (!on) { try { window.speechSynthesis.cancel(); } catch (e) {} }
+		}
+		btn.addEventListener('click', function () {
+			on = !on;
+			try { localStorage.setItem('tenses-tts', on ? '1' : '0'); } catch (e) {}
+			apply();
+		});
+		apply();
+	})();
+
+	// Chinese labels on/off, remembered between visits.
+	(function chineseToggleSetup() {
+		var btn = document.getElementById('toggle-zh');
+		var label = document.getElementById('toggle-zh-label');
+		var hidden = false;
+		try { hidden = localStorage.getItem('tenses-hide-zh') === '1'; } catch (e) {}
+
+		function apply() {
+			document.body.classList.toggle('hide-zh', hidden);
+			label.textContent = hidden ? '显示中文' : '隐藏中文';
+			document.dispatchEvent(new CustomEvent('zh-toggled'));
+		}
+		btn.addEventListener('click', function () {
+			hidden = !hidden;
+			try { localStorage.setItem('tenses-hide-zh', hidden ? '1' : '0'); } catch (e) {}
+			apply();
+		});
+		apply();
+	})();
+	</script>
+
+	<script>
+	// Light/dark theme: apply a saved choice and add a floating toggle, since
+	// this page has no site nav. (Mirrors the logic in english-buttons.js.)
+	(function themeToggleSetup() {
+		var root = document.documentElement;
+		try {
+			var saved = localStorage.getItem('theme');
+			if (saved === 'dark' || saved === 'light') root.setAttribute('data-theme', saved);
+		} catch (e) {}
+
+		var mq = window.matchMedia('(prefers-color-scheme: dark)');
+		function effective() {
+			var a = root.getAttribute('data-theme');
+			if (a === 'dark' || a === 'light') return a;
+			return mq.matches ? 'dark' : 'light';
+		}
+		function addFloatingToggle() {
+			if (document.getElementById('theme-toggle-float') || !document.body) return;
+			var btn = document.createElement('button');
+			btn.id = 'theme-toggle-float';
+			btn.type = 'button';
+			btn.setAttribute('aria-label', 'Toggle dark mode');
+			btn.style.cssText = 'position:fixed;top:14px;right:14px;z-index:1000;width:42px;height:42px;border-radius:50%;border:1px solid var(--surface-border);background:var(--color3);color:var(--color1);cursor:pointer;box-shadow:1px 1px 10px var(--shadow);font-size:18px;display:flex;align-items:center;justify-content:center;padding:0;margin:0;';
+			function updateIcon() {
+				btn.innerHTML = effective() === 'dark'
+					? '<i class="fa-solid fa-sun"></i>'
+					: '<i class="fa-solid fa-moon"></i>';
+			}
+			btn.addEventListener('click', function () {
+				var next = effective() === 'dark' ? 'light' : 'dark';
+				root.setAttribute('data-theme', next);
+				try { localStorage.setItem('theme', next); } catch (e) {}
+				updateIcon();
+			});
+			mq.addEventListener('change', function () {
+				if (!root.getAttribute('data-theme')) updateIcon();
+			});
+			document.body.appendChild(btn);
+			updateIcon();
+		}
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', addFloatingToggle);
+		} else {
+			addFloatingToggle();
+		}
+	})();
+	</script>
+
+</body>

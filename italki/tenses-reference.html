@@ -1,0 +1,493 @@
+<!DOCTYPE HTML>
+
+<head>
+<!-- Apply saved light/dark choice before paint (avoids a flash when the device default differs from the toggle) -->
+<script>
+try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}
+(function(){var d=document.documentElement;d.classList.add('fonts-loading');var done=false;function fin(){if(done)return;done=true;d.classList.remove('fonts-loading');}setTimeout(fin,500);try{if(document.fonts&&document.fonts.load){Promise.all([document.fonts.load('1em Freeman'),document.fonts.load('1em "Great Vibes"')]).then(fin,fin);}else{fin();}}catch(e){fin();}})();
+</script>
+	<title>Trevor's English Tenses Reference</title>
+	<meta name="robots" content="noindex, nofollow">
+	<meta charset="utf-8"> <!--ensures that there aren't any issues with the display of emojis -->
+	<meta name="viewport" content="width=device-width"> <!-- essential for making sure that the ACTUAL screen width is interpreted by the CSS as opposed to some idealized number presented by smartphones (980px+) -->
+	<link rel="preload" href="/fonts/freeman-latin.woff2" as="font" type="font/woff2" crossorigin>
+	<link rel="preload" href="/fonts/greatvibes-latin.woff2" as="font" type="font/woff2" crossorigin>
+	<link href="/style.css" rel="stylesheet">
+	<link href="/favicon.ico" rel="shortcut icon">
+<!-- Google font stuff -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@100..900&display=swap" rel="stylesheet">
+<script src="https://kit.fontawesome.com/157b2a3980.js" crossorigin="anonymous"></script> <!-- Font Awesome icons -->
+
+<style>
+	:root[data-theme="dark"] { color-scheme: dark; }
+	:root[data-theme="light"] { color-scheme: light; }
+	@media (prefers-color-scheme: dark) {
+		:root:not([data-theme="light"]) { color-scheme: dark; }
+	}
+
+	.chinese, .zh { font-family: "Noto Sans SC", sans-serif; }
+
+	body.hide-zh .zh,
+	body.hide-zh .chinese { display: none; }
+
+	body.hide-zh #toggle-zh-label { display: inline; }
+
+	.subtitle-row {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 14px;
+		margin: -10px 0 6px;
+		min-height: 40px;
+	}
+
+	.page-subtitle {
+		font-family: "Noto Sans SC", sans-serif;
+		font-size: 130%;
+		color: var(--color4);
+		margin: 0;
+	}
+
+	.tk-button {
+		display: inline-flex;
+		align-items: center;
+		gap: 8px;
+		padding: 7px 14px;
+		border: 1px solid var(--color1);
+		border-radius: 10px;
+		background: transparent;
+		color: var(--color1);
+		font-family: Freeman, sans-serif;
+		font-size: 14px;
+		text-decoration: none;
+		cursor: pointer;
+		transition: background-color 0.2s ease;
+	}
+
+	.tk-button:hover { background: var(--tint-1); }
+
+	.section-label {
+		margin: 30px 0 4px;
+		font-family: Freeman, sans-serif;
+		font-size: 17px;
+		color: var(--color1);
+	}
+
+	.section-label .zh {
+		font-size: 90%;
+		color: var(--color4);
+		margin-left: 6px;
+	}
+
+	/* ---- the grammar table ---- */
+	.table-wrap {
+		max-width: 920px;
+		margin: 14px auto 10px;
+		overflow-x: auto;   /* narrow screens scroll sideways rather than squash the patterns */
+		overflow-y: clip;   /* ... but never gets a vertical scrollbar of its own */
+	}
+
+	/* On a narrow screen the table uses the whole width: the page's side margin
+	   becomes padding inside the scroller, so the first and last columns can be
+	   scrolled clear of the edges. */
+	@media (max-width: 760px) {
+		.table-wrap {
+			width: 100vw;
+			max-width: none;
+			margin-left: calc(50% - 50vw);
+			margin-right: calc(50% - 50vw);
+			padding-left: calc((100vw - min(1000px, var(--widthmax))) / 2);
+			padding-right: calc((100vw - min(1000px, var(--widthmax))) / 2);
+		}
+	}
+
+	/* With room to spare, the table steps outside the text column: the patterns
+	   are much easier to read when they are not wrapped into three lines. */
+	@media (min-width: 1150px) {
+		.table-wrap {
+			/* centred with margins rather than a transform: a transformed ancestor
+			   would trap the sticky header inside this box */
+			width: min(1400px, 94vw);
+			max-width: none;
+			margin-left: calc((100% - min(1400px, 94vw)) / 2);
+			margin-right: calc((100% - min(1400px, 94vw)) / 2);
+		}
+	}
+
+	/* On a phone the table scrolls sideways inside its own box, and the header
+	   row stays put while you scroll down it. */
+
+
+	.grammar-table {
+		width: 100%;
+		min-width: 700px;
+		border-collapse: collapse;
+		font-size: 14px;
+	}
+
+	.grammar-table th, .grammar-table td {
+		padding: 10px 12px;
+		text-align: left;
+		vertical-align: top;
+		border-bottom: 1px solid var(--divider);
+	}
+
+	.grammar-table th {
+		background: var(--tint-1);
+		font-family: Freeman, sans-serif;
+		font-weight: normal;
+		white-space: nowrap;
+	}
+
+	/* The table is long, so its header row stays in view as the page scrolls.
+	   The tint sits on an opaque base, so body rows pass underneath it. */
+	.grammar-table thead th {
+		position: sticky;
+		top: 0;
+		z-index: 2;
+		background-color: var(--color3);
+		background-image: linear-gradient(var(--tint-3), var(--tint-3));
+		border-bottom: 2px solid var(--color1);
+		color: var(--color1);
+	}
+
+	.grammar-table tbody th { background: transparent; }
+	.grammar-table tr:last-child td, .grammar-table tr:last-child th { border-bottom: none; }
+
+	.grammar-table .key { color: var(--button-bg); font-weight: bold; }
+	.grammar-table .zh { display: block; color: var(--color4); font-size: 92%; margin-top: 2px; }
+
+	/* A worked example under each pattern: the same verb all the way across, so
+	   the shapes can be compared row by row. */
+	.grammar-table .example {
+		display: block;
+		margin-top: 8px;
+		padding-top: 6px;
+		border-top: 1px dashed var(--divider);
+		color: var(--color1);
+		line-height: 1.5;
+	}
+
+	/* ---- vocabulary ---- */
+	.vocab-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+		gap: 8px;
+		max-width: 920px;
+		margin: 12px auto 6px;
+	}
+
+	.vocab-item {
+		padding: 8px 12px;
+		border: 1px solid var(--divider);
+		border-radius: 10px;
+		background: var(--tint-1);
+		font-size: 15px;
+		line-height: 1.35;
+	}
+
+	.vocab-item .zh {
+		display: block;
+		font-size: 90%;
+		color: var(--color4);
+	}
+
+	/* irregular past forms are the ones worth memorising, so they are marked */
+	.irregular {
+		color: var(--button-bg);
+		font-weight: bold;
+	}
+
+	.vocab-item .forms {
+		display: block;
+		font-size: 88%;
+		color: var(--color4);
+		margin-top: 2px;
+	}
+
+	body.hide-examples .example { display: none; }
+
+	.vocab-note { color: var(--color4); font-size: 14px; }
+</style>
+
+</head>
+
+<body>
+
+	<div class="content">
+
+		<h1>Trevor's English Tenses Reference</h1>
+
+		<div class="subtitle-row">
+			<a class="tk-button" href="tenses.html"><i class="fa-solid fa-arrow-left"></i> <span>Practice page</span><span class="zh chinese">练习页</span></a>
+			<button type="button" class="tk-button" id="toggle-zh">
+				<i class="fa-solid fa-language"></i>
+				<span id="toggle-zh-label">隐藏中文</span>
+			</button>
+			<button type="button" class="tk-button" id="toggle-examples">
+				<i class="fa-solid fa-comment-dots"></i>
+				<span id="toggle-examples-label">Hide examples</span><span class="zh chinese">例句</span>
+			</button>
+			<p class="page-subtitle zh">康明的英语时态参考资料</p>
+		</div>
+
+		<p class="section-label">Sentence patterns<span class="zh">句型结构</span></p>
+		<p>Every sentence on the practice page follows one of these patterns. <span class="chinese">练习页上的句子都用下面的结构。</span></p>
+
+		<div class="table-wrap">
+			<table class="grammar-table">
+				<thead>
+					<tr>
+						<th>Tense<span class="zh">时态</span></th>
+						<th>Statement<span class="zh">陈述句</span></th>
+						<th>Yes-or-no question<span class="zh">一般疑问句</span></th>
+						<th>Wh- question<span class="zh">特殊疑问句</span></th>
+						<th>Wh- question (subject)<span class="zh">特殊疑问句（主语）</span></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<th>Simple present<span class="zh">一般现在时</span></th>
+						<td>subject + <span class="key">base verb (+s)</span><span class="zh">主语 + 动词原形(s)</span><span class="example">Sam teaches English.<br>They teach English.</span></td>
+						<td><span class="key">Do(es)</span> + subject + <span class="key">base verb</span> + …?<span class="zh">Do(es) + 主语 + 动词原形 + …?</span><span class="example">Does Sam teach English?<br>Do they teach English?</span></td>
+						<td>wh- word + <span class="key">do(es)</span> + subject + <span class="key">base verb</span> + …?<span class="zh">疑问词 + do(es) + 主语 + 动词原形 + …?</span><span class="example">What does Sam teach?<br>What do they teach?</span></td>
+						<td>wh- word + <span class="key">base verb (+s)</span> + …?<span class="zh">疑问词（主语）+ 动词原形(s) + …?</span><span class="example">Who teaches English?</span></td>
+					</tr>
+					<tr>
+						<th>Simple present (be)<span class="zh">一般现在时（be动词）</span></th>
+						<td>subject + <span class="key">is/am/are</span> + object<span class="zh">主语 + is/am/are + 宾语</span><span class="example">Sam is the teacher.<br>They are teachers.</span></td>
+						<td><span class="key">Is/Am/Are</span> + subject + object + …?<span class="zh">Is/Am/Are + 主语 + 宾语 + …?</span><span class="example">Is Sam the teacher?<br>Are they teachers?</span></td>
+						<td>wh- word + <span class="key">is/am/are</span> + subject + object + …?<span class="zh">疑问词 + is/am/are + 主语 + 宾语 + …?</span><span class="example">Who is Sam?<br>Who are they?</span></td>
+						<td>wh- word + <span class="key">is</span> + object + …?<span class="zh">疑问词（主语）+ is + 宾语 + …?</span><span class="example">Who is the teacher?<br>Who are the teachers?</span></td>
+					</tr>
+					<tr>
+						<th>Present continuous<span class="zh">现在进行时</span></th>
+						<td>subject + <span class="key">is/am/are</span> + <span class="key">present participle</span><span class="zh">主语 + is/am/are + 动词现在分词</span><span class="example">Sam is teaching English.<br>They are teaching English.</span></td>
+						<td><span class="key">Is/Am/Are</span> + subject + <span class="key">present participle</span> + …?<span class="zh">Is/Am/Are + 主语 + 动词现在分词 + …?</span><span class="example">Is Sam teaching English?<br>Are they teaching English?</span></td>
+						<td>wh- word + <span class="key">is/am/are</span> + subject + <span class="key">present participle</span> + …?<span class="zh">疑问词 + is/am/are + 主语 + 动词现在分词 + …?</span><span class="example">What is Sam teaching?<br>What are they teaching?</span></td>
+						<td>wh- word + <span class="key">is</span> + <span class="key">present participle</span> + …?<span class="zh">疑问词（主语）+ is + 动词现在分词 + …?</span><span class="example">Who is teaching English?</span></td>
+					</tr>
+					<tr>
+						<th>Simple past<span class="zh">一般过去时</span></th>
+						<td>subject + <span class="key">past form</span><span class="zh">主语 + 动词过去式</span><span class="example">Sam taught English.<br>They taught English.</span></td>
+						<td><span class="key">Did</span> + subject + <span class="key">base verb</span> + …?<span class="zh">Did + 主语 + 动词原形 + …?</span><span class="example">Did Sam teach English?<br>Did they teach English?</span></td>
+						<td>wh- word + <span class="key">did</span> + subject + <span class="key">base verb</span> + …?<span class="zh">疑问词 + did + 主语 + 动词原形 + …?</span><span class="example">What did Sam teach?<br>What did they teach?</span></td>
+						<td>wh- word + <span class="key">past form</span> + …?<span class="zh">疑问词（主语）+ 动词过去式 + …?</span><span class="example">Who taught English?</span></td>
+					</tr>
+					<tr>
+						<th>Simple past (be)<span class="zh">一般过去时（be动词）</span></th>
+						<td>subject + <span class="key">was/were</span> + object<span class="zh">主语 + was/were + 宾语</span><span class="example">Sam was the teacher.<br>They were teachers.</span></td>
+						<td><span class="key">Was/Were</span> + subject + object + …?<span class="zh">Was/Were + 主语 + 宾语 + …?</span><span class="example">Was Sam the teacher?<br>Were they teachers?</span></td>
+						<td>wh- word + <span class="key">was/were</span> + subject + object + …?<span class="zh">疑问词 + was/were + 主语 + 宾语 + …?</span><span class="example">Who was Sam?<br>Who were they?</span></td>
+						<td>wh- word + <span class="key">was</span> + object + …?<span class="zh">疑问词（主语）+ was + 宾语 + …?</span><span class="example">Who was the teacher?<br>Who were the teachers?</span></td>
+					</tr>
+					<tr>
+						<th>Simple future<span class="zh">一般未来时</span></th>
+						<td>subject + <span class="key">will</span> + <span class="key">base verb</span><span class="zh">主语 + will + 动词原形</span><span class="example">Sam will teach English.<br>They will teach English.</span></td>
+						<td><span class="key">Will</span> + subject + <span class="key">base verb</span> + …?<span class="zh">Will + 主语 + 动词原形 + …?</span><span class="example">Will Sam teach English?<br>Will they teach English?</span></td>
+						<td>wh- word + <span class="key">will</span> + subject + <span class="key">base verb</span> + …?<span class="zh">疑问词 + will + 主语 + 动词原形 + …?</span><span class="example">What will Sam teach?<br>What will they teach?</span></td>
+						<td>wh- word + <span class="key">will</span> + <span class="key">base verb</span> + …?<span class="zh">疑问词（主语）+ will + 动词原形 + …?</span><span class="example">Who will teach English?</span></td>
+					</tr>
+					<tr>
+						<th>Present perfect<span class="zh">现在完成时</span></th>
+						<td>subject + <span class="key">have/has</span> + <span class="key">past participle</span><span class="zh">主语 + have/has + 动词过去分词</span><span class="example">Sam has taught English.<br>They have taught English.</span></td>
+						<td><span class="key">Have/Has</span> + subject + <span class="key">past participle</span> + …?<span class="zh">Have/Has + 主语 + 动词过去分词 + …?</span><span class="example">Has Sam taught English?<br>Have they taught English?</span></td>
+						<td>wh- word + <span class="key">have/has</span> + subject + <span class="key">past participle</span> + …?<span class="zh">疑问词 + have/has + 主语 + 动词过去分词 + …?</span><span class="example">What has Sam taught?<br>What have they taught?</span></td>
+						<td>wh- word + <span class="key">has</span> + <span class="key">past participle</span> + …?<span class="zh">疑问词（主语）+ has + 动词过去分词 + …?</span><span class="example">Who has taught English?</span></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<p class="section-label">Vocabulary<span class="zh">词汇表</span></p>
+		<p>Every word the practice sentences can use. Verb forms are listed as simple past · past participle, with irregular ones marked in <span class="irregular">color</span>. <span class="chinese">练习句子用到的所有单词。动词形式按「过去式 · 过去分词」列出，不规则的用<span class="irregular">颜色</span>标出。</span></p>
+
+		<div id="vocab"></div>
+
+	</div>
+
+	<script>
+	// The word lists come from the same file the practice page generates from,
+	// so this page can never drift out of step with the exercises.
+	(function loadVocabulary() {
+		var root = document.getElementById('vocab');
+
+		function esc(str) {
+			return String(str).replace(/[&<>"]/g, function (c) {
+				return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+			});
+		}
+
+		// A past form counts as regular when it is the base plus -ed, allowing for
+		// the usual spelling changes (bake→baked, study→studied, stop→stopped).
+		// Anything else is irregular and worth pointing out.
+		function regularPast(base, past) {
+			var cands = [base + 'ed', base + 'd'];
+			if (/[^aeiou]y$/.test(base)) cands.push(base.slice(0, -1) + 'ied');
+			if (/[^aeiou][aeiou][^aeiouwxy]$/.test(base)) cands.push(base + base.slice(-1) + 'ed');
+			return cands.indexOf(past) !== -1;
+		}
+
+		function formsHTML(v) {
+			// read / read are spelled alike, so each carries its pronunciation
+			var alike = v.past === v.base;
+			function mark(form) {
+				var text = form + (alike && v.ipaPast ? ' ' + v.ipaPast : '');
+				return regularPast(v.base, form)
+					? esc(text)
+					: '<span class="irregular">' + esc(text) + '</span>';
+			}
+			// simple past and past participle: the two forms worth memorising
+			return mark(v.past) + ' · ' + mark(v.pp);
+		}
+
+		function section(titleEn, titleZh, items) {
+			var html = '<p class="section-label">' + esc(titleEn) +
+				'<span class="zh">' + esc(titleZh) + '</span></p><div class="vocab-grid">';
+			items.forEach(function (it) {
+				html += '<div class="vocab-item">' + esc(it.en) +
+					(it.zh ? '<span class="zh">' + esc(it.zh) + '</span>' : '') +
+					(it.forms ? '<span class="forms">' + it.forms + '</span>' : '') +
+				'</div>';
+			});
+			return html + '</div>';
+		}
+
+		fetch('tenses-data.json')
+			.then(function (res) { return res.json(); })
+			.then(function (data) {
+				var html = '';
+
+				html += section('Subjects', '主语', data.subjects.map(function (s) {
+					return { en: s.en, zh: s.zh };
+				}));
+
+				// Verbs and their objects as one list: a verb that takes no object
+				// stands on its own, and every object appears with its verb. A verb
+				// repeats once per object, which is the point: these are the
+				// phrases the sentences are actually built from.
+				var phrases = [];
+				data.verbs.forEach(function (v) {
+					var forms = formsHTML(v);
+					var head = v.base + (v.past === v.base && v.ipaBase ? ' ' + v.ipaBase : '');
+					if (!v.objects || !v.objects.length) {
+						phrases.push({ en: head, zh: v.zh, forms: forms });
+						return;
+					}
+					v.objects.forEach(function (o) {
+						phrases.push({
+							en: head + ' ' + o.en,
+							zh: (o.zhVerb || v.zh) + o.zh,
+							forms: forms
+						});
+					});
+				});
+				html += section('Verbs and objects', '动词和宾语', phrases);
+
+				if (data.beComplements) {
+					html += section('After be', 'be动词后面的词', data.beComplements.map(function (c) {
+						return { en: c.en, zh: c.zh };
+					}));
+				}
+
+				html += section('Time expressions', '时间词', data.times.map(function (t) {
+					return { en: t.en, zh: t.zh };
+				}));
+
+				root.innerHTML = html;
+			})
+			.catch(function () {
+				root.innerHTML = '<p class="vocab-note">The word list could not be loaded. Please refresh the page.</p>';
+			});
+	})();
+
+	// The worked examples can be switched off for a compact table.
+	(function exampleToggleSetup() {
+		var btn = document.getElementById('toggle-examples');
+		var label = document.getElementById('toggle-examples-label');
+		var hidden = false;
+		try { hidden = localStorage.getItem('tenses-hide-examples') === '1'; } catch (e) {}
+
+		function apply() {
+			document.body.classList.toggle('hide-examples', hidden);
+			label.textContent = hidden ? 'Show examples' : 'Hide examples';
+		}
+		btn.addEventListener('click', function () {
+			hidden = !hidden;
+			try { localStorage.setItem('tenses-hide-examples', hidden ? '1' : '0'); } catch (e) {}
+			apply();
+		});
+		apply();
+	})();
+
+	// Chinese labels on/off, shared with the practice page through localStorage.
+	(function chineseToggleSetup() {
+		var btn = document.getElementById('toggle-zh');
+		var label = document.getElementById('toggle-zh-label');
+		var hidden = false;
+		try { hidden = localStorage.getItem('tenses-hide-zh') === '1'; } catch (e) {}
+
+		function apply() {
+			document.body.classList.toggle('hide-zh', hidden);
+			label.textContent = hidden ? '显示中文' : '隐藏中文';
+		}
+		btn.addEventListener('click', function () {
+			hidden = !hidden;
+			try { localStorage.setItem('tenses-hide-zh', hidden ? '1' : '0'); } catch (e) {}
+			apply();
+		});
+		apply();
+	})();
+	</script>
+
+	<script>
+	// Light/dark theme: apply a saved choice and add a floating toggle, since
+	// this page has no site nav. (Mirrors the practice page.)
+	(function themeToggleSetup() {
+		var root = document.documentElement;
+		try {
+			var saved = localStorage.getItem('theme');
+			if (saved === 'dark' || saved === 'light') root.setAttribute('data-theme', saved);
+		} catch (e) {}
+
+		var mq = window.matchMedia('(prefers-color-scheme: dark)');
+		function effective() {
+			var a = root.getAttribute('data-theme');
+			if (a === 'dark' || a === 'light') return a;
+			return mq.matches ? 'dark' : 'light';
+		}
+		function addFloatingToggle() {
+			if (document.getElementById('theme-toggle-float') || !document.body) return;
+			var btn = document.createElement('button');
+			btn.id = 'theme-toggle-float';
+			btn.type = 'button';
+			btn.setAttribute('aria-label', 'Toggle dark mode');
+			btn.style.cssText = 'position:fixed;top:14px;right:14px;z-index:1000;width:42px;height:42px;border-radius:50%;border:1px solid var(--surface-border);background:var(--color3);color:var(--color1);cursor:pointer;box-shadow:1px 1px 10px var(--shadow);font-size:18px;display:flex;align-items:center;justify-content:center;padding:0;margin:0;';
+			function updateIcon() {
+				btn.innerHTML = effective() === 'dark'
+					? '<i class="fa-solid fa-sun"></i>'
+					: '<i class="fa-solid fa-moon"></i>';
+			}
+			btn.addEventListener('click', function () {
+				var next = effective() === 'dark' ? 'light' : 'dark';
+				root.setAttribute('data-theme', next);
+				try { localStorage.setItem('theme', next); } catch (e) {}
+				updateIcon();
+			});
+			mq.addEventListener('change', function () {
+				if (!root.getAttribute('data-theme')) updateIcon();
+			});
+			document.body.appendChild(btn);
+			updateIcon();
+		}
+		if (document.readyState === 'loading') {
+			document.addEventListener('DOMContentLoaded', addFloatingToggle);
+		} else {
+			addFloatingToggle();
+		}
+	})();
+	</script>
+
+</body>
