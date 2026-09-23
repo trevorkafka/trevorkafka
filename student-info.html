@@ -1,0 +1,398 @@
+<!DOCTYPE HTML>
+
+<head>
+<!-- Apply saved light/dark choice before paint (avoids a flash when the device default differs from the toggle) -->
+<script>
+try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}
+try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElement.classList.add('ann-collapsed');}catch(e){}
+(function(){var d=document.documentElement;d.classList.add('fonts-loading');var done=false;function fin(){if(done)return;done=true;d.classList.remove('fonts-loading');}setTimeout(fin,500);try{if(document.fonts&&document.fonts.load){Promise.all([document.fonts.load('1em Freeman'),document.fonts.load('1em "Great Vibes"')]).then(fin,fin);}else{fin();}}catch(e){fin();}})();
+</script>
+	<title>Student Information | Trevor Kafka Tutoring</title>
+	<meta name="description" content="Everything current students need in one place: booking and cancelling lessons, policies, billing and payment options, how to prepare for class, and where to find class notes.">
+
+	<meta charset="utf-8"> <!--ensures that there aren't any issues with the display of emojis -->
+	<meta name="viewport" content="width=device-width"> <!-- essential for making sure that the ACTUAL screen width is interpreted by the CSS as opposed to some idealized number presented by smartphones (980px+) -->
+
+	<link rel="preload" href="/fonts/freeman-latin.woff2" as="font" type="font/woff2" crossorigin>
+	<link rel="preload" href="/fonts/greatvibes-latin.woff2" as="font" type="font/woff2" crossorigin>
+	<link rel="stylesheet" href="style.css">
+	<link rel="shortcut icon" href="favicon.ico">
+
+	<!-- Google font stuff -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> <!-- use JQuery -->
+	<script type="text/javascript" src="script.js" defer></script> <!-- defer means to wait to run the script until the whole page is ready -->
+
+	<style>
+		/* pill link-buttons, same style as the cards on the resources page */
+		.quick-links-title {
+			align-self: center;
+			margin-right: 4px;
+			font-family: "Freeman", sans-serif;
+			font-size: 105%;
+			color: var(--color4);
+		}
+
+		.tool-cards {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 10px;
+			margin: 5px 0 30px;
+		}
+
+		.tool-card {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			background-color: transparent;
+			padding: 9px 20px;
+			border: 1px solid var(--color1);
+			border-radius: 999px;
+			text-decoration: none;
+			color: inherit;
+			font-family: "Freeman", sans-serif;
+			transition: background-color 0.2s ease, color 0.2s ease;
+		}
+
+		.tool-card:hover {
+			background-color: var(--color1);
+			color: var(--color3);
+		}
+
+		/* headshot beside the intro text */
+		.si-intro {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: 24px;
+			margin-bottom: 10px;
+		}
+
+		.si-intro > p { flex: 1 1 320px; margin: 0; }
+
+		.si-portrait {
+			width: 150px;
+			height: 150px;
+			border-radius: 100%;
+			object-fit: cover;
+			flex-shrink: 0;
+		}
+
+		/* Payment options, framed like the tables on the discount pages. */
+		.pay-frame {
+			width: fit-content;
+			margin: 2em auto;
+			border-radius: 10px;
+			overflow: hidden;
+			border: solid 1px white;
+		}
+
+		@media (max-width: 600px) {
+			.pay-frame { width: 100%; }
+			.pay-frame table, .pay-frame tbody, .pay-frame tr, .pay-frame td { display: block; width: 100%; }
+			.pay-frame thead { display: none; }
+			.pay-frame tr { padding: 6px 0; }
+			.pay-frame td { padding: 4px 16px !important; }
+			.pay-frame td[data-label]::before {
+				content: attr(data-label) ": ";
+				font-family: "Freeman", sans-serif;
+			}
+		}
+
+		/* a boxed aside, matching the announcement box's frame */
+		.si-callout {
+			background: var(--color3);
+			padding: 15px;
+			border-radius: 10px;
+			border: solid 1.5px var(--surface-border);
+			margin: 20px 0;
+		}
+
+		/* the FAQ accordions sit flush against whatever follows them */
+		.FAQ { margin-bottom: 22px; }
+
+		.si-callout p:first-child { margin-top: 0; }
+		.si-callout p:last-child { margin-bottom: 0; }
+	</style>
+
+</head>
+
+<body>
+
+	<trevorkafka-nav></trevorkafka-nav>
+
+	<div class="content">
+
+		<trevorkafka-announcement></trevorkafka-announcement>
+
+		<h1><i class="fa-solid fa-circle-info" style="margin-right: 0.35em"></i>Student Information</h1>
+
+		<div class="si-intro">
+			<p>This page gathers everything you'll need now that we're working together: how to book and cancel lessons, how billing works, what to send me before class, and where to find your notes afterward. If you can't find what you're looking for here, just email me at <trevorkafka-email></trevorkafka-email> and I'll help you out.</p>
+			<img class="si-portrait glow-shadow" src="media/TK indonesia.png" alt="Trevor Kafka" width="1939" height="1939">
+		</div>
+
+		<div class="tool-cards">
+			<span class="quick-links-title">Quick links</span>
+			<a class="tool-card" href="/login.html"><i class="fa-solid fa-right-to-bracket"></i> Student Portal</a>
+			<a class="tool-card" href="/availability.html"><i class="fa-solid fa-calendar-days"></i> My Availability</a>
+			<a class="tool-card" href="/mynotes.html"><i class="fa-solid fa-note-sticky"></i> My Class Notes</a>
+			<a class="tool-card" href="mailto:tutor@trevorkafka.com"><i class="fa-solid fa-envelope"></i> Email Trevor</a>
+		</div>
+
+		<h2 class="section-heading"><i class="fa-solid fa-calendar-check"></i> Booking &amp; Scheduling</h2>
+
+		<p>All scheduling happens in the <a href="/login.html">student portal</a>. You can book, cancel, and see your upcoming lessons there at any time, and you can browse my <a href="/availability.html">next 90 days of availability</a> before you log in to find a time that works.</p>
+
+		<p>Lessons can be booked as little as <strong>12 hours</strong> in advance. That said, if your own schedule is tight, I'd recommend booking about <strong>three weeks ahead</strong> so you can count on getting the times you want.</p>
+
+		<div class="FAQ">
+
+			<details>
+				<summary>How do I cancel a lesson?</summary>
+				<br>
+				<p>First, login above to access the parent/student portal. Then, follow the steps below.</p>
+				<div align="center"><img src="media/help - cancel lesson.png" style="width: min(500px, 100%); border-radius: 20px"></div>
+				<p>Please note that students whose parent/guardian(s) haven't granted them calendar booking permissions will not be able to sign up for or cancel lessons on the calendar. This setting can be changed on the parent/guardian-side profile settings.</p>
+			<p>If in a pinch, you can also email me at <trevorkafka-email></trevorkafka-email> or text me in order to make a cancellation.</p>
+			</details>
+
+			<details>
+				<summary>Can I set up a weekly recurring lesson time?</summary>
+				<div>
+					<p>Yes, and this is the easiest way to lock in a time that works for you. Email me at <trevorkafka-email></trevorkafka-email> and let me know which day and time you'd like, and I'll set it up on my end.</p>
+				</div>
+			</details>
+
+			<details>
+				<summary>How do I sign up for lesson reminders?</summary>
+				<br>
+				<p>
+					<strong>For both students and parents</strong>, lesson reminders are available <strong>24 hours in advance of class by email</strong> and/or <strong>2 hours in advance of class by text</strong>. After logging in,
+					<ol>
+						<li>click your name at the top-right of the screen,</li>
+						<li>click <em>My Preferences</em>,</li>
+						<li>click the pencil icon to edit student and/or parent contact information,</li>
+						<li>make sure the listed email address and mobile numbers are up to date,</li>
+						<li>if SMS reminders are desired, make sure the "SMS Capable" box is checked under the mobile number,</li>
+						<li>and finally in the "Reminders" section check the types of lesson reminders you would like to receive.</li>
+					</ol>
+					Make sure to update these settings for <em>each</em> recipient.
+				</p>
+			</details>
+
+			<details>
+				<summary>How can I synchronize my class calendar with my calendar, such as Google Calendar or iCal?</summary>
+				<br>
+				<p>After logging in,</p>
+					<ol>
+						<li>Navigate to <em>Calendar</em> from the main menu on the left.</li>
+						<li>Click <em>Sync Calendar</em> in the toolbar.</li>
+						<li>Select your device/calendar from the drop-down menu.</li>
+					</ol>
+					<div align="center"><img src="media/sync calendar.png" style="width: min(301px, 100%); border-radius: 20px"></div>
+				<p>Please note that due to limitations set by Google, you will only see updates to your synced calendar once every 24 hours on Google Calendar.
+				</p>
+			</details>
+
+			<details>
+				<summary>What time zone does the calendar show?</summary>
+				<div>
+					<p>Everything is shown in your own local time, so there's no conversion to do on your end. Just make sure your time zone settings in the student portal match that of your current location.</p>
+				</div>
+			</details>
+
+		</div>
+
+		<h2 class="section-heading"><i class="fa-solid fa-file-contract"></i> Policies</h2>
+
+		<div class="FAQ">
+
+			<details id="cancellation-policy">
+				<summary class="red">Please note that I hold a strict 24-hour cancellation policy (click for details)</summary>
+				<div style="background-color: var(--faq-red-surface); border-radius: 10px">
+					<ul>
+						<li>The online registration system will not accept cancellations once the 24 hour window has passed.</li>
+						<li>Late-cancelled lessons (cancellations less than 24 hours in advance) are still billable.</li>
+						<li>Registrations can be made for classes up to 12 hours before a class start time. Please note that registrations made within 12-24 hours before a class start time cannot be cancelled online. If you make a registration in error when registering less than 24 hours in advance, email me immediately at <trevorkafka-email></trevorkafka-email> or text me.</li>
+						<li>If you would like to make a reservation on shorter than 12 hours notice, please email me at <trevorkafka-email></trevorkafka-email> or text me to confirm availability. I cannot guarantee that my listed availability online is accurate with less than 12 hours notice, but I can make work what is possible.</li>
+						<li>Email reminders for appointments are automatically sent 36 hours in advance and SMS reminders (when opted-in) are sent 2 hours in advance. </li>
+						<li>Please make sure your contact information on your account is up-to-date and that notifications are on if you would like to receive reminders.</li>
+					</ul>
+					<p>
+						No-shows and late cancellations are truly my least favorite situations to encounter in the online teaching business, but it's a necessity in order for me to be able to keep teaching as a reliable and sustainable occupation, which is fundamentally what allows me to be able to provide teaching opportunities in the first place. 😊 Let's please work together to try to avoid late cancellation situations in the first place and we all will remain happy.
+					</p>
+				</div>
+			</details>
+
+			<details>
+				<summary>How long are lessons, and can I change my default length?</summary>
+				<div>
+					<p>Most students take 60-minute lessons, but you can request whatever length works best for you (45, 60, 75, 90 minutes, and so on). Email me at <trevorkafka-email></trevorkafka-email> to change your default lesson length. There's more detail on the <a href="/index.html#lesson-lengths">lesson lengths FAQ</a>.</p>
+				</div>
+			</details>
+
+			<details>
+				<summary>What are your rates, and are there discounts?</summary>
+				<div>
+					<p>Current rates are listed in the <a href="/index.html#pricing">pricing FAQ</a> on my homepage. Two ways to bring the cost down:</p>
+					<ul>
+						<li><a href="/announcements/package-discounts.html">Package discounts</a> for buying 10, 20, or 40 lessons at once.</li>
+						<li><a href="/announcements/referral-discount.html">Referral discount</a> when you refer a new student to me.</li>
+					</ul>
+				</div>
+			</details>
+
+		</div>
+
+		<h2 class="section-heading"><i class="fa-solid fa-credit-card"></i> Billing &amp; Payments</h2>
+
+		<p>In most cases, lessons are billed on the <strong>first of each month</strong> for the lessons that took place during the previous month. Invoices are sent out automatically by email, and billing information is visible in the <a href="/login.html">student portal</a> to parents and adult students.</p>
+
+		<p>Available payment options are shown below. Please note that as of August 2025, online payments carry a <strong>2.89% processing fee</strong> to offset credit card processing costs.</p>
+
+		<div class="tk-table-frame pay-frame">
+		<table style="border-collapse: collapse;">
+			<thead>
+				<tr style="background-color: var(--color1); color: var(--color3);">
+					<th style="padding: 14px 20px; text-align: left;">Payment method</th>
+					<th style="padding: 14px 20px; text-align: left;">Send to&hellip;</th>
+					<th style="padding: 14px 20px; text-align: left;">Processing fee</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="padding: 12px 20px;" data-label="Payment method"><strong>Zelle</strong> (preferred)</td>
+					<td style="padding: 12px 20px;" data-label="Send to"><trevorkafka-email></trevorkafka-email></td>
+					<td style="padding: 12px 20px; white-space: nowrap;" data-label="Processing fee">none</td>
+				</tr>
+				<tr style="background-color: var(--color4light);">
+					<td style="padding: 12px 20px;" data-label="Payment method">Online payment (credit card, Venmo, auto pay, etc.)</td>
+					<td style="padding: 12px 20px;" data-label="Send to">Pay online through the <a href="/login.html">student portal</a>.</td>
+					<td style="padding: 12px 20px; white-space: nowrap;" data-label="Processing fee">2.89%</td>
+				</tr>
+				<tr>
+					<td style="padding: 12px 20px;" data-label="Payment method">Paper check via mail</td>
+					<td style="padding: 12px 20px;" data-label="Send to">Trevor Kafka<br>6 Liberty Sq PMB 91595<br>Boston, MA 02109</td>
+					<td style="padding: 12px 20px; white-space: nowrap;" data-label="Processing fee">none</td>
+				</tr>
+			</tbody>
+		</table>
+		</div>
+
+		<div class="FAQ">
+
+			<details>
+				<summary>How do I enroll in automatic payments?</summary>
+				<br>
+				<p>After logging in,
+					<ol>
+						<li>click your name at the top-right of the screen,</li>
+						<li>click <em>My Preferences</em>,</li>
+						<li>click <em>Manage Payment Methods</em>, and finally</li>
+						<li>select <em>Enable Auto Pay</em> in the dropdown for the card that you would like to make automatic payments with.</li>
+					</ol>
+					<div align="center"><img src="media/enable auto pay.png" style="width: min(247px, 100%); border-radius: 20px"></div>
+				</p>
+			</details>
+
+			<details>
+				<summary>What if I need more time to pay?</summary>
+				<div>
+					<p>If you anticipate any payment delays or need to set up a payment plan, please just reply to your invoice email or write to me at <trevorkafka-email></trevorkafka-email> to reach out. I'm happy to work something out.</p>
+				</div>
+			</details>
+
+		</div>
+
+		<h2 class="section-heading"><i class="fa-solid fa-video"></i> Before &amp; During Class</h2>
+
+		<p>Classes are held on <strong>Zoom</strong>. Your lesson reminder email arrives 36 hours before class and contains the Zoom link.</p>
+
+		<div class="si-callout">
+			<p><strong>💡 What should I do to prepare for my lesson?</strong></p>
+			<p>One of the greatest challenges for me in tutoring is being prepared to teach content that is relevant and specifically tailored to the needs of your teacher and your class. I teach many students from many districts each week, and the needs of two different students can vary greatly. The more we can stay in communication about your class content, the more effective our sessions will be.</p>
+			<p>Please send me the following before our class session begins:</p>
+			<ul>
+				<li>A quick note about what topics you'd like to cover, or what you've been working on in class recently.</li>
+				<li>Any changes to your personal achievement goals.</li>
+				<li>Any documents or files that would be useful for us to look over together: exam study topic lists, worksheets, homework, textbook pages, review guides, and so on. <strong>When possible, please send original PDF files</strong>, as these are easier for me to work with during class than images.</li>
+			</ul>
+			<p>Photos taken with your phone are perfectly fine. Please avoid sending links unless they are publicly viewable (you can check this by opening the link in an incognito window).</p>
+			<p>Email to <trevorkafka-email></trevorkafka-email>.</p>
+		</div>
+
+		<div class="FAQ">
+
+			<details>
+				<summary>Can I record our lessons?</summary>
+				<div>
+					<p>Yes! Click the <strong>record</strong> button in Zoom during a lesson to begin recording. The video file is saved to your own computer at the end of the meeting, for your personal use.</p>
+				</div>
+			</details>
+
+			<details>
+				<summary>Are progress reports available?</summary>
+				<div>
+					<p>Yes. Progress reports are available on request for parents of youth students taking at least two lessons per month, up to one report per month. Email me at <trevorkafka-email></trevorkafka-email> to request one.</p>
+				</div>
+			</details>
+
+			<details>
+				<summary>What should I have ready for class?</summary>
+				<div>
+					<p>A quiet space, a reliable internet connection, and a way to show me your written work (a phone camera, a tablet, or simply holding your paper up to the webcam all work). I'll share a digital whiteboard during class, so you don't need any special software beyond Zoom.</p>
+				</div>
+			</details>
+
+		</div>
+
+		<h2 class="section-heading"><i class="fa-solid fa-note-sticky"></i> After Class</h2>
+
+		<div class="FAQ">
+
+			<details>
+				<summary>Where can I find my class notes?</summary>
+				<div>
+					<p>Notes and materials from our tutoring sessions live on the <a href="/mynotes.html">My Class Notes</a> page. Head there and enter your first and last name to open your personal folder.</p>
+				</div>
+			</details>
+
+			<details>
+				<summary>Do you assign homework?</summary>
+				<div>
+					<p>Homework assignments are available by request. I typically offer them at no additional charge, but so that my time goes to the students who will get the most out of them, I generally don't create homework assignments unless a student or parent asks for them explicitly.</p>
+					<p>Students are often very busy, so additional tutor-assigned homework isn't always appropriate. If it would be helpful, just let me know roughly how much time you can <em>reasonably</em> devote between classes and I'll put something together.</p>
+				</div>
+			</details>
+
+		</div>
+
+		<p>Have a question between lessons? Send it to me through <a href="/ask.html">Ask Trevor Q&amp;A</a> and I'll get back to you.</p>
+
+		<h2 class="section-heading"><i class="fa-solid fa-circle-question"></i> Need Help?</h2>
+
+		<div class="FAQ">
+
+			<details>
+				<summary>I can't log in and haven't taken classes in over a year.</summary>
+				<div>
+					<p>Accounts that have been inactive for over a year may be archived, so your login will stop working. Just email me at <trevorkafka-email></trevorkafka-email> to confirm availability and I'll reactivate your account right away. (I archive old accounts to prevent overbooking of appointments.)</p>
+				</div>
+			</details>
+
+			<details>
+				<summary>Something else isn't working.</summary>
+				<div>
+					<p>Email me at <trevorkafka-email></trevorkafka-email>. Whether it's a login problem, a billing question, or a scheduling conflict, I'd rather hear about it early than have you stuck.</p>
+				</div>
+			</details>
+
+		</div>
+
+		<div style="padding-bottom: 40px"></div>
+
+	</div>
+
+</body>
+
+<trevorkafka-footer></trevorkafka-footer>

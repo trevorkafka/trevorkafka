@@ -26,14 +26,26 @@
       "number": "sg"
     },
     {
-      "en": "my sister",
+      "en": "my younger sister",
       "zh": "我妹妹",
       "person": 3,
       "number": "sg"
     },
     {
-      "en": "my brother",
+      "en": "my older brother",
       "zh": "我哥哥",
+      "person": 3,
+      "number": "sg"
+    },
+    {
+      "en": "my younger brother",
+      "zh": "我弟弟",
+      "person": 3,
+      "number": "sg"
+    },
+    {
+      "en": "my older sister",
+      "zh": "我姐姐",
       "person": 3,
       "number": "sg"
     },
@@ -99,7 +111,8 @@
           "en": "dumplings",
           "zh": "饺子"
         }
-      ]
+      ],
+      "noTemporary": true
     },
     {
       "base": "drink",
@@ -121,7 +134,8 @@
           "en": "water",
           "zh": "水"
         }
-      ]
+      ],
+      "noTemporary": true
     },
     {
       "base": "read",
@@ -230,7 +244,8 @@
           "en": "a ticket",
           "zh": "票"
         }
-      ]
+      ],
+      "noTemporary": true
     },
     {
       "base": "cook",
@@ -304,7 +319,8 @@
       "ing": "sleeping",
       "pp": "slept",
       "zh": "睡觉",
-      "objects": []
+      "objects": [],
+      "noTemporary": true
     },
     {
       "base": "work",
@@ -322,7 +338,8 @@
       "ing": "running",
       "pp": "run",
       "zh": "跑步",
-      "objects": []
+      "objects": [],
+      "noTemporary": true
     },
     {
       "base": "swim",
@@ -331,7 +348,8 @@
       "ing": "swimming",
       "pp": "swum",
       "zh": "游泳",
-      "objects": []
+      "objects": [],
+      "noTemporary": true
     },
     {
       "base": "like",
@@ -784,177 +802,6 @@
       "group": "next-weekday"
     },
     {
-      "en": "in January",
-      "zh": "一月",
-      "tenses": [
-        "past-simple",
-        "future-simple"
-      ],
-      "group": "month"
-    },
-    {
-      "en": "in February",
-      "zh": "二月",
-      "tenses": [
-        "past-simple",
-        "future-simple"
-      ],
-      "group": "month"
-    },
-    {
-      "en": "in March",
-      "zh": "三月",
-      "tenses": [
-        "past-simple",
-        "future-simple"
-      ],
-      "group": "month"
-    },
-    {
-      "en": "in April",
-      "zh": "四月",
-      "tenses": [
-        "past-simple",
-        "future-simple"
-      ],
-      "group": "month"
-    },
-    {
-      "en": "in May",
-      "zh": "五月",
-      "tenses": [
-        "past-simple",
-        "future-simple"
-      ],
-      "group": "month"
-    },
-    {
-      "en": "in June",
-      "zh": "六月",
-      "tenses": [
-        "past-simple",
-        "future-simple"
-      ],
-      "group": "month"
-    },
-    {
-      "en": "in July",
-      "zh": "七月",
-      "tenses": [
-        "past-simple",
-        "future-simple"
-      ],
-      "group": "month"
-    },
-    {
-      "en": "in August",
-      "zh": "八月",
-      "tenses": [
-        "past-simple",
-        "future-simple"
-      ],
-      "group": "month"
-    },
-    {
-      "en": "in September",
-      "zh": "九月",
-      "tenses": [
-        "past-simple",
-        "future-simple"
-      ],
-      "group": "month"
-    },
-    {
-      "en": "in October",
-      "zh": "十月",
-      "tenses": [
-        "past-simple",
-        "future-simple"
-      ],
-      "group": "month"
-    },
-    {
-      "en": "in November",
-      "zh": "十一月",
-      "tenses": [
-        "past-simple",
-        "future-simple"
-      ],
-      "group": "month"
-    },
-    {
-      "en": "in December",
-      "zh": "十二月",
-      "tenses": [
-        "past-simple",
-        "future-simple"
-      ],
-      "group": "month"
-    },
-    {
-      "en": "on Monday",
-      "zh": "周一",
-      "tenses": [
-        "past-simple",
-        "future-simple"
-      ],
-      "group": "on-weekday"
-    },
-    {
-      "en": "on Tuesday",
-      "zh": "周二",
-      "tenses": [
-        "past-simple",
-        "future-simple"
-      ],
-      "group": "on-weekday"
-    },
-    {
-      "en": "on Wednesday",
-      "zh": "周三",
-      "tenses": [
-        "past-simple",
-        "future-simple"
-      ],
-      "group": "on-weekday"
-    },
-    {
-      "en": "on Thursday",
-      "zh": "周四",
-      "tenses": [
-        "past-simple",
-        "future-simple"
-      ],
-      "group": "on-weekday"
-    },
-    {
-      "en": "on Friday",
-      "zh": "周五",
-      "tenses": [
-        "past-simple",
-        "future-simple"
-      ],
-      "group": "on-weekday"
-    },
-    {
-      "en": "on Saturday",
-      "zh": "周六",
-      "tenses": [
-        "past-simple",
-        "future-simple"
-      ],
-      "group": "on-weekday"
-    },
-    {
-      "en": "on Sunday",
-      "zh": "周日",
-      "tenses": [
-        "past-simple",
-        "future-simple"
-      ],
-      "group": "on-weekday"
-    },
-    {
       "en": "yesterday morning",
       "zh": "昨天早上",
       "tenses": [
@@ -1063,7 +910,7 @@
         "present-perfect",
         "present-continuous"
       ],
-      "group": "perfect-span"
+      "group": "temporary"
     },
     {
       "en": "this month",
@@ -1071,7 +918,7 @@
       "tenses": [
         "present-perfect"
       ],
-      "group": "perfect-span"
+      "group": "temporary"
     },
     {
       "en": "since Monday",
@@ -1160,6 +1007,198 @@
         "present-continuous"
       ],
       "group": "temporary"
+    },
+    {
+      "en": "last January",
+      "zh": "去年一月",
+      "tenses": [
+        "past-simple"
+      ],
+      "group": "last-month"
+    },
+    {
+      "en": "next January",
+      "zh": "明年一月",
+      "tenses": [
+        "future-simple"
+      ],
+      "group": "next-month"
+    },
+    {
+      "en": "last February",
+      "zh": "去年二月",
+      "tenses": [
+        "past-simple"
+      ],
+      "group": "last-month"
+    },
+    {
+      "en": "next February",
+      "zh": "明年二月",
+      "tenses": [
+        "future-simple"
+      ],
+      "group": "next-month"
+    },
+    {
+      "en": "last March",
+      "zh": "去年三月",
+      "tenses": [
+        "past-simple"
+      ],
+      "group": "last-month"
+    },
+    {
+      "en": "next March",
+      "zh": "明年三月",
+      "tenses": [
+        "future-simple"
+      ],
+      "group": "next-month"
+    },
+    {
+      "en": "last April",
+      "zh": "去年四月",
+      "tenses": [
+        "past-simple"
+      ],
+      "group": "last-month"
+    },
+    {
+      "en": "next April",
+      "zh": "明年四月",
+      "tenses": [
+        "future-simple"
+      ],
+      "group": "next-month"
+    },
+    {
+      "en": "last May",
+      "zh": "去年五月",
+      "tenses": [
+        "past-simple"
+      ],
+      "group": "last-month"
+    },
+    {
+      "en": "next May",
+      "zh": "明年五月",
+      "tenses": [
+        "future-simple"
+      ],
+      "group": "next-month"
+    },
+    {
+      "en": "last June",
+      "zh": "去年六月",
+      "tenses": [
+        "past-simple"
+      ],
+      "group": "last-month"
+    },
+    {
+      "en": "next June",
+      "zh": "明年六月",
+      "tenses": [
+        "future-simple"
+      ],
+      "group": "next-month"
+    },
+    {
+      "en": "last July",
+      "zh": "去年七月",
+      "tenses": [
+        "past-simple"
+      ],
+      "group": "last-month"
+    },
+    {
+      "en": "next July",
+      "zh": "明年七月",
+      "tenses": [
+        "future-simple"
+      ],
+      "group": "next-month"
+    },
+    {
+      "en": "last August",
+      "zh": "去年八月",
+      "tenses": [
+        "past-simple"
+      ],
+      "group": "last-month"
+    },
+    {
+      "en": "next August",
+      "zh": "明年八月",
+      "tenses": [
+        "future-simple"
+      ],
+      "group": "next-month"
+    },
+    {
+      "en": "last September",
+      "zh": "去年九月",
+      "tenses": [
+        "past-simple"
+      ],
+      "group": "last-month"
+    },
+    {
+      "en": "next September",
+      "zh": "明年九月",
+      "tenses": [
+        "future-simple"
+      ],
+      "group": "next-month"
+    },
+    {
+      "en": "last October",
+      "zh": "去年十月",
+      "tenses": [
+        "past-simple"
+      ],
+      "group": "last-month"
+    },
+    {
+      "en": "next October",
+      "zh": "明年十月",
+      "tenses": [
+        "future-simple"
+      ],
+      "group": "next-month"
+    },
+    {
+      "en": "last November",
+      "zh": "去年十一月",
+      "tenses": [
+        "past-simple"
+      ],
+      "group": "last-month"
+    },
+    {
+      "en": "next November",
+      "zh": "明年十一月",
+      "tenses": [
+        "future-simple"
+      ],
+      "group": "next-month"
+    },
+    {
+      "en": "last December",
+      "zh": "去年十二月",
+      "tenses": [
+        "past-simple"
+      ],
+      "group": "last-month"
+    },
+    {
+      "en": "next December",
+      "zh": "明年十二月",
+      "tenses": [
+        "future-simple"
+      ],
+      "group": "next-month"
     }
   ],
   "_timesComment": "group: time words are picked by choosing a group first and then a word inside it, so a family like on Monday...on Sunday counts once against 'yesterday', rather than seven times.",
@@ -1221,5 +1260,6 @@
       ]
     }
   ],
-  "_genericComment": "genericSubjects state general truths, so they are only used with the simple present."
+  "_genericComment": "genericSubjects state general truths, so they are only used with the simple present.",
+  "_temporaryComment": "noTemporary: the verb is an everyday action, so it does not take 'this week' / 'these days', which describe a temporarily different situation."
 }

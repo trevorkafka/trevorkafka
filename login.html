@@ -57,6 +57,25 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 				z-index: 0;
 			}
 			@keyframes widget-spin { to { transform: rotate(360deg); } }
+			/* The two links sit above the login box: side by side when they fit,
+			   stacked and centred when they do not. */
+			.login-links {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				align-items: stretch;
+				gap: 0;
+				margin-bottom: 0.5em;
+				/* wider than the 500px login column, so both fit on one line when
+				   the screen allows; they wrap and centre when it does not */
+				width: min(620px, 92vw);
+				margin-left: 50%;
+				transform: translateX(-50%);
+			}
+
+			.login-links .button { display: inline-block; }
+			.login-links .button div { margin: 6px; }
+
 			.login-notes {
 				list-style: none;
 				padding: 0;
@@ -83,6 +102,15 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 		</div> -->
 
 		<div style="max-width: 500px; margin: 0 auto 1em;">
+			<div class="login-links">
+				<a href="availability.html" class="button subtle">
+					<div align="center"><i class="fa-solid fa-calendar-days"></i> Preview my 90-day availability</div>
+				</a>
+				<a href="student-info.html" class="button subtle">
+					<div align="center"><i class="fa-solid fa-circle-info"></i> Student information &amp; FAQ</div>
+				</a>
+			</div>
+
 			<div class="tk-table-frame" style="border: solid 1.5px var(--surface-border); border-radius: 20px; overflow: hidden;">
 			<div class="invert-in-dark" style="background-color: white; border-radius: 20px; padding: 20px; position: relative; min-height: 120px;">
 				<div id="login-widget-spinner" class="widget-spinner"></div>
@@ -108,138 +136,12 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 					}, 150);
 				})();
 			</script>
-			<div style="text-align: center; margin: 0.75em 0 0.25em;">
-				<a href="availability.html" class="button subtle" style="display: inline-block;">
-					<div align="center"><i class="fa-solid fa-calendar-days"></i> Preview my 90-day availability</div>
-				</a>
-			</div>
 			<ul class="login-notes">
 				<li><i class="fa-solid fa-user-plus"></i><span>Accounts are automatically created when registering for a <a href="call.html">free intro call</a>.</span></li>
 				<li><i class="fa-solid fa-envelope"></i><span>To change your lesson length or set up weekly-recurring lessons, email <trevorkafka-email></trevorkafka-email>.</span></li>
 			</ul>
 		</div>
 
-		<h1><i class="fa-solid fa-circle-question"></i> Frequently Asked Questions</h1>
-		<div class="FAQ">
-			<details id="cancellation-policy">
-				<summary class="red">Please note that I hold a strict 24-hour cancellation policy (click for details)</summary>
-				<div style="background-color: var(--faq-red-surface); border-radius: 10px">
-					<ul>
-						<li>The online registration system will not accept cancellations once the 24 hour window has passed.</li>
-						<li>Late-cancelled lessons (cancellations less than 24 hours in advance) are still billable.</li>
-						<li>Registrations can be made for classes up to 12 hours before a class start time. Please note that registrations made within 12-24 hours before a class start time cannot be cancelled online. If you make a registration in error when registering less than 24 hours in advance, email me immediately at 
-							<span class="tooltip">
-								<a onclick="copyEmail()" onmouseout="outFunc()">tutor@trevorkafka.com</a>
-								<span class="tooltiptext">Copy to clipboard</span>
-							</span>
-						or text me.</li>
-						<li>If you would like to make a reservation on shorter than 12 hours notice, please email me at 
-							<span class="tooltip">
-								<a onclick="copyEmail()" onmouseout="outFunc()">tutor@trevorkafka.com</a>
-								<span class="tooltiptext">Copy to clipboard</span>
-							</span>
-						or text me to confirm availability. I cannot guarantee that my listed availability online is accurate with less than 12 hours notice, but I can make work what is possible.</li>
-						<li>Email reminders for appointments are automatically sent 36 hours in advance and SMS reminders (when opted-in) are sent 2 hours in advance. </li>
-						<li>Please make sure your contact information on your account is up-to-date and that notifications are on if you would like to receive reminders.</li>
-					</ul>
-					<p>
-						No-shows and late cancellations are truly my least favorite situations to encounter in the online teaching business, but it's a necessity in order for me to be able to keep teaching as a reliable and sustainable occupation, which is fundamentally what allows me to be able to provide teaching opportunities in the first place. 😊 Let's please work together to try to avoid late cancellation situations in the first place and we all will remain happy.
-					</p>
-				</div>
-			</details>
-			<details>
-				<summary>Having trouble logging in and haven't taken classes in over a year?</summary>
-				<div>
-					<p>If you are having trouble logging in and you haven't taken class with me in over a year, your account may have been archived. Please email <trevorkafka-email></trevorkafka-email> to confirm availability and reactivate (I do this to prevent overbooking of appointments).</p>
-				</div>
-			</details>
-			<details>
-				<summary>How do I sign up for lesson reminders?</summary>
-				<br>
-				<p>
-					<strong>For both students and parents</strong>, lesson reminders are available <strong>24 hours in advance of class by email</strong> and/or <strong>2 hours in advance of class by text</strong>. After logging in,
-					<ol>
-						<li>click your name at the top-right of the screen,</li>
-						<li>click <em>My Preferences</em>,</li>
-						<li>click the pencil icon to edit student and/or parent contact information,</li>
-						<li>make sure the listed email address and mobile numbers are up to date,</li>
-						<li>if SMS reminders are desired, make sure the "SMS Capable" box is checked under the mobile number,</li>
-						<li>and finally in the "Reminders" section check the types of lesson reminders you would like to receive.</li>
-					</ol>
-					Make sure to update these settings for <em>each</em> recipient.
-				</p>
-			</details>
-			<details>
-				<summary>How do I enroll in automatic payments?</summary>
-				<br>
-				<p>After logging in,
-					<ol>
-						<li>click your name at the top-right of the screen,</li>
-						<li>click <em>My Preferences</em>,</li>
-						<li>click <em>Manage Payment Methods</em>, and finally</li>
-						<li>select <em>Enable Auto Pay</em> in the dropdown for the card that you would like to make automatic payments with.</li>
-					</ol>
-					<div align="center"><img src="media/enable auto pay.png" style="width: min(247px, 100%); border-radius: 20px"></div>
-				</p>
-			</details>
-			<!-- <details>
-				<summary>How do I make a one-time payment?</summary>
-				<br>
-				<p>The easiest way to make payments is by using the link provided in the invoice PDF sent to your email, which even allows payment without needing to log in. If you do find yourself logged in and wanting to make a payment, please consult the following steps.</p>
-				<div align="center"><img src="media/help - one time payment.png" style="width: min(500px, 100%); border-radius: 20px"></div>
-			</details> -->
-			<details>
-				<summary>How can I synchronize my class calendar with my calendar, such as Google Calendar or iCal?</summary>
-				<br>
-				<p>After logging in,</p>
-					<ol>
-						<li>Navigate to <em>Calendar</em> from the main menu on the left.</li>
-						<li>Click <em>Sync Calendar</em> in the toolbar.</li>
-						<li>Select your device/calendar from the drop-down menu.</li>
-					</ol>
-					<div align="center"><img src="media/sync calendar.png" style="width: min(301px, 100%); border-radius: 20px"></div>
-				<p>Please note that due to limitations set by Google, you will only see updates to your synced calendar once every 24 hours on Google Calendar.
-				</p>
-			</details>
-			<!-- <details>
-				<summary>How can I hide empty lesson time slots or show full time slots on the calendar?</summary>
-				<br>
-				<p>
-					By default, the calendar will show available lesson time slots and hide lesson time slots that have been filled. At times however, it may be useful to hide empty lesson time slots if you want an easier picture of the classes that you have already reserved. At other times, it may be helpful to show full lesson time slots so that you can have a better understanding of how my general schedule works, even if that means seeing lesson time slots that have already been reserved by others. 
-				</p>
-				<p>
-					If you would like to hide empty lesson time slots or show full time slots on the calendar, consult the following steps.
-					<ol>
-						<li>Navigate to <em>Calendar</em> from the main menu on the left.</li>
-						<li>Click <em>Search</em> in the toolbar.</li>
-						<li>Check or uncheck <em>Show full events</em> or <em>Show open lesson timeslots</em> based on your personal preferences.</li>
-					</ol>
-					<div align="center"><img src="media/filter.png" style="width: min(377px, 100%); border-radius: 20px"></div>
-
-				</p>
-			</details>
-			<details>
-				<summary>How do I register for a lesson?</summary>
-
-				<p><strong>Update (Wednesday June 25, 2025):</strong> A change has been made to the student portal allowing more flexible lesson scheduling for students with login access. In order to schedule lessons after logging in, one must now click "Find & Book" on the calendar to view available dates and times.</p>
-				
-				<div align="center"><img src="media/help - register lesson.png" style="width: min(500px, 100%); border-radius: 20px"></div>
-			</details> -->
-			<details>
-				<summary>How do I cancel a lesson?</summary>
-				<br>
-				<p>First, login above to access the parent/student portal. Then, follow the steps below.</p>
-				<div align="center"><img src="media/help - cancel lesson.png" style="width: min(500px, 100%); border-radius: 20px"></div>	
-				<p>Please note that students whose parent/guardian(s) haven't granted them calendar booking permissions will not be able to sign up for or cancel lessons on the calendar. This setting can be changed on the parent/guardian-side profile settings.</p>
-			<p>If in a pinch, you can also email me at <trevorkafka-email></trevorkafka-email> or text me in order to make a cancellation.</p>
-			</details>
-			<details>
-				<summary>Where can I find my class notes?</summary>
-				<div>
-					<p>Notes and materials from our tutoring sessions live on the <a href="/mynotes.html">My Class Notes</a> page. Head there and enter your first and last name to open your personal folder.</p>
-				</div>
-			</details>
-		</div>
 		<div style="padding-bottom: 20px"></div>
 	</div>
 

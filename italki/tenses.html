@@ -23,6 +23,15 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 <script src="https://kit.fontawesome.com/157b2a3980.js" crossorigin="anonymous"></script> <!-- Font Awesome icons -->
 
 <style>
+	/* The site's muted tan is very faint on the cream background, so this page
+	   uses a deeper grey-tan for secondary text in light mode. Dark mode keeps
+	   the site colour, which reads fine there. */
+	:root { --tk-muted: #7F7359; }
+	:root[data-theme="dark"] { --tk-muted: var(--color4); }
+	@media (prefers-color-scheme: dark) {
+		:root:not([data-theme="light"]) { --tk-muted: var(--color4); }
+	}
+
 	:root[data-theme="dark"] { color-scheme: dark; }
 	:root[data-theme="light"] { color-scheme: light; }
 	@media (prefers-color-scheme: dark) {
@@ -39,7 +48,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 	.page-subtitle {
 		font-family: "Noto Sans SC", sans-serif;
 		font-size: 130%;
-		color: var(--color4);
+		color: var(--tk-muted);
 		margin-top: -10px;
 	}
 
@@ -92,7 +101,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 		font-family: "Noto Sans SC", sans-serif;
 		font-size: 13px;
 		line-height: 1.3;
-		color: var(--color4);
+		color: var(--tk-muted);
 		transition: color 0.18s ease;
 	}
 
@@ -143,6 +152,103 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
 
+	/* Each settings area collapses to a one-line summary of what is selected,
+	   in the same spirit as the unit circle page. */
+	.settings {
+		border: 1px solid var(--divider);
+		border-radius: 12px;
+		margin: 14px auto 0;
+		max-width: 620px;
+		text-align: left;
+		background: var(--tint-1);
+	}
+
+	.settings > summary {
+		list-style: none;
+		cursor: pointer;
+		display: flex;
+		align-items: baseline;
+		gap: 8px;
+		padding: 10px 14px;
+		font-family: Freeman, sans-serif;
+		font-size: 15px;
+		color: var(--color1);
+		user-select: none;
+		-webkit-tap-highlight-color: transparent;
+	}
+
+	.settings > summary::-webkit-details-marker { display: none; }
+
+	.settings .arr {
+		flex: none;
+		font-size: 13px;
+		color: var(--tk-muted);
+		transition: transform 0.2s ease;
+	}
+
+	.settings[open] > summary .arr { transform: rotate(90deg); }
+
+	.settings-name .zh {
+		font-family: "Noto Sans SC", sans-serif;
+		font-size: 90%;
+		color: var(--tk-muted);
+		margin-left: 6px;
+	}
+
+	.settings-sentence {
+		flex: 1;
+		font-family: Freeman, sans-serif;
+		font-size: 14px;
+		color: var(--tk-muted);
+		line-height: 1.4;
+	}
+
+	.settings[open] .settings-sentence { display: none; }
+
+	.settings-body { padding: 0 14px 12px; }
+
+	.settings .section-label { margin-top: 6px; }
+
+	/* Headshot in the top corner, out of the way of the title, with the italki
+	   link underneath it. */
+	.page-portrait-block {
+		float: right;
+		width: min(150px, 30vw);
+		margin: 0 0 12px 20px;
+		text-align: center;
+	}
+
+	.page-portrait {
+		width: 100%;
+		height: auto;
+		border-radius: 100%;
+	}
+
+	.italki-link {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 6px;
+		margin-top: 8px;
+		padding: 5px 12px;
+		border: 1px solid var(--divider);
+		border-radius: 100px;
+		font-family: Freeman, sans-serif;
+		font-size: 13px;
+		color: var(--color1);
+		text-decoration: none;
+		white-space: nowrap;
+		transition: border-color 0.2s ease, background-color 0.2s ease;
+	}
+
+	.italki-link:hover {
+		border-color: var(--color1);
+		background: var(--tint-1);
+	}
+
+	.italki-link img { width: 18px; height: auto; }
+	.italki-link i { font-size: 11px; color: var(--tk-muted); }
+
 	.section-label {
 		margin: 26px 0 0;
 		font-family: Freeman, sans-serif;
@@ -151,14 +257,14 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 	}
 
 	.advice {
-		color: var(--color4);
+		color: var(--tk-muted);
 		font-size: 15px;
 	}
 
 	.section-label .zh {
 		font-family: "Noto Sans SC", sans-serif;
 		font-size: 90%;
-		color: var(--color4);
+		color: var(--tk-muted);
 		margin-left: 6px;
 	}
 
@@ -241,7 +347,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 		min-width: 22px;
 		font-family: Freeman, sans-serif;
 		font-size: 14px;
-		color: var(--color4);
+		color: var(--tk-muted);
 	}
 
 	.tense-chip {
@@ -277,7 +383,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 		padding: 4px 12px;
 		border: 1px solid var(--divider);
 		border-radius: 100px;
-		color: var(--color4);
+		color: var(--tk-muted);
 		font-size: 13px;
 		line-height: 1.5;
 	}
@@ -329,7 +435,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 		text-shadow: none;
 	}
 
-	.verb-select option:disabled { color: var(--color4); }
+	.verb-select option:disabled { color: var(--tk-muted); }
 
 	.verb-select.right {
 		border-color: #2f9e4f;
@@ -389,15 +495,18 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 
 	/* Reveals the Chinese for an English-only question, on its own line. */
 	.translate-btn {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
 		margin-left: 8px;
-		width: 26px;
-		height: 26px;
+		width: 32px;
+		height: 32px;
 		padding: 0;
 		border: 1px solid var(--divider);
 		border-radius: 50%;
 		background: transparent;
-		color: var(--color4);
-		font-size: 14px;
+		color: var(--tk-muted);
+		font-size: 19px;      /* fills the circle, so the glyph reads clearly */
 		line-height: 1;
 		vertical-align: middle;
 		cursor: pointer;
@@ -427,13 +536,13 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 		margin: 2px 0 10px;
 		font-family: "Noto Sans SC", sans-serif;
 		font-size: 15px;
-		color: var(--color4);
+		color: var(--tk-muted);
 	}
 
 	.en-line {
 		margin: 2px 0 10px;
 		font-size: 15px;
-		color: var(--color4);
+		color: var(--tk-muted);
 	}
 
 	.prompt-words {
@@ -455,7 +564,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 	.prompt-word .zh {
 		font-family: "Noto Sans SC", sans-serif;
 		font-size: 85%;
-		color: var(--color4);
+		color: var(--tk-muted);
 		margin-left: 5px;
 	}
 
@@ -496,7 +605,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 	.feedback .zh {
 		display: block;
 		font-family: "Noto Sans SC", sans-serif;
-		color: var(--color4);
+		color: var(--tk-muted);
 		margin-top: 2px;
 	}
 
@@ -544,6 +653,15 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 
 	<div class="content">
 
+		<div class="page-portrait-block">
+			<img class="page-portrait glow-shadow" src="/media/TK indonesia.png" alt="Trevor Kafka" width="1939" height="1939">
+			<a class="italki-link" href="https://www.italki.com/trevorkafka" target="_blank" rel="noopener">
+				<img src="/media/referral/italki.png" alt="" width="783" height="497">
+				<span>italki profile</span>
+				<i class="fa-solid fa-arrow-up-right-from-square"></i>
+			</a>
+		</div>
+
 		<h1>Trevor's English Tenses Practice Page</h1>
 		<div class="subtitle-row">
 			<a class="tk-button secondary" href="tenses-reference.html">
@@ -561,7 +679,9 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			<p class="page-subtitle zh">康明的英语时态练习网页</p>
 		</div>
 
-		<p class="section-label">Tenses<span class="zh">时态</span></p>
+		<details class="settings" id="settings-tense">
+			<summary><span class="arr">›</span><span class="settings-name">Tenses<span class="zh">时态</span></span><span class="settings-sentence" id="sentence-tense"></span></summary>
+			<div class="settings-body">
 		<p>Choose the tenses you would like to practice. <span class="chinese">请选择你想练习的时态。</span></p>
 		<p class="advice">Start with one tense at a time, and add more as you feel comfortable.<span class="zh chinese"> 建议先练习一种时态，熟悉以后再慢慢加。</span></p>
 
@@ -628,36 +748,46 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			</label>
 		</div>
 
-		<p style="color: var(--color4)">The greyed-out tenses are not available yet.<span class="zh chinese"> 灰色的时态暂时还不能练习，以后会加上。</span></p>
+		<p style="color: var(--tk-muted)">The greyed-out tenses are not available yet.<span class="zh chinese"> 灰色的时态暂时还不能练习，以后会加上。</span></p>
 
-		<p class="section-label">Question types<span class="zh">题型</span></p>
-		<p>Choose one question type. <span class="chinese">请选择一种题型。</span></p>
-		<p class="advice">The two "determine the tense" types need at least two tenses selected.<span class="zh chinese"> 「判断时态」的题型需要选择两种以上的时态。</span></p>
+			</div>
+		</details>
+
+		<details class="settings" id="settings-qtype">
+			<summary><span class="arr">›</span><span class="settings-name">Question types<span class="zh">题型</span></span><span class="settings-sentence" id="sentence-qtype"></span></summary>
+			<div class="settings-body">
+		<p>Choose the kinds of questions you would like. <span class="chinese">请选择你想做的题型。</span></p>
+		<p class="advice">Pick as many as you like; the questions are mixed. The two "determine the tense" types need at least two tenses selected.<span class="zh chinese"> 可以选多种，题目会混合出现。「判断时态」的题型需要选择两种以上的时态。</span></p>
 
 		<div class="tense-grid qtype-grid">
 			<label class="tense-cell">
-				<input type="radio" name="qtype" value="tense-from-english" checked>
+				<input type="checkbox" name="qtype" value="tense-from-english">
 				<span class="label-en">Determine English tense from English sentence</span>
 				<span class="label-zh">从英语句子判断时态</span>
 			</label>
 			<label class="tense-cell">
-				<input type="radio" name="qtype" value="tense-from-chinese">
+				<input type="checkbox" name="qtype" value="tense-from-chinese">
 				<span class="label-en">Determine English tense from Chinese sentence</span>
 				<span class="label-zh">从中文句子判断时态</span>
 			</label>
 			<label class="tense-cell">
-				<input type="radio" name="qtype" value="english-from-tense">
+				<input type="checkbox" name="qtype" value="english-from-tense">
 				<span class="label-en">Write English sentence from English tense</span>
 				<span class="label-zh">根据时态写英语句子</span>
 			</label>
 			<label class="tense-cell">
-				<input type="radio" name="qtype" value="english-from-chinese">
+				<input type="checkbox" name="qtype" value="english-from-chinese" checked>
 				<span class="label-en">Write English sentence from Chinese sentence</span>
 				<span class="label-zh">根据中文句子写英语句子</span>
 			</label>
 		</div>
 
-		<p class="section-label">Sentence types<span class="zh">句型</span></p>
+			</div>
+		</details>
+
+		<details class="settings" id="settings-sform">
+			<summary><span class="arr">›</span><span class="settings-name">Sentence types<span class="zh">句型</span></span><span class="settings-sentence" id="sentence-sform"></span></summary>
+			<div class="settings-body">
 		<p>Choose the kinds of sentences you would like. <span class="chinese">请选择你想练习的句型。</span></p>
 
 		<div class="tense-grid qtype-grid">
@@ -667,7 +797,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 				<span class="label-zh">陈述句</span>
 			</label>
 			<label class="tense-cell">
-				<input type="checkbox" name="sform" value="yesno">
+				<input type="checkbox" name="sform" value="yesno" checked>
 				<span class="label-en">Yes-or-no questions</span>
 				<span class="label-zh">一般疑问句</span>
 			</label>
@@ -683,6 +813,9 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			</label>
 		</div>
 
+			</div>
+		</details>
+
 		<div class="toolbar">
 			<button type="button" class="tk-button" id="generate">
 				<i class="fa-solid fa-shuffle"></i>
@@ -697,6 +830,29 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 		<div class="practice-list" id="practice"></div>
 
 	</div>
+
+	<script>
+	// Chrome's speech queue lives in the browser, not in the page, and a
+	// cancel() does not always take effect on the first call, so anything left
+	// over can start talking minutes later. Everything that stops speech goes
+	// through here, and it cancels twice.
+	window.tkStopSpeech = function () {
+		if (!('speechSynthesis' in window)) return;
+		try {
+			window.speechSynthesis.cancel();
+			setTimeout(function () { try { window.speechSynthesis.cancel(); } catch (e) {} }, 60);
+		} catch (e) {}
+	};
+
+	// clear anything a previous visit left queued, and never let speech outlive
+	// the page or carry on in a hidden tab
+	window.tkStopSpeech();
+	window.addEventListener('pagehide', window.tkStopSpeech);
+	window.addEventListener('beforeunload', window.tkStopSpeech);
+	document.addEventListener('visibilitychange', function () {
+		if (document.hidden) window.tkStopSpeech();
+	});
+	</script>
 
 	<script>
 	// ---------------------------------------------------------------------
@@ -922,7 +1078,10 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 				// the past needs a time word: Chinese marks it no other way here
 				// being something is a state, so it takes no habitual time phrase:
 				// "She is hungry every morning" is not a sentence anybody says
-				var needTime = tense === 'past-simple' && !subject.kind;
+				// the past needs a time word (Chinese marks it no other way with an
+				// adjective), and so does the future (会 would otherwise read as
+				// ability)
+				var needTime = (tense === 'past-simple' || tense === 'future-simple') && !subject.kind;
 				var wantBeTime = !subject.kind && tense !== 'present-simple' &&
 					(needTime || Math.random() < 0.5);
 				var beTime = wantBeTime ? pickTime(beTimes) : null;
@@ -965,10 +1124,25 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			}
 			var object = objectPool.length ? pick(objectPool) : null;
 			var candidates = DATA.times.filter(function (t) { return t.tenses.indexOf(tense) !== -1; });
+			// "this week" and "these days" describe a situation that is temporarily
+			// different, which everyday actions cannot be: "is sleeping this week"
+			if (verb.noTemporary && tense === 'present-continuous') {
+				candidates = candidates.filter(function (t) { return t.group !== 'temporary'; });
+			}
 			// The continuous and the simple present read better with a time word,
 			// so include one more often for those.
 			var wantTime = (tense === 'present-continuous' || tense === 'present-simple') ? Math.random() < 0.75 : Math.random() < 0.6;
+			// An action in the simple present needs a habitual time phrase, or the
+			// sentence gives no sign of its tense: "Who cooks noodles?" could be
+			// almost anything, "Who cooks noodles every day?" could not.
+			if (tense === 'present-simple') wantTime = true;
+			// ... except where the sentence is a state or a general truth, which
+			// are timeless: "The students like English every morning" is not a
+			// sentence anybody says
 			if (verb.stative && tense === 'present-simple') wantTime = false;
+			// 会 on its own can be read as ability ("谁会做晚饭？" = who can cook?),
+			// so a future sentence always carries a time word to settle it
+			if (tense === 'future-simple') wantTime = true;
 			if (subject.kind) wantTime = false;   // general truths: "Cats like fish."
 			var time = wantTime ? pickTime(candidates) : null;
 
@@ -1302,10 +1476,16 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			if (!document.body.classList.contains('tts-on')) return;
 			if (!('speechSynthesis' in window) || !text) return;
 			try {
-				window.speechSynthesis.cancel();
+				window.tkStopSpeech();
 				var u = new SpeechSynthesisUtterance(text);
 				u.lang = 'en-US';
 				u.rate = 0.95;
+				// a late-starting utterance checks again: by the time the browser
+				// gets round to it the toggle may be off, or these questions may
+				// have been replaced
+				u.onstart = function () {
+					if (!document.body.classList.contains('tts-on')) window.tkStopSpeech();
+				};
 				window.speechSynthesis.speak(u);
 			} catch (e) {}
 		}
@@ -1315,19 +1495,37 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 		// A question may have more than one blank (a question sentence splits into
 		// auxiliary and main verb); it counts as solved only when they are all
 		// right, and only then does the sentence get read aloud.
-		function wireGroup(pairs, sayOnCorrect, revealOn) {
-			function allRight() {
-				return pairs.every(function (p) { return p.select.__lastRight === true; });
+		function wireGroup(pairs, sayOnCorrect, revealOn, combos) {
+			// "What was cold on Friday?" can be filled in either order: the verb in
+			// the first blank and nothing in the second, or the other way round.
+			// combos lists each arrangement that counts as right.
+			var selects = pairs.map(function (p) { return p.select; });
+
+			function complete(combo) {
+				return selects.every(function (sel, i) { return sel.value === combo[i]; });
 			}
-			pairs.forEach(function (p) {
+
+			// Each blank is judged on its own: getting the verb right still counts
+			// as right even when the auxiliary beside it is wrong.
+			function isRight(index) {
+				if (!combos) return selects[index].value === pairs[index].answer;
+				return combos.some(function (c) { return c[index] === selects[index].value; });
+			}
+
+			function allRight() {
+				if (!combos) return pairs.every(function (p) { return p.select.__lastRight === true; });
+				return combos.some(complete);
+			}
+
+			pairs.forEach(function (p, i) {
 				wireSelect(p.select, p.answer, function () {
 					if (!allRight()) return null;
 					return sayOnCorrect ? sayOnCorrect() : null;
-				}, revealOn, allRight);
+				}, revealOn, allRight, function () { return isRight(i); });
 			});
 		}
 
-		function wireSelect(select, answer, sayOnCorrect, revealOn, solved) {
+		function wireSelect(select, answer, sayOnCorrect, revealOn, solved, rightTest) {
 			select.__lastRight = null;   // no answer chosen yet
 
 			function paint(right, animate) {
@@ -1344,7 +1542,17 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			// the choice being made. Closing it without picking anything new puts
 			// the previous result back.
 			function clearMark() { select.classList.remove('right', 'wrong', 'shake', 'glow'); }
-			function restoreMark() { if (select.__lastRight !== null) paint(select.__lastRight, false); }
+			// Escape (and clicking away) can revert the dropdown to its previous
+			// value without firing a change event, so the colour is worked out
+			// from whatever is showing now rather than from the last change.
+			function restoreMark() {
+				if (!select.value) { select.__lastRight = null; clearMark(); return; }
+				var right = rightTest ? rightTest() : (select.value === answer);
+				select.__lastRight = right;
+				paint(right, false);
+				var done = solved ? solved() : right;
+				if (revealOn) revealOn.classList.toggle('revealed', done);
+			}
 
 			select.addEventListener('mousedown', clearMark);
 			select.addEventListener('keydown', clearMark);
@@ -1353,7 +1561,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 				if (e.key === 'Escape' || e.key === 'Tab') restoreMark();
 			});
 			select.addEventListener('change', function () {
-				var right = select.value === answer;
+				var right = rightTest ? rightTest() : (select.value === answer);
 				select.__lastRight = right;
 				paint(right, true);
 				var done = solved ? solved() : right;
@@ -1598,6 +1806,22 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			];
 		}
 
+		// The arrangements that count as right. Normally there is one; a subject
+		// question with a one-word verb reads the same either way round, so the
+		// student may put the word in either blank.
+		function blankCombos(q) {
+			var first = correctVerbForm(q);
+			var second = correctMainKey(q);
+			var combos = [[first, second]];
+			if (q.form === 'wh-subject' && first === 'none' && second !== 'none') {
+				// e.g. "What [was] [—] cold?" as well as "What [—] [was] cold?"
+				var asAux = second + '-q';
+				var auxHasIt = slot1Keys(q, selectedTenses()).indexOf(asAux) !== -1;
+				if (auxHasIt) combos.push([asAux, 'none']);
+			}
+			return combos;
+		}
+
 		function renderQuestion(q, index, tenses, qtype) {
 			var parts = sentenceParts(q);
 
@@ -1606,13 +1830,15 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 				var name = TENSE_NAMES[q.tense];
 				var head = '<span class="tense-chip">' + escapeHTML(name.en) +
 					'<span class="zh">' + escapeHTML(name.zh) + '</span></span>';
-				var el = questionShell(index, head,
+				// the chip already occupies a line of its own, so the translate
+				// button rides along with it rather than trailing the sentence
+				var el = questionShell(index, head + translateHTML(),
 					'<div class="sentence">' + escapeHTML(parts.head) + blankHTML(q, tenses) +
-						parts.tailHTML + translateHTML() + '</div>' + zhLineHTML() + structureHTML(q));
+						parts.tailHTML + '</div>' + zhLineHTML() + structureHTML(q));
 				wireTranslate(el, q.chineseHTML, true);
 				wireGroup(blankPairs(el, q), function () {
 					return parts.head + phraseText(q, correctVerbForm(q)) + parts.tail;
-				}, el);
+				}, el, blankCombos(q));
 				return el;
 			}
 
@@ -1630,7 +1856,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 						parts.tailHTML + '</div>' + structureHTML(q));
 				wireGroup(blankPairs(elc, q), function () {
 					return parts.head + phraseText(q, correctVerbForm(q)) + parts.tail;
-				}, elc);
+				}, elc, blankCombos(q));
 				return elc;
 			}
 
@@ -1678,15 +1904,19 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 
 		function generate() {
 			var list = document.getElementById('practice');
+			// whatever was queued belongs to questions that are about to disappear
+			window.tkStopSpeech();
 			list.innerHTML = '';
 			if (!DATA) return;
 
 			var BUILT = ['english-from-tense', 'english-from-chinese', 'tense-from-english', 'tense-from-chinese'];
-			var checked = document.querySelector('input[name="qtype"]:checked');
-			var qtype = checked ? checked.value : '';
-			if (BUILT.indexOf(qtype) === -1) {
-				list.innerHTML = '<p>This question type is not available yet.' +
-					'<span class="zh chinese"> 这种题型还没有做好。</span></p>';
+			var qtypes = Array.prototype.slice
+				.call(document.querySelectorAll('input[name="qtype"]:checked'))
+				.map(function (i) { return i.value; })
+				.filter(function (v) { return BUILT.indexOf(v) !== -1; });
+			if (!qtypes.length) {
+				list.innerHTML = '<p>Please choose at least one question type above.' +
+					'<span class="zh chinese"> 请至少选择一种题型。</span></p>';
 				return;
 			}
 			var tenses = selectedTenses();
@@ -1696,26 +1926,61 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 				return;
 			}
 			// Deal the tenses out in equal shares rather than picking at random,
-			// so a set never happens to be mostly one tense. Any remainder goes
-			// to tenses chosen at random, then the whole run is shuffled.
-			var plan = [];
-			var per = Math.floor(QUESTION_COUNT / tenses.length);
-			tenses.forEach(function (t) {
-				for (var k = 0; k < per; k++) plan.push(t);
-			});
-			var spare = tenses.slice();
-			while (plan.length < QUESTION_COUNT) {
-				if (!spare.length) spare = tenses.slice();
-				plan.push(spare.splice(Math.floor(Math.random() * spare.length), 1)[0]);
-			}
-			for (var j = plan.length - 1; j > 0; j--) {
-				var m = Math.floor(Math.random() * (j + 1));
-				var tmp = plan[j]; plan[j] = plan[m]; plan[m] = tmp;
+			// so a set never happens to be mostly one tense. The question types
+			// are shared out the same way, so a mixed set really is mixed.
+			function sharesOf(list) {
+				var plan = [];
+				var per = Math.floor(QUESTION_COUNT / list.length);
+				list.forEach(function (item) {
+					for (var k = 0; k < per; k++) plan.push(item);
+				});
+				var spare = list.slice();
+				while (plan.length < QUESTION_COUNT) {
+					if (!spare.length) spare = list.slice();
+					plan.push(spare.splice(Math.floor(Math.random() * spare.length), 1)[0]);
+				}
+				for (var j = plan.length - 1; j > 0; j--) {
+					var m = Math.floor(Math.random() * (j + 1));
+					var tmp = plan[j]; plan[j] = plan[m]; plan[m] = tmp;
+				}
+				return plan;
 			}
 
-			var forms = selectedForms();
+			// Each of the three settings is dealt out in equal shares, then the
+			// three plans are lined up so that as few questions as possible end up
+			// with the same combination of tense, question type and sentence type.
+			// Swapping entries between positions keeps every share exactly as it
+			// was, so the distribution stays even however much shuffling happens.
+			var plan = sharesOf(tenses);
+			var typePlan = sharesOf(qtypes);
+			var formPlan = sharesOf(selectedForms());
+
+			function combosOf() {
+				var seen = {};
+				var dupes = 0;
+				for (var n = 0; n < QUESTION_COUNT; n++) {
+					var key = plan[n] + '|' + typePlan[n] + '|' + formPlan[n];
+					if (seen[key]) dupes++;
+					seen[key] = true;
+				}
+				return dupes;
+			}
+
+			var dupes = combosOf();
+			var lists = [plan, typePlan, formPlan];
+			for (var attempt = 0; attempt < 300 && dupes > 0; attempt++) {
+				var which = lists[Math.floor(Math.random() * lists.length)];
+				var a = Math.floor(Math.random() * QUESTION_COUNT);
+				var b = Math.floor(Math.random() * QUESTION_COUNT);
+				if (a === b || which[a] === which[b]) continue;
+				var keep = which[a]; which[a] = which[b]; which[b] = keep;
+				var after = combosOf();
+				if (after <= dupes) dupes = after;
+				else { keep = which[a]; which[a] = which[b]; which[b] = keep; }
+			}
+
 			for (var i = 0; i < QUESTION_COUNT; i++) {
-				list.appendChild(renderQuestion(makeQuestion(plan[i], pick(forms)), i, tenses, qtype));
+				list.appendChild(renderQuestion(makeQuestion(plan[i], formPlan[i]), i, tenses, typePlan[i]));
 			}
 		}
 
@@ -1731,8 +1996,11 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 				input.disabled = few || !built;
 				card.classList.toggle('unavailable', input.disabled);
 				if (input.disabled && input.checked) {
-					var fallback = document.querySelector('input[name="qtype"][value="english-from-tense"]');
-					if (fallback) { fallback.checked = true; }
+					input.checked = false;
+					if (!document.querySelector('input[name="qtype"]:checked')) {
+						var fallback = document.querySelector('input[name="qtype"][value="english-from-tense"]');
+						if (fallback) fallback.checked = true;
+					}
 				}
 			});
 		}
@@ -1759,7 +2027,15 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			});
 		});
 		Array.prototype.forEach.call(document.querySelectorAll('input[name="qtype"], input[name="sform"]'), function (r) {
-			r.addEventListener('change', generate);
+			r.addEventListener('change', function () {
+				// as with the tenses, the last question type cannot be switched off
+				if (r.name === 'qtype' && !r.checked &&
+					!document.querySelector('input[name="qtype"]:checked')) {
+					r.checked = true;
+					return;
+				}
+				generate();
+			});
 		});
 
 		fetch('tenses-data.json')
@@ -1784,7 +2060,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			btn.classList.toggle('on', on);
 			btn.setAttribute('aria-pressed', on ? 'true' : 'false');
 			icon.className = on ? 'fa-solid fa-volume-high' : 'fa-solid fa-volume-xmark';
-			if (!on) { try { window.speechSynthesis.cancel(); } catch (e) {} }
+			if (!on) window.tkStopSpeech();
 		}
 		btn.addEventListener('click', function () {
 			on = !on;
@@ -1792,6 +2068,37 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			apply();
 		});
 		apply();
+	})();
+
+	// Each settings panel shows what is selected while it is closed.
+	(function settingsSummarySetup() {
+		function labelsFor(name) {
+			return Array.prototype.slice
+				.call(document.querySelectorAll('input[name="' + name + '"]:checked'))
+				.map(function (i) {
+					var en = i.closest('.tense-cell').querySelector('.label-en');
+					return en ? en.textContent : i.value;
+				});
+		}
+
+		function update() {
+			var tenses = labelsFor('tense');
+			var el = document.getElementById('sentence-tense');
+			if (el) el.textContent = tenses.join(', ');
+
+			var qtypes = labelsFor('qtype');
+			var q = document.getElementById('sentence-qtype');
+			if (q) q.textContent = qtypes.join(', ');
+
+			var forms = labelsFor('sform');
+			var f = document.getElementById('sentence-sform');
+			if (f) f.textContent = forms.join(', ');
+		}
+
+		document.addEventListener('change', function (e) {
+			if (e.target && e.target.name && ['tense', 'qtype', 'sform'].indexOf(e.target.name) !== -1) update();
+		});
+		update();
 	})();
 
 	// Chinese labels on/off, remembered between visits.

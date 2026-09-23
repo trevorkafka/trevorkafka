@@ -21,6 +21,15 @@ try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.docu
 <script src="https://kit.fontawesome.com/157b2a3980.js" crossorigin="anonymous"></script> <!-- Font Awesome icons -->
 
 <style>
+	/* The site's muted tan is very faint on the cream background, so this page
+	   uses a deeper grey-tan for secondary text in light mode. Dark mode keeps
+	   the site colour, which reads fine there. */
+	:root { --tk-muted: #7F7359; }
+	:root[data-theme="dark"] { --tk-muted: var(--color4); }
+	@media (prefers-color-scheme: dark) {
+		:root:not([data-theme="light"]) { --tk-muted: var(--color4); }
+	}
+
 	:root[data-theme="dark"] { color-scheme: dark; }
 	:root[data-theme="light"] { color-scheme: light; }
 	@media (prefers-color-scheme: dark) {
@@ -46,7 +55,7 @@ try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.docu
 	.page-subtitle {
 		font-family: "Noto Sans SC", sans-serif;
 		font-size: 130%;
-		color: var(--color4);
+		color: var(--tk-muted);
 		margin: 0;
 	}
 
@@ -77,7 +86,7 @@ try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.docu
 
 	.section-label .zh {
 		font-size: 90%;
-		color: var(--color4);
+		color: var(--tk-muted);
 		margin-left: 6px;
 	}
 
@@ -157,7 +166,7 @@ try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.docu
 	.grammar-table tr:last-child td, .grammar-table tr:last-child th { border-bottom: none; }
 
 	.grammar-table .key { color: var(--button-bg); font-weight: bold; }
-	.grammar-table .zh { display: block; color: var(--color4); font-size: 92%; margin-top: 2px; }
+	.grammar-table .zh { display: block; color: var(--tk-muted); font-size: 92%; margin-top: 2px; }
 
 	/* A worked example under each pattern: the same verb all the way across, so
 	   the shapes can be compared row by row. */
@@ -191,7 +200,7 @@ try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.docu
 	.vocab-item .zh {
 		display: block;
 		font-size: 90%;
-		color: var(--color4);
+		color: var(--tk-muted);
 	}
 
 	/* irregular past forms are the ones worth memorising, so they are marked */
@@ -203,13 +212,13 @@ try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.docu
 	.vocab-item .forms {
 		display: block;
 		font-size: 88%;
-		color: var(--color4);
+		color: var(--tk-muted);
 		margin-top: 2px;
 	}
 
 	body.hide-examples .example { display: none; }
 
-	.vocab-note { color: var(--color4); font-size: 14px; }
+	.vocab-note { color: var(--tk-muted); font-size: 14px; }
 </style>
 
 </head>
@@ -364,6 +373,14 @@ try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.docu
 					return { en: s.en, zh: s.zh };
 				}));
 
+				if (data.genericSubjects) {
+					// these only appear in general truths, which are stated in the
+					// simple present
+					html += section('General truths', '客观事实', data.genericSubjects.map(function (g) {
+						return { en: g.en, zh: g.zh, forms: 'simple present' };
+					}));
+				}
+
 				// Verbs and their objects as one list: a verb that takes no object
 				// stands on its own, and every object appears with its verb. A verb
 				// repeats once per object, which is the point: these are the
@@ -392,8 +409,21 @@ try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.docu
 					}));
 				}
 
+				// Each time expression carries the tense (or tenses) it is used with,
+				// since that is exactly what makes it a clue in the exercises.
+				var TENSE_SHORT = {
+					'present-simple': 'simple present',
+					'past-simple': 'simple past',
+					'future-simple': 'simple future',
+					'present-continuous': 'present continuous',
+					'present-perfect': 'present perfect'
+				};
 				html += section('Time expressions', '时间词', data.times.map(function (t) {
-					return { en: t.en, zh: t.zh };
+					return {
+						en: t.en,
+						zh: t.zh,
+						forms: t.tenses.map(function (x) { return TENSE_SHORT[x] || x; }).join(', ')
+					};
 				}));
 
 				root.innerHTML = html;
