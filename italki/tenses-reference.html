@@ -114,6 +114,12 @@ try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.docu
 	/* On a narrow screen the table uses the whole width: the page's side margin
 	   becomes padding inside the scroller, so the first and last columns can be
 	   scrolled clear of the edges. */
+	@media (max-width: 560px) {
+		/* The buttons wrap raggedly at this width, so they stack full width. */
+		.subtitle-row { flex-direction: column; align-items: stretch; gap: 8px; }
+		.subtitle-row .tk-button { justify-content: center; }
+	}
+
 	@media (max-width: 760px) {
 		.table-wrap {
 			width: 100vw;

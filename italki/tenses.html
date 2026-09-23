@@ -407,10 +407,13 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 	   sentence calls for. */
 	.sentence {
 		font-size: 17px;
-		line-height: 2;
+		line-height: 2.1;
 	}
 
 	.verb-select {
+		/* a wrapped sentence puts one dropdown under another, so they need a
+		   little air between the rows */
+		margin: 3px 0;
 		padding: 5px 8px;
 		border: 2px solid var(--color1);
 		border-radius: 8px;
@@ -638,6 +641,10 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 	.tk-button.secondary.on:hover { background: var(--button-bg-hover); }
 
 	@media (max-width: 560px) {
+		/* The buttons wrap raggedly at this width, so they stack full width. */
+		.subtitle-row { flex-direction: column; align-items: stretch; gap: 8px; }
+		.subtitle-row .tk-button { justify-content: center; }
+
 		.tense-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 		.qtype-grid { grid-template-columns: minmax(0, 1fr); }
 		.tense-cell { padding: 10px 12px; }
