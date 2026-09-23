@@ -1,5 +1,7 @@
 <!DOCTYPE HTML>
 
+<html lang="en">
+
 <head>
 <!-- Apply saved light/dark choice before paint (avoids a flash when the device default differs from the toggle) -->
 <script>
@@ -366,7 +368,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 	/* On questions that do not hand the tense over, the chip appears once the
 	   student has worked it out. The space is reserved, so nothing jumps. */
 	/* The sentence pattern, revealed with the answer. Quieter than the tense
-	   chip: an outline rather than a fill. */
+	   chip: plain text rather than a chip of its own. */
 	.structure-line {
 		margin-top: 10px;
 		opacity: 0;
@@ -380,9 +382,6 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 		flex-direction: column;   /* English pattern above, Chinese below */
 		align-items: flex-start;
 		gap: 2px;
-		padding: 4px 12px;
-		border: 1px solid var(--divider);
-		border-radius: 100px;
 		color: var(--tk-muted);
 		font-size: 13px;
 		line-height: 1.5;
@@ -502,19 +501,18 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 		width: 32px;
 		height: 32px;
 		padding: 0;
-		border: 1px solid var(--divider);
-		border-radius: 50%;
+		border: 0;
 		background: transparent;
 		color: var(--tk-muted);
 		font-size: 19px;      /* fills the circle, so the glyph reads clearly */
 		line-height: 1;
 		vertical-align: middle;
 		cursor: pointer;
-		transition: border-color 0.15s ease, color 0.15s ease;
+		transition: color 0.15s ease;
 	}
 
 	.translate-btn:hover,
-	.translate-btn.on { border-color: var(--color1); color: var(--color1); }
+	.translate-btn.on { color: var(--color1); }
 
 	/* Once the tense has been worked out, the words that gave it away are bolded
 	   (only where the tense was not handed to the student in the first place). */
@@ -622,7 +620,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 		flex-wrap: wrap;
 		align-items: center;
 		gap: 14px;
-		margin: -10px 0 6px;
+		margin: 12px 0 6px;
 		min-height: 40px;
 	}
 
@@ -649,7 +647,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 
 </head>
 
-<body>
+<body translate="no" class="notranslate">
 
 	<div class="content">
 
@@ -663,12 +661,14 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 		</div>
 
 		<h1>Trevor's English Tenses Practice Page</h1>
+		<p class="page-subtitle zh">康明的英语时态练习网页</p>
+
 		<div class="subtitle-row">
 			<a class="tk-button secondary" href="tenses-reference.html">
 				<i class="fa-solid fa-book"></i>
 				<span>Reference Material</span><span class="zh chinese">参考资料</span>
 			</a>
-			<button type="button" class="tk-button secondary" id="toggle-zh">
+			<button type="button" class="tk-button secondary" id="toggle-zh" aria-pressed="true">
 				<i class="fa-solid fa-language"></i>
 				<span id="toggle-zh-label">隐藏中文</span>
 			</button>
@@ -676,8 +676,9 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 				<i class="fa-solid fa-volume-xmark" id="toggle-tts-icon"></i>
 				<span>Read aloud</span><span class="zh chinese">朗读</span>
 			</button>
-			<p class="page-subtitle zh">康明的英语时态练习网页</p>
 		</div>
+
+		<p class="section-label">Settings<span class="zh">设定</span></p>
 
 		<details class="settings" id="settings-tense">
 			<summary><span class="arr">›</span><span class="settings-name">Tenses<span class="zh">时态</span></span><span class="settings-sentence" id="sentence-tense"></span></summary>
@@ -826,6 +827,8 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 				<span>Reset answers</span><span class="zh chinese">清空答案</span>
 			</button>
 		</div>
+
+		<p class="section-label">Questions<span class="zh">练习题</span></p>
 
 		<div class="practice-list" id="practice"></div>
 
@@ -2104,13 +2107,14 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 	// Chinese labels on/off, remembered between visits.
 	(function chineseToggleSetup() {
 		var btn = document.getElementById('toggle-zh');
-		var label = document.getElementById('toggle-zh-label');
 		var hidden = false;
 		try { hidden = localStorage.getItem('tenses-hide-zh') === '1'; } catch (e) {}
 
 		function apply() {
+			// lit like the read-aloud button when the Chinese is showing
 			document.body.classList.toggle('hide-zh', hidden);
-			label.textContent = hidden ? '显示中文' : '隐藏中文';
+			btn.classList.toggle('on', !hidden);
+			btn.setAttribute('aria-pressed', hidden ? 'false' : 'true');
 			document.dispatchEvent(new CustomEvent('zh-toggled'));
 		}
 		btn.addEventListener('click', function () {
@@ -2171,3 +2175,5 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 	</script>
 
 </body>
+
+</html>

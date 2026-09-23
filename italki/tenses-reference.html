@@ -1,5 +1,7 @@
 <!DOCTYPE HTML>
 
+<html lang="en">
+
 <head>
 <!-- Apply saved light/dark choice before paint (avoids a flash when the device default differs from the toggle) -->
 <script>
@@ -41,6 +43,7 @@ try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.docu
 	body.hide-zh .zh,
 	body.hide-zh .chinese { display: none; }
 
+	/* the Chinese toggle keeps its own Chinese label either way */
 	body.hide-zh #toggle-zh-label { display: inline; }
 
 	.subtitle-row {
@@ -48,7 +51,7 @@ try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.docu
 		flex-wrap: wrap;
 		align-items: center;
 		gap: 14px;
-		margin: -10px 0 6px;
+		margin: 12px 0 6px;
 		min-height: 40px;
 	}
 
@@ -56,7 +59,7 @@ try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.docu
 		font-family: "Noto Sans SC", sans-serif;
 		font-size: 130%;
 		color: var(--tk-muted);
-		margin: 0;
+		margin: -10px 0 0;
 	}
 
 	.tk-button {
@@ -76,6 +79,16 @@ try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.docu
 	}
 
 	.tk-button:hover { background: var(--tint-1); }
+
+	/* A toggle fills in while it is on, so its state is visible at a glance. */
+	.tk-button.on {
+		background: var(--button-bg);
+		border-color: var(--button-bg);
+		color: var(--button-text, #FFF6EC);
+		text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.35);
+	}
+
+	.tk-button.on:hover { background: var(--button-bg-hover); }
 
 	.section-label {
 		margin: 30px 0 4px;
@@ -223,23 +236,24 @@ try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.docu
 
 </head>
 
-<body>
+<body translate="no" class="notranslate">
 
 	<div class="content">
 
 		<h1>Trevor's English Tenses Reference</h1>
 
+		<p class="page-subtitle zh">康明的英语时态参考资料</p>
+
 		<div class="subtitle-row">
 			<a class="tk-button" href="tenses.html"><i class="fa-solid fa-arrow-left"></i> <span>Practice page</span><span class="zh chinese">练习页</span></a>
-			<button type="button" class="tk-button" id="toggle-zh">
+			<button type="button" class="tk-button" id="toggle-zh" aria-pressed="true">
 				<i class="fa-solid fa-language"></i>
 				<span id="toggle-zh-label">隐藏中文</span>
 			</button>
-			<button type="button" class="tk-button" id="toggle-examples">
+			<button type="button" class="tk-button" id="toggle-examples" aria-pressed="true">
 				<i class="fa-solid fa-comment-dots"></i>
-				<span id="toggle-examples-label">Hide examples</span><span class="zh chinese">例句</span>
+				<span>Examples</span><span class="zh chinese">例句</span>
 			</button>
-			<p class="page-subtitle zh">康明的英语时态参考资料</p>
 		</div>
 
 		<p class="section-label">Sentence patterns<span class="zh">句型结构</span></p>
@@ -436,13 +450,13 @@ try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.docu
 	// The worked examples can be switched off for a compact table.
 	(function exampleToggleSetup() {
 		var btn = document.getElementById('toggle-examples');
-		var label = document.getElementById('toggle-examples-label');
 		var hidden = false;
 		try { hidden = localStorage.getItem('tenses-hide-examples') === '1'; } catch (e) {}
 
 		function apply() {
 			document.body.classList.toggle('hide-examples', hidden);
-			label.textContent = hidden ? 'Show examples' : 'Hide examples';
+			btn.classList.toggle('on', !hidden);
+			btn.setAttribute('aria-pressed', hidden ? 'false' : 'true');
 		}
 		btn.addEventListener('click', function () {
 			hidden = !hidden;
@@ -455,13 +469,13 @@ try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.docu
 	// Chinese labels on/off, shared with the practice page through localStorage.
 	(function chineseToggleSetup() {
 		var btn = document.getElementById('toggle-zh');
-		var label = document.getElementById('toggle-zh-label');
 		var hidden = false;
 		try { hidden = localStorage.getItem('tenses-hide-zh') === '1'; } catch (e) {}
 
 		function apply() {
 			document.body.classList.toggle('hide-zh', hidden);
-			label.textContent = hidden ? '显示中文' : '隐藏中文';
+			btn.classList.toggle('on', !hidden);
+			btn.setAttribute('aria-pressed', hidden ? 'false' : 'true');
 		}
 		btn.addEventListener('click', function () {
 			hidden = !hidden;
@@ -521,3 +535,5 @@ try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.docu
 	</script>
 
 </body>
+
+</html>
