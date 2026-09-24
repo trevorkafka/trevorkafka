@@ -1,4 +1,26 @@
 [
+	{"date": "2026-09-24",
+	"vocabulary": [
+		{"word": "Annabelle", "IPA": "/ˈænəˌbɛl/", "translation": "安娜贝尔（人名）"},
+		{"word": "Anna", "IPA": "/ˈænə/", "translation": "安娜（人名）"},
+		{"word": "Michael", "IPA": "/ˈmaɪkəl/", "translation": "迈克尔（人名）"},
+		{"word": "Mike", "IPA": "/maɪk/", "translation": "迈克（人名）"},
+		{"word": "gimmie", "IPA": "/ˈɡɪmi/", "translation": "给我（give me 的口语读法）"},
+		{"word": "cuppa joe", "IPA": "/ˈkʌpə dʒoʊ/", "translation": "一杯咖啡（口语）"},
+		{"word": "All set!", "audio": "all set", "IPA": "/ɔl sɛt/", "translation": "准备好了"},
+		{"word": "it depends on", "IPA": "/ɪt dɪˈpɛndz ɑn/", "translation": "取决于"},
+		{"word": "board game", "IPA": "/bɔrd ɡeɪm/", "translation": "桌游；棋牌游戏"},
+		{"word": "video game", "IPA": "/ˈvɪdioʊ ɡeɪm/", "translation": "电子游戏"},
+		{"word": "confused", "IPA": "/kənˈfjuzd/", "translation": "困惑的"},
+		{"word": "based on", "IPA": "/beɪst ɑn/", "translation": "基于"},
+		{"word": "sword", "IPA": "/sɔrd/", "translation": "剑"},
+		{"word": "swordsman", "IPA": "/ˈsɔrdzmən/", "translation": "剑客"},
+		{"word": "martial arts", "IPA": "/ˈmɑrʃəl ɑrts/", "translation": "武术"},
+		{"word": "night shift", "IPA": "/naɪt ʃɪft/", "translation": "夜班"},
+		{"word": "drop off", "IPA": "/drɑp ɑf/", "translation": "送（某人）"},
+		{"word": "pick up", "IPA": "/pɪk ʌp/", "translation": "接（某人）"},
+		{"word": "sleep in", "IPA": "/slip ɪn/", "translation": "睡懒觉"}
+	]},
 	{"date": "2026-09-21",
 	"vocabulary": [
 		{"word": "permanent", "IPA": "/ˈpɜrmənənt/", "translation": "永久的"},
