@@ -15,7 +15,125 @@
     --cal-tx:       var(--transitiontime, 0.2s);
   }
   * { box-sizing: border-box; }
-  .cal-container { container-type: inline-size; }
+  .cal-container { container-type: inline-size; position: relative; }
+
+  /* A whole-horizon glance at the availability, in the margin beside the
+     calendar. One row per week of the pager, one column per weekday, and a
+     green cell wherever that day has a slot long enough for the selected
+     lesson length. Only shown when there is room for it beside the
+     1000px-wide calendar. */
+  .mini-cal {
+    display: none;
+    position: absolute;
+    left: -186px;   /* in the margin beside the 1000px calendar column */
+    width: 154px;
+    z-index: 5;
+    color: var(--cal-muted);
+    font-family: Freeman, sans-serif;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+  }
+  .mini-cal.ready { opacity: 1; }
+
+  /* 1000px of calendar + 154px of grid + gaps on both sides */
+  @media (min-width: 1420px) {
+    .mini-cal { display: block; }
+  }
+
+  /* No gaps: neighbouring free days run together into a block. The first
+     column is the gutter the month names stand in. */
+  .mini-cal-grid {
+    display: grid;
+    grid-template-columns: 16px repeat(7, 1fr);
+  }
+
+  .mini-cal-month {
+    grid-column: 1;
+    display: flex;
+    align-items: center;
+    /* the box is flipped, so its flex end is the visual top of the segment,
+       and padding on its bottom is the gap under the month rule */
+    justify-content: flex-end;
+    padding-bottom: 6px;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    text-transform: uppercase;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    color: var(--cal-muted);
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .mini-cal-dow {
+    font-size: 11px;
+    line-height: 18px;
+    text-align: center;
+    color: var(--cal-muted);
+  }
+
+  .mini-cal-day {
+    position: relative;
+    height: 20px;
+    /* the page's plain text face, not the display font of the headings */
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    line-height: 20px;
+    text-align: center;
+    /* faded with alpha rather than opacity: the month rules below are drawn on
+       the same element and have to stay at full strength */
+    color: var(--cal-muted);
+    transition: color var(--cal-tx) ease, background-color var(--cal-tx) ease;
+  }
+
+  /* The green is a fixed light color in both themes, so the number on top of
+     it is always the dark ink rather than the theme's text color. */
+  .mini-cal-day-free {
+    background: color-mix(in srgb, var(--cal-available) 26%, transparent);
+  }
+
+  /* Same corner flag the calendar's header uses for today. */
+  .mini-cal-day-today::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-top: 7px solid var(--cal-accent);
+  }
+
+  /* The seven days the calendar is showing are simply the ones in full
+     strength; the rest of the horizon sits back. No frames or rules, which
+     would be louder than anything else on the page. */
+  /* dates outside the 90-day horizon: present, but only just */
+  .mini-cal-day-outside { color: color-mix(in srgb, var(--cal-muted) 55%, transparent); }
+
+  .mini-cal-day[data-week] { cursor: pointer; }
+
+  /* The week on show carries full color and weight; everything else is held
+     well back, so the eye lands on it straight away. */
+  .mini-cal-day-shown { color: var(--cal-text); }
+  .mini-cal-day-shown.mini-cal-day-free { background: var(--cal-available); color: #3C303E; }
+
+  /* Month boundaries: a hard line along the top of each new month's cells,
+     stepping down with a vertical segment where the month turns mid-week. */
+  .mini-cal-m-top  { box-shadow: inset 0 1px 0 var(--cal-text); }
+  /* the label box is flipped, so its rule is drawn on what is locally the bottom */
+  .mini-cal-month.mini-cal-m-top { box-shadow: inset 0 -1px 0 var(--cal-text); }
+  .mini-cal-m-left { box-shadow: inset 1px 0 0 var(--cal-text); }
+  .mini-cal-m-top.mini-cal-m-left {
+    box-shadow: inset 0 1px 0 var(--cal-text), inset 1px 0 0 var(--cal-text);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mini-cal-day { transition: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mini-cal { transition: none; }
+  }
 
   .legend {
     max-width: 1000px;
@@ -659,6 +777,7 @@
   }
 </style>
 <div class="cal-container">
+<div class="mini-cal" id="mini-cal" role="group" aria-label="Jump to a week"></div>
 <div class="legend">
   <div class="legend-keys">
     <span><span class="legend-swatch available"></span>Available</span>
@@ -947,6 +1066,129 @@
     updateWeekNav(days);
     const grid = classify(cachedEvents, days, currentMinRun());
     render(root, days, grid);
+    renderMiniCal();
+  }
+
+  // ---- mini calendar (the availability page only) ----
+  // Calendar weeks running Sunday to Saturday, so the horizon starts partway
+  // into the first row. Today carries the same corner flag the calendar uses,
+  // and the seven days on show beside it are boxed in.
+  function miniCalEnabled() {
+    return !!document.querySelector('trevorkafka-availability[data-mini-calendar]');
+  }
+
+  function renderMiniCal() {
+    const el = document.getElementById('mini-cal');
+    if (!el || !miniCalEnabled() || !cachedEvents) return;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const days = [];
+    for (let i = 0; i < loadedWeeks() * 7; i++) {
+      const d = new Date(today);
+      d.setDate(today.getDate() + i);
+      days.push(d);
+    }
+
+    // Judged over the whole range at once, so a free evening running into the
+    // next morning is measured the same way the calendar measures it.
+    const grid = classify(cachedEvents, days, currentMinRun());
+
+    // Blank cells before today, so the columns are real weekdays.
+    const lead = today.getDay();
+    const letterFmt = new Intl.DateTimeFormat(undefined, { weekday: 'narrow' });
+    const sunday = new Date(today);
+    sunday.setDate(today.getDate() - lead);
+
+    // The week the calendar is showing: seven days from today + weekOffset.
+    const shownFrom = weekOffset * 7;
+    const shownTo = shownFrom + 6;
+
+    // Whole weeks, so the days on either end of the horizon are dated too
+    // rather than left as gaps.
+    const cellCount = Math.ceil((lead + days.length) / 7) * 7;
+
+    // A row belongs to the month of its Sunday, so the top of a month's label
+    // lands on the same line as the month rule beside it.
+    const monthFmt = new Intl.DateTimeFormat(undefined, { month: 'short' });
+    const rowMonth = [];
+    for (let r = 0; r * 7 < cellCount; r++) {
+      const first = new Date(sunday);
+      first.setDate(sunday.getDate() + r * 7);
+      rowMonth.push(first);
+    }
+    const spanStart = rowMonth.map((d, r) => r === 0 || d.getMonth() !== rowMonth[r - 1].getMonth());
+    const spanLength = rowMonth.map((d, r) => {
+      let n = 1;
+      while (r + n < rowMonth.length && rowMonth[r + n].getMonth() === d.getMonth()) n++;
+      return n;
+    });
+
+    let html = '<div class="mini-cal-grid"><div></div>';
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(sunday);
+      d.setDate(sunday.getDate() + i);
+      html += '<div class="mini-cal-dow">' + escapeHTML(letterFmt.format(d)) + '</div>';
+    }
+    for (let c = 0; c < cellCount; c++) {
+      const r = c / 7;
+      if (Number.isInteger(r) && spanStart[r]) {
+        html += '<div class="mini-cal-month' + (r ? ' mini-cal-m-top' : '') +
+          '" style="grid-row: span ' + spanLength[r] + '">' +
+          escapeHTML(monthFmt.format(rowMonth[r])) + '</div>';
+      }
+
+      const i = c - lead;                       // index into the horizon
+      const inRange = i >= 0 && i < days.length;
+      const d = new Date(sunday);
+      d.setDate(sunday.getDate() + c);
+
+      const cls = ['mini-cal-day'];
+      // a new month draws a line above it, and to its left when it starts
+      // partway through a row
+      const above = new Date(d); above.setDate(d.getDate() - 7);
+      const left  = new Date(d); left.setDate(d.getDate() - 1);
+      if (above.getMonth() !== d.getMonth()) cls.push('mini-cal-m-top');
+      if (c % 7 !== 0 && left.getMonth() !== d.getMonth()) cls.push('mini-cal-m-left');
+      if (!inRange) cls.push('mini-cal-day-outside');
+      if (inRange && grid[i].some(state => state === 1)) cls.push('mini-cal-day-free');
+      if (i === 0) cls.push('mini-cal-day-today');
+      if (i >= shownFrom && i <= shownTo) cls.push('mini-cal-day-shown');
+      // days within the horizon page the calendar to their own week
+      const week = inRange ? ' data-week="' + Math.floor(i / 7) + '"' : '';
+      html += '<div class="' + cls.join(' ') + '"' + week + '>' + d.getDate() + '</div>';
+    }
+    html += '</div>';
+    el.innerHTML = html;
+    positionMiniCal();
+    el.classList.add('ready');
+  }
+
+  // Clicking a day pages the calendar to the week that day belongs to.
+  (function setupMiniCalClicks() {
+    const el = document.getElementById('mini-cal');
+    if (!el) return;
+    // pages that haven't opted in (the homepage) shouldn't carry an empty box
+    // in the margin where their own table of contents sits
+    if (!miniCalEnabled()) { el.remove(); return; }
+    el.addEventListener('click', e => {
+      const cell = e.target.closest('[data-week]');
+      if (!cell) return;
+      const wk = Number(cell.getAttribute('data-week'));
+      if (!Number.isFinite(wk) || wk === weekOffset) return;
+      weekOffset = Math.max(0, Math.min(loadedWeeks() - 1, wk));
+      renderWeek();
+    });
+  })();
+
+  // Line the weekday letters up with the calendar's own header row.
+  function positionMiniCal() {
+    const el = document.getElementById('mini-cal');
+    const cal = document.querySelector('#root .calendar');
+    if (!el || !cal || !el.offsetParent) return;
+    let y = 0;
+    for (let node = cal; node && node !== el.offsetParent; node = node.offsetParent) y += node.offsetTop;
+    el.style.top = y + 'px';
   }
 
   function buildWeek(today, offset = 0) {
@@ -1643,6 +1885,7 @@ function updateWeekNav(days) {
       const root = document.getElementById('root');
       if (!root || !root.querySelector('.calendar')) return;
       renderPauseNotice(root, buildWeek(new Date(), weekOffset));
+      positionMiniCal();
     });
   });
 })();
