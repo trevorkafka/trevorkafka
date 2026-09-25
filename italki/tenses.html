@@ -12,7 +12,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 	<title>Trevor's English Tenses Practice Page</title>
 	<meta name="robots" content="noindex, nofollow">
 	<meta charset="utf-8"> <!--ensures that there aren't any issues with the display of emojis -->
-	<meta name="viewport" content="width=device-width"> <!-- essential for making sure that the ACTUAL screen width is interpreted by the CSS as opposed to some idealized number presented by smartphones (980px+) -->
+	<meta name="viewport" content="width=device-width, initial-scale=1"> <!-- essential for making sure that the ACTUAL screen width is interpreted by the CSS as opposed to some idealized number presented by smartphones (980px+) -->
 	<link rel="preload" href="/fonts/freeman-latin.woff2" as="font" type="font/woff2" crossorigin>
 	<link rel="preload" href="/fonts/greatvibes-latin.woff2" as="font" type="font/woff2" crossorigin>
 	<link href="/style.css" rel="stylesheet">
@@ -643,7 +643,9 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 	@media (max-width: 560px) {
 		/* The buttons wrap raggedly at this width, so they stack full width. */
 		.subtitle-row { flex-direction: column; align-items: stretch; gap: 8px; }
-		.subtitle-row .tk-button { justify-content: center; }
+		/* the link and the two <button>s differ in box model (the site gives
+		   buttons a 6px margin), so even them out or the link sits wider */
+		.subtitle-row .tk-button { justify-content: center; margin: 0; box-sizing: border-box; }
 
 		.tense-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 		.qtype-grid { grid-template-columns: minmax(0, 1fr); }

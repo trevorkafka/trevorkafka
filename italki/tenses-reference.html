@@ -11,7 +11,7 @@ try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.docu
 	<title>Trevor's English Tenses Reference</title>
 	<meta name="robots" content="noindex, nofollow">
 	<meta charset="utf-8"> <!--ensures that there aren't any issues with the display of emojis -->
-	<meta name="viewport" content="width=device-width"> <!-- essential for making sure that the ACTUAL screen width is interpreted by the CSS as opposed to some idealized number presented by smartphones (980px+) -->
+	<meta name="viewport" content="width=device-width, initial-scale=1"> <!-- essential for making sure that the ACTUAL screen width is interpreted by the CSS as opposed to some idealized number presented by smartphones (980px+) -->
 	<link rel="preload" href="/fonts/freeman-latin.woff2" as="font" type="font/woff2" crossorigin>
 	<link rel="preload" href="/fonts/greatvibes-latin.woff2" as="font" type="font/woff2" crossorigin>
 	<link href="/style.css" rel="stylesheet">
@@ -105,8 +105,11 @@ try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.docu
 
 	/* ---- the grammar table ---- */
 	.table-wrap {
+		box-sizing: border-box;   /* the side padding below must sit inside 100vw */
 		max-width: 920px;
 		margin: 14px auto 10px;
+		border: solid 1px white;
+		border-radius: 10px;
 		overflow-x: auto;   /* narrow screens scroll sideways rather than squash the patterns */
 		overflow-y: clip;   /* ... but never gets a vertical scrollbar of its own */
 	}
@@ -117,11 +120,16 @@ try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.docu
 	@media (max-width: 560px) {
 		/* The buttons wrap raggedly at this width, so they stack full width. */
 		.subtitle-row { flex-direction: column; align-items: stretch; gap: 8px; }
-		.subtitle-row .tk-button { justify-content: center; }
+		/* the link and the two <button>s differ in box model (the site gives
+		   buttons a 6px margin), so even them out or the link sits wider */
+		.subtitle-row .tk-button { justify-content: center; margin: 0; box-sizing: border-box; }
 	}
 
 	@media (max-width: 760px) {
 		.table-wrap {
+			border: none;
+			border-radius: 0;
+			box-shadow: none;
 			width: 100vw;
 			max-width: none;
 			margin-left: calc(50% - 50vw);
@@ -150,17 +158,22 @@ try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.docu
 
 	.grammar-table {
 		width: 100%;
-		min-width: 700px;
+		min-width: 880px;
 		border-collapse: collapse;
 		font-size: 14px;
 	}
 
 	.grammar-table th, .grammar-table td {
-		padding: 10px 12px;
+		padding: 12px 20px;
 		text-align: left;
 		vertical-align: top;
 		border-bottom: 1px solid var(--divider);
+		/* a column narrower than this breaks the patterns over too many lines,
+		   so the table scrolls sideways instead */
+		min-width: 185px;
 	}
+
+	.grammar-table th:first-child, .grammar-table td:first-child { min-width: 120px; }
 
 	.grammar-table th {
 		background: var(--tint-1);
@@ -170,16 +183,18 @@ try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.docu
 	}
 
 	/* The table is long, so its header row stays in view as the page scrolls.
-	   The tint sits on an opaque base, so body rows pass underneath it. */
+	   The fill is opaque, so body rows pass underneath it. */
 	.grammar-table thead th {
 		position: sticky;
 		top: 0;
 		z-index: 2;
-		background-color: var(--color3);
-		background-image: linear-gradient(var(--tint-3), var(--tint-3));
-		border-bottom: 2px solid var(--color1);
-		color: var(--color1);
+		padding: 14px 20px;
+		background-color: var(--color1);
+		border-bottom: none;
+		color: var(--color3);
 	}
+
+	.grammar-table thead th .zh { color: var(--color3); opacity: 0.75; }
 
 	.grammar-table tbody th { background: transparent; }
 	.grammar-table tr:last-child td, .grammar-table tr:last-child th { border-bottom: none; }
@@ -265,7 +280,7 @@ try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.docu
 		<p class="section-label">Sentence patterns<span class="zh">句型结构</span></p>
 		<p>Every sentence on the practice page follows one of these patterns. <span class="chinese">练习页上的句子都用下面的结构。</span></p>
 
-		<div class="table-wrap">
+		<div class="table-wrap tk-table-frame">
 			<table class="grammar-table">
 				<thead>
 					<tr>
@@ -389,17 +404,17 @@ try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.docu
 			.then(function (data) {
 				var html = '';
 
-				html += section('Subjects', '主语', data.subjects.map(function (s) {
+				// One list of subjects. The last few only appear in general truths,
+				// which are stated in the simple present, so they say so.
+				var subjects = data.subjects.map(function (s) {
 					return { en: s.en, zh: s.zh };
-				}));
-
+				});
 				if (data.genericSubjects) {
-					// these only appear in general truths, which are stated in the
-					// simple present
-					html += section('General truths', '客观事实', data.genericSubjects.map(function (g) {
-						return { en: g.en, zh: g.zh, forms: 'simple present' };
+					subjects = subjects.concat(data.genericSubjects.map(function (g) {
+						return { en: g.en, zh: g.zh, forms: 'general truths · simple present' };
 					}));
 				}
+				html += section('Subjects', '主语', subjects);
 
 				// Verbs and their objects as one list: a verb that takes no object
 				// stands on its own, and every object appears with its verb. A verb
