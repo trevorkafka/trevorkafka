@@ -80,15 +80,30 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 		/* Payment options, framed like the tables on the discount pages. */
 		.pay-frame {
 			width: fit-content;
+			max-width: min(100%, 720px);   /* narrower, so the cells wrap rather than run on */
 			margin: 2em auto;
 			border-radius: 10px;
 			overflow: hidden;
 			border: solid 1px white;
 		}
 
+		/* The mailing address is drawn as outlines rather than set as text, so
+		   it is not sitting in the markup for scrapers to pick up. */
+		.pay-address { fill: currentColor; display: block; max-width: 100%; height: auto; }
+
+		.pay-frame td:first-child { width: 30%; }
+		.pay-frame td:last-child { width: 1%; white-space: nowrap; }
+
+		/* the fee-free rows read like the discounts on the package pages */
+		.pay-fee-none {
+			font-family: "Freeman", sans-serif;
+			font-size: 115%;
+			line-height: 1;
+		}
+
 		@media (max-width: 600px) {
 			.pay-frame { width: 100%; }
-			.pay-frame table, .pay-frame tbody, .pay-frame tr, .pay-frame td { display: block; width: 100%; }
+			.pay-frame table, .pay-frame tbody, .pay-frame tr, .pay-frame td { display: block; width: 100%; box-sizing: border-box; }
 			.pay-frame thead { display: none; }
 			.pay-frame tr { padding: 6px 0; }
 			.pay-frame td { padding: 4px 16px !important; }
@@ -99,6 +114,28 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 		}
 
 		/* a boxed aside, matching the announcement box's frame */
+		/* A fact card beside the section's text, in the shape of the pair on the
+		   homepage (register 12+ hrs / cancel 24+ hrs). */
+		.si-intro-row {
+			display: flex;
+			justify-content: space-between;
+			align-items: flex-start;
+			flex-wrap: wrap;
+			gap: 20px;
+		}
+
+		.si-intro-text { flex: 1 1 320px; max-width: 600px; }
+
+		.si-fact-card {
+			padding: 20px;
+			border-radius: 20px;
+			text-align: center;
+			font-weight: bold;
+			margin: 0 auto;
+		}
+
+		.si-fact-card table { margin: 0 auto; }
+
 		.si-callout {
 			background: var(--color3);
 			padding: 15px;
@@ -132,11 +169,9 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 		</div>
 
 		<div class="tool-cards">
-			<span class="quick-links-title">Quick links</span>
-			<a class="tool-card" href="/login.html"><i class="fa-solid fa-right-to-bracket"></i> Student Portal</a>
-			<a class="tool-card" href="/availability.html"><i class="fa-solid fa-calendar-days"></i> My Availability</a>
+			<a class="tool-card" href="/login.html"><i class="fa-solid fa-right-to-bracket"></i> Book Lessons</a>
+			<a class="tool-card" href="/availability.html"><i class="fa-solid fa-calendar-days"></i> Availability</a>
 			<a class="tool-card" href="/mynotes.html"><i class="fa-solid fa-note-sticky"></i> My Class Notes</a>
-			<a class="tool-card" href="mailto:tutor@trevorkafka.com"><i class="fa-solid fa-envelope"></i> Email Trevor</a>
 		</div>
 
 		<h2 class="section-heading"><i class="fa-solid fa-calendar-check"></i> Booking &amp; Scheduling</h2>
@@ -246,9 +281,26 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 
 		<h2 class="section-heading"><i class="fa-solid fa-credit-card"></i> Billing &amp; Payments</h2>
 
-		<p>In most cases, lessons are billed on the <strong>first of each month</strong> for the lessons that took place during the previous month. Invoices are sent out automatically by email, and billing information is visible in the <a href="/login.html">student portal</a> to parents and adult students.</p>
+		<div class="si-intro-row">
+			<div class="si-intro-text">
+				<p style="margin-top: 0">In most cases, lessons are billed on the <strong>first of each month</strong> for the lessons that took place during the previous month. Invoices are sent out automatically by email, and billing information is visible in the <a href="/login.html">student portal</a> to parents and adult students.</p>
 
-		<p>Available payment options are shown below. Please note that as of August 2025, online payments carry a <strong>2.89% processing fee</strong> to offset credit card processing costs.</p>
+				<p>Available payment options are shown below. Please note that as of August 2025, online payments carry a <strong>2.89% processing fee</strong> to offset credit card processing costs.</p>
+			</div>
+
+			<div class="glow-shadow tk-table-frame si-fact-card">
+				Invoices sent on
+				<table>
+					<tr>
+						<td style="padding: 0px;"><span style="font-family: freeman, sans-serif; font-size: 400%; margin-right: -3px;">1</span></td>
+						<td style="padding: 8px 0px 0px 0px; font-family: freeman, sans-serif; line-height: 1; vertical-align: top; text-align: left;">
+							<span style="font-size: 250%">st</span>
+						</td>
+					</tr>
+				</table>
+				of each month
+			</div>
+		</div>
 
 		<div class="tk-table-frame pay-frame">
 		<table style="border-collapse: collapse;">
@@ -256,24 +308,24 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 				<tr style="background-color: var(--color1); color: var(--color3);">
 					<th style="padding: 14px 20px; text-align: left;">Payment method</th>
 					<th style="padding: 14px 20px; text-align: left;">Send to&hellip;</th>
-					<th style="padding: 14px 20px; text-align: left;">Processing fee</th>
+					<th style="padding: 14px 20px; text-align: left; white-space: nowrap;">Processing fee</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr>
-					<td style="padding: 12px 20px;" data-label="Payment method"><strong>Zelle</strong> (preferred)</td>
+					<td style="padding: 12px 20px;" data-label="Payment method">Zelle (preferred)</td>
 					<td style="padding: 12px 20px;" data-label="Send to"><trevorkafka-email></trevorkafka-email></td>
-					<td style="padding: 12px 20px; white-space: nowrap;" data-label="Processing fee">none</td>
+					<td style="padding: 12px 20px;" data-label="Processing fee"><strong class="color pay-fee-none">none</strong></td>
 				</tr>
 				<tr style="background-color: var(--color4light);">
 					<td style="padding: 12px 20px;" data-label="Payment method">Online payment (credit card, Venmo, auto pay, etc.)</td>
-					<td style="padding: 12px 20px;" data-label="Send to">Pay online through the <a href="/login.html">student portal</a>.</td>
-					<td style="padding: 12px 20px; white-space: nowrap;" data-label="Processing fee">2.89%</td>
+					<td style="padding: 12px 20px;" data-label="Send to">Pay online by <a href="/login.html">logging in</a> or using the link in your emailed invoice.</td>
+					<td style="padding: 12px 20px;" data-label="Processing fee">2.89%</td>
 				</tr>
 				<tr>
 					<td style="padding: 12px 20px;" data-label="Payment method">Paper check via mail</td>
-					<td style="padding: 12px 20px;" data-label="Send to">Trevor Kafka<br>6 Liberty Sq PMB 91595<br>Boston, MA 02109</td>
-					<td style="padding: 12px 20px; white-space: nowrap;" data-label="Processing fee">none</td>
+					<td style="padding: 12px 20px;" data-label="Send to"><svg class="pay-address" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 174 61" width="174" height="61" role="img" aria-label="Mailing address for paper checks"><path transform="translate(0.00 19.00) scale(0.00781 -0.00781)" d="M531 0V1293H48V1466H1210V1293H725V0Z"/><path transform="translate(9.77 19.00) scale(0.00781 -0.00781)" d="M133 0V1062H295V901Q357 1014 409.5 1050.0Q462 1086 525 1086Q616 1086 710 1028L648 861Q582 900 516 900Q457 900 410.0 864.5Q363 829 343 766Q313 670 313 556V0Z"/><path transform="translate(15.10 19.00) scale(0.00781 -0.00781)" d="M862 342 1048 319Q1004 156 885.0 66.0Q766 -24 581 -24Q348 -24 211.5 119.5Q75 263 75 522Q75 790 213.0 938.0Q351 1086 571 1086Q784 1086 919.0 941.0Q1054 796 1054 533Q1054 517 1053 485H261Q271 310 360.0 217.0Q449 124 582 124Q681 124 751.0 176.0Q821 228 862 342ZM271 633H864Q852 767 796 834Q710 938 573 938Q449 938 364.5 855.0Q280 772 271 633Z"/><path transform="translate(24.00 19.00) scale(0.00781 -0.00781)" d="M430 0 26 1062H216L444 426Q481 323 512 212Q536 296 579 414L815 1062H1000L598 0Z"/><path transform="translate(32.00 19.00) scale(0.00781 -0.00781)" d="M68 531Q68 826 232 968Q369 1086 566 1086Q785 1086 924.0 942.5Q1063 799 1063 546Q1063 341 1001.5 223.5Q940 106 822.5 41.0Q705 -24 566 -24Q343 -24 205.5 119.0Q68 262 68 531ZM253 531Q253 327 342.0 225.5Q431 124 566 124Q700 124 789.0 226.0Q878 328 878 537Q878 734 788.5 835.5Q699 937 566 937Q431 937 342.0 836.0Q253 735 253 531Z"/><path transform="translate(40.90 19.00) scale(0.00781 -0.00781)" d="M133 0V1062H295V901Q357 1014 409.5 1050.0Q462 1086 525 1086Q616 1086 710 1028L648 861Q582 900 516 900Q457 900 410.0 864.5Q363 829 343 766Q313 670 313 556V0Z"/><path transform="translate(50.67 19.00) scale(0.00781 -0.00781)" d="M150 0V1466H344V739L1072 1466H1335L720 872L1362 0H1106L584 742L344 508V0Z"/><path transform="translate(61.34 19.00) scale(0.00781 -0.00781)" d="M828 131Q728 46 635.5 11.0Q543 -24 437 -24Q262 -24 168.0 61.5Q74 147 74 280Q74 358 109.5 422.5Q145 487 202.5 526.0Q260 565 332 585Q385 599 492 612Q710 638 813 674Q814 711 814 721Q814 831 763 876Q694 937 558 937Q431 937 370.5 892.5Q310 848 281 735L105 759Q129 872 184.0 941.5Q239 1011 343.0 1048.5Q447 1086 584 1086Q720 1086 805.0 1054.0Q890 1022 930.0 973.5Q970 925 986 851Q995 805 995 685V445Q995 194 1006.5 127.5Q1018 61 1052 0H864Q836 56 828 131ZM813 533Q715 493 519 465Q408 449 362.0 429.0Q316 409 291.0 370.5Q266 332 266 285Q266 213 320.5 165.0Q375 117 480 117Q584 117 665.0 162.5Q746 208 784 287Q813 348 813 467Z"/><path transform="translate(70.24 19.00) scale(0.00781 -0.00781)" d="M178 0V922H19V1062H178V1175Q178 1282 197 1334Q223 1404 288.5 1447.5Q354 1491 472 1491Q548 1491 640 1473L613 1316Q557 1326 507 1326Q425 1326 391.0 1291.0Q357 1256 357 1160V1062H564V922H357V0Z"/><path transform="translate(74.69 19.00) scale(0.00781 -0.00781)" d="M136 0V1466H316V630L742 1062H975L569 668L1016 0H794L443 543L316 421V0Z"/><path transform="translate(82.69 19.00) scale(0.00781 -0.00781)" d="M828 131Q728 46 635.5 11.0Q543 -24 437 -24Q262 -24 168.0 61.5Q74 147 74 280Q74 358 109.5 422.5Q145 487 202.5 526.0Q260 565 332 585Q385 599 492 612Q710 638 813 674Q814 711 814 721Q814 831 763 876Q694 937 558 937Q431 937 370.5 892.5Q310 848 281 735L105 759Q129 872 184.0 941.5Q239 1011 343.0 1048.5Q447 1086 584 1086Q720 1086 805.0 1054.0Q890 1022 930.0 973.5Q970 925 986 851Q995 805 995 685V445Q995 194 1006.5 127.5Q1018 61 1052 0H864Q836 56 828 131ZM813 533Q715 493 519 465Q408 449 362.0 429.0Q316 409 291.0 370.5Q266 332 266 285Q266 213 320.5 165.0Q375 117 480 117Q584 117 665.0 162.5Q746 208 784 287Q813 348 813 467Z"/><path transform="translate(0.00 38.00) scale(0.00781 -0.00781)" d="M1019 1107 840 1093Q816 1199 772 1247Q699 1324 592 1324Q506 1324 441 1276Q356 1214 307.0 1095.0Q258 976 256 756Q321 855 415.0 903.0Q509 951 612 951Q792 951 918.5 818.5Q1045 686 1045 476Q1045 338 985.5 219.5Q926 101 822.0 38.0Q718 -25 586 -25Q361 -25 219.0 140.5Q77 306 77 686Q77 1111 234 1304Q371 1472 603 1472Q776 1472 886.5 1375.0Q997 1278 1019 1107ZM284 475Q284 382 323.5 297.0Q363 212 434.0 167.5Q505 123 583 123Q697 123 779.0 215.0Q861 307 861 465Q861 617 780.0 704.5Q699 792 576 792Q454 792 369.0 704.5Q284 617 284 475Z"/><path transform="translate(13.34 38.00) scale(0.00781 -0.00781)" d="M150 0V1466H344V173H1066V0Z"/><path transform="translate(22.24 38.00) scale(0.00781 -0.00781)" d="M136 1259V1466H316V1259ZM136 0V1062H316V0Z"/><path transform="translate(25.80 38.00) scale(0.00781 -0.00781)" d="M301 0H134V1466H314V943Q428 1086 605 1086Q703 1086 790.5 1046.5Q878 1007 934.5 935.5Q991 864 1023.0 763.0Q1055 662 1055 547Q1055 274 920.0 125.0Q785 -24 596 -24Q408 -24 301 133ZM299 539Q299 348 351 263Q436 124 581 124Q699 124 785.0 226.5Q871 329 871 532Q871 740 788.5 839.0Q706 938 589 938Q471 938 385.0 835.5Q299 733 299 539Z"/><path transform="translate(34.70 38.00) scale(0.00781 -0.00781)" d="M862 342 1048 319Q1004 156 885.0 66.0Q766 -24 581 -24Q348 -24 211.5 119.5Q75 263 75 522Q75 790 213.0 938.0Q351 1086 571 1086Q784 1086 919.0 941.0Q1054 796 1054 533Q1054 517 1053 485H261Q271 310 360.0 217.0Q449 124 582 124Q681 124 751.0 176.0Q821 228 862 342ZM271 633H864Q852 767 796 834Q710 938 573 938Q449 938 364.5 855.0Q280 772 271 633Z"/><path transform="translate(43.59 38.00) scale(0.00781 -0.00781)" d="M133 0V1062H295V901Q357 1014 409.5 1050.0Q462 1086 525 1086Q616 1086 710 1028L648 861Q582 900 516 900Q457 900 410.0 864.5Q363 829 343 766Q313 670 313 556V0Z"/><path transform="translate(48.92 38.00) scale(0.00781 -0.00781)" d="M528 161 554 2Q478 -14 418 -14Q320 -14 266.0 17.0Q212 48 190.0 98.5Q168 149 168 311V922H36V1062H168V1325L347 1433V1062H528V922H347V301Q347 224 356.5 202.0Q366 180 387.5 167.0Q409 154 449 154Q479 154 528 161Z"/><path transform="translate(53.37 38.00) scale(0.00781 -0.00781)" d="M127 -409 107 -240Q166 -256 210 -256Q270 -256 306.0 -236.0Q342 -216 365 -180Q382 -153 420 -46Q425 -31 436 -2L33 1062H227L448 447Q491 330 525 201Q556 325 599 443L826 1062H1006L602 -18Q537 -193 501 -259Q453 -348 391.0 -389.5Q329 -431 243 -431Q191 -431 127 -409Z"/><path transform="translate(65.81 38.00) scale(0.00781 -0.00781)" d="M92 471 275 487Q288 377 335.5 306.5Q383 236 483.0 192.5Q583 149 708 149Q819 149 904.0 182.0Q989 215 1030.5 272.5Q1072 330 1072 398Q1072 467 1032.0 518.5Q992 570 900 605Q841 628 639.0 676.5Q437 725 356 768Q251 823 199.5 904.5Q148 986 148 1087Q148 1198 211.0 1294.5Q274 1391 395.0 1441.0Q516 1491 664 1491Q827 1491 951.5 1438.5Q1076 1386 1143.0 1284.0Q1210 1182 1215 1053L1029 1039Q1014 1178 927.5 1249.0Q841 1320 672 1320Q496 1320 415.5 1255.5Q335 1191 335 1100Q335 1021 392 970Q448 919 684.5 865.5Q921 812 1009 772Q1137 713 1198.0 622.5Q1259 532 1259 414Q1259 297 1192.0 193.5Q1125 90 999.5 32.5Q874 -25 717 -25Q518 -25 383.5 33.0Q249 91 172.5 207.5Q96 324 92 471Z"/><path transform="translate(76.48 38.00) scale(0.00781 -0.00781)" d="M812 -407V113Q770 54 694.5 15.0Q619 -24 534 -24Q345 -24 208.5 127.0Q72 278 72 541Q72 701 127.5 828.0Q183 955 288.5 1020.5Q394 1086 520 1086Q717 1086 830 920V1062H992V-407ZM257 534Q257 329 343.0 226.5Q429 124 549 124Q664 124 747.0 221.5Q830 319 830 518Q830 730 742.5 837.0Q655 944 537 944Q420 944 338.5 844.5Q257 745 257 534Z"/><path transform="translate(89.83 38.00) scale(0.00781 -0.00781)" d="M158 0V1466H711Q857 1466 934 1452Q1042 1434 1115.0 1383.5Q1188 1333 1232.5 1242.0Q1277 1151 1277 1042Q1277 855 1158.0 725.5Q1039 596 728 596H352V0ZM352 769H731Q919 769 998.0 839.0Q1077 909 1077 1036Q1077 1128 1030.5 1193.5Q984 1259 908 1280Q859 1293 727 1293H352Z"/><path transform="translate(100.50 38.00) scale(0.00781 -0.00781)" d="M152 0V1466H444L791 428Q839 283 861 211Q886 291 939 446L1290 1466H1551V0H1364V1227L938 0H763L339 1248V0Z"/><path transform="translate(113.83 38.00) scale(0.00781 -0.00781)" d="M150 0V1466H700Q868 1466 969.5 1421.5Q1071 1377 1128.5 1284.5Q1186 1192 1186 1091Q1186 997 1135.0 914.0Q1084 831 981 780Q1114 741 1185.5 647.0Q1257 553 1257 425Q1257 322 1213.5 233.5Q1170 145 1106.0 97.0Q1042 49 945.5 24.5Q849 0 709 0ZM344 850H661Q790 850 846 867Q920 889 957.5 940.0Q995 991 995 1068Q995 1141 960.0 1196.5Q925 1252 860.0 1272.5Q795 1293 637 1293H344ZM344 173H709Q803 173 841 180Q908 192 953.0 220.0Q998 248 1027.0 301.5Q1056 355 1056 425Q1056 507 1014.0 567.5Q972 628 897.5 652.5Q823 677 683 677H344Z"/><path transform="translate(128.95 38.00) scale(0.00781 -0.00781)" d="M112 339 285 355Q307 233 369.0 178.0Q431 123 528 123Q611 123 673.5 161.0Q736 199 776.0 262.5Q816 326 843.0 434.0Q870 542 870 654Q870 666 869 690Q815 604 721.5 550.5Q628 497 519 497Q337 497 211.0 629.0Q85 761 85 977Q85 1200 216.5 1336.0Q348 1472 546 1472Q689 1472 807.5 1395.0Q926 1318 987.5 1175.5Q1049 1033 1049 763Q1049 482 988.0 315.5Q927 149 806.5 62.0Q686 -25 524 -25Q352 -25 243.0 70.5Q134 166 112 339ZM849 986Q849 1141 766.5 1232.0Q684 1323 568 1323Q448 1323 359.0 1225.0Q270 1127 270 971Q270 831 354.5 743.5Q439 656 563 656Q688 656 768.5 743.5Q849 831 849 986Z"/><path transform="translate(137.84 38.00) scale(0.00781 -0.00781)" d="M763 0H583V1147Q518 1085 412.5 1023.0Q307 961 223 930V1104Q374 1175 487.0 1276.0Q600 1377 647 1472H763Z"/><path transform="translate(146.74 38.00) scale(0.00781 -0.00781)" d="M85 384 274 400Q295 262 371.5 192.5Q448 123 556 123Q686 123 776.0 221.0Q866 319 866 481Q866 635 779.5 724.0Q693 813 553 813Q466 813 396.0 773.5Q326 734 286 671L117 693L259 1446H988V1274H403L324 880Q456 972 601 972Q793 972 925.0 839.0Q1057 706 1057 497Q1057 298 941 153Q800 -25 556 -25Q356 -25 229.5 87.0Q103 199 85 384Z"/><path transform="translate(155.64 38.00) scale(0.00781 -0.00781)" d="M112 339 285 355Q307 233 369.0 178.0Q431 123 528 123Q611 123 673.5 161.0Q736 199 776.0 262.5Q816 326 843.0 434.0Q870 542 870 654Q870 666 869 690Q815 604 721.5 550.5Q628 497 519 497Q337 497 211.0 629.0Q85 761 85 977Q85 1200 216.5 1336.0Q348 1472 546 1472Q689 1472 807.5 1395.0Q926 1318 987.5 1175.5Q1049 1033 1049 763Q1049 482 988.0 315.5Q927 149 806.5 62.0Q686 -25 524 -25Q352 -25 243.0 70.5Q134 166 112 339ZM849 986Q849 1141 766.5 1232.0Q684 1323 568 1323Q448 1323 359.0 1225.0Q270 1127 270 971Q270 831 354.5 743.5Q439 656 563 656Q688 656 768.5 743.5Q849 831 849 986Z"/><path transform="translate(164.54 38.00) scale(0.00781 -0.00781)" d="M85 384 274 400Q295 262 371.5 192.5Q448 123 556 123Q686 123 776.0 221.0Q866 319 866 481Q866 635 779.5 724.0Q693 813 553 813Q466 813 396.0 773.5Q326 734 286 671L117 693L259 1446H988V1274H403L324 880Q456 972 601 972Q793 972 925.0 839.0Q1057 706 1057 497Q1057 298 941 153Q800 -25 556 -25Q356 -25 229.5 87.0Q103 199 85 384Z"/><path transform="translate(0.00 57.00) scale(0.00781 -0.00781)" d="M150 0V1466H700Q868 1466 969.5 1421.5Q1071 1377 1128.5 1284.5Q1186 1192 1186 1091Q1186 997 1135.0 914.0Q1084 831 981 780Q1114 741 1185.5 647.0Q1257 553 1257 425Q1257 322 1213.5 233.5Q1170 145 1106.0 97.0Q1042 49 945.5 24.5Q849 0 709 0ZM344 850H661Q790 850 846 867Q920 889 957.5 940.0Q995 991 995 1068Q995 1141 960.0 1196.5Q925 1252 860.0 1272.5Q795 1293 637 1293H344ZM344 173H709Q803 173 841 180Q908 192 953.0 220.0Q998 248 1027.0 301.5Q1056 355 1056 425Q1056 507 1014.0 567.5Q972 628 897.5 652.5Q823 677 683 677H344Z"/><path transform="translate(10.67 57.00) scale(0.00781 -0.00781)" d="M68 531Q68 826 232 968Q369 1086 566 1086Q785 1086 924.0 942.5Q1063 799 1063 546Q1063 341 1001.5 223.5Q940 106 822.5 41.0Q705 -24 566 -24Q343 -24 205.5 119.0Q68 262 68 531ZM253 531Q253 327 342.0 225.5Q431 124 566 124Q700 124 789.0 226.0Q878 328 878 537Q878 734 788.5 835.5Q699 937 566 937Q431 937 342.0 836.0Q253 735 253 531Z"/><path transform="translate(19.57 57.00) scale(0.00781 -0.00781)" d="M63 317 241 345Q256 238 324.5 181.0Q393 124 516 124Q640 124 700.0 174.5Q760 225 760 293Q760 354 707 389Q670 413 523 450Q325 500 248.5 536.5Q172 573 132.5 637.5Q93 702 93 780Q93 851 125.5 911.5Q158 972 214 1012Q256 1043 328.5 1064.5Q401 1086 484 1086Q609 1086 703.5 1050.0Q798 1014 843.0 952.5Q888 891 905 788L729 764Q717 846 659.5 892.0Q602 938 497 938Q373 938 320.0 897.0Q267 856 267 801Q267 766 289 738Q311 709 358 690Q385 680 517 644Q708 593 783.5 560.5Q859 528 902.0 466.0Q945 404 945 312Q945 222 892.5 142.5Q840 63 741.0 19.5Q642 -24 517 -24Q310 -24 201.5 62.0Q93 148 63 317Z"/><path transform="translate(27.57 57.00) scale(0.00781 -0.00781)" d="M528 161 554 2Q478 -14 418 -14Q320 -14 266.0 17.0Q212 48 190.0 98.5Q168 149 168 311V922H36V1062H168V1325L347 1433V1062H528V922H347V301Q347 224 356.5 202.0Q366 180 387.5 167.0Q409 154 449 154Q479 154 528 161Z"/><path transform="translate(32.02 57.00) scale(0.00781 -0.00781)" d="M68 531Q68 826 232 968Q369 1086 566 1086Q785 1086 924.0 942.5Q1063 799 1063 546Q1063 341 1001.5 223.5Q940 106 822.5 41.0Q705 -24 566 -24Q343 -24 205.5 119.0Q68 262 68 531ZM253 531Q253 327 342.0 225.5Q431 124 566 124Q700 124 789.0 226.0Q878 328 878 537Q878 734 788.5 835.5Q699 937 566 937Q431 937 342.0 836.0Q253 735 253 531Z"/><path transform="translate(40.91 57.00) scale(0.00781 -0.00781)" d="M135 0V1062H297V911Q414 1086 635 1086Q731 1086 811.5 1051.5Q892 1017 932.0 961.0Q972 905 988 828Q998 778 998 653V0H818V646Q818 756 797.0 810.5Q776 865 722.5 897.5Q669 930 597 930Q482 930 398.5 857.0Q315 784 315 580V0Z"/><path transform="translate(49.81 57.00) scale(0.00781 -0.00781)" d="M182 0V205H387V0Q387 -113 347.0 -182.5Q307 -252 220 -290L170 -213Q227 -188 254.0 -139.5Q281 -91 284 0Z"/><path transform="translate(58.70 57.00) scale(0.00781 -0.00781)" d="M152 0V1466H444L791 428Q839 283 861 211Q886 291 939 446L1290 1466H1551V0H1364V1227L938 0H763L339 1248V0Z"/><path transform="translate(72.03 57.00) scale(0.00781 -0.00781)" d="M-3 0 560 1466H769L1369 0H1148L977 444H364L203 0ZM420 602H917L764 1008Q694 1193 660 1312Q632 1171 581 1032Z"/><path transform="translate(87.15 57.00) scale(0.00781 -0.00781)" d="M85 723Q85 983 138.5 1141.5Q192 1300 297.5 1386.0Q403 1472 563 1472Q681 1472 770.0 1424.5Q859 1377 917.0 1287.5Q975 1198 1008.0 1069.5Q1041 941 1041 723Q1041 465 988.0 306.5Q935 148 829.5 61.5Q724 -25 563 -25Q351 -25 230 127Q85 310 85 723ZM270 723Q270 362 354.5 242.5Q439 123 563 123Q687 123 771.5 243.0Q856 363 856 723Q856 1085 771.5 1204.0Q687 1323 561 1323Q437 1323 363 1218Q270 1084 270 723Z"/><path transform="translate(96.05 57.00) scale(0.00781 -0.00781)" d="M1031 173V0H62Q60 65 83 125Q120 224 201.5 320.0Q283 416 437 542Q676 738 760.0 852.5Q844 967 844 1069Q844 1176 767.5 1249.5Q691 1323 568 1323Q438 1323 360.0 1245.0Q282 1167 281 1029L96 1048Q115 1255 239.0 1363.5Q363 1472 572 1472Q783 1472 906.0 1355.0Q1029 1238 1029 1065Q1029 977 993.0 892.0Q957 807 873.5 713.0Q790 619 596 455Q434 319 388.0 270.5Q342 222 312 173Z"/><path transform="translate(104.95 57.00) scale(0.00781 -0.00781)" d="M763 0H583V1147Q518 1085 412.5 1023.0Q307 961 223 930V1104Q374 1175 487.0 1276.0Q600 1377 647 1472H763Z"/><path transform="translate(113.84 57.00) scale(0.00781 -0.00781)" d="M85 723Q85 983 138.5 1141.5Q192 1300 297.5 1386.0Q403 1472 563 1472Q681 1472 770.0 1424.5Q859 1377 917.0 1287.5Q975 1198 1008.0 1069.5Q1041 941 1041 723Q1041 465 988.0 306.5Q935 148 829.5 61.5Q724 -25 563 -25Q351 -25 230 127Q85 310 85 723ZM270 723Q270 362 354.5 242.5Q439 123 563 123Q687 123 771.5 243.0Q856 363 856 723Q856 1085 771.5 1204.0Q687 1323 561 1323Q437 1323 363 1218Q270 1084 270 723Z"/><path transform="translate(122.74 57.00) scale(0.00781 -0.00781)" d="M112 339 285 355Q307 233 369.0 178.0Q431 123 528 123Q611 123 673.5 161.0Q736 199 776.0 262.5Q816 326 843.0 434.0Q870 542 870 654Q870 666 869 690Q815 604 721.5 550.5Q628 497 519 497Q337 497 211.0 629.0Q85 761 85 977Q85 1200 216.5 1336.0Q348 1472 546 1472Q689 1472 807.5 1395.0Q926 1318 987.5 1175.5Q1049 1033 1049 763Q1049 482 988.0 315.5Q927 149 806.5 62.0Q686 -25 524 -25Q352 -25 243.0 70.5Q134 166 112 339ZM849 986Q849 1141 766.5 1232.0Q684 1323 568 1323Q448 1323 359.0 1225.0Q270 1127 270 971Q270 831 354.5 743.5Q439 656 563 656Q688 656 768.5 743.5Q849 831 849 986Z"/></svg></td>
+					<td style="padding: 12px 20px;" data-label="Processing fee"><strong class="color pay-fee-none">none</strong></td>
 				</tr>
 			</tbody>
 		</table>
@@ -308,8 +360,8 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 
 		<p>Classes are held on <strong>Zoom</strong>. Your lesson reminder email arrives 36 hours before class and contains the Zoom link.</p>
 
-		<div class="si-callout">
-			<p><strong>💡 What should I do to prepare for my lesson?</strong></p>
+		<div class="si-callout tk-table-frame">
+			<p><strong><i class="fa-solid fa-lightbulb" style="margin-right: 0.5em"></i>What should I do to prepare for my lesson?</strong></p>
 			<p>One of the greatest challenges for me in tutoring is being prepared to teach content that is relevant and specifically tailored to the needs of your teacher and your class. I teach many students from many districts each week, and the needs of two different students can vary greatly. The more we can stay in communication about your class content, the more effective our sessions will be.</p>
 			<p>Please send me the following before our class session begins:</p>
 			<ul>
