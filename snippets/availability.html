@@ -13,6 +13,14 @@
     --cal-busy:      #cdbf9d;                        /* booked/blocked base */
     --cal-busy-alt:  #ece2cb;                        /* booked/blocked stripe */
     --cal-tx:       var(--transitiontime, 0.2s);
+    /* mini calendar numbers and labels: the muted text colour drawn toward the
+       grid-line colour, as far as legibility allows (about 3:1 on the page) */
+    --mini-ink:     color-mix(in srgb, var(--cal-muted) 88%, var(--cal-border));
+    /* on the pale green days: the seam one gentle step from the fill, and the
+       numbers. On a dark page the pale fill is darker than the full green, so
+       the full-green seam would glow; dark mode sets both below. */
+    --mini-seam-pale: var(--cal-available);
+    --mini-ink-on-green: var(--mini-ink);
   }
   * { box-sizing: border-box; }
   .cal-container { container-type: inline-size; position: relative; }
@@ -60,7 +68,7 @@
     text-transform: uppercase;
     font-size: 10px;
     letter-spacing: 0.04em;
-    color: var(--cal-muted);
+    color: var(--mini-ink);
     white-space: nowrap;
     overflow: hidden;
   }
@@ -69,7 +77,7 @@
     font-size: 11px;
     line-height: 18px;
     text-align: center;
-    color: var(--cal-muted);
+    color: var(--mini-ink);
   }
 
   .mini-cal-day {
@@ -80,9 +88,9 @@
     font-size: 11px;
     line-height: 20px;
     text-align: center;
-    /* faded with alpha rather than opacity: the month rules below are drawn on
-       the same element and have to stay at full strength */
-    color: var(--cal-muted);
+    /* the ordinary days are drawn toward the calendar's line colour; the week
+       on show and the days outside the horizon are set apart from them below */
+    color: var(--mini-ink);
     transition: color var(--cal-tx) ease, background-color var(--cal-tx) ease;
   }
 
@@ -108,23 +116,42 @@
      strength; the rest of the horizon sits back. No frames or rules, which
      would be louder than anything else on the page. */
   /* dates outside the 90-day horizon: present, but only just */
-  .mini-cal-day-outside { color: color-mix(in srgb, var(--cal-muted) 55%, transparent); }
+  .mini-cal-day-outside { color: color-mix(in srgb, var(--mini-ink) 65%, transparent); }
 
   .mini-cal-day[data-week] { cursor: pointer; }
 
   /* The week on show carries full color and weight; everything else is held
      well back, so the eye lands on it straight away. */
-  .mini-cal-day-shown { color: var(--cal-text); }
+  .mini-cal-day-shown { color: var(--cal-text); font-weight: bold; }
   .mini-cal-day-shown.mini-cal-day-free { background: var(--cal-available); color: #3C303E; }
 
-  /* Month boundaries: a hard line along the top of each new month's cells,
-     stepping down with a vertical segment where the month turns mid-week. */
-  .mini-cal-m-top  { box-shadow: inset 0 1px 0 var(--cal-text); }
+  /* Month boundaries: a line along the top of each new month's cells,
+     stepping down with a vertical segment where the month turns mid-week.
+     Same 1px weight and colour as the main calendar's grid lines. */
+  .mini-cal-day, .mini-cal-month { --mini-rule: var(--cal-border); }
+  /* Across a green (available) day the tan line would read as a scratch over
+     the block, so there it becomes a seam one step darker than the green it
+     crosses: the full green between pale days, a deeper green wherever the line
+     touches a bright day of the week on show (set by the script, which knows
+     both neighbours). Same place, just as continuous. */
+  .mini-cal-day-free { --mini-rule: var(--mini-seam-pale); color: var(--mini-ink-on-green); }
+  .mini-cal-seam-strong { --mini-rule: color-mix(in srgb, var(--cal-available) 55%, #1f3d0c); }
+  .mini-cal-m-top  { box-shadow: inset 0 1px 0 var(--mini-rule); }
   /* the label box is flipped, so its rule is drawn on what is locally the bottom */
-  .mini-cal-month.mini-cal-m-top { box-shadow: inset 0 -1px 0 var(--cal-text); }
-  .mini-cal-m-left { box-shadow: inset 1px 0 0 var(--cal-text); }
-  .mini-cal-m-top.mini-cal-m-left {
-    box-shadow: inset 0 1px 0 var(--cal-text), inset 1px 0 0 var(--cal-text);
+  .mini-cal-month.mini-cal-m-top { box-shadow: inset 0 -1px 0 var(--mini-rule); }
+  /* The step down where a month starts mid-week. The upright line runs 1px
+     past the bottom of its cell, into the corner of the cell below-right,
+     where it meets the line along the next row; otherwise that corner pixel
+     belongs to neither line and shows as a notch. */
+  .mini-cal-m-left::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: -1px;
+    width: 1px;
+    background: var(--mini-rule);
+    z-index: 1;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -758,6 +785,9 @@
     --cal-muted:    #9C8AA0;
     --cal-busy:     #3A3340;
     --cal-busy-alt: #4A4250;
+    --mini-ink:     color-mix(in srgb, var(--cal-muted) 55%, var(--cal-border));
+    --mini-seam-pale: color-mix(in srgb, var(--cal-available) 45%, transparent);
+    --mini-ink-on-green: var(--cal-muted);
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
@@ -765,6 +795,9 @@
       --cal-muted:    #9C8AA0;
       --cal-busy:     #3A3340;
       --cal-busy-alt: #4A4250;
+      --mini-ink:     color-mix(in srgb, var(--cal-muted) 55%, var(--cal-border));
+      --mini-seam-pale: color-mix(in srgb, var(--cal-available) 45%, transparent);
+      --mini-ink-on-green: var(--cal-muted);
     }
   }
   :root[data-theme="dark"] .book-menu,
@@ -818,7 +851,7 @@
 <div id="root"></div>
 <div id="status" class="status"></div>
 <div class="subtitle"><i class="fa-solid fa-clock fa-fw"></i><span class="tz-info" id="tz-info"></span></div>
-<div class="subtitle"><i class="fa-solid fa-calendar-week fa-fw"></i><span>Availability typically spans mornings, afternoons, and evenings on Sundays through Thursdays (Boston time<span class="boston-offset"></span>). Deviations from this general pattern may occur during holidays and school breaks, such as over the summer.</span></div>
+<div class="subtitle"><i class="fa-solid fa-calendar-week fa-fw"></i><span>Availability typically spans mornings, afternoons, and evenings, Sunday through Thursday (Boston time<span class="boston-offset"></span>). From December 2026 through February 2027, availability will be limited to 4:00 p.m. &ndash; 12:00 a.m. (Boston time, UTC-5 during those months). The schedule may also vary around holidays and school breaks, such as over the summer.</span></div>
 <div class="subtitle"><i class="fa-solid fa-bell fa-fw"></i><span>If there is a time on the calendar that is currently booked and you would like to be waitlisted for that time, please email me at <span class="tooltip"><a onclick="copyEmail()" onmouseout="outFunc()">tutor@trevorkafka.com</a><span class="tooltiptext">Copy to clipboard</span></span>.</span></div>
 <br>
 <trevorkafka-availability-announcement></trevorkafka-availability-announcement>
@@ -1154,6 +1187,14 @@
       if (inRange && grid[i].some(state => state === 1)) cls.push('mini-cal-day-free');
       if (i === 0) cls.push('mini-cal-day-today');
       if (i >= shownFrom && i <= shownTo) cls.push('mini-cal-day-shown');
+      // A month line has to show against both days it separates, so where
+      // either of them is a bright day of the week on show it takes the deep
+      // seam colour (the full green would vanish into the bright block).
+      const bright = k => k >= 0 && k < days.length && k >= shownFrom && k <= shownTo &&
+        grid[k].some(state => state === 1);
+      if (bright(i) ||
+          (cls.includes('mini-cal-m-top') && bright(i - 7)) ||
+          (cls.includes('mini-cal-m-left') && bright(i - 1))) cls.push('mini-cal-seam-strong');
       // days within the horizon page the calendar to their own week
       const week = inRange ? ' data-week="' + Math.floor(i / 7) + '"' : '';
       html += '<div class="' + cls.join(' ') + '"' + week + '>' + d.getDate() + '</div>';
@@ -1771,7 +1812,8 @@ function makeDemoEvents() {
   el.innerHTML = `Showing available times over the next <span class="cal-horizon-days">90</span> days in ${escapeHTML(tzName)} (${escapeHTML(formatTZOffset(new Date()))}).`;
 })();
 
-  // Fill in Boston's live UTC offset (accounts for daylight saving).
+  // Fill in Boston's live UTC offset (accounts for daylight saving), marked
+  // as the current one so it isn't read against the winter hours' UTC-5.
 (function setupBostonOffset() {
   let off = '';
   try {
@@ -1780,7 +1822,7 @@ function makeDemoEvents() {
     if (tz) off = tz.value.replace('GMT', 'UTC');
   } catch (e) {}
   if (!off) return;
-  document.querySelectorAll('.boston-offset').forEach(el => { el.textContent = ', ' + off; });
+  document.querySelectorAll('.boston-offset').forEach(el => { el.textContent = ', currently ' + off; });
 })();
 
   // Book-a-lesson dropdown.
