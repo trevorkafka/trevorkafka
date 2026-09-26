@@ -1,37 +1,1907 @@
 <!DOCTYPE HTML>
 
+<html lang="en">
+
 <head>
 <!-- Apply saved light/dark choice before paint (avoids a flash when the device default differs from the toggle) -->
 <script>
 try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}
-try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElement.classList.add('ann-collapsed');}catch(e){}
 (function(){var d=document.documentElement;d.classList.add('fonts-loading');var done=false;function fin(){if(done)return;done=true;d.classList.remove('fonts-loading');}setTimeout(fin,500);try{if(document.fonts&&document.fonts.load){Promise.all([document.fonts.load('1em Freeman'),document.fonts.load('1em "Great Vibes"')]).then(fin,fin);}else{fin();}}catch(e){fin();}})();
 </script>
 	<title>Thai Alphabet | Trevor Kafka</title>
 	<meta name="robots" content="noindex, nofollow">
-	<meta charset="utf-8"> <!--ensures that there aren't any issues with the display of emojis -->
-	<meta name="viewport" content="width=device-width"> <!-- essential for making sure that the ACTUAL screen width is interpreted by the CSS as opposed to some idealized number presented by smartphones (980px+) -->
-
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="preload" href="/fonts/freeman-latin.woff2" as="font" type="font/woff2" crossorigin>
-	<link rel="preload" href="/fonts/greatvibes-latin.woff2" as="font" type="font/woff2" crossorigin>
-	<link rel="stylesheet" href="../style.css">
-	<link rel="shortcut icon" href="../favicon.ico">
+	<link href="/style.css" rel="stylesheet">
+	<link href="/favicon.ico" rel="shortcut icon">
+	<link href="https://fonts.googleapis.com" rel="preconnect">
+	<link crossorigin href="https://fonts.gstatic.com" rel="preconnect">
+	<link href="https://fonts.googleapis.com/css2?family=Mali:wght@500;700&display=swap" rel="stylesheet">
+	<script src="https://kit.fontawesome.com/157b2a3980.js" crossorigin="anonymous"></script> <!-- Font Awesome icons -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	<!-- script.js adds the floating light/dark toggle on pages without the site nav -->
+	<script src="/script.js" defer></script>
 
-	<!-- Google font stuff -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> <!-- use JQuery -->
-	<script type="text/javascript" src="../script.js" defer></script> <!-- defer means to wait to run the script until the whole page is ready -->
+<style>
+	/* Consonant classes in red (high), green (mid) and blue (low); vowels in
+	   amber (short) and purple (long); rare forms in grey. */
+	:root {
+		--tk-muted: #7F7359;
+		--bg-s: #fbe6b8; --tx-s: #8a5a00;
+		--bg-l: #eadcf5; --tx-l: #6a2c8f;
+		--bg-hi: #f8d9d4; --tx-hi: #a3261a;
+		--bg-mid: #d8eed6; --tx-mid: #276b22;
+		--bg-lo: #d6e4f7; --tx-lo: #1c4f9e;
+		--ink-rare: #8d8578;
+		/* the grey cells' background: the old see-through tint, made solid */
+		--bg-r: color-mix(in srgb, #C6B895 25%, var(--color3)); --fade-r: 0.5;
+		/* pronunciation chips: plain grey */
+		--bg-pron: #e3dfd8; --tx-pron: #4d4852;
+	}
+	:root[data-theme="dark"] {
+		--tk-muted: var(--color4);
+		--bg-s: #4a3708; --tx-s: #ffd27a;
+		--bg-l: #3a2150; --tx-l: #dcb3f5;
+		--bg-hi: #521d18; --tx-hi: #ffab9e;
+		--bg-mid: #1c3d1a; --tx-mid: #9ddc95;
+		--bg-lo: #173154; --tx-lo: #9cc3ff;
+		--ink-rare: #8a7f8c;
+		--bg-r: color-mix(in srgb, #ffffff 8%, var(--color3)); --fade-r: 0.5;
+		--bg-pron: #2b2830; --tx-pron: #c4bcc7;
+		color-scheme: dark;
+	}
+	@media (prefers-color-scheme: dark) {
+		:root:not([data-theme="light"]) {
+			--tk-muted: var(--color4);
+			--bg-s: #4a3708; --tx-s: #ffd27a;
+			--bg-l: #3a2150; --tx-l: #dcb3f5;
+		--bg-hi: #521d18; --tx-hi: #ffab9e;
+		--bg-mid: #1c3d1a; --tx-mid: #9ddc95;
+		--bg-lo: #173154; --tx-lo: #9cc3ff;
+			--ink-rare: #8a7f8c;
+			--bg-r: color-mix(in srgb, #ffffff 8%, var(--color3)); --fade-r: 0.5;
+			--bg-pron: #2b2830; --tx-pron: #c4bcc7;
+			color-scheme: dark;
+		}
+	}
+
+	body { background: var(--color3); color: var(--color1); }
+	.content { width: min(640px, var(--widthmax)); padding-top: 40px; padding-bottom: 60px; }
+	h1 { margin-bottom: 8px; }
+	.intro { margin: 0 0 12px; line-height: 1.5; }
+	/* the Paiboon+ / IPA switch under the introduction */
+	.rom-switch { display: flex; align-items: center; gap: 6px; margin: 0 0 24px; }
+	/* thai-language.com marks each syllable's tone with a small capital after it */
+	.tl-tone { font-size: 0.65em; vertical-align: super; line-height: 0; margin-left: 1px; }
+	/* Every pronunciation on the page is shown in the same chip, so it can't be
+	   mistaken for a name or for Thai letters on their own. */
+	html .pron {
+		display: inline-block;
+		background: var(--bg-pron);
+		color: var(--tx-pron);
+		border-radius: 2px;
+		padding: 0 0.45em;
+		font-family: Arial, sans-serif;
+		font-weight: normal;
+		line-height: 1.55;
+		white-space: nowrap;
+		opacity: 1;
+		font-size: 12.5px;
+	}
+	/* a little larger for the builder's result; smaller under its parts */
+	html .bld-rom { font-size: 17px; }
+	html .bld-pname { font-size: 11px; }
+	html:not([data-rom="th"]) .pron { font-family: Arial, sans-serif; }
+	.rom.pron, .num-rom.pron { justify-self: center; }
+	/* chips inside a sentence: shorter, so the lines above and below clear them */
+	html p .pron { line-height: 1.25; padding: 0 0.35em; font-size: 0.88em; }
+	.sec-intro:has(.pron) { line-height: 1.8; }
+	/* in the list rows, a chip is only as wide as its text */
+	.sym > .pron, .det > .pron { justify-self: start; }
+	/* respelt in Thai script: in the Thai face, at the same size as the others */
+	:root[data-rom="th"] .pron { font-family: Mali, sans-serif; font-weight: 500; }
+	.rom-switch .chip:lang(th) { font-family: Mali, sans-serif; }
+	.rom-switch-label { font: bold 13px Arial, sans-serif; color: var(--tk-muted); margin-right: 4px; }
+	.intro :lang(th):not(.pron) { font-family: Mali, sans-serif; }
+	/* each heading's Thai name beside it, in the Thai face */
+	.th-title { font-family: Mali, sans-serif; font-weight: 700; margin-left: 0.3em; }
+	/* The site fades each element's colour on a light/dark switch. A Thai
+	   title inherits its heading's colour, and fading on its own it would
+	   start from the heading's half-faded colour and flash; without its own
+	   fade it simply follows the heading's. */
+	.th-title { transition: none; }
+
+	/* ---- the chart ---- */
+	.grid {
+		display: grid;
+		grid-template-columns: auto repeat(4, 1fr) auto;
+		gap: 4px;
+		font-family: Mali, sans-serif;
+		font-weight: 500;
+		font-size: 24px;
+		line-height: 1.3;
+	}
+	.c { border-radius: 6px; padding: 10px 0; text-align: center; box-sizing: border-box; }
+	.s { background: var(--bg-s); color: var(--tx-s); }                 /* short */
+	.l { background: var(--bg-l); color: var(--tx-l); }                 /* long */
+	.r { background: var(--bg-r); color: var(--ink-rare); }      /* rare */
+	.n { background: var(--bg-r); color: var(--color1); }        /* a consonant */
+	.x { box-shadow: inset 0 0 0 1.5px currentColor; }                  /* special spelling */
+	/* อ stands in for "any consonant": a copy of it in the cell's own colour
+	   is laid over it, fading it back */
+	.w { position: relative; display: inline-block; }
+	.o { position: absolute; left: 0; top: 0; opacity: 0.7; }
+	/* drawn by CSS rather than written into the page, so copying a cell gives
+	   just its spelling (เออะ, not เอออะ) and screen readers don't read it twice */
+	.o::before { content: "อ"; }
+	.s .o { color: var(--bg-s); }
+	.l .o { color: var(--bg-l); }
+
+	/* ---- consonants: 44 letters in alphabetical order, 11 to a row ---- */
+	.cons {
+		display: grid;
+		grid-template-columns: repeat(11, 1fr);
+		/* rows keep their own height while the table's height is animating */
+		align-content: start;
+		gap: 4px;
+		font-family: Mali, sans-serif;
+		font-weight: 500;
+		font-size: 24px;
+		line-height: 1.2;
+		margin-bottom: 8px;
+	}
+	/* Even space above the tallest letters (the tails of ป ฝ ฟ) and below the
+	   lowest (ฎ ฏ ฐ ญ): with a line height of 1, Mali's letters reach from
+	   0.02em above the line to 0.23em below it, so the padding makes up the
+	   difference, leaving 0.2em of space at each end. */
+	.cons .c { line-height: 1; padding: calc(0.2em + 0.02em) 0 calc(0.2em + 0.23em); }
+	.hi  { background: var(--bg-hi);  color: var(--tx-hi); }
+	.mid { background: var(--bg-mid); color: var(--tx-mid); }
+	.lo  { background: var(--bg-lo);  color: var(--tx-lo); }
+	/* letters no longer used (ฃ ฅ) in the rare forms' grey; they keep their
+	   class for the orderings */
+	/* obsolete letters: their own colours, faded into the page */
+	.obs.hi  { background: color-mix(in srgb, var(--bg-hi) 38%, var(--color3));  color: color-mix(in srgb, var(--tx-hi) 38%, var(--color3)); }
+	.obs.mid { background: color-mix(in srgb, var(--bg-mid) 38%, var(--color3)); color: color-mix(in srgb, var(--tx-mid) 38%, var(--color3)); }
+	.obs.lo  { background: color-mix(in srgb, var(--bg-lo) 38%, var(--color3));  color: color-mix(in srgb, var(--tx-lo) 38%, var(--color3)); }
+	.obs.s   { background: color-mix(in srgb, var(--bg-s) 38%, var(--color3));   color: color-mix(in srgb, var(--tx-s) 38%, var(--color3)); }
+	.obs.l   { background: color-mix(in srgb, var(--bg-l) 38%, var(--color3));   color: color-mix(in srgb, var(--tx-l) 38%, var(--color3)); }
+	/* by class, each class starts on a new row */
+	.cons .row-start { grid-column-start: 1; }
+	.cons .class-gap { grid-column: 1 / -1; height: 8px; }
+
+	/* by sound, letters that share a sound are kept together, each group
+	   labelled with its sound and never split across rows */
+	.cons.by-sound { display: flex; flex-direction: column; gap: 18px; }
+	.snd-block { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 10px 14px; }
+	/* the last line of a block isn't stretched: this takes up its spare room */
+	.snd-block::after { content: ""; flex: auto; }
+	.snd { display: flex; flex-direction: column; align-items: stretch; gap: 7px; }
+	.snd { max-width: 100%; }
+	/* a group too big for one row (final t has 18) wraps within itself */
+	.snd-cells { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; }
+	.snd-cells .c { width: var(--cell, 36px); }
+	/* a light rule across the whole group ties its letters to their sound */
+	/* the letters that never end a syllable, faded back */
+	.snd-none .c, .det-none .c { background: var(--bg-r); color: var(--ink-rare); }   /* plain grey */
+	.snd-label { font: bold 12px Arial, sans-serif; color: var(--tk-muted); text-align: center; border-top: 1px solid color-mix(in srgb, var(--tk-muted) 45%, transparent); padding-top: 6px; }
+
+	/* detail: one letter to a line, with its name, a picture of the word
+	   and what the word means */
+	.cons.detail { display: flex; flex-direction: column; gap: 4px; }
+	.det { display: grid; grid-template-columns: var(--cell, 36px) minmax(0, 1fr) minmax(0, 1fr) 48px 48px 40px 26px minmax(0, 1.1fr); align-items: center; gap: 12px; }
+	/* in the detail list, each class or sound group gets a small heading
+	   with a light rule, like the labels under the groups in the grid */
+	.det-group { font: bold 12px Arial, sans-serif; color: var(--tk-muted); border-bottom: 1px solid color-mix(in srgb, var(--tk-muted) 45%, transparent); padding: 10px 0 2px; }
+	.det-group.new-block { margin-top: 14px; }
+	/* the detail switch sits apart from the orderings */
+	.chip-switch i { font-size: 11px; margin-right: 3px; }
+	/* column headings over the detail rows */
+	.det-head { font: bold 12px Arial, sans-serif; color: var(--tk-muted); }
+	.det-head span { align-self: end; }
+	.det-ini, .det-fin { font: bold 15px Arial, sans-serif; color: var(--color1); text-align: center; }
+	.det-fin.none { color: var(--tk-muted); font-weight: normal; }
+	.det-live { font: 13px Arial, sans-serif; color: var(--tk-muted); text-align: center; }
+	.det-pic { display: flex; justify-content: center; color: var(--color1); }   /* drawn in the text colour */
+	.det-pic svg { width: 26px; height: 26px; }
+	.det-th { font-size: 20px; }
+	.det-rom { font: 15px Arial, sans-serif; color: var(--tk-muted); }
+	.det-en { font: 15px Arial, sans-serif; color: var(--tk-muted); }
+
+	/* ordering chips */
+	.chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 10px; }
+	.chip {
+		padding: 4px 12px;
+		border-radius: 999px;
+		border: 1.5px solid var(--color4);
+		background: transparent;
+		color: var(--tk-muted);
+		font: bold 13px Arial, sans-serif;
+		cursor: pointer;
+	}
+	.chip:hover { color: var(--color1); }
+	.chip[aria-pressed="true"] { background: var(--color1); border-color: var(--color1); color: var(--color3); }
+	.chip:focus-visible { outline: 2px solid var(--color2); outline-offset: 2px; }
+	.section { font-family: Freeman, sans-serif; font-size: 20px; color: var(--color1); margin: 0 0 8px; }
+	.r .o, .n .o { color: var(--bg-r); }
+	/* the grey ink is fainter to begin with, so it's faded less, leaving the
+	   placeholder about as visible as in the coloured cells */
+	.r .o { opacity: var(--fade-r); }
+	/* the dash stands in for a final consonant */
+	.f { opacity: 0.35; }
+
+	.h, .lb, .op { font-family: Arial, sans-serif; color: var(--tk-muted); }
+	.h { font-size: 13px; font-weight: bold; text-align: center; padding-bottom: 4px; }
+	/* Special Combinations, a subsection of Vowels: a step smaller than the section headings */
+	.lb { grid-column: 1 / -1; font-family: Freeman, sans-serif; font-size: 17px; font-weight: bold; color: var(--color1); margin: 0; padding: 24px 0 6px; }
+	/* Special combinations fill the width: every row is laid on one grid of
+	   six equal tile columns (two to combine, up to four results) with a
+	   narrow column between each for the +, → or "or". */
+	.k { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 24px 1fr 24px 1fr 24px 1fr 24px 1fr 24px 1fr 40px; gap: 6px; align-items: center; font-size: 24px; }
+	.k .c { padding: 8px 0; }
+	.op { font-size: 15px; text-align: center; }
+	/* each row's vowel in Paiboon+ (its short form) */
+	.rom { font: 14px Arial, sans-serif; color: var(--tk-muted); text-align: center; align-self: center; padding: 0 4px; white-space: nowrap; }
+	.res { display: contents; }
+	.k > .k-pron + * { grid-column-start: 1; }   /* each row starts a fresh line */
+	.k-pron { justify-self: start; margin-left: 6px; white-space: nowrap; }   /* right after the row's last tile */
+	/* the two groups of special combinations */
+	.k-sub { grid-column: 1 / -1; font: bold 14px Arial, sans-serif; color: var(--tk-muted); margin: 10px 0 2px; }
+	.k-sub:first-child { margin-top: 0; }
+	.k > .k-sub + * { grid-column-start: 1; }
+
+
+	/* ---- tones ---- */
+	.sec-intro { margin: 0 0 12px; line-height: 1.5; }
+	.sec-intro :lang(th):not(.pron), .th-inline { font-family: Mali, sans-serif; }
+	/* the placeholders as they look in the chart */
+	.ph-demo { font-family: Mali, sans-serif; opacity: 0.4; }
+	.sec-intro .o { color: var(--color3); }   /* the overlay fading อ, against the page */
+	.sub-h { font-family: Freeman, sans-serif; font-size: 17px; color: var(--color1); margin: 22px 0 8px; }
+	.tone-tile { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+	.tone-tile svg { width: 40px; height: 22px; fill: none; stroke: var(--color1); stroke-width: 2.4; stroke-linecap: round; }
+	.tone-en { font: bold 13px Arial, sans-serif; }
+	.tone-scroll { overflow-x: auto; }
+	/* seven equal columns (merged cells simply span several) */
+	.tone-table { width: 100%; table-layout: fixed; border-collapse: separate; border-spacing: 4px; margin: 0 -4px; }
+	.tone-table col { width: calc(100% / 7); }
+	.tone-table thead th { font: bold 12px Arial, sans-serif; color: var(--tk-muted); vertical-align: bottom; padding: 0; }
+	/* the column headings are tiles like the tone marks beside them: "no tone
+	   mark" over "live ending" and "dead ending" */
+	.tone-table thead th .c.head-tile, .tone-table tfoot th .c.head-tile { font: bold 12px/1.2 Arial, sans-serif; color: var(--tk-muted); padding: 6px 4px; }
+	.tone-table thead th[rowspan] .c { display: flex; align-items: center; justify-content: center; height: 100%; box-sizing: border-box; }
+	.tone-table thead th { height: 1px; }   /* lets a tile fill a cell that spans both rows */
+	.tone-table thead th[rowspan] { vertical-align: top; }
+	/* under the low class's two dead cells, which differ by vowel length */
+	.tone-table tfoot th { font: bold 12px Arial, sans-serif; color: var(--tk-muted); vertical-align: top; padding: 0; }
+	/* the tone mark columns are headed by the same tiles as the tone marks list */
+	.tone-table thead th .c { font-family: Mali, sans-serif; font-size: 24px; font-weight: 500; line-height: 1.3; padding: 6px 0; }
+	/* each row in its class's colours (see the key above the table) */
+	.row-mid td:not(.none) { background: var(--bg-mid); color: var(--tx-mid); }
+	.row-hi td:not(.none) { background: var(--bg-hi); color: var(--tx-hi); }
+	.row-lo td:not(.none) { background: var(--bg-lo); color: var(--tx-lo); }
+	.tone-table td { background: var(--bg-r); border-radius: 6px; text-align: center; padding: 6px 2px; }
+	.tone-table td.none { background: none; color: var(--tk-muted); }
+	/* each cell: the tone's contour, with its name under it */
+	.tone-table .tn { display: block; font: bold 11px Arial, sans-serif; margin-top: 2px; }
+	.tone-table .tc { display: block; width: 38px; height: 22px; margin: 0 auto; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+
+	/* ---- syllable builder ---- */
+	.bld-pick { margin: 0 0 12px; }
+	.bld-label { font: bold 13px Arial, sans-serif; color: var(--tk-muted); margin: 0 0 4px; }
+	.bld-opt { font-weight: normal; }
+	.bld-opts { display: flex; flex-wrap: wrap; gap: 4px; font-family: Mali, sans-serif; font-weight: 500; }
+	.bld-opts .c { min-width: 40px; padding: 4px 6px; font-size: 22px; line-height: 1.3; cursor: pointer; border: 0; font-family: inherit; font-weight: inherit; }
+	.bld-opts .c:focus-visible { outline: 2px solid var(--color2); outline-offset: 2px; }
+	.bld-opts .c.picked { box-shadow: 0 0 0 2.5px var(--color1); }
+	.bld-opts .c:disabled { opacity: 0.2; cursor: default; }
+	.bld-opts .c[hidden] { display: none; }
+	.bld-opts .bld-none { font: bold 12px Arial, sans-serif; min-width: 52px; }
+	.bld { position: relative; }
+	.bld-parts { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 8px 6px; margin: 8px 0 4px; font-family: Mali, sans-serif; font-weight: 500; }
+	/* each part is a button that opens its choices */
+	.bld-slot { background: none; border: 0; padding: 0; cursor: pointer; font: inherit; color: inherit; }
+	.bld-slot:focus-visible { outline: 2px solid var(--color2); outline-offset: 3px; border-radius: 6px; }
+	.bld-slot:hover .c { filter: brightness(1.06); }
+	.bld-slot.open .c { box-shadow: 0 0 0 2.5px var(--color1); }
+	.bld-part .c.bld-empty { font: bold 12px Arial, sans-serif; color: var(--tk-muted); display: flex; align-items: center; justify-content: center; min-height: 47px; box-sizing: border-box; }
+	/* the choices, in a card that opens under the parts */
+	.bld-pop {
+		position: absolute; left: 0; right: 0; z-index: 20;
+		background: var(--color3); border: 1px solid color-mix(in srgb, var(--tk-muted) 40%, transparent);
+		border-radius: 8px; box-shadow: 0 8px 28px var(--shadow); padding: 14px 14px 4px;
+	}
+	.bld-pop[hidden] { display: none; }
+	.bld-pop .bld-pick[hidden] { display: none; }
+	.bld-close { position: absolute; top: 6px; right: 6px; background: none; border: 0; padding: 6px 8px; cursor: pointer; color: var(--tk-muted); font-size: 16px; }
+	.bld-close:hover { color: var(--color1); }
+	/* why some choices are greyed out */
+	.bld-note { font: 13px Arial, sans-serif; color: var(--tk-muted); margin: 0 0 10px; }
+	.bld-note :lang(th) { font-family: Mali, sans-serif; }
+	.bld-part { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+	.bld-part .c { min-width: 52px; font-size: 26px; padding: 6px 8px; line-height: 1.3; }
+	.bld-part span.bld-plabel { font: bold 11px Arial, sans-serif; color: var(--tk-muted); }
+	.bld-plus { font: bold 16px Arial, sans-serif; color: var(--tk-muted); padding-top: 14px; }
+	.bld-pname { font-size: 12px; margin-top: 2px; }
+	/* tall enough for a vowel and a tone mark stacked above the letters */
+	.bld-word { text-align: center; font-family: Mali, sans-serif; font-weight: 500; font-size: 96px; line-height: 1.9; margin: 0; padding-top: 28px; }
+	.bld-read { display: flex; flex-direction: column; align-items: center; gap: 6px; font: 20px Arial, sans-serif; }
+	.bld-reading { display: flex; justify-content: center; align-items: center; gap: 10px; flex-wrap: wrap; }
+	.bld-rlabel { font: bold 13px Arial, sans-serif; color: var(--tk-muted); }
+	.bld-or { color: var(--tk-muted); margin: 0 -2px; }
+	.bld-rlabel :lang(th) { font-family: Mali, sans-serif; }
+	/* fake clusters: their own group in the second-consonant choices */
+	.bld-fakehead { flex-basis: 100%; font: bold 13px Arial, sans-serif; color: var(--tk-muted); margin: 8px 0 0; }
+	.bld-fakehead[hidden] { display: none; }
+	.bld-fake small { display: block; font-size: 11px; line-height: 1.2; opacity: 0.85; }
+	.bld-read .tc { width: 44px; height: 26px; fill: none; stroke: var(--color1); stroke-width: 2.4; stroke-linecap: round; }
+	.bld-read .bld-tone { font-weight: bold; }
+	:root[data-rom="th"] .bld-read .bld-rom { font-family: Mali, sans-serif; }
+	/* the pieces of a hovered part light up; the rest dims a little */
+	.bld-word { display: grid; }
+	.bld-word > span { grid-area: 1 / 1; }
+	.bld-l1 .on { color: var(--button-bg); }
+	.bld-l1 .off { color: transparent; }
+	.bld-l1 { pointer-events: none; }
+	.bld-why { text-align: center; line-height: 1.5; margin: 10px auto 0; max-width: 34em; }
+	.bld-why :lang(th) { font-family: Mali, sans-serif; }
+
+	/* the tone rules table's explanations */
+	.tone-table tbody td:not(.none) { cursor: help; }
+	.tone-table tbody td:focus-visible { outline: 2px solid var(--color2); outline-offset: 2px; }
+	.tone-tip {
+		position: absolute; z-index: 60; max-width: 300px;
+		background: var(--color1); color: var(--color3);
+		font: 14px/1.45 Arial, sans-serif; padding: 8px 11px; border-radius: 6px;
+		box-shadow: 0 6px 20px var(--shadow); pointer-events: none;
+		opacity: 0; transition: opacity 0.15s ease;
+	}
+	.tone-tip.on { opacity: 1; }
+	.tone-tip ol { margin: 4px 0 0; padding-left: 1.4em; }
+	.tone-tip li { margin: 0; }
+	.tone-tip :lang(th) { font-family: Mali, sans-serif; font-size: 16px; }
+	.tone-tip .o { color: var(--color1); }   /* fading the อ into the card */
+
+	/* ---- numerals and symbols ---- */
+	.nums {
+		display: grid;
+		grid-template-columns: repeat(10, 1fr);
+		gap: 4px;
+		font-family: Mali, sans-serif;
+		font-weight: 500;
+		font-size: 26px;
+		line-height: 1.2;
+	}
+	.nums .c { padding: 6px 0 4px; }
+	.nums .c small { display: block; font: bold 12px Arial, sans-serif; color: var(--tk-muted); }
+	.num-rom { font: 13px Arial, sans-serif; color: var(--tk-muted); text-align: center; }
+	.syms { display: flex; flex-direction: column; gap: 4px; margin-top: 16px; font-family: Mali, sans-serif; font-weight: 500; }
+	.sym { display: grid; grid-template-columns: 64px minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.4fr); gap: 14px; align-items: center; }
+	.sym .c { font-size: 24px; padding: 6px 0; }
+	.sym-th { font-size: 20px; }
+	.sym-rom, .sym-en { font: 15px Arial, sans-serif; color: var(--tk-muted); }
+
+	/* ---- traditional count: a numbered badge in the corner of each of the
+	   32 vowels taught in school ---- */
+	.has-trad { position: relative; }
+	.trad {
+		position: absolute;
+		top: 2px;
+		right: 2px;   /* tucked into the tile's corner, clear of its neighbours */
+		z-index: 2;
+		min-width: 14px;
+		height: 14px;
+		padding: 0 3px;
+		box-sizing: border-box;
+		/* the top-right corner follows the tile's own rounded corner, set in by
+		   the same 2px (6px - 2px), so the two curves share a centre */
+		border-radius: 7px 4px 7px 7px;
+		background: var(--color1);   /* the colours of a switched-on chip */
+		color: var(--color3);
+		font: bold 8.5px/14px Arial, sans-serif;
+		text-align: center;
+		pointer-events: none;
+	}
+	.trad::before { content: attr(data-n); }
+	.chip i { font-size: 11px; margin-right: 3px; }
+
+	/* ---- key ---- */
+	.key { display: flex; flex-wrap: wrap; gap: 8px 16px; margin: 0 0 10px; padding: 0; list-style: none; font-size: 14px; color: var(--tk-muted); }
+	.key li { display: flex; align-items: center; gap: 6px; margin: 0; line-height: 1.3; }
+	.key .c { display: inline-block; width: 30px; height: 22px; padding: 0; }
+	/* the outline alone, in the rare forms' grey */
+	/* a key inside the vowel chart spans its width, in the page's own face */
+	.key-in-grid { grid-column: 1 / -1; font-family: Arial, sans-serif; font-weight: normal; line-height: 1.3; }
+	.key li > i { font-size: 12px; width: 30px; text-align: center; }
+	/* obsolete consonants keep their class colour, faded, so the swatch
+	   shows all three */
+	.key .key-obs-cons { background: linear-gradient(90deg,
+		color-mix(in srgb, var(--bg-hi) 38%, var(--color3)) 0 33.3%,
+		color-mix(in srgb, var(--bg-mid) 38%, var(--color3)) 33.3% 66.6%,
+		color-mix(in srgb, var(--bg-lo) 38%, var(--color3)) 66.6%); }
+	.key .key-obs-vow { background: linear-gradient(90deg,
+		color-mix(in srgb, var(--bg-s) 38%, var(--color3)) 0 50%,
+		color-mix(in srgb, var(--bg-l) 38%, var(--color3)) 50%); }
+	.key .key-grey { background: var(--bg-r); }
+	.key .key-dash { width: 30px; text-align: center; color: var(--tk-muted); }
+	.key li[hidden] { display: none; }
+	.key .key-x { background: none; color: var(--ink-rare); }
+
+	@media (max-width: 600px) {
+		.cons { font-size: 19px; gap: 3px; }
+	}
+	@media (max-width: 480px) {
+		.nums { grid-template-columns: repeat(5, 1fr); row-gap: 4px; }
+		.nums > :nth-child(-n+5) { grid-row: 1; }
+		.nums > :nth-child(n+6):nth-child(-n+10) { grid-row: 3; }
+		.nums > :nth-child(n+11):nth-child(-n+15) { grid-row: 2; }
+		.nums > :nth-child(n+16) { grid-row: 4; }
+		.num-rom { font-size: 10px; }
+		.sym { grid-template-columns: 52px minmax(0, 1fr) minmax(0, 1fr); }
+		.sym-en { grid-column: 2 / -1; margin-top: -10px; }
+		.grid { font-size: 20px; }
+		/* too narrow for six columns: results wrap in their own area */
+		.k { grid-template-columns: 52px 14px 52px 18px 1fr; gap: 4px 6px; font-size: 17px; }
+		.k .c { padding: 6px 0; }
+		.res { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+		.res .c { min-width: 50px; flex: 0 0 auto; }
+		.k-pron { grid-column: 3 / -1; margin: -2px 0 6px; }
+	}
+</style>
 </head>
 
 <body>
 
-	<trevorkafka-nav></trevorkafka-nav>
-
 	<div class="content">
+		<h1 id="top">Thai Alphabet <span class="th-title" lang="th">อักษรไทย</span></h1>
+		<p class="intro">The Thai alphabet has 44 consonants (two of which are obsolete). Each belongs to one of three classes (high, mid or low), which together with the tone marks decides the tone of a syllable. Three of the consonants, <span lang="th">อ</span>, <span lang="th">ว</span> and <span lang="th">ย</span>, also double as parts of vowels. Thai's 21 vowel symbols, written before, after, above or below the consonant, combine into 33 vowel spellings (24 vowels in short and long pairs, some spelt differently when a final consonant follows) and 14 special combinations (traditionally counted as 32 vowels). Thai also has its own numerals and some other special symbols.</p>
+		<div class="rom-switch" role="group" aria-label="Pronunciation shown as">
+			<span class="rom-switch-label">pronunciation system</span>
+			<button type="button" class="chip" data-rom="paiboon" aria-pressed="true">Paiboon+</button>
+			<button type="button" class="chip" data-rom="ipa" aria-pressed="false">IPA</button>
+			<button type="button" class="chip" data-rom="tl" aria-pressed="false">thai-language.com</button>
+			<button type="button" class="chip" data-rom="th" aria-pressed="false" lang="th">อักษรไทย</button>
+		</div>
 
-		<h1>Thai Alphabet</h1>
 
+		<h2 class="section" id="consonants">Consonants <span class="th-title" lang="th">พยัญชนะ</span></h2>
+		<ul class="key">
+			<li><span class="c hi"></span>high class consonant</li>
+			<li><span class="c mid"></span>mid class consonant</li>
+			<li><span class="c lo"></span>low class consonant</li>
+			<li><span class="c key-obs-cons"></span>obsolete consonant</li>
+			<li class="key-nofinal" hidden><span class="c key-grey"></span>cannot be used in final position</li>
+			<li><span class="pron" lang="th-Latn" data-paiboon="kaa" data-ipa="kaː" data-tl="kaa^M" data-th="กา">kaa</span>pronunciation</li>
+		</ul>
+		<div class="chips" role="group" aria-label="Order">
+			<button type="button" class="chip" data-order="abc" aria-pressed="true">alphabetical</button>
+			<button type="button" class="chip" data-order="class" aria-pressed="false">class | frequency</button>
+			<button type="button" class="chip" data-order="sound-class" aria-pressed="false">initial sound | class | frequency</button>
+			<button type="button" class="chip" data-order="final" aria-pressed="false">final sound | frequency</button>
+			<button type="button" class="chip chip-switch" data-toggle="detail" aria-pressed="false"><i class="fa-solid fa-list" aria-hidden="true"></i> detail</button>
+			<button type="button" class="chip" data-toggle="trad-cons" aria-pressed="false"><i class="fa-solid fa-list-ol" aria-hidden="true"></i> traditional count (44)</button>
+		</div>
+		<div class="cons" lang="th">
+<div class="c mid" data-say="กอ ไก่">ก</div><div class="c hi" data-say="ขอ ไข่">ข</div><div class="c hi obs" data-say="ฃอ ขวด">ฃ</div><div class="c lo" data-say="คอ ควาย">ค</div><div class="c lo obs" data-say="ฅอ คน">ฅ</div><div class="c lo" data-say="ฆอ ระฆัง">ฆ</div><div class="c lo" data-say="งอ งู">ง</div><div class="c mid" data-say="จอ จาน">จ</div><div class="c hi" data-say="ฉอ ฉิ่ง">ฉ</div><div class="c lo" data-say="ชอ ช้าง">ช</div><div class="c lo" data-say="ซอ โซ่">ซ</div>
+<div class="c lo" data-say="ฌอ เฌอ">ฌ</div><div class="c lo" data-say="ญอ หญิง">ญ</div><div class="c mid" data-say="ฎอ ชฎา">ฎ</div><div class="c mid" data-say="ฏอ ปฏัก">ฏ</div><div class="c hi" data-say="ฐอ ฐาน">ฐ</div><div class="c lo" data-say="ฑอ มณโฑ">ฑ</div><div class="c lo" data-say="ฒอ ผู้เฒ่า">ฒ</div><div class="c lo" data-say="ณอ เณร">ณ</div><div class="c mid" data-say="ดอ เด็ก">ด</div><div class="c mid" data-say="ตอ เต่า">ต</div><div class="c hi" data-say="ถอ ถุง">ถ</div>
+<div class="c lo" data-say="ทอ ทหาร">ท</div><div class="c lo" data-say="ธอ ธง">ธ</div><div class="c lo" data-say="นอ หนู">น</div><div class="c mid" data-say="บอ ใบไม้">บ</div><div class="c mid" data-say="ปอ ปลา">ป</div><div class="c hi" data-say="ผอ ผึ้ง">ผ</div><div class="c hi" data-say="ฝอ ฝา">ฝ</div><div class="c lo" data-say="พอ พาน">พ</div><div class="c lo" data-say="ฟอ ฟัน">ฟ</div><div class="c lo" data-say="ภอ สำเภา">ภ</div><div class="c lo" data-say="มอ ม้า">ม</div>
+<div class="c lo" data-say="ยอ ยักษ์">ย</div><div class="c lo" data-say="รอ เรือ">ร</div><div class="c lo" data-say="ลอ ลิง">ล</div><div class="c lo" data-say="วอ แหวน">ว</div><div class="c hi" data-say="ศอ ศาลา">ศ</div><div class="c hi" data-say="ษอ ฤๅษี">ษ</div><div class="c hi" data-say="สอ เสือ">ส</div><div class="c hi" data-say="หอ หีบ">ห</div><div class="c lo" data-say="ฬอ จุฬา">ฬ</div><div class="c mid" data-say="ออ อ่าง">อ</div><div class="c lo" data-say="ฮอ นกฮูก">ฮ</div>
+		</div>
+
+		<h2 class="section" id="vowels" style="margin-top: 28px">Vowels <span class="th-title" lang="th">สระ</span></h2>
+		<p class="sec-intro">Thai vowels are written around a consonant, so each vowel below is shown on a placeholder: a faded <span class="ph-demo" lang="th">อ</span> stands for any initial consonant, and a faded <span class="ph-demo">-</span> stands for a final consonant. For example, <span lang="th" class="th-inline">เ<span class="ph-demo">อ</span>ะ</span> with <span lang="th" class="th-inline">ต</span> gives <span lang="th" class="th-inline">เตะ</span>, and <span lang="th" class="th-inline">เ<span class="w">อี<span class="o"></span></span>ย<span class="ph-demo">-</span></span> with <span lang="th" class="th-inline">ฃ</span> and <span lang="th" class="th-inline">ง</span> gives <span lang="th" class="th-inline">เฃียง</span>.</p>
+		<ul class="key">
+			<li><span class="c s"></span>short vowel</li>
+			<li><span class="c l"></span>long vowel</li>
+			<li><span class="c r"></span>rare vowel</li>
+			<li><span class="c x key-x"></span>special spelling</li>
+			<li><span lang="th" style="font-family: Mali, sans-serif; font-size: 18px; opacity: 0.6">อ</span>initial consonant</li>
+			<li><span style="font-family: Mali, sans-serif; font-size: 18px; opacity: 0.35">-</span>final consonant</li>
+			<li><span class="pron" lang="th-Latn" data-paiboon="kaa" data-ipa="kaː" data-tl="kaa^M" data-th="กา">kaa</span>pronunciation</li>
+		</ul>
+		<div class="chips">
+			<button type="button" class="chip" data-toggle="trad" aria-pressed="false"><i class="fa-solid fa-list-ol" aria-hidden="true"></i> traditional count (32)</button>
+			<button type="button" class="chip" data-toggle="ours" aria-pressed="false"><i class="fa-solid fa-list-ol" aria-hidden="true"></i> my count (49)</button>
+		</div>
+		<div class="grid" lang="th">
+<div></div><div class="h" lang="en">Short open</div><div class="h" lang="en">Short closed</div><div class="h" lang="en">Long open</div><div class="h" lang="en">Long closed</div><div></div>
+<div class="rom pron" lang="th-Latn" data-paiboon="a" data-ipa="a" data-tl="a" data-th="อะ">a</div><div class="c s"><span class="w">อ<span class="o"></span></span>ะ</div><div class="c s"><span class="w">อั<span class="o"></span></span><span class="f">-</span></div><div class="c l"><span class="w">อ<span class="o"></span></span>า</div><div class="c l"><span class="w">อ<span class="o"></span></span>า<span class="f">-</span></div><div class="rom rom-long pron" lang="th-Latn" data-paiboon="aa" data-ipa="aː" data-tl="aa" data-th="อา">aa</div>
+<div class="rom pron" lang="th-Latn" data-paiboon="i" data-ipa="i" data-tl="i" data-th="อิ">i</div><div class="c s"><span class="w">อิ<span class="o"></span></span></div><div class="c s"><span class="w">อิ<span class="o"></span></span><span class="f">-</span></div><div class="c l"><span class="w">อี<span class="o"></span></span></div><div class="c l"><span class="w">อี<span class="o"></span></span><span class="f">-</span></div><div class="rom rom-long pron" lang="th-Latn" data-paiboon="ii" data-ipa="iː" data-tl="ee" data-th="อี">ii</div>
+<div class="rom pron" lang="th-Latn" data-paiboon="ʉ" data-ipa="ɯ" data-tl="eu" data-th="อึ">ʉ</div><div class="c s"><span class="w">อึ<span class="o"></span></span></div><div class="c s"><span class="w">อึ<span class="o"></span></span><span class="f">-</span></div><div class="c l"><span class="w">อื<span class="o"></span></span>อ</div><div class="c l x"><span class="w">อื<span class="o"></span></span><span class="f">-</span></div><div class="rom rom-long pron" lang="th-Latn" data-paiboon="ʉʉ" data-ipa="ɯː" data-tl="euu" data-th="อือ">ʉʉ</div>
+<div class="rom pron" lang="th-Latn" data-paiboon="u" data-ipa="u" data-tl="oo" data-th="อุ">u</div><div class="c s"><span class="w">อุ<span class="o"></span></span></div><div class="c s"><span class="w">อุ<span class="o"></span></span><span class="f">-</span></div><div class="c l"><span class="w">อู<span class="o"></span></span></div><div class="c l"><span class="w">อู<span class="o"></span></span><span class="f">-</span></div><div class="rom rom-long pron" lang="th-Latn" data-paiboon="uu" data-ipa="uː" data-tl="uu" data-th="อู">uu</div>
+<div class="rom pron" lang="th-Latn" data-paiboon="e" data-ipa="e" data-tl="eh" data-th="เอะ">e</div><div class="c s">เ<span class="w">อ<span class="o"></span></span>ะ</div><div class="c s">เ<span class="w">อ็<span class="o"></span></span><span class="f">-</span></div><div class="c l">เ<span class="w">อ<span class="o"></span></span></div><div class="c l">เ<span class="w">อ<span class="o"></span></span><span class="f">-</span></div><div class="rom rom-long pron" lang="th-Latn" data-paiboon="ee" data-ipa="eː" data-tl="aeh" data-th="เอ">ee</div>
+<div class="rom pron" lang="th-Latn" data-paiboon="ɛ" data-ipa="ɛ" data-tl="ae" data-th="แอะ">ɛ</div><div class="c s">แ<span class="w">อ<span class="o"></span></span>ะ</div><div class="c s">แ<span class="w">อ็<span class="o"></span></span><span class="f">-</span></div><div class="c l">แ<span class="w">อ<span class="o"></span></span></div><div class="c l">แ<span class="w">อ<span class="o"></span></span><span class="f">-</span></div><div class="rom rom-long pron" lang="th-Latn" data-paiboon="ɛɛ" data-ipa="ɛː" data-tl="aae" data-th="แอ">ɛɛ</div>
+<div class="rom pron" lang="th-Latn" data-paiboon="o" data-ipa="o" data-tl="o" data-th="โอะ">o</div><div class="c s">โ<span class="w">อ<span class="o"></span></span>ะ</div><div class="c s x"><span class="w">อ<span class="o"></span></span><span class="f">-</span></div><div class="c l">โ<span class="w">อ<span class="o"></span></span></div><div class="c l">โ<span class="w">อ<span class="o"></span></span><span class="f">-</span></div><div class="rom rom-long pron" lang="th-Latn" data-paiboon="oo" data-ipa="oː" data-tl="o:h" data-th="โอ">oo</div>
+<div class="rom pron" lang="th-Latn" data-paiboon="ɔ" data-ipa="ɔ" data-tl="aw" data-th="เอาะ">ɔ</div><div class="c s x">เ<span class="w">อ<span class="o"></span></span>าะ</div><div class="c r x"><span class="w">อ็<span class="o"></span></span>อ<span class="f">-</span></div><div class="c l"><span class="w">อ<span class="o"></span></span>อ</div><div class="c l"><span class="w">อ<span class="o"></span></span>อ<span class="f">-</span></div><div class="rom rom-long pron" lang="th-Latn" data-paiboon="ɔɔ" data-ipa="ɔː" data-tl="aaw" data-th="ออ">ɔɔ</div>
+<div class="rom pron" lang="th-Latn" data-paiboon="ia" data-ipa="ia" data-tl="ia" data-th="เอียะ">ia</div><div class="c r">เ<span class="w">อี<span class="o"></span></span>ยะ</div><div></div><div class="c l">เ<span class="w">อี<span class="o"></span></span>ย</div><div class="c l">เ<span class="w">อี<span class="o"></span></span>ย<span class="f">-</span></div><div class="rom rom-long pron" lang="th-Latn" data-paiboon="iia" data-ipa="iːa" data-tl="iia" data-th="เอีย">iia</div>
+<div class="rom pron" lang="th-Latn" data-paiboon="ʉa" data-ipa="ɯa" data-tl="eua" data-th="เอือะ">ʉa</div><div class="c r">เ<span class="w">อื<span class="o"></span></span>อะ</div><div></div><div class="c l">เ<span class="w">อื<span class="o"></span></span>อ</div><div class="c l">เ<span class="w">อื<span class="o"></span></span>อ<span class="f">-</span></div><div class="rom rom-long pron" lang="th-Latn" data-paiboon="ʉʉa" data-ipa="ɯːa" data-tl="euua" data-th="เอือ">ʉʉa</div>
+<div class="rom pron" lang="th-Latn" data-paiboon="ua" data-ipa="ua" data-tl="ua" data-th="อัวะ">ua</div><div class="c r"><span class="w">อั<span class="o"></span></span>วะ</div><div></div><div class="c l"><span class="w">อั<span class="o"></span></span>ว</div><div class="c l x"><span class="w">อ<span class="o"></span></span>ว<span class="f">-</span></div><div class="rom rom-long pron" lang="th-Latn" data-paiboon="uua" data-ipa="uːa" data-tl="uaa" data-th="อัว">uua</div>
+<div class="rom pron" lang="th-Latn" data-paiboon="ə" data-ipa="ɤ" data-tl="uh, er" data-th="เออะ">ə</div><div class="c s">เ<span class="w">อ<span class="o"></span></span>อะ</div><div class="c r x">เ<span class="w">อิ<span class="o"></span></span><span class="f">-</span></div><div class="c l">เ<span class="w">อ<span class="o"></span></span>อ</div><div class="c l x">เ<span class="w">อิ<span class="o"></span></span><span class="f">-</span></div><div class="rom rom-long pron" lang="th-Latn" data-paiboon="əə" data-ipa="ɤː" data-tl="uuhr, eer" data-th="เออ">əə</div>
+<h3 class="lb" id="combinations" lang="en">Special Combinations <span class="th-title" lang="th">การประสมพิเศษ</span></h3>
+<ul class="key key-in-grid" lang="en">
+			<li><span class="c lo"></span>low class consonant</li>
+			<li><span class="c s"></span>short vowel</li>
+			<li><span class="c l"></span>long vowel</li>
+			<li><span class="c key-obs-vow"></span>obsolete vowel</li>
+			<li><span class="c x key-x"></span>special spelling</li>
+			<li><i class="fa-solid fa-plus" aria-hidden="true"></i>combined with</li>
+			<li><i class="fa-solid fa-arrow-right" aria-hidden="true"></i>written as</li>
+			<li><span lang="th" style="font-family: Mali, sans-serif; font-size: 18px; opacity: 0.6">อ</span>initial consonant</li>
+			<li><span style="font-family: Mali, sans-serif; font-size: 18px; opacity: 0.35">-</span>final consonant</li>
+			<li><span class="pron" lang="th-Latn" data-paiboon="kaa" data-ipa="kaː" data-tl="kaa^M" data-th="กา">kaa</span>pronunciation</li>
+		</ul>
+<div class="k">
+<h4 class="k-sub" id="combinations-final" lang="en">With a Final Consonant</h4>
+<div class="c s"><span class="w">อั<span class="o"></span></span><span class="f">-</span></div><div class="op"><i class="fa-solid fa-plus" aria-label="plus"></i></div><div class="c lo">ม</div><div class="op"><i class="fa-solid fa-arrow-right" aria-label="becomes"></i></div><div class="res"><div class="c s"><span class="w">อั<span class="o"></span></span>ม</div><span class="op" lang="en">or</span><div class="c s x"><span class="w">อ<span class="o"></span></span>ำ</div></div><span class="pron k-pron" lang="th-Latn" data-paiboon="am" data-ipa="am" data-tl="am" data-th="อัม">am</span>
+<div class="c s"><span class="w">อั<span class="o"></span></span><span class="f">-</span></div><div class="op"><i class="fa-solid fa-plus" aria-label="plus"></i></div><div class="c lo">ย</div><div class="op"><i class="fa-solid fa-arrow-right" aria-label="becomes"></i></div><div class="res"><div class="c s"><span class="w">อั<span class="o"></span></span>ย</div><span class="op" lang="en">or</span><div class="c s x">ใ<span class="w">อ<span class="o"></span></span></div><span class="op" lang="en">or</span><div class="c s x">ไ<span class="w">อ<span class="o"></span></span></div><span class="op" lang="en">or</span><div class="c s x">ไ<span class="w">อ<span class="o"></span></span>ย</div></div><span class="pron k-pron" lang="th-Latn" data-paiboon="ai" data-ipa="aj" data-tl="ai" data-th="ไอ">ai</span>
+<div class="c s"><span class="w">อั<span class="o"></span></span><span class="f">-</span></div><div class="op"><i class="fa-solid fa-plus" aria-label="plus"></i></div><div class="c lo">ว</div><div class="op"><i class="fa-solid fa-arrow-right" aria-label="becomes"></i></div><div class="res"><div class="c s x">เ<span class="w">อ<span class="o"></span></span>า</div></div><span class="pron k-pron" lang="th-Latn" data-paiboon="ao" data-ipa="aw" data-tl="ao" data-th="เอา">ao</span>
+<div class="c l">เ<span class="w">อิ<span class="o"></span></span><span class="f">-</span></div><div class="op"><i class="fa-solid fa-plus" aria-label="plus"></i></div><div class="c lo">ย</div><div class="op"><i class="fa-solid fa-arrow-right" aria-label="becomes"></i></div><div class="res"><div class="c l x">เ<span class="w">อ<span class="o"></span></span>ย</div></div><span class="pron k-pron" lang="th-Latn" data-paiboon="əəi" data-ipa="ɤːj" data-tl="eeuy" data-th="เอย">əəi</span>
+<div class="c s"><span class="w">อั<span class="o"></span></span><span class="f">-</span></div><div class="op"><i class="fa-solid fa-plus" aria-label="plus"></i></div><div class="c lo">ร</div><div class="op"><i class="fa-solid fa-arrow-right" aria-label="becomes"></i></div><div class="res"><div class="c s"><span class="w">อั<span class="o"></span></span>น</div><span class="op" lang="en">or</span><div class="c s x"><span class="w">อ<span class="o"></span></span>รร</div></div><span class="pron k-pron" lang="th-Latn" data-paiboon="an" data-ipa="an" data-tl="an" data-th="อัน">an</span>
+<div class="c l"><span class="w">อ<span class="o"></span></span>อ<span class="f">-</span></div><div class="op"><i class="fa-solid fa-plus" aria-label="plus"></i></div><div class="c lo">ร</div><div class="op"><i class="fa-solid fa-arrow-right" aria-label="becomes"></i></div><div class="res"><div class="c l x"><span class="w">อ<span class="o"></span></span>ร</div></div><span class="pron k-pron" lang="th-Latn" data-paiboon="ɔɔn" data-ipa="ɔːn" data-tl="aawn" data-th="ออน">ɔɔn</span>
+<h4 class="k-sub" id="combinations-open" lang="en">With an Initial Consonant</h4>
+<div class="c lo">ร</div><div class="op"><i class="fa-solid fa-plus" aria-label="plus"></i></div><div class="c s"><span class="w">อึ<span class="o"></span></span></div><div class="op"><i class="fa-solid fa-arrow-right" aria-label="becomes"></i></div><div class="res"><div class="c s">รึ</div><span class="op" lang="en">or</span><div class="c s x">ฤ</div></div><span class="pron k-pron" lang="th-Latn" data-paiboon="rʉ́" data-ipa="rɯ́" data-tl="reu^H" data-th="รึ">rʉ́</span>
+<div class="c lo">ร</div><div class="op"><i class="fa-solid fa-plus" aria-label="plus"></i></div><div class="c s"><span class="w">อิ<span class="o"></span></span></div><div class="op"><i class="fa-solid fa-arrow-right" aria-label="becomes"></i></div><div class="res"><div class="c s">ริ</div><span class="op" lang="en">or</span><div class="c s x">ฤ</div></div><span class="pron k-pron" lang="th-Latn" data-paiboon="rí" data-ipa="rí" data-tl="ri^H" data-th="ริ">rí</span>
+<div class="c lo">ร</div><div class="op"><i class="fa-solid fa-plus" aria-label="plus"></i></div><div class="c l">เ<span class="w">อ<span class="o"></span></span>อ</div><div class="op"><i class="fa-solid fa-arrow-right" aria-label="becomes"></i></div><div class="res"><div class="c l">เรอ</div><span class="op" lang="en">or</span><div class="c l x">ฤ</div></div><span class="pron k-pron" lang="th-Latn" data-paiboon="rəə" data-ipa="rɤː" data-tl="ruuhr^M" data-th="เรอ">rəə</span>
+<div class="c lo">ร</div><div class="op"><i class="fa-solid fa-plus" aria-label="plus"></i></div><div class="c l"><span class="w">อื<span class="o"></span></span>อ</div><div class="op"><i class="fa-solid fa-arrow-right" aria-label="becomes"></i></div><div class="res"><div class="c l">รือ</div><span class="op" lang="en">or</span><div class="c l x">ฤๅ</div></div><span class="pron k-pron" lang="th-Latn" data-paiboon="rʉʉ" data-ipa="rɯː" data-tl="reuu^M" data-th="รือ">rʉʉ</span>
+<div class="c lo">ล</div><div class="op"><i class="fa-solid fa-plus" aria-label="plus"></i></div><div class="c s"><span class="w">อึ<span class="o"></span></span></div><div class="op"><i class="fa-solid fa-arrow-right" aria-label="becomes"></i></div><div class="res"><div class="c s">ลึ</div><span class="op" lang="en">or</span><div class="c s x obs">ฦ</div></div><span class="pron k-pron" lang="th-Latn" data-paiboon="lʉ́" data-ipa="lɯ́" data-tl="leu^H" data-th="ลึ">lʉ́</span>
+<div class="c lo">ล</div><div class="op"><i class="fa-solid fa-plus" aria-label="plus"></i></div><div class="c l"><span class="w">อื<span class="o"></span></span>อ</div><div class="op"><i class="fa-solid fa-arrow-right" aria-label="becomes"></i></div><div class="res"><div class="c l">ลือ</div><span class="op" lang="en">or</span><div class="c l x obs">ฦๅ</div></div><span class="pron k-pron" lang="th-Latn" data-paiboon="lʉʉ" data-ipa="lɯː" data-tl="leuu^M" data-th="ลือ">lʉʉ</span>
+<h4 class="k-sub" id="combinations-bare" lang="en">Without a Consonant</h4>
+<div class="c s"><span class="w">อั<span class="o"></span></span><span class="f">-</span></div><div></div><div></div><div class="op"><i class="fa-solid fa-arrow-right" aria-label="becomes"></i></div><div class="res"><div class="c s"><span class="w">อั<span class="o"></span></span><span class="f">-</span></div><span class="op" lang="en">or</span><div class="c s x"><span class="w">อ<span class="o"></span></span>รร<span class="f">-</span></div></div><span class="pron k-pron" lang="th-Latn" data-paiboon="a-" data-ipa="a-" data-tl="a-" data-th="อั-">a-</span>
+<div class="c s"><span class="w">อ<span class="o"></span></span>ะ</div><div></div><div></div><div class="op"><i class="fa-solid fa-arrow-right" aria-label="becomes"></i></div><div class="res"><div class="c s"><span class="w">อ<span class="o"></span></span>ะ</div><span class="op" lang="en">or</span><div class="c s x"><span class="w">อ<span class="o"></span></span></div></div><span class="pron k-pron" lang="th-Latn" data-paiboon="a" data-ipa="a" data-tl="a" data-th="อะ">a</span>
+</div>
+		</div>
+
+		<h2 class="section" id="tones" style="margin-top: 28px">Tones <span class="th-title" lang="th">วรรณยุกต์</span></h2>
+		<p class="sec-intro">Thai has five tones. Which one a syllable takes depends on the class of its first consonant, whether the final consonant is live or dead, and whether it carries a tone mark. Note that the tone names "high", "mid" and "low" are unrelated to the high, mid and low consonant classes.</p>
+		<div class="syms" lang="th">
+<div class="sym"><div class="c n tone-tile"><svg viewBox="0 0 40 24" aria-hidden="true"><path d="M4 12H36"/></svg><span class="tone-en" lang="en">mid</span></div><span class="sym-th">สามัญ</span><span class="sym-rom pron" lang="th-Latn" data-paiboon="sǎa-man" data-ipa="sǎː.man" data-tl="saa^R man^M" data-th="สา-มัน">sǎa-man</span></div>
+<div class="sym"><div class="c n tone-tile"><svg viewBox="0 0 40 24" aria-hidden="true"><path d="M4 16L36 19"/></svg><span class="tone-en" lang="en">low</span></div><span class="sym-th">เอก</span><span class="sym-rom pron" lang="th-Latn" data-paiboon="èek" data-ipa="ʔèːk" data-tl="aehk^L" data-th="เอก">èek</span></div>
+<div class="sym"><div class="c n tone-tile"><svg viewBox="0 0 40 24" aria-hidden="true"><path d="M4 11C14 3 24 5 36 20"/></svg><span class="tone-en" lang="en">falling</span></div><span class="sym-th">โท</span><span class="sym-rom pron" lang="th-Latn" data-paiboon="too" data-ipa="tʰoː" data-tl="tho:h^M" data-th="โท">too</span></div>
+<div class="sym"><div class="c n tone-tile"><svg viewBox="0 0 40 24" aria-hidden="true"><path d="M4 10C16 11 26 7 36 3"/></svg><span class="tone-en" lang="en">high</span></div><span class="sym-th">ตรี</span><span class="sym-rom pron" lang="th-Latn" data-paiboon="dtrii" data-ipa="triː" data-tl="dtree^M" data-th="ตฺรี">dtrii</span></div>
+<div class="sym"><div class="c n tone-tile"><svg viewBox="0 0 40 24" aria-hidden="true"><path d="M4 14C14 22 26 17 36 4"/></svg><span class="tone-en" lang="en">rising</span></div><span class="sym-th">จัตวา</span><span class="sym-rom pron" lang="th-Latn" data-paiboon="jàt-dtà-waa" data-ipa="tɕàt.ta.waː" data-tl="jat^L dta^L waa^M" data-th="จัด-ตะ-วา">jàt-dtà-waa</span></div>
+		</div>
+
+		<h3 class="sub-h" id="tone-marks" lang="en">Tone Marks</h3>
+		<p class="sec-intro">A tone mark is written when a word’s actual tone differs from the one its spelling would otherwise give; the mark changes the tone to the one that is actually spoken.</p>
+		<div class="syms" lang="th">
+<div class="sym"><div class="c n has-trad"><span class="w">อ่<span class="o"></span></span><span class="trad" lang="en" data-n="1"></span></div><span class="sym-th">ไม้เอก</span><span class="sym-rom pron" lang="th-Latn" data-paiboon="mái èek" data-ipa="máj.ʔèːk" data-tl="maai^H aehk^L" data-th="ไม้-เอก">mái èek</span></div>
+<div class="sym"><div class="c n has-trad"><span class="w">อ้<span class="o"></span></span><span class="trad" lang="en" data-n="2"></span></div><span class="sym-th">ไม้โท</span><span class="sym-rom pron" lang="th-Latn" data-paiboon="mái too" data-ipa="máj.tʰoː" data-tl="maai^H tho:h^M" data-th="ไม้-โท">mái too</span></div>
+<div class="sym"><div class="c n has-trad"><span class="w">อ๊<span class="o"></span></span><span class="trad" lang="en" data-n="3"></span></div><span class="sym-th">ไม้ตรี</span><span class="sym-rom pron" lang="th-Latn" data-paiboon="mái dtrii" data-ipa="máj.triː" data-tl="maai^H dtree^M" data-th="ไม้-ตฺรี">mái dtrii</span></div>
+<div class="sym"><div class="c n has-trad"><span class="w">อ๋<span class="o"></span></span><span class="trad" lang="en" data-n="4"></span></div><span class="sym-th">ไม้จัตวา</span><span class="sym-rom pron" lang="th-Latn" data-paiboon="mái jàt-dtà-waa" data-ipa="máj.tɕàt.ta.waː" data-tl="maai^H jat^L dta^L waa^M" data-th="ไม้-จัด-ตะ-วา">mái jàt-dtà-waa</span></div>
+		</div>
+
+		<h3 class="sub-h" id="tone-rules" lang="en">Tone Rules</h3>
+		<p class="sec-intro">A <b>live</b> syllable ends in a long vowel or in <span class="pron" lang="th-Latn" data-paiboon="-m" data-ipa="/-m/" data-tl="-m" data-th="-ม">-m</span>, <span class="pron" lang="th-Latn" data-paiboon="-n" data-ipa="/-n/" data-tl="-n" data-th="-น">-n</span>, <span class="pron" lang="th-Latn" data-paiboon="-ng" data-ipa="/-ŋ/" data-tl="-ng" data-th="-ง">-ng</span>, <span class="pron" lang="th-Latn" data-paiboon="-y" data-ipa="/-j/" data-tl="-y" data-th="-ย">-y</span> or <span class="pron" lang="th-Latn" data-paiboon="-w" data-ipa="/-w/" data-tl="-w" data-th="-ว">-w</span>; a <b>dead</b> syllable ends in a short vowel or in <span class="pron" lang="th-Latn" data-paiboon="-k" data-ipa="/-k̚/" data-tl="-k" data-th="-ก">-k</span>, <span class="pron" lang="th-Latn" data-paiboon="-t" data-ipa="/-t̚/" data-tl="-t" data-th="-ด">-t</span> or <span class="pron" lang="th-Latn" data-paiboon="-p" data-ipa="/-p̚/" data-tl="-p" data-th="-บ">-p</span>. High and low class consonants take only the first two marks.</p>
+		<ul class="key">
+			<li><span class="c hi"></span>high class initial consonant</li>
+			<li><span class="c mid"></span>mid class initial consonant</li>
+			<li><span class="c lo"></span>low class initial consonant</li>
+			<li><span lang="th" style="font-family: Mali, sans-serif; font-size: 18px; opacity: 0.6">อ</span>initial consonant</li>
+			<li><span class="key-dash">–</span>not possible</li>
+		</ul>
+		<div class="tone-scroll">
+			<table class="tone-table" lang="th">
+				<colgroup><col><col><col><col><col><col><col></colgroup>
+				<thead lang="en"><tr><th colspan="3"><div class="c n head-tile">no tone mark</div></th><th rowspan="2"><div class="c n" lang="th"><span class="w">อ่<span class="o"></span></span></div></th><th rowspan="2"><div class="c n" lang="th"><span class="w">อ้<span class="o"></span></span></div></th><th rowspan="2"><div class="c n" lang="th"><span class="w">อ๊<span class="o"></span></span></div></th><th rowspan="2"><div class="c n" lang="th"><span class="w">อ๋<span class="o"></span></span></div></th></tr><tr><th><div class="c n head-tile">live ending</div></th><th colspan="2"><div class="c n head-tile">dead ending</div></th></tr></thead>
+				<tbody>
+				<tr class="row-hi"><td><svg class="tc" viewBox="0 0 40 24" role="img" aria-label="rising"><path d="M4 14C14 22 26 17 36 4"/></svg><span class="tn" lang="en">rising</span></td><td colspan="3"><svg class="tc" viewBox="0 0 40 24" role="img" aria-label="low"><path d="M4 16L36 19"/></svg><span class="tn" lang="en">low</span></td><td><svg class="tc" viewBox="0 0 40 24" role="img" aria-label="falling"><path d="M4 11C14 3 24 5 36 20"/></svg><span class="tn" lang="en">falling</span></td><td class="none">–</td><td class="none">–</td></tr>
+				<tr class="row-mid"><td><svg class="tc" viewBox="0 0 40 24" role="img" aria-label="mid"><path d="M4 12H36"/></svg><span class="tn" lang="en">mid</span></td><td colspan="3"><svg class="tc" viewBox="0 0 40 24" role="img" aria-label="low"><path d="M4 16L36 19"/></svg><span class="tn" lang="en">low</span></td><td><svg class="tc" viewBox="0 0 40 24" role="img" aria-label="falling"><path d="M4 11C14 3 24 5 36 20"/></svg><span class="tn" lang="en">falling</span></td><td><svg class="tc" viewBox="0 0 40 24" role="img" aria-label="high"><path d="M4 10C16 11 26 7 36 3"/></svg><span class="tn" lang="en">high</span></td><td><svg class="tc" viewBox="0 0 40 24" role="img" aria-label="rising"><path d="M4 14C14 22 26 17 36 4"/></svg><span class="tn" lang="en">rising</span></td></tr>
+				<tr class="row-lo"><td><svg class="tc" viewBox="0 0 40 24" role="img" aria-label="mid"><path d="M4 12H36"/></svg><span class="tn" lang="en">mid</span></td><td><svg class="tc" viewBox="0 0 40 24" role="img" aria-label="high"><path d="M4 10C16 11 26 7 36 3"/></svg><span class="tn" lang="en">high</span></td><td colspan="2"><svg class="tc" viewBox="0 0 40 24" role="img" aria-label="falling"><path d="M4 11C14 3 24 5 36 20"/></svg><span class="tn" lang="en">falling</span></td><td><svg class="tc" viewBox="0 0 40 24" role="img" aria-label="high"><path d="M4 10C16 11 26 7 36 3"/></svg><span class="tn" lang="en">high</span></td><td class="none">–</td><td class="none">–</td></tr>
+				</tbody>
+				<tfoot lang="en"><tr><th></th><th><div class="c n head-tile">short vowel</div></th><th><div class="c n head-tile">long vowel</div></th><th></th><th></th><th></th><th></th></tr></tfoot>
+			</table>
+		</div>
+
+		<h2 class="section" id="builder" style="margin-top: 28px">Build a Thai Syllable <span class="th-title" lang="th">ประกอบพยางค์</span></h2>
+		<p class="sec-intro">Click any part of the syllable below to change it, and see how the parts are written together, how the result is pronounced, and why it has the tone it does. Choices that can’t go with the parts before them are greyed out. <span lang="th">ฤ</span> and <span lang="th">ฤๅ</span> aren’t included: they aren’t obsolete, but they appear only in a small set of words, and how <span lang="th">ฤ</span> is read depends on the word.</p>
+		<p class="sec-intro">The builder follows the regular rules for how Thai spelling maps to pronunciation, which cover the great majority of Thai syllables; it does <em>not</em> account for words with irregular spellings or pronunciations.</p>
+		<div class="bld" id="bld">
+			<div class="bld-parts" lang="th"></div>
+			<div class="bld-pop" role="dialog" aria-label="Choose" hidden>
+				<button type="button" class="bld-close" aria-label="Close"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+				<div class="bld-pick" data-slot-of="ini"><div class="bld-label" lang="en">initial consonant</div><div class="bld-opts" data-part="ini" lang="th"></div></div>
+				<div class="bld-pick" data-slot-of="sec"><div class="bld-label" lang="en">second consonant <span class="bld-opt">(optional)</span></div><div class="bld-opts" data-part="sec" lang="th"></div></div>
+				<div class="bld-pick" data-slot-of="ini"><div class="bld-label" lang="en">consonant digraph <span class="bld-opt">(instead of an initial consonant)</span></div><div class="bld-opts" data-part="dig" lang="th"></div></div>
+				<div class="bld-pick" data-slot-of="vow"><div class="bld-label" lang="en">vowel</div><div class="bld-opts" data-part="vow" lang="th"></div></div>
+				<div class="bld-pick" data-slot-of="mark"><div class="bld-label" lang="en">tone mark <span class="bld-opt">(optional)</span></div><div class="bld-opts" data-part="mark" lang="th"></div></div>
+				<div class="bld-pick" data-slot-of="fin"><div class="bld-label" lang="en">final consonant <span class="bld-opt">(optional)</span></div><div class="bld-opts" data-part="fin" lang="th"></div></div>
+				<p class="bld-note" lang="en" hidden></p>
+			</div>
+			<div class="bld-word" lang="th"></div>
+			<div class="bld-read"></div>
+			<p class="bld-why" lang="en"></p>
+		</div>
+
+		<h2 class="section" id="numerals" style="margin-top: 28px">Numerals and Symbols <span class="th-title" lang="th">ตัวเลขและเครื่องหมาย</span></h2>
+		<div class="nums" lang="th">
+<div class="c n" data-say="ศูนย์">๐<small lang="en">0</small></div><div class="c n" data-say="หนึ่ง">๑<small lang="en">1</small></div><div class="c n" data-say="สอง">๒<small lang="en">2</small></div><div class="c n" data-say="สาม">๓<small lang="en">3</small></div><div class="c n" data-say="สี่">๔<small lang="en">4</small></div><div class="c n" data-say="ห้า">๕<small lang="en">5</small></div><div class="c n" data-say="หก">๖<small lang="en">6</small></div><div class="c n" data-say="เจ็ด">๗<small lang="en">7</small></div><div class="c n" data-say="แปด">๘<small lang="en">8</small></div><div class="c n" data-say="เก้า">๙<small lang="en">9</small></div>
+<div class="num-rom pron" lang="th-Latn" data-paiboon="sǔun" data-ipa="sǔːn" data-tl="suun^R" data-th="สูน">sǔun</div><div class="num-rom pron" lang="th-Latn" data-paiboon="nʉ̀ng" data-ipa="nɯ̀ŋ" data-tl="neung^L" data-th="หฺนึ่ง">nʉ̀ng</div><div class="num-rom pron" lang="th-Latn" data-paiboon="sɔ̌ɔng" data-ipa="sɔ̌ːŋ" data-tl="saawng^R" data-th="สอง">sɔ̌ɔng</div><div class="num-rom pron" lang="th-Latn" data-paiboon="sǎam" data-ipa="sǎːm" data-tl="saam^R" data-th="สาม">sǎam</div><div class="num-rom pron" lang="th-Latn" data-paiboon="sìi" data-ipa="sìː" data-tl="see^L" data-th="สี่">sìi</div><div class="num-rom pron" lang="th-Latn" data-paiboon="hâa" data-ipa="hâː" data-tl="haa^F" data-th="ห้า">hâa</div><div class="num-rom pron" lang="th-Latn" data-paiboon="hòk" data-ipa="hòk" data-tl="hohk^L" data-th="หก">hòk</div><div class="num-rom pron" lang="th-Latn" data-paiboon="jèt" data-ipa="tɕèt" data-tl="jet^L" data-th="เจ็ด">jèt</div><div class="num-rom pron" lang="th-Latn" data-paiboon="bpɛ̀ɛt" data-ipa="pɛ̀ːt" data-tl="bpaaet^L" data-th="แปด">bpɛ̀ɛt</div><div class="num-rom pron" lang="th-Latn" data-paiboon="gâao" data-ipa="kâːw" data-tl="gao^F" data-th="เก้า">gâao</div>
+		</div>
+		<div class="syms" lang="th">
+<div class="sym"><div class="c n" data-say="ไม้ยมก">ๆ</div><span class="sym-th">ไม้ยมก</span><span class="sym-rom pron" lang="th-Latn" data-paiboon="mái-yá-mók" data-ipa="máj.já.mók" data-tl="maai^H ya^H mohk^H" data-th="ไม้-ยะ-มก">mái-yá-mók</span><span class="sym-en" lang="en">repeats the word before it</span></div>
+<div class="sym"><div class="c n" data-say="ไปยาลน้อย">ฯ</div><span class="sym-th">ไปยาลน้อย</span><span class="sym-rom pron" lang="th-Latn" data-paiboon="bpai-yaan-nɔ́ɔi" data-ipa="paj.jaːn.nɔ́ːj" data-tl="bpai^M yaan^M naawy^H" data-th="ไป-ยาน-น้อย">bpai-yaan-nɔ́ɔi</span><span class="sym-en" lang="en">marks a shortened word</span></div>
+<div class="sym"><div class="c n" data-say="ไม้ทัณฑฆาต"><span class="w">อ์<span class="o"></span></span></div><span class="sym-th">ไม้ทัณฑฆาต</span><span class="sym-rom pron" lang="th-Latn" data-paiboon="mái-tan-tá-kâat" data-ipa="máj.tʰan.tʰá.kʰâːt" data-tl="maai^H than^M tha^H khaat^F" data-th="ไม้-ทัน-ทะ-คาด">mái-tan-tá-kâat</span><span class="sym-en" lang="en">silences the letter under it</span></div>
+<div class="sym"><div class="c n" data-say="พินทุ"><span class="w">อฺ<span class="o"></span></span></div><span class="sym-th">พินทุ</span><span class="sym-rom pron" lang="th-Latn" data-paiboon="pin-tú" data-ipa="pʰin.tʰú" data-tl="phin^M thoo^H" data-th="พิน-ทุ">pin-tú</span><span class="sym-en" lang="en">a consonant with no vowel (Pali and Sanskrit words)</span></div>
+		</div>
 	</div>
+
+	<!-- Section table of contents, in the same style as the home page's: fixed
+	     in the left margin when there's room beside the 640px column, and
+	     highlighting whichever section fills most of the screen. -->
+	<nav class="page-toc" id="page-toc" aria-label="On this page">
+		<span class="page-toc-rail" aria-hidden="true"><span class="page-toc-thumb"></span></span>
+		<ol>
+			<li><a href="#" data-section="top" data-top>Thai Alphabet</a></li>
+			<li><a href="#consonants" data-section="consonants">Consonants</a></li>
+			<li><a href="#vowels" data-section="vowels">Vowels</a></li>
+			<li class="sub"><a href="#combinations" data-section="combinations">Special Combinations</a></li>
+			<li><a href="#tones" data-section="tones">Tones</a></li>
+			<li class="sub"><a href="#tone-marks" data-section="tone-marks">Tone Marks</a></li>
+			<li class="sub"><a href="#tone-rules" data-section="tone-rules">Tone Rules</a></li>
+			<li><a href="#builder" data-section="builder">Build a Thai Syllable</a></li>
+			<li><a href="#numerals" data-section="numerals">Numerals and Symbols</a></li>
+		</ol>
+	</nav>
+
+	<style>
+		.page-toc {
+			display: none;
+			position: fixed;
+			top: 120px; /* overwritten by script: lined up with the page title */
+			/* sit in the gap left of the centred 640px content column */
+			left: calc((100vw - 640px) / 2 - 210px);
+			width: 170px;
+			z-index: 50;
+			font-family: Freeman, sans-serif;
+			font-size: 15px;
+			letter-spacing: 0.02em;
+			opacity: 0;
+			transition: opacity 0.6s ease;
+		}
+		.page-toc.ready { opacity: 1; }
+		/* only when there is room for it beside the 640px column */
+		@media (min-width: 1080px) {
+			.page-toc { display: block; }
+		}
+		.page-toc ol {
+			list-style: none;
+			margin: 0;
+			padding: 0 0 0 18px;
+			display: flex;
+			flex-direction: column;
+			gap: 2px;
+		}
+		.page-toc li { margin: 0; line-height: 1.3; }
+		.page-toc li.sub { padding-left: 14px; font-size: 13px; }   /* a subsection */
+		.page-toc a {
+			display: block;
+			padding: 6px 0;
+			color: var(--color4);
+			text-decoration: none;
+			font-weight: normal;
+			line-height: 1.3;
+			white-space: nowrap;
+			transition: color 0.35s ease, transform 0.35s ease;
+		}
+		.page-toc a:hover { color: var(--color1); }
+		.page-toc a.active {
+			color: var(--color1);
+			transform: translateX(3px);
+		}
+		/* thin rail with a sliding accent thumb marking the active entry */
+		.page-toc-rail {
+			position: absolute;
+			left: 0;
+			top: 0;
+			bottom: 0;
+			width: 2px;
+			border-radius: 2px;
+			background: var(--tint-3);
+		}
+		.page-toc-thumb {
+			position: absolute;
+			left: 0;
+			width: 2px;
+			border-radius: 2px;
+			background: var(--button-bg);
+			top: 0;
+			height: 0;
+			transition: top 0.35s ease, height 0.35s ease, opacity 0.35s ease;
+		}
+		@media (prefers-reduced-motion: reduce) {
+			.page-toc, .page-toc a, .page-toc-thumb { transition: none; }
+		}
+	</style>
+
+	<script>
+	(function pageToc() {
+		var toc = document.getElementById('page-toc');
+		var links = [].slice.call(toc.querySelectorAll('a[data-section]'));
+		var thumb = toc.querySelector('.page-toc-thumb');
+		var rail = toc.querySelector('.page-toc-rail');
+		var calm = window.matchMedia('(prefers-reduced-motion: reduce)');
+		var current = null, held = null, release;
+
+		function setActive(link) {
+			if (link === current) return;
+			links.forEach(function (a) { a.classList.toggle('active', a === link); });
+			current = link;
+			if (link) {
+				var r = rail.getBoundingClientRect(), l = link.getBoundingClientRect();
+				thumb.style.top = (l.top - r.top) + 'px';
+				thumb.style.height = l.height + 'px';
+				thumb.style.opacity = '1';
+			} else {
+				thumb.style.opacity = '0';
+			}
+		}
+
+		function pageTop(el) {
+			return el.getBoundingClientRect().top + window.scrollY;
+		}
+
+		// with the page at the top, the list starts just under the page title
+		function alignTop() {
+			var h1 = document.getElementById('top');
+			toc.style.top = (pageTop(h1) + h1.getBoundingClientRect().height) + 'px';
+		}
+
+		// Clicking an entry glides the page to that section's heading (this
+		// page has no navbar, so a little breathing room above it is enough).
+		function glide(y) {
+			window.scrollTo({ top: Math.max(0, y), behavior: calm.matches ? 'auto' : 'smooth' });
+		}
+		links.forEach(function (a) {
+			a.addEventListener('click', function (e) {
+				e.preventDefault();
+				// the entry clicked stays marked while the page glides to it (a
+				// section near the end may not be able to reach the top)
+				setActive(a);
+				held = a;
+				clearTimeout(release);
+				release = setTimeout(function () { held = null; }, 1500);
+				if (a.hasAttribute('data-top')) glide(0);
+				else glide(pageTop(document.getElementById(a.getAttribute('data-section'))) - 24);
+				if (history.replaceState) history.replaceState(null, '', a.hasAttribute('data-top') ? location.pathname : a.getAttribute('href'));
+			});
+		});
+
+		// The active section is the last one whose heading has passed a line a
+		// third of the way down the screen, so a section scrolled to is marked
+		// however short it is (the most-visible rule of the home page would
+		// pass over the short consonant section in favour of the long vowels).
+		function update() {
+			if (held) return;
+			var line = window.innerHeight / 3, best = links[0];
+			links.forEach(function (a) {
+				if (document.getElementById(a.getAttribute('data-section')).getBoundingClientRect().top <= line) best = a;
+			});
+			// at the very bottom, the last section counts as reached
+			if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) best = links[links.length - 1];
+			setActive(best);
+		}
+
+		var ticking = false;
+		function onScroll() {
+			if (ticking) return;
+			ticking = true;
+			requestAnimationFrame(function () { update(); ticking = false; });
+		}
+		window.addEventListener('scroll', onScroll, { passive: true });
+		// once the glide has stopped, the hold ends at the next scroll by hand
+		window.addEventListener('scrollend', function () { clearTimeout(release); release = setTimeout(function () { held = null; }, 150); });
+		['wheel', 'touchstart', 'keydown'].forEach(function (t) { window.addEventListener(t, function () { held = null; }, { passive: true }); });
+		window.addEventListener('resize', function () { alignTop(); onScroll(); });
+		// the consonant table changes height when its order changes
+		document.querySelectorAll('.chip').forEach(function (b) { b.addEventListener('click', function () { setTimeout(onScroll, 900); }); });
+		[0, 300, 1200].forEach(function (t) { setTimeout(function () { alignTop(); update(); }, t); });
+		requestAnimationFrame(function () { toc.classList.add('ready'); });
+	})();
+	</script>
+
+	<script>
+	// Tone rules table: hovering (or focusing) a coloured cell explains it in a
+	// sentence, worked out from its row (the class) and the columns it spans.
+	(function toneTips() {
+		var table = document.querySelector('.tone-table');
+		if (!table) return;
+		var CLASS = { 'row-hi': 'high', 'row-mid': 'mid', 'row-lo': 'low' };
+		// each mark on the page's faded อ, as in the charts
+		var MARKS = ['\u0e48', '\u0e49', '\u0e4a', '\u0e4b'].map(function (m) { return '<span class="w">\u0e2d' + m + '<span class="o"></span></span>'; });
+		var tip = document.createElement('div');
+		tip.className = 'tone-tip';
+		tip.setAttribute('role', 'tooltip');
+		tip.id = 'tone-tip';
+		tip.hidden = true;
+		document.body.appendChild(tip);
+		var th = function (x) { return '<span lang="th">' + x + '</span>'; };
+		function describe(cell) {
+			var row = cell.parentElement, cls = CLASS[row.className], col = 0;
+			for (var c = row.firstElementChild; c !== cell; c = c.nextElementSibling) col += c.colSpan;
+			var cols = []; for (var i = 0; i < cell.colSpan; i++) cols.push(col + i);
+			var tone = cell.querySelector('.tc').getAttribute('aria-label');
+			var has = function (n) { return cols.indexOf(n) >= 0; };
+			// each way of reaching this tone, as a list of what the syllable has
+			var ways = [];
+			if (has(0)) ways.push(['no tone mark', 'a live ending']);
+			if (has(1) && has(2)) ways.push(['no tone mark', 'a dead ending']);
+			else if (has(1)) ways.push(['no tone mark', 'a dead ending', 'a short vowel']);
+			else if (has(2)) ways.push(['no tone mark', 'a dead ending', 'a long vowel']);
+			cols.filter(function (n) { return n >= 3; }).forEach(function (n) { ways.push(['the tone mark ' + th(MARKS[n - 3])]); });
+			var list = function (xs) { return xs.length < 3 ? xs.join(' and ') : xs.slice(0, -1).join(', ') + ', and ' + xs[xs.length - 1]; };
+			var subject = 'A Thai syllable with a ' + cls + ' class initial consonant';
+			if (ways.length === 1) return 'A Thai syllable with ' + list(['a ' + cls + ' class initial consonant'].concat(ways[0])) + ' is pronounced with a ' + tone + ' tone.';
+			// more than one way: a numbered list, one way per item
+			return subject + ' is pronounced with a ' + tone + ' tone if it has either' +
+				'<ol>' + ways.map(function (w, i) { return '<li>' + list(w) + (i < ways.length - 1 ? ', or' : '.') + '</li>'; }).join('') + '</ol>';
+		}
+		var cells = table.querySelectorAll('tbody td:not(.none)');
+		function show(cell) {
+			tip.innerHTML = describe(cell);
+			tip.hidden = false;
+			var r = cell.getBoundingClientRect(), tw = tip.offsetWidth, th2 = tip.offsetHeight;
+			var left = Math.max(8, Math.min(window.innerWidth - tw - 8, r.left + r.width / 2 - tw / 2));
+			var top = r.top - th2 - 8;
+			if (top < 8) top = r.bottom + 8;
+			tip.style.left = (left + window.scrollX) + 'px';
+			tip.style.top = (top + window.scrollY) + 'px';
+			tip.classList.add('on');
+		}
+		function hide() { tip.classList.remove('on'); tip.hidden = true; }
+		cells.forEach(function (cell) {
+			cell.tabIndex = 0;
+			cell.setAttribute('aria-describedby', 'tone-tip');
+			cell.addEventListener('mouseenter', function () { show(cell); });
+			cell.addEventListener('focus', function () { show(cell); });
+			cell.addEventListener('mouseleave', hide);
+			cell.addEventListener('blur', hide);
+		});
+		window.addEventListener('scroll', hide, { passive: true });
+	})();
+	</script>
+
+	<script>
+	// Build a Thai syllable from its parts: initial consonant, optional second
+	// consonant (a true cluster, a silent leading ห, or อ before ย), vowel,
+	// optional tone mark and optional final. Choices that can't go with the
+	// current ones are disabled; the result is written out, pronounced in the
+	// page's chosen system, and its tone explained.
+	(function syllableBuilder() {
+		var root = document.getElementById('bld');
+		var HIGH = 'ขฃฉฐถผฝศษสห', MID = 'กจฎฏดตบปอ';
+		function cls(ch) { return HIGH.indexOf(ch) >= 0 ? 'hi' : MID.indexOf(ch) >= 0 ? 'mid' : 'lo'; }
+		var CLASS_NAME = { hi: 'high', mid: 'mid', lo: 'low' };
+		var ALPHABET = 'กขฃคฅฆงจฉชซฌญฎฏฐฑฒณดตถทธนบปผฝพฟภมยรลวศษสหฬอฮ';
+
+		// initial sounds: [Paiboon+, IPA, thai-language.com]
+		var INI = {};
+		[['ก', 'g', 'k', 'g'], ['ขฃคฅฆ', 'k', 'k\u02b0', 'kh'], ['ง', 'ng', '\u014b', 'ng'], ['จ', 'j', 't\u0255', 'j'],
+		 ['ฉชฌ', 'ch', 't\u0255\u02b0', 'ch'], ['ซศษส', 's', 's', 's'], ['ญย', 'y', 'j', 'y'], ['ฎด', 'd', 'd', 'd'],
+		 ['ฏต', 'dt', 't', 'dt'], ['ฐฑฒถทธ', 't', 't\u02b0', 'th'], ['ณน', 'n', 'n', 'n'], ['บ', 'b', 'b', 'b'],
+		 ['ป', 'bp', 'p', 'bp'], ['ผพภ', 'p', 'p\u02b0', 'ph'], ['ฝฟ', 'f', 'f', 'f'], ['ม', 'm', 'm', 'm'],
+		 ['ร', 'r', 'r', 'r'], ['ลฬ', 'l', 'l', 'l'], ['ว', 'w', 'w', 'w'], ['หฮ', 'h', 'h', 'h'], ['อ', '', '\u0294', '']
+		].forEach(function (g) { g[0].split('').forEach(function (c) { INI[c] = g.slice(1); }); });
+
+		// what may follow each initial as a second consonant
+		var SECOND = { 'ก': 'รลว', 'ข': 'รลว', 'ค': 'รลว', 'ต': 'ร', 'ป': 'รล', 'พ': 'รล' };   // true clusters
+		var LEAD = { 'ห': 'งญนมยรลว', 'อ': 'ย' };   // a silent leading ห or อ (digraphs)
+		// Fake clusters, only pairs found in real words, each with its reading(s):
+		// hidden = the first letter is its own syllable with an unwritten short a
+		// (ขนม kà-nǒm); s = ทร read as ซ (ทราย); tr = ทร as a true cluster, in
+		// loanwords; silent = the ร is not pronounced (จริง).
+		var FAKE = {
+			'ขน': [['hidden', 'ขนม']], 'ขม': [['hidden', 'ขมิ้น']], 'ขย': [['hidden', 'ขยะ']], 'ถน': [['hidden', 'ถนน']],
+			'ฉล': [['hidden', 'ฉลาด']], 'ฉน': [['hidden', 'ฉนวน']], 'สน': [['hidden', 'สนุก']], 'สม': [['hidden', 'สมุด']],
+			'สล': [['hidden', 'สลัด']], 'ผล': [['hidden', 'ผลิต']], 'ผย': [['hidden', 'ผยอง']],
+			'ตล': [['hidden', 'ตลาด']], 'จม': [['hidden', 'จมูก']], 'อร': [['hidden', 'อร่อย']], 'กน': [['hidden', 'กนก']],
+			'ฉพ': [['hidden', 'เฉพาะ']], 'สภ': [['hidden', 'สภาพ']], 'ทห': [['hidden', 'ทหาร']], 'ชน': [['hidden', 'ชนิด']], 'ทน': [['hidden', 'ทนาย']],
+			'ทร': [['s', 'ทราย'], ['tr', 'ทรัมเป็ต']],
+			'จร': [['silent', 'จริง']], 'ศร': [['silent', 'ศรี']], 'ซร': [['silent', 'ไซร้']],
+			'สร': [['silent', 'สร้าง'], ['hidden', 'สระ']]
+		};
+		var SONORANT = 'งญณนมยรลวฬ';
+
+		// vowels: key, length, open spelling, closed spelling (C = the
+		// consonant(s), F = the final), and each system's spelling
+		var VOWELS = [
+			['a', 's', 'Cะ', 'CัF', 'a', 'a', 'a'], ['aa', 'l', 'Cา', 'CาF', 'aa', 'a\u02d0', 'aa'],
+			['i', 's', 'Cิ', 'CิF', 'i', 'i', 'i'], ['ii', 'l', 'Cี', 'CีF', 'ii', 'i\u02d0', 'ee'],
+			['\u0289', 's', 'Cึ', 'CึF', '\u0289', '\u026f', 'eu'], ['\u0289\u0289', 'l', 'Cือ', 'CืF', '\u0289\u0289', '\u026f\u02d0', 'euu'],
+			['u', 's', 'Cุ', 'CุF', 'u', 'u', 'oo'], ['uu', 'l', 'Cู', 'CูF', 'uu', 'u\u02d0', 'uu'],
+			['e', 's', 'เCะ', 'เC็F', 'e', 'e', 'e'], ['ee', 'l', 'เC', 'เCF', 'ee', 'e\u02d0', 'aeh'],
+			['\u025b', 's', 'แCะ', 'แC็F', '\u025b', '\u025b', 'ae'], ['\u025b\u025b', 'l', 'แC', 'แCF', '\u025b\u025b', '\u025b\u02d0', 'aae'],
+			['o', 's', 'โCะ', 'CF', 'o', 'o', 'o'], ['oo', 'l', 'โC', 'โCF', 'oo', 'o\u02d0', 'o:h'],
+			['\u0254', 's', 'เCาะ', 'C็อF', '\u0254', '\u0254', 'aw'], ['\u0254\u0254', 'l', 'Cอ', 'CอF', '\u0254\u0254', '\u0254\u02d0', 'aaw'],
+			['ia', 's', 'เCียะ', null, 'ia', 'ia', 'ia'], ['iia', 'l', 'เCีย', 'เCียF', 'iia', 'i\u02d0a', 'iia'],
+			['\u0289a', 's', 'เCือะ', null, '\u0289a', '\u026fa', 'eua'], ['\u0289\u0289a', 'l', 'เCือ', 'เCือF', '\u0289\u0289a', '\u026f\u02d0a', 'euua'],
+			['ua', 's', 'Cัวะ', null, 'ua', 'ua', 'ua'], ['uua', 'l', 'Cัว', 'CวF', 'uua', 'u\u02d0a', 'uaa'],
+			['\u0259', 's', 'เCอะ', null, '\u0259', '\u0264', 'uh'], ['\u0259\u0259', 'l', 'เCอ', 'เCิF', '\u0259\u0259', '\u0264\u02d0', 'uuhr'],
+			['am', 'x', 'Cำ', null, 'am', 'am', 'am'], ['ai1', 'x', 'ใC', null, 'ai', 'aj', 'ai'],
+			['ai2', 'x', 'ไC', 'ไCF', 'ai', 'aj', 'ai'], ['ao', 'x', 'เCา', null, 'ao', 'aw', 'ao']
+		].map(function (v) { return { key: v[0], len: v[1], open: v[2], closed: v[3], pb: v[4], ipa: v[5], tl: v[6] }; });
+		function vowel(k) { return VOWELS.filter(function (v) { return v.key === k; })[0]; }
+
+		// finals by sound
+		var FINAL = [['k', 'กขคฆ'], ['t', 'จชซฌฎฏฐฑฒดตถทธศษส'], ['p', 'บปพฟภ'], ['ng', 'ง'], ['n', 'ญณนรลฬ'], ['m', 'ม'], ['y', 'ย'], ['w', 'ว']];
+		function finSound(ch) { var f = ch && FINAL.filter(function (f) { return f[1].indexOf(ch) >= 0; })[0]; return f ? f[0] : null; }
+		// which vowels take a final -y or -w
+		var TAKES_Y = ['a', 'aa', 'u', 'oo', '\u0254\u0254', '\u0259\u0259', 'uua', '\u0289\u0289a'];
+		var TAKES_W = ['aa', 'i', 'ii', 'e', 'ee', '\u025b', '\u025b\u025b', 'iia'];
+
+		var MARKS = ['', '\u0e48', '\u0e49', '\u0e4a', '\u0e4b'];
+		var MARK_NAME = { '\u0e48': 'ไม้เอก', '\u0e49': 'ไม้โท', '\u0e4a': 'ไม้ตรี', '\u0e4b': 'ไม้จัตวา' };
+		var CONTOUR = { mid: 'M4 12H36', low: 'M4 16L36 19', falling: 'M4 11C14 3 24 5 36 20', high: 'M4 10C16 11 26 7 36 3', rising: 'M4 14C14 22 26 17 36 4' };
+
+		// starts on เปรี้ยว: a cluster, a vowel written around it, a tone mark and a final
+		var pick = { ini: 'ป', sec: 'ร', fake: '', vow: 'iia', mark: '\u0e49', fin: 'ว' };
+
+		// ---- rules ----
+		function effClass(p) {
+			if (p.forceClass) return p.forceClass;
+			if (p.sec && p.ini === 'ห') return 'hi';   // silent leading ห
+			if (p.sec && p.ini === 'อ') return 'mid';  // อ before ย
+			return cls(p.ini);
+		}
+		function legal(p) {
+			if (p.sec && ((SECOND[p.ini] || '') + (LEAD[p.ini] || '')).indexOf(p.sec) < 0) return false;
+			if (p.fake && (p.sec || !FAKE[p.ini + p.fake])) return false;
+			var v = vowel(p.vow);
+			if (p.fin) {
+				if (!finSound(p.fin)) return false;   // this letter never ends a syllable
+				if (!v.closed) return false;
+				var f = finSound(p.fin);
+				if (v.key === 'ai2' && f !== 'y') return false;   // ไ takes only a silent ย (ไทย)
+				if (f === 'y' && TAKES_Y.indexOf(v.key) < 0 && v.key !== 'ai2') return false;
+				if (f === 'w' && TAKES_W.indexOf(v.key) < 0) return false;
+			}
+			if ((p.mark === '\u0e4a' || p.mark === '\u0e4b') && mainClasses(p).some(function (c) { return c !== 'mid'; })) return false;
+			return true;
+		}
+		// the class of the syllable a tone mark sits on (with a fake cluster, the
+		// main syllable's, in each of its readings)
+		function mainClasses(p) {
+			if (!p.fake || !FAKE[p.ini + p.fake]) return [effClass(p)];
+			return FAKE[p.ini + p.fake].map(function (it) {
+				if (it[0] === 'hidden') return SONORANT.indexOf(p.fake) >= 0 && cls(p.ini) !== 'lo' ? cls(p.ini) : cls(p.fake);
+				if (it[0] === 's' || it[0] === 'tr') return 'lo';
+				return cls(p.ini);
+			});
+		}
+		function live(p) {
+			var v = vowel(p.vow), f = finSound(p.fin);
+			if (f) return 'kpt'.indexOf(f) < 0 || f === 'ng';
+			return v.len !== 's';
+		}
+		function tone(p) {
+			var c = effClass(p), m = p.mark;
+			if (m === '\u0e48') return c === 'lo' ? 'falling' : 'low';
+			if (m === '\u0e49') return c === 'lo' ? 'high' : 'falling';
+			if (m === '\u0e4a') return 'high';
+			if (m === '\u0e4b') return 'rising';
+			if (live(p)) return c === 'hi' ? 'rising' : 'mid';
+			if (c !== 'lo') return 'low';
+			return vowel(p.vow).len === 's' ? 'high' : 'falling';
+		}
+
+		// ---- spelling ----
+		var COMBINING = /[\u0e31\u0e34-\u0e3a\u0e47-\u0e4e]/;
+		// The word as pieces, each tagged with the part it comes from (ini, sec,
+		// vow, mark, fin), so the pieces of a part can be lit up together.
+		function spellParts(p) {
+			var v = vowel(p.vow), form = p.fin ? v.closed : v.open;
+			if (p.fin && finSound(p.fin) === 'y' && v.key === '\u0259\u0259') form = 'เCF';   // เออ + ย = เอย
+			var dig = p.sec && (p.ini === 'ห' || p.ini === 'อ');
+			var aiy = v.key === 'ai2' && p.fin === 'ย';            // ไ◌ย: the ย belongs to the vowel
+			var i = form.indexOf('C'), before = form.slice(0, i), after = form.slice(i + 1), marks = '';
+			while (after && COMBINING.test(after[0])) { marks += after[0]; after = after.slice(1); }
+			if (p.mark) marks = marks.replace('\u0e47', '');   // ไม้ไต่คู้ gives way to a tone mark
+			var f = after.indexOf('F'), pre = f < 0 ? after : after.slice(0, f), post = f < 0 ? '' : after.slice(f + 1);
+			return [
+				[before, 'vow'], [p.ini, 'ini'], [p.fake || p.sec, dig ? 'ini' : 'sec'],
+				[marks, 'vow'], [p.mark, 'mark'], [pre, 'vow'], [f < 0 ? '' : p.fin, aiy ? 'vow' : 'fin'], [post, 'vow']
+			].filter(function (x) { return x[0]; });
+		}
+		function spell(p) { return spellParts(p).map(function (x) { return x[0]; }).join(''); }
+
+		// ---- pronunciation ----
+		var DIA = { low: '\u0300', falling: '\u0302', high: '\u0301', rising: '\u030c', mid: '' };
+		var TLT = { low: 'L', falling: 'F', high: 'H', rising: 'R', mid: 'M' };
+		function reading(p, sys) {
+			var n = sys === 'ipa' ? 1 : sys === 'tl' ? 2 : 0;
+			var lead = p.sec && (p.ini === 'ห' || p.ini === 'อ');
+			var onset = lead ? INI[p.sec][n] : INI[p.ini][n] + (p.sec ? INI[p.sec][n] : '');
+			if (sys === 'ipa' && !onset) onset = '\u0294';
+			var v = vowel(p.vow), f = finSound(p.fin), vs = sys === 'ipa' ? v.ipa : sys === 'tl' ? v.tl : v.pb, coda = '';
+			if (v.key === 'ai2' && f === 'y') f = null;   // ไ◌ย: the ย is silent
+			if (f === 'y' || f === 'w') {
+				if (sys === 'ipa') coda = f === 'y' ? 'j' : 'w';
+				else {
+					// Paiboon+ writes the glides as vowels: -i, and -o (-u after i)
+					if (/^(iia|uua|\u0289\u0289a)$/.test(v.key)) vs = { iia: 'ia', uua: 'ua', '\u0289\u0289a': '\u0289a' }[v.key];
+					coda = f === 'y' ? 'i' : /i$/.test(vs) ? 'u' : 'o';
+				}
+			} else if (f) coda = sys === 'ipa' && f === 'ng' ? '\u014b' : f;
+			// Paiboon+ writes a long diphthong single before a final (เครื่อง krʉ̂ang, เรียน rian)
+			if (sys !== 'ipa' && sys !== 'tl' && f && /^(iia|uua|\u0289\u0289a)$/.test(v.key)) vs = { iia: 'ia', uua: 'ua', '\u0289\u0289a': '\u0289a' }[v.key];
+			// thai-language.com spells ə differently before a final (เงิน ngeern)
+			if (sys === 'tl' && f) vs = { 'ə': 'er', 'əə': 'eer' }[v.key] || vs;
+			if (sys === 'tl' && f === 'y' && v.key === '\u0254\u0254') coda = 'y';   // น้อย naawy
+			var t = tone(p);
+			if (sys === 'tl') return onset + vs + coda + '^' + TLT[t];
+			// the tone mark goes on the first vowel letter
+			var syl = vs + coda, at = syl.search(/[a-z\u0254\u025b\u0259\u0289\u026f\u0264]/i);
+			syl = syl.slice(0, at + 1) + DIA[t] + syl.slice(at + 1);
+			return onset + syl;
+		}
+
+		// ---- readings: one per way the spelling can be read ----
+		function readings(p) {
+			var th = function (x) { return '<span lang="th">' + x + '</span>'; };
+			var base = { vow: p.vow, mark: p.mark, fin: p.fin, sec: '' };
+			if (!p.fake) return [{ sylls: [p], why: why(p) }];
+			var c1 = p.ini, c2 = p.fake;
+			return FAKE[c1 + c2].map(function (it) {
+				var kind = it[0], ex = it[1], main, first = null, lead = '';
+				if (kind === 'hidden') {
+					first = { ini: c1, sec: '', vow: 'a', mark: '', fin: '' };
+					var borrow = SONORANT.indexOf(c2) >= 0 && cls(c1) !== 'lo';
+					main = Object.assign({}, base, { ini: c2, forceClass: borrow ? cls(c1) : cls(c2), leader: c1 });
+					lead = 'Read as two syllables. First, ' + th(c1) + ' with an unwritten short a: a dead syllable with a ' + CLASS_NAME[cls(c1)] + ' class initial, so ' + tone(first) + ' tone. Then the main syllable: ';
+					if (!borrow) main.intro = th(c2) + ' keeps its own ' + CLASS_NAME[cls(c2)] + ' class' + (SONORANT.indexOf(c2) >= 0 ? ' (a low class ' + th(c1) + ' lends it nothing)' : ' (it isn\u2019t a sonorant)') + '.';
+				} else if (kind === 's') {
+					main = Object.assign({}, base, { ini: 'ซ', forceClass: 'lo', intro: th('ทร') + ' is read like ' + th('ซ') + ' (s), keeping the low class of ' + th('ท') + '.' });
+				} else if (kind === 'tr') {
+					main = Object.assign({}, base, { ini: 'ท', sec: 'ร', intro: 'In loanwords, ' + th('ทร') + ' can be a true cluster (tr), and ' + th('ท') + ' is low class.' });
+				} else {
+					main = Object.assign({}, base, { ini: c1, intro: 'The ' + th('ร') + ' is silent, so ' + th(c1 + 'ร') + ' is read as ' + th(c1) + ', a ' + CLASS_NAME[cls(c1)] + ' class consonant.' });
+				}
+				return { sylls: first ? [first, main] : [main], why: lead + why(main), ex: ex, kind: kind, main: main };
+			});
+		}
+
+		// ---- respelt in Thai script, as a dictionary gives a word's reading ----
+		// Clusters and a leading ห are marked with พินทุ under the first letter
+		// (เปฺรี้ยว, หฺมา); a sonorant that borrows a high or mid class is
+		// respelt with หฺ in front (ขะ-หฺนม, ตะ-หฺลาด).
+		function thReading(sy) {
+			var q = sy;
+			if (sy.forceClass && sy.forceClass !== cls(sy.ini)) q = Object.assign({}, sy, { ini: 'ห', sec: sy.ini, forceClass: null });
+			var w = spell(q);
+			var marked = q.sec && ((SECOND[q.ini] || '').indexOf(q.sec) >= 0 || q.ini === 'ห' || q.ini + q.sec === 'ทร');
+			if (marked) { var i = w.indexOf(q.ini + q.sec); if (i >= 0) w = w.slice(0, i + 1) + '\u0e3a' + w.slice(i + 1); }
+			return w;
+		}
+
+		// ---- explanation ----
+		function why(p) {
+			var c = effClass(p), t = tone(p), f = finSound(p.fin), v = vowel(p.vow);
+			var th = function (x) { return '<span lang="th">' + x + '</span>'; };
+			var parts = [];
+			if (p.skipIntro) { /* a shared first sentence is given elsewhere */ }
+			else if (p.intro) parts.push(p.intro);
+			else if (p.forceClass && p.forceClass !== cls(p.ini)) parts.push(th(p.ini) + ' is a sonorant after the ' + CLASS_NAME[p.forceClass] + ' class ' + th(p.leader) + ', so it takes ' + th(p.leader) + '’s ' + CLASS_NAME[p.forceClass] + ' class.');
+			else if (p.sec && p.ini === 'ห') parts.push('The silent ' + th('ห') + ' in front makes ' + th(p.sec) + ' count as a high class consonant.');
+			else if (p.sec && p.ini === 'อ') parts.push('The silent ' + th('อ') + ' in front makes ' + th('ย') + ' count as a mid class consonant.');
+			else if (p.sec) parts.push('In the cluster ' + th(p.ini + p.sec) + ', the first consonant, ' + th(p.ini) + ', is ' + CLASS_NAME[c] + ' class.');
+			else parts.push(th(p.ini) + ' is a ' + CLASS_NAME[c] + ' class consonant.');
+			if (p.mark) {
+				parts.push('With ' + th('\u25cc' + p.mark) + ', a ' + CLASS_NAME[c] + ' class syllable is pronounced with a ' + t + ' tone.');
+			} else {
+				var ending = v.key === 'ai2' && f === 'y' ? 'its vowel ends in -y' : f ? 'it ends in -' + f : v.len === 'x' ? 'its vowel ends in -' + v.pb.slice(-1) : 'it ends in a ' + (v.len === 's' ? 'short' : 'long') + ' vowel';
+				var isLive = live(p);
+				parts.push('The syllable is ' + (isLive ? 'live' : 'dead') + ' because ' + ending + '.');
+				var rule = 'With no tone mark, a ' + (isLive ? 'live' : 'dead') + ' syllable with a ' + CLASS_NAME[c] + ' class initial';
+				if (!isLive && c === 'lo') rule += ' and a ' + (v.len === 's' ? 'short' : 'long') + ' vowel';
+				parts.push(rule + ' is pronounced with a ' + t + ' tone.');
+			}
+			return parts.join(' ');
+		}
+
+		// ---- why options are greyed out (one sentence) ----
+		function whyGrey(slot, isDig) {
+			var th = function (x) { return '<span lang="th">' + x + '</span>'; };
+			var v = vowel(pick.vow), vw = th(v.open.replace('C', 'อ'));
+			if (slot === 'ini') return th('ฃ') + ' and ' + th('ฅ') + ' are obsolete, so they can’t be picked.';
+			if (slot === 'sec') {
+				if (isDig) return 'The digraph ' + th(pick.ini + pick.sec) + ' already has its second letter, so no second consonant can be added.';
+				if (pick.ini === 'อ') return th('อ') + ' forms no clusters, but a silent ' + th('อ') + ' can lead ' + th('ย') + ': choose ' + th('ย') + ' to make the digraph ' + th('อย') + '.';
+				var ok = SECOND[pick.ini] || '';
+				if (!ok) return 'Only ' + th('ก ข ค ต ป พ') + ' begin true clusters, so ' + th(pick.ini) + ' can’t take ' + th('ร ล ว') + ' as a second consonant' + (fakeHead.hidden ? '' : ' (but see the fake clusters below them)') + '.';
+				if (ok.length < 3) return th(pick.ini) + ' only forms clusters with ' + th(ok.split('').join(' and ')) + '.';
+				return '';
+			}
+			if (slot === 'mark') {
+				var notMid = mainClasses(pick).filter(function (c) { return c !== 'mid'; })[0];
+				if (!notMid) return '';
+				var name = CLASS_NAME[notMid];
+				return name.charAt(0).toUpperCase() + name.slice(1) + ' class initial consonants can\u2019t take all tone marks.';
+			}
+			if (slot === 'fin') {
+				// อำ ใอ ไอ เอา: a vowel and its final in one, so nothing more can follow
+				if (v.key === 'ai2') return vw + ' already contains a final consonant (' + th('ย') + '); the only final it can take is a silent ' + th('ย') + ', as in ' + th('ไทย') + '.';
+				var BUILT_IN = { am: 'ม', ai1: 'ย', ao: 'ว' };
+				if (BUILT_IN[v.key]) return vw + ' is a special combination that already contains a final consonant (' + th(BUILT_IN[v.key]) + '), so no other final can follow.';
+				if (!v.closed) return vw + ' is never followed by a final consonant.';
+				var never = th('ฉ ผ ฝ ห อ ฮ') + ' never end a syllable and ' + th('ฃ ฅ') + ' are obsolete';
+				var noY = TAKES_Y.indexOf(v.key) < 0, noW = TAKES_W.indexOf(v.key) < 0;
+				var glide = noY && noW ? th('ย') + ' and ' + th('ว') : noY ? th('ย') : noW ? th('ว') : '';
+				return never + (glide ? ', and ' + vw + ' doesn’t combine with a final ' + glide : '') + '.';
+			}
+			return '';
+		}
+
+		// ---- the pickers ----
+		function tile(text, value, extra) {
+			var b = document.createElement('button');
+			b.type = 'button';
+			b.className = 'c ' + (extra || '');
+			b.innerHTML = text;
+			b.dataset.value = value;
+			return b;
+		}
+		function ghost(form) {
+			// the consonant slot as the chart's faded อ, marks and all
+			return form.replace(/C([\u0e31\u0e34-\u0e3a\u0e47-\u0e4e]*)/, '<span class="w">อ$1<span class="o"></span></span>').replace('F', '<span class="f">-</span>');
+		}
+		var opts = {};
+		root.querySelectorAll('.bld-opts').forEach(function (o) { opts[o.dataset.part] = o; });
+		ALPHABET.split('').forEach(function (ch) { opts.ini.appendChild(tile(ch, ch, cls(ch) + ('ฃฅ'.indexOf(ch) >= 0 ? ' obs' : ''))); });
+		opts.sec.appendChild(tile('none', '', 'n bld-none'));
+		'รลว'.split('').forEach(function (ch) { opts.sec.appendChild(tile(ch, ch, cls(ch))); });
+		// after อ only: ย, which makes the digraph อย
+		opts.sec.appendChild(tile('ย', 'ย', 'lo bld-yo'));
+		// fake clusters, in their own group: only those that start with the
+		// initial are shown, each with a real word that has it
+		var fakeHead = document.createElement('div');
+		fakeHead.className = 'bld-fakehead';
+		fakeHead.lang = 'en';
+		fakeHead.innerHTML = 'fake clusters <span class="bld-opt">(read differently from how they look; tap one to see how)</span>';
+		opts.sec.appendChild(fakeHead);
+		Object.keys(FAKE).forEach(function (pair) {
+			var b = tile(pair[1] + '<small lang="th">' + FAKE[pair].map(function (i) { return i[1]; }).join(' / ') + '</small>', pair[1], cls(pair[1]) + ' bld-fake');
+			b.dataset.pair = pair;
+			opts.sec.appendChild(b);
+		});
+		// digraphs: a silent ห (high class) or อ (mid class) in front of a sonorant
+		['หง', 'หญ', 'หน', 'หม', 'หย', 'หร', 'หล', 'หว', 'อย'].forEach(function (d) { opts.dig.appendChild(tile(d, d, d[0] === 'ห' ? 'hi' : 'mid')); });
+		VOWELS.forEach(function (v) { opts.vow.appendChild(tile(ghost(v.open), v.key, v.len === 's' ? 's' : v.len === 'l' ? 'l' : 's x')); });
+		MARKS.forEach(function (m) { opts.mark.appendChild(m ? tile(ghost('C' + m), m, 'n') : tile('none', '', 'n bld-none')); });
+		opts.fin.appendChild(tile('none', '', 'n bld-none'));
+		// finals, like the initials: all 44 in alphabetical order; those that
+		// never end a syllable are always greyed out
+		ALPHABET.split('').forEach(function (ch) { opts.fin.appendChild(tile(ch, ch, cls(ch) + ('ฃฅ'.indexOf(ch) >= 0 ? ' obs' : ''))); });
+
+		// The parts are chosen top to bottom: an option is greyed out only if it
+		// can't follow the parts above it, and choosing something clears any
+		// part below it that no longer fits.
+		var ORDER = ['ini', 'sec', 'vow', 'mark', 'fin'];
+		function upTo(part, value) {
+			var trial = { ini: pick.ini, sec: '', fake: part === 'ini' || part === 'sec' ? '' : pick.fake, vow: pick.vow, mark: '', fin: '' };
+			for (var i = 0; ORDER[i] !== part; i++) trial[ORDER[i]] = pick[ORDER[i]];
+			trial[part] = value;
+			if (ORDER.indexOf(part) < ORDER.indexOf('vow')) trial.vow = 'aa';   // any vowel will do here
+			return trial;
+		}
+		var pop = root.querySelector('.bld-pop'), openSlot = null;
+		function openPop(slot) {
+			openSlot = slot;
+			pop.querySelectorAll('.bld-pick').forEach(function (pk) { pk.hidden = pk.dataset.slotOf !== slot; });
+			pop.hidden = false;
+			render();
+			var strip = root.querySelector('.bld-parts');
+			pop.style.top = (strip.offsetTop + strip.offsetHeight + 8) + 'px';
+			var first = pop.querySelector('.bld-pick:not([hidden]) .c.picked') || pop.querySelector('.bld-pick:not([hidden]) .c:not(:disabled)');
+			if (first) first.focus();
+		}
+		function closePop() {
+			if (!openSlot) return;
+			var was = openSlot;
+			openSlot = null;
+			pop.hidden = true;
+			render();
+			var s = root.querySelector('.bld-slot[data-slot="' + was + '"]');
+			if (s) s.focus();
+		}
+		root.addEventListener('click', function (e) {
+			var slot = e.target.closest('.bld-slot');
+			if (slot) { if (openSlot === slot.dataset.slot) closePop(); else openPop(slot.dataset.slot); return; }
+			if (e.target.closest('.bld-close')) { closePop(); return; }
+		});
+		// (a click on a part redraws the parts, so ignore targets no longer on the page)
+		document.addEventListener('click', function (e) { if (openSlot && e.target.isConnected && !root.contains(e.target)) closePop(); });
+		document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && openSlot) closePop(); });
+		root.addEventListener('click', function (e) {
+			var b = e.target.closest('.bld-opts .c');
+			if (!b || b.disabled) return;
+			var part = b.closest('.bld-opts').dataset.part, v = b.dataset.value;
+			if (part === 'ini') { pick.ini = v; pick.sec = ''; pick.fake = ''; }
+			else if (part === 'dig') { pick.ini = v[0]; pick.sec = v[1]; pick.fake = ''; part = 'sec'; }
+			else if (b.classList.contains('bld-fake')) { pick.fake = v; pick.sec = ''; }
+			else { if (part === 'sec') pick.fake = ''; pick[part] = v; }
+			ORDER.slice(ORDER.indexOf(part) + 1).forEach(function (later) {
+				if (later !== 'vow' && !legal(pick)) pick[later] = '';
+			});
+			closePop();
+			render();
+		});
+
+		function sysName() { return document.documentElement.dataset.rom || 'paiboon'; }
+		function render() {
+			// options: picked, and disabled where they'd be illegal
+			// ห and อ take no cluster, so a second letter after them makes a digraph
+			var isDig = !!pick.sec && (pick.ini === 'ห' || pick.ini === 'อ');
+			Object.keys(opts).forEach(function (part) {
+				opts[part].querySelectorAll('.c').forEach(function (b) {
+					var v = b.dataset.value, on;
+					if (part === 'ini') { b.disabled = 'ฃฅ'.indexOf(v) >= 0; on = !isDig && pick.ini === v; }   // obsolete letters can't be picked
+					else if (part === 'dig') { b.disabled = false; on = isDig && pick.ini + pick.sec === v; }
+					else if (part === 'sec') {
+						var yo = b.classList.contains('bld-yo'), fk = b.classList.contains('bld-fake');
+						if (fk) {
+							b.hidden = isDig || b.dataset.pair[0] !== pick.ini;
+							b.disabled = false;
+							on = pick.fake === v;
+						} else {
+							b.hidden = yo && !(pick.ini === 'อ' && !isDig);
+							b.disabled = yo ? false : v !== '' && (SECOND[pick.ini] || '').indexOf(v) < 0 || (isDig && v !== '');
+							on = !yo && !isDig && !pick.fake && pick.sec === v;
+						}
+					}
+					else { b.disabled = !legal(upTo(part, v)); on = pick[part] === v; }
+					b.classList.toggle('picked', on);
+					b.setAttribute('aria-pressed', String(on));
+				});
+			});
+
+
+			fakeHead.hidden = isDig || !opts.sec.querySelector('.bld-fake:not([hidden])');
+
+			// under the open choices: why any of them are greyed out
+			var note = root.querySelector('.bld-note');
+			note.innerHTML = openSlot ? whyGrey(openSlot, isDig) : '';
+			note.hidden = !note.innerHTML;
+
+			// the parts, then the syllable
+			var v = vowel(pick.vow);
+			var sys = sysName();
+			// always all five parts, "none" where one isn't used
+			var NONE = [null, 'none', 'n bld-empty'];
+			// each part's Thai name, shown under its label
+			var nameOf = function (ch) { var t = [].filter.call(document.querySelectorAll('.cons .c'), function (c) { return c.firstChild.textContent.trim() === ch; })[0]; return t ? t.dataset.say : ''; };
+			// ไ with its silent ย is shown as the one vowel ไอย, with no final
+			var aiy = v.key === 'ai2' && pick.fin === 'ย';
+			var vowName = aiy ? 'สระไอย' : 'สระ' + v.open.replace('C', 'อ');
+			// each part's name, as pronounced in the chosen system
+			var ln = function (ch) { return window.letterNameReading ? window.letterNameReading(ch, sys) : nameOf(ch); };
+			var SARA = { paiboon: 'sà-rà', ipa: 'sà.rà', tl: 'sa^L ra^L', th: 'สะ-หฺระ' };
+			var vowelOnly = { ini: 'อ', sec: '', vow: pick.vow, mark: '', fin: aiy ? 'ย' : '' };
+			var vowRead = sys === 'th' ? thReading(vowelOnly) : reading(vowelOnly, sys);
+			var markRead = '';
+			if (pick.mark) {
+				var row = [].filter.call(document.querySelectorAll('.sym'), function (r) { return r.querySelector('.sym-th').textContent === MARK_NAME[pick.mark]; })[0];
+				var chip = row && row.querySelector('.pron');
+				if (chip) markRead = sys === 'ipa' ? chip.dataset.ipa : sys === 'tl' ? chip.dataset.tl : sys === 'th' ? chip.dataset.th : chip.dataset.paiboon;
+			}
+			var names = {
+				ini: isDig ? ln(pick.ini) + ' ' + ln(pick.sec) : ln(pick.ini),   // a digraph: both letters' names
+				sec: pick.fake ? ln(pick.fake) : !isDig && pick.sec ? ln(pick.sec) : '',
+				vow: SARA[sys] + ' ' + vowRead,
+				mark: markRead,
+				fin: pick.fin && !aiy ? ln(pick.fin) : ''
+			};
+			var nameHTML = function (t) {
+				if (!t) return '';
+				var shown = sys === 'tl' ? window.tlHTML(t) : sys === 'ipa' ? esc(window.ipaSlash(t)) : esc(t);
+				return '<span class="bld-pname pron" lang="th-Latn">' + shown + '</span>';
+			};
+			var slots = [
+				['ini', isDig ? ['initial', pick.ini + pick.sec, effClass(pick)] : ['initial', pick.ini, cls(pick.ini)]],
+				['sec', pick.fake ? ['fake cluster', pick.fake, cls(pick.fake)] : !isDig && pick.sec ? ['second', pick.sec, cls(pick.sec)] : ['second', NONE[1], NONE[2]]],
+				['vow', ['vowel', aiy ? ghost('ไCย') : ghost(pick.fin ? v.closed : v.open), v.len === 's' ? 's' : v.len === 'l' ? 'l' : 's x']],
+				['mark', pick.mark ? ['tone mark', ghost('C' + pick.mark), 'n'] : ['tone mark', NONE[1], NONE[2]]],
+				['fin', pick.fin && !aiy ? ['final', pick.fin, cls(pick.fin)] : ['final', NONE[1], NONE[2]]]
+			];
+			root.querySelector('.bld-parts').innerHTML = slots.map(function (x) {
+				var p = x[1];
+				return '<button type="button" class="bld-slot bld-part' + (openSlot === x[0] ? ' open' : '') + '" data-slot="' + x[0] + '" aria-haspopup="dialog" aria-expanded="' + (openSlot === x[0]) + '">' +
+					'<span class="c ' + p[2] + '"' + (p[2].indexOf('bld-empty') >= 0 ? ' lang="en"' : '') + '>' + p[1] + '</span><span class="bld-plabel" lang="en">' + p[0] + '</span>' +
+					nameHTML(names[x[0]]) + '</button>';
+			}).join('<span class="bld-plus" aria-hidden="true">+</span>');
+			var word = spell(pick);
+			wordParts = spellParts(pick);
+			drawWord();
+			light(litSlot, true);
+			var rs = readings(pick);
+			var th = function (x) { return '<span lang="th">' + x + '</span>'; };
+			var romOf = function (r) {
+				var parts = r.sylls.map(function (sy) { return reading(sy, sys); });
+				var rom = sys === 'th' ? r.sylls.map(thReading).join('-') : sys === 'ipa' ? window.ipaSlash(parts.join('.')) : parts.join(sys === 'tl' ? ' ' : '-');
+				return '<span class="bld-rom pron" lang="th-Latn">' + (sys === 'tl' ? window.tlHTML(rom) : rom.replace(/&/g, '&amp;').replace(/</g, '&lt;')) + '</span>';
+			};
+			var tonesOf = function (r) { return r.sylls.map(tone); };
+			var toneHTML = function (tones) {
+				return tones.map(function (t) { return '<svg class="tc" viewBox="0 0 40 24" aria-hidden="true"><path d="' + CONTOUR[t] + '"/></svg>'; }).join('') +
+					'<span class="bld-tone" lang="en">' + tones.join(' + ') + (tones.length > 1 ? ' tones' : ' tone') + '</span>';
+			};
+			// readings that differ only in their sounds (ทร: s or tr) are shown
+			// together, with one explanation
+			var same = rs.length > 1 && rs.every(function (r) { return tonesOf(r).join() === tonesOf(rs[0]).join(); });
+			var readEl = root.querySelector('.bld-read'), whyEl = root.querySelector('.bld-why');
+			if (rs.length === 1 || same) {
+				var roms = rs.map(romOf).join('<span class="bld-or" aria-hidden="true">/</span>');
+				readEl.innerHTML = '<div class="bld-reading">' + roms + toneHTML(tonesOf(rs[0])) + '</div>';
+				if (rs.length === 1) whyEl.innerHTML = rs[0].why;
+				else {
+					var intro = pick.ini + pick.fake === 'ทร'
+						? th('ทร') + ' is read like ' + th('ซ') + ' (s), or, in loanwords such as ' + th('ทรัมเป็ต') + ', as a true cluster (tr); either way it keeps the low class of ' + th('ท') + '.'
+						: rs.map(function (r) { return r.main.intro; }).join(' Or: ');
+					whyEl.innerHTML = intro + ' ' + why(Object.assign({}, rs[0].main, { skipIntro: true }));
+				}
+			} else {
+				readEl.innerHTML = rs.map(function (r, i) {
+					return '<div class="bld-reading"><span class="bld-rlabel" lang="en">reading ' + (i + 1) + ' (as in ' + th(r.ex) + ')</span>' + romOf(r) + toneHTML(tonesOf(r)) + '</div>';
+				}).join('');
+				whyEl.innerHTML = rs.map(function (r, i) { return '<b lang="en">Reading ' + (i + 1) + ':</b> ' + r.why; }).join('<br>');
+			}
+		}
+		// A Thai vowel or tone mark is always painted in the colour of the letter
+		// it sits on, and each mark's position depends on the marks under it, so
+		// a mark can't be coloured, or drawn, on its own. So the word is drawn
+		// twice, stacked exactly: the whole word dimmed, and on top only the lit
+		// pieces. A lit letter is drawn alone (its marks stay dim below); a lit
+		// mark is drawn with its whole stack, then cropped to the band the mark
+		// occupies (above-letter vowel, tone mark, or below-letter vowel), with
+		// the bands measured from the font itself.
+		var wordParts = [], litSlot = null;
+		var MARKLIKE = /[\u0e31\u0e34-\u0e3a\u0e47-\u0e4e]/;
+		var UPPER = /[\u0e31\u0e34-\u0e37\u0e47\u0e4c-\u0e4e]/, LOWER = /[\u0e38-\u0e3a]/, TONEMK = /[\u0e48-\u0e4b]/;
+		var measurer = document.createElement('canvas').getContext('2d');
+		function clustersOf() {
+			var clusters = [];
+			wordParts.forEach(function (x) {
+				x[0].split('').forEach(function (ch) {
+					if (MARKLIKE.test(ch) && clusters.length) clusters[clusters.length - 1].marks.push({ ch: ch, part: x[1] });
+					else clusters.push({ ch: ch, part: x[1], marks: [] });
+				});
+			});
+			return clusters;
+		}
+		var esc = function (t) { return t.replace(/&/g, '&amp;').replace(/</g, '&lt;'); };
+		var all = function (c) { return c.ch + c.marks.map(function (m) { return m.ch; }).join(''); };
+		function drawWord() {
+			root.querySelector('.bld-word').innerHTML = '<span class="bld-l0">' + esc(clustersOf().map(all).join('')) + '</span>';
+		}
+		// The lit pieces fade in on a layer of their own; the layer they replace
+		// fades out, so moving from part to part cross-fades.
+		function light(slot, instant) {
+			if ((slot || null) === litSlot && !instant) return;
+			litSlot = slot || null;
+			var w = root.querySelector('.bld-word'), clusters = clustersOf(), html = '';
+			var calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+			w.querySelectorAll('.bld-l1').forEach(function (old) {
+				if (instant || calm || !old.animate) { old.remove(); return; }
+				old.classList.add('leaving');
+				old.animate([{ opacity: getComputedStyle(old).opacity }, { opacity: 0 }], { duration: 220, easing: 'ease' })
+					.finished.then(function () { old.remove(); }, function () {});
+			});
+			if (litSlot) {
+				var cs = getComputedStyle(w);
+				measurer.font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily;
+				var asc = function (t) { return measurer.measureText(t).actualBoundingBoxAscent; };
+				var fm = measurer.measureText('ก'), fA = fm.fontBoundingBoxAscent, fD = fm.fontBoundingBoxDescent;
+				var xh = asc('อ') + 1, big = 1000;
+				html = '<span class="bld-l1" aria-hidden="true">' + clusters.map(function (c) {
+					if (c.part === litSlot) return '<span class="on">' + esc(c.ch) + '</span>';
+					var lit = c.marks.filter(function (m) { return m.part === litSlot; });
+					if (!lit.length) return '<span class="off">' + esc(c.ch) + '</span>';
+					// the band (height above the baseline) each lit mark occupies
+					var up = c.marks.filter(function (m) { return UPPER.test(m.ch); }).map(function (m) { return m.ch; }).join('');
+					var top = -big, bottom = big;
+					lit.forEach(function (m) {
+						var t, b;
+						if (TONEMK.test(m.ch)) { t = big; b = up ? asc(c.ch + up) : xh; }
+						else if (UPPER.test(m.ch)) { t = asc(c.ch + up); b = xh; }
+						else { t = 0; b = -big; }
+						top = Math.max(top, t); bottom = Math.min(bottom, b);
+					});
+					var clip = 'inset(' + (fA - top).toFixed(1) + 'px -50px ' + (fD + bottom).toFixed(1) + 'px -50px)';
+					return '<span class="on" style="clip-path: ' + clip + '">' + esc(all(c)) + '</span>';
+				}).join('') + '</span>';
+			}
+			if (html) {
+				w.insertAdjacentHTML('beforeend', html);
+				var layer = w.lastElementChild;
+				if (!instant && !calm && layer.animate) layer.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 220, easing: 'ease' });
+			}
+		}
+		['mouseover', 'focusin'].forEach(function (ev) {
+			root.querySelector('.bld-parts').addEventListener(ev, function (e) { var sl = e.target.closest('.bld-slot'); light(sl && sl.dataset.slot); });
+		});
+		['mouseleave', 'focusout'].forEach(function (ev) {
+			root.querySelector('.bld-parts').addEventListener(ev, function () { light(null); });
+		});
+		document.addEventListener('romchange', render);
+		render();
+		// the letter names come from the consonant section, which is set up
+		// after this; draw again once the page has loaded
+		window.addEventListener('load', render);
+	})();
+	</script>
+
+	<script>
+	// Traditional count: the 32 vowels as taught in Thai schools, numbered in
+	// the school order (the pairs อะ อา to ออ, then เอียะ to อัว, then เออะ and
+	// เออ, then อำ ใอ ไอ เอา ฤ ฤๅ ฦ ฦๅ). The first 24 are the open forms in the
+	// chart; the last 8 are among the special combinations.
+	(function traditionalCount() {
+		var ROWS = { 'a': [1, 2], 'i': [3, 4], 'ʉ': [5, 6], 'u': [7, 8], 'e': [9, 10], 'ɛ': [11, 12], 'o': [13, 14],
+			'ɔ': [15, 16], 'ia': [17, 18], 'ʉa': [19, 20], 'ua': [21, 22], 'ə': [23, 24] };
+		var EXTRA = { 'อำ': 25, 'ใอ': 26, 'ไอ': 27, 'เอา': 28, 'ฤ': 29, 'ฤๅ': 30, 'ฦ': 31, 'ฦๅ': 32 };
+		var marked = [];
+		document.querySelectorAll('.grid .rom:not(.rom-long)').forEach(function (rom) {
+			var n = ROWS[rom.dataset.paiboon], shortOpen = rom.nextElementSibling;
+			var longOpen = shortOpen.nextElementSibling.nextElementSibling;
+			marked.push([shortOpen, n[0]], [longOpen, n[1]]);
+		});
+		// what a cell spells, without the faded copy of อ laid over it
+		function spelt(cell) {
+			var copy = cell.cloneNode(true);
+			copy.querySelectorAll('.o, .trad').forEach(function (o) { o.remove(); });
+			return copy.textContent.trim();
+		}
+		// ฤ is the result of three rows; it's counted once, on the row with
+		// its school reading, ร + อึ (รึ), which is the first of them
+		var counted = {};
+		document.querySelectorAll('.k .res .c').forEach(function (c) {
+			var n = EXTRA[spelt(c)];
+			if (n && !counted[n]) { marked.push([c, n]); counted[n] = true; }
+		});
+
+		// the consonants: all 44 in alphabetical order, the order they're taught
+		var consonants = [].map.call(document.querySelectorAll('.cons .c'), function (c, i) { return [c, i + 1]; });
+		// my count: every vowel spelling in the chart, row by row, leaving out
+		// a closed form that is written just like its open form (อิ / อิ-)
+		var ours = [];
+		document.querySelectorAll('.grid .rom:not(.rom-long)').forEach(function (rom) {
+			var open = null;
+			for (var c = rom.nextElementSibling, i = 0; i < 4; i++, c = c.nextElementSibling) {
+				if (!c.classList.contains('c')) { open = null; continue; }
+				var t = spelt(c).replace('-', '');
+				if (i % 2 === 0) open = t;                 // open column
+				else if (open !== null && t === open) continue;   // closed, same spelling
+				ours.push(c);
+			}
+		});
+		// ...then on through the special combinations: each special spelling
+		// (the outlined results), counting ฤ once for each of its three
+		// readings (rʉ, ri, rəə)
+		document.querySelectorAll('.k .res .c.x').forEach(function (c) { ours.push(c); });
+		ours = ours.map(function (c, i) { return [c, i + 1]; });
+		var trad = toggle(document.querySelector('.chip[data-toggle="trad"]'), marked, 'akson-trad', 'trad-v');
+		var own = toggle(document.querySelector('.chip[data-toggle="ours"]'), ours, 'akson-ours', 'trad-o');
+		// the two vowel counts share the corners, so only one shows at a time
+		trad.onChange = function (on) { if (on && own.on()) own.apply(false, true); };
+		own.onChange = function (on) { if (on && trad.on()) trad.apply(false, true); };
+		if (trad.on() && own.on()) own.apply(false, false);
+		toggle(document.querySelector('.chip[data-toggle="trad-cons"]'), consonants, 'akson-trad-cons', 'trad-c');
+	})();
+
+	function toggle(btn, marked, key, cls) {
+		var self = {};
+		// the badges fade in and out as the count is switched on and off
+		var calm = window.matchMedia('(prefers-reduced-motion: reduce)');
+		function apply(on, fade) {
+			fade = fade && !calm.matches;
+			marked.forEach(function (m) {
+				var old = m[0].querySelector(':scope > .' + cls);
+				if (old) {
+					old.getAnimations().forEach(function (a) { a.cancel(); });
+					if (!on && fade) {
+						old.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 300, easing: 'ease' })
+							.finished.then(function () { old.remove(); if (!old.isConnected) m[0].classList.toggle('has-trad', !!m[0].querySelector(':scope > .trad')); }, function () {});
+						return;
+					}
+					old.remove();
+				}
+				m[0].classList.toggle('has-trad', on);
+				if (!on) return;
+				var b = document.createElement('span');
+				b.className = 'trad ' + cls;
+				b.lang = 'en';
+				b.dataset.n = m[1];   // drawn by CSS, so it isn't copied with the letter
+				m[0].appendChild(b);
+				if (fade) b.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 300, easing: 'ease' });
+			});
+			btn.setAttribute('aria-pressed', String(on));
+			try { localStorage.setItem(key, on ? '1' : ''); } catch (e) {}
+			if (self.onChange) self.onChange(on);
+		}
+		btn.addEventListener('click', function () { apply(btn.getAttribute('aria-pressed') !== 'true', true); });
+		var saved = false;
+		try { saved = !!localStorage.getItem(key); } catch (e) {}
+		apply(saved, false);
+		self.apply = apply;
+		self.on = function () { return btn.getAttribute('aria-pressed') === 'true'; };
+		return self;
+	}	</script>
+
+	<script>
+	// Pronunciation in Paiboon+ (the default), IPA, thai-language.com's system
+	// or respelt in Thai script (as a dictionary gives a word's reading): the choice is kept on
+	// the page root and remembered; fixed text carries both spellings, and the
+	// consonant table redraws itself when told.
+	// IPA is always shown between slashes
+	// (a hyphen marking an initial k- or a final -k stays outside: -/k/, /k/-)
+	window.ipaSlash = function (t) {
+		t = t.replace(/^\/|\/$/g, '').replace(/^\/?(-?)\/?/, '$1');
+		var pre = t.charAt(0) === '-' ? '-' : '', post = t.length > 1 && t.slice(-1) === '-' ? '-' : '';
+		return pre + '/' + t.slice(pre.length, t.length - post.length) + '/' + post;
+	};
+	// "gaaw^M gai^L" → the syllables with their tone letters raised
+	window.tlHTML = function (t) {
+		return t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/\^([LMHFR])/g, '<span class="tl-tone">$1</span>');
+	};
+	(function romSwitch() {
+		var root = document.documentElement;
+		function apply(mode, announce) {
+			root.dataset.rom = mode;
+			document.querySelectorAll('[data-paiboon]').forEach(function (el) {
+				if (mode === 'tl') el.innerHTML = window.tlHTML(el.dataset.tl);
+				else el.textContent = mode === 'ipa' ? window.ipaSlash(el.dataset.ipa) : mode === 'th' ? el.dataset.th : el.dataset.paiboon;
+			});
+			document.querySelectorAll('.chip[data-rom]').forEach(function (b) {
+				b.setAttribute('aria-pressed', String(b.dataset.rom === mode));
+			});
+			try { localStorage.setItem('akson-rom', mode); } catch (e) {}
+			if (announce) document.dispatchEvent(new Event('romchange'));
+		}
+		document.querySelectorAll('.chip[data-rom]').forEach(function (b) {
+			b.addEventListener('click', function () { if (b.dataset.rom !== root.dataset.rom) apply(b.dataset.rom, true); });
+		});
+		var saved = 'paiboon';
+		try { saved = localStorage.getItem('akson-rom') || 'paiboon'; } catch (e) {}
+		if (!/^(paiboon|ipa|tl|th)$/.test(saved)) saved = 'paiboon';
+		// announce it too, so parts drawn before this (the syllable builder) redraw
+		apply(saved, true);
+	})();
+	</script>
+
+	<script>
+	// Consonant order, chosen with the chips and remembered:
+	// - alphabetical (ก to ฮ);
+	// - by class (high, mid, low), most frequent first within each, each
+	//   class starting on its own row;
+	// - by sound and class: letters that begin a syllable with the same sound
+	//   kept together; the mid class's sounds, then the sounds shared by a
+	//   high and a low letter, then the low class's own sounds; each group in
+	//   order of its most frequent letter.
+	// - by final sound: the eight sounds a syllable can end on, then the
+	//   letters that never end one.
+	// - detail: alphabetical, one to a line, each with its name (in Thai and
+	//   Paiboon+), its initial and final sounds, a drawing and the meaning of
+	//   its word.
+	// Frequency is roughly how often each letter turns up in ordinary Thai text.
+	(function consonantOrder() {
+		var FREQ = 'นรกองมยวตลดทสปบคหจพขชถผญศซณธภษฟฉฐฝฒฑฮฏฎฆฬฌฅฃ';
+		// each sound as it's said at the start of a syllable (shown as k-, and
+		// final sounds as -k, marking where in the syllable they come)
+		var SOUNDS = [
+			['k', 'ก'], ['kh', 'ขฃคฅฆ'], ['ng', 'ง'], ['j', 'จ'], ['ch', 'ฉชฌ'],
+			['s', 'ซศษส'], ['y', 'ญย'], ['d', 'ฎด'], ['t', 'ฏต'], ['th', 'ฐฑฒถทธ'],
+			['n', 'ณน'], ['b', 'บ'], ['p', 'ป'], ['ph', 'ผพภ'], ['f', 'ฝฟ'],
+			['m', 'ม'], ['r', 'ร'], ['l', 'ลฬ'], ['w', 'ว'], ['h', 'หฮ'], ['ʔ', 'อ']
+		];
+		// and as it's said at the end of one; the last group never ends a
+		// syllable (ผ ฝ in practice, ห ฮ อ at all)
+		var FINALS = [
+			['k', 'กขฃคฅฆ'], ['t', 'จชซฌฎฏฐฑฒดตถทธศษส'], ['p', 'บปพฟภ'], ['ng', 'ง'],
+			['n', 'ญณนรลฬ'], ['m', 'ม'], ['y', 'ย'], ['w', 'ว'], [null, 'ฉผฝหฮอ']
+		];
+		// for the detail view: the meaning of each letter's word, its name in
+		// Paiboon+ romanization, and a small line drawing of the word (32x32,
+		// drawn in the letter's class colour)
+		var WORD = {
+			'ก': ['chicken', 'gɔɔ gài', '<circle cx="11" cy="10" r="4"/><path d="M7 10l-3 1 3 1M9 6.5l1-2.5 1.5 2 1.5-2 .8 2.5"/><path d="M14 13c4-1 10 0 12 3 1 5-4 9-9 9s-8-3-8-8"/><path d="M15 25v4M19 25v4M26 16l3-4M26 17l4-1"/><circle cx="10" cy="9.5" r="0.9" fill="currentColor" stroke="none"/>'],
+			'ข': ['egg', 'kɔ̌ɔ kài', '<path d="M16 4c5 0 9 8 9 14a9 9 0 0 1-18 0c0-6 4-14 9-14z"/>'],
+			'ฃ': ['bottle', 'kɔ̌ɔ kùat', '<path d="M13 3h6M14 3v6l-3 4v15a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V13l-3-4V3M11 17h10"/>'],
+			'ค': ['water buffalo', 'kɔɔ kwaai', '<path d="M3 8c2 5 6 7 9.5 6M29 8c-2 5-6 7-9.5 6"/><path d="M12 13c0 7 2 14 4 14s4-7 4-14c-2-1-6-1-8 0z"/><path d="M12 15l-4 2M20 15l4 2"/><circle cx="14.5" cy="23" r="0.9" fill="currentColor" stroke="none"/><circle cx="17.5" cy="23" r="0.9" fill="currentColor" stroke="none"/>'],
+			'ฅ': ['person', 'kɔɔ kon', '<circle cx="16" cy="7" r="3.5"/><path d="M16 11v10M9 15h14M16 21l-5 8M16 21l5 8"/>'],
+			'ฆ': ['bell', 'kɔɔ rá-kang', '<path d="M16 3v3M9 22c0-10 2-16 7-16s7 6 7 16M6 22h20M14 25a2 2 0 0 0 4 0"/>'],
+			'ง': ['snake', 'ngɔɔ nguu', '<path d="M4 27c6 1 10-1 10-4s-8-3-8-8 5-8 12-8" stroke-width="5"/><path d="M4 27c6 1 10-1 10-4s-8-3-8-8 5-8 12-8" stroke-width="1.6" style="stroke: var(--color3)"/><ellipse cx="21" cy="7" rx="3.8" ry="2.8" style="fill: var(--color3)"/><path d="M24.8 7l3-1.2M24.8 7l3 1.2"/><circle cx="21.5" cy="6.3" r="0.9" fill="currentColor" stroke="none"/>'],
+			'จ': ['plate', 'jɔɔ jaan', '<ellipse cx="16" cy="18" rx="13" ry="6"/><ellipse cx="16" cy="17" rx="7" ry="3"/>'],
+			'ฉ': ['small cymbals', 'chɔ̌ɔ chìng', '<path d="M3 21c0-4 2.5-6 5.5-6s5.5 2 5.5 6zM18 21c0-4 2.5-6 5.5-6s5.5 2 5.5 6zM8.5 15c0-5 5-8 7.5-8s7.5 3 7.5 8"/>'],
+			'ช': ['elephant', 'chɔɔ cháang', '<path d="M5 27v-8c0-5 3-8 8-8h7c4 0 7 3 7 7v2c0 3 1 5 3 7h-2c-2 0-3-2-3-5-1 1.5-2.5 1.5-3.5 0v5h-4v-4h-8v4z"/><path d="M17 12c-2 2-2 6 1 7M25 21.5l2 1.5"/><circle cx="22.5" cy="15.5" r="0.9" fill="currentColor" stroke="none"/>'],
+			'ซ': ['chain', 'sɔɔ sôo', '<rect x="2" y="12.5" width="11" height="7" rx="3.5"/><rect x="10.5" y="14.5" width="11" height="3" rx="1.5"/><rect x="19" y="12.5" width="11" height="7" rx="3.5"/>'],
+			'ฌ': ['tree', 'chɔɔ chəə', '<path d="M16 29V17M16 22l-4-3M16 20l4-3M9 17a5 5 0 0 1 1-9 6 6 0 0 1 12 0 5 5 0 0 1 1 9z"/>'],
+			'ญ': ['woman', 'yɔɔ yǐng', '<circle cx="16" cy="8" r="4"/><path d="M12 8c0 4-1 6-2 7M20 8c0 4 1 6 2 7M13 14l-4 14h14l-4-14z"/>'],
+			'ฎ': ['dancer\u2019s headdress', 'dɔɔ chá-daa', '<path d="M16 2l-2 8h4zM13 10h6l1 5h-8zM11 15h10l1 5H10zM8 20h16v4c-4 3-12 3-16 0zM8 24l-2 4M24 24l2 4"/>'],
+			'ฏ': ['goad', 'dtɔɔ bpà-dtàk', '<path d="M7 29L22 7l3-4M22 7c3 0 5 2 5 4s-2 3-4 2"/>'],
+			'ฐ': ['pedestal', 'tɔ̌ɔ tǎan', '<path d="M10 8h12M12 8v3h8V8M9 11h14v4H9zM7 15h18v5H7zM5 20h22v6H5z"/>'],
+			'ฑ': ['Montho (a queen in the Ramakien)', 'tɔɔ mon-too', '<circle cx="16" cy="15" r="5"/><path d="M11 10l1-6 2 3 2-4 2 4 2-3 1 6zM8 29c1-5 4-8 8-8s7 3 8 8"/>'],
+			'ฒ': ['old man', 'tɔɔ pûu-tâo', '<circle cx="12" cy="6.5" r="3"/><path d="M14.5 9.5c3.5 1 5.5 4 5.5 8.5M16 11.5l-4.5 5.5M11 16.5v12.5M11 16.5c0-1.5 2-1.5 2 0M20 18l-3 5 .5 6M20 18l1.5 11"/>'],
+			'ณ': ['novice monk', 'nɔɔ neen', '<circle cx="13" cy="6" r="3.5"/><path d="M9.5 11h6.5c1 3 1.5 5.5 1.5 8.5H24v4h-2.5V29h-3v-5.5H9.5zM9.5 14.5l7 3.5M9.5 18.5l8 4M6 23.5h3.5M7 23.5V29"/>'],
+			'ด': ['child', 'dɔɔ dèk', '<circle cx="16" cy="9" r="5"/><path d="M16 14v8M11 17l5 2 5-2M16 22l-4 6M16 22l4 6"/>'],
+			'ต': ['turtle', 'dtɔɔ dtào', '<ellipse cx="16" cy="17" rx="8" ry="10"/><circle cx="16" cy="4.5" r="2.5"/><path d="M13 12h6l2 5-2 5h-6l-2-5zM13 12l-3-3M19 12l3-3M11 17H8M21 17h3M13 22l-3 3M19 22l3 3M9.5 10.5l-3-2M22.5 10.5l3-2M9.5 23.5l-3 2M22.5 23.5l3 2M16 27v2.5"/>'],
+			'ถ': ['bag', 'tɔ̌ɔ tǔng', '<path d="M12 5h8l-2 4c5 2 8 7 8 12 0 5-4 7-10 7S6 26 6 21c0-5 3-10 8-12zM13 9h6"/>'],
+			'ท': ['soldier', 'tɔɔ tá-hǎan', '<path d="M11.5 8a3.5 3.5 0 0 1 7 0zM10 8h10M12 8v2a3 3 0 0 0 6 0V8"/><path d="M11 14h8l1 8H10zM10.5 18h9M13 22v7M17 22v7M11 29h3M16 29h3M11 14l-2 7M19 14l2 5M20 23l5-20"/>'],
+			'ธ': ['flag', 'tɔɔ tong', '<path d="M7 29V3M7 5c5-3 9 3 18 0v11c-9 3-13-3-18 0"/>'],
+			'น': ['mouse', 'nɔɔ nǔu', '<circle cx="16" cy="19" r="8"/><circle cx="8.5" cy="9.5" r="4.5"/><circle cx="23.5" cy="9.5" r="4.5"/><path d="M3.5 19.5l6 1.5M3.5 24l6-1.5M28.5 19.5l-6 1.5M28.5 24l-6-1.5"/><circle cx="13" cy="17" r="0.9" fill="currentColor" stroke="none"/><circle cx="19" cy="17" r="0.9" fill="currentColor" stroke="none"/><circle cx="16" cy="21.5" r="1.2" fill="currentColor" stroke="none"/>'],
+			'บ': ['leaf', 'bɔɔ bai-máai', '<path d="M6 26C6 12 14 5 27 5c0 13-7 21-21 21zM6 26L20 12"/>'],
+			'ป': ['fish', 'bpɔɔ bplaa', '<path d="M4 16c4-6 13-8 19-2l5-4v12l-5-4c-6 6-15 4-19-2z"/><circle cx="9" cy="15" r="0.9" fill="currentColor" stroke="none"/>'],
+			'ผ': ['bee', 'pɔ̌ɔ pʉ̂ng', '<ellipse cx="17" cy="20" rx="8" ry="5.5"/><circle cx="7" cy="19.5" r="3"/><path d="M15 14.7v10.6M19.5 14.9v10.2M25 20h3M6 16.8l-2-4M8.5 16.8l.5-4.5"/><ellipse cx="14" cy="10" rx="2.8" ry="4.5" transform="rotate(-25 14 10)"/><ellipse cx="20" cy="10" rx="2.8" ry="4.5" transform="rotate(25 20 10)"/>'],
+			'ฝ': ['lid', 'fɔ̌ɔ fǎa', '<path d="M4 23h24M6 23a10 8 0 0 1 20 0M14 15v-3h4v3"/>'],
+			'พ': ['offering tray', 'pɔɔ paan', '<path d="M5 14h22M7 14l3 5h12l3-5M14 19v5M18 19v5M10 28l4-4h4l4 4zM11 14c0-4 2-7 5-7s5 3 5 7"/>'],
+			'ฟ': ['tooth', 'fɔɔ fan', '<path d="M8 7c2-3 5-2 8-1 3-1 6-2 8 1 2 4 0 8-1 11l-2 9c-1 1-2 0-2-1l-1-6c0-2-3-2-3 0l-1 6c0 1-1 2-2 1l-2-9C8 15 6 11 8 7z"/>'],
+			'ภ': ['junk (sailing ship)', 'pɔɔ sǎm-pao', '<path d="M3 22h26l-3 6H7zM11 22V4M21 22V7M11 5c4 2 4 13 0 15M21 8c3 2 3 10 0 12M11 10h3M11 15h3M21 12h2M21 16h2"/>'],
+			'ม': ['horse', 'mɔɔ máa', '<path d="M8 13h12l4-6.5c2 .5 3.5 2.5 5 4.5l-1 1.5-4-1-3 5.5v2.5H8c-1-2.5-1-4.5 0-6.5z"/><path d="M9 19.5V28M12 19.5V28M18 19.5V28M21 19.5V28M8 14c-3 1-4 5-3 9M20 13l3.5-6.5M23 7l-1-2.5"/><circle cx="25.5" cy="8.5" r="0.9" fill="currentColor" stroke="none"/>'],
+			'ย': ['giant', 'yɔɔ yák', '<path d="M16 1l-2.5 5h5zM12.5 6h7l1.5 3H11z"/><path d="M8 9h16v10c0 5-4 9-8 9s-8-4-8-9zM8 12H5l3 5M24 12h3l-3 5"/><circle cx="12.5" cy="14" r="2.3"/><circle cx="19.5" cy="14" r="2.3"/><path d="M10.5 21c2.5 2 8.5 2 11 0M11.5 21.5l-1-4M20.5 21.5l1-4"/><circle cx="12.5" cy="14" r="0.9" fill="currentColor" stroke="none"/><circle cx="19.5" cy="14" r="0.9" fill="currentColor" stroke="none"/>'],
+			'ร': ['boat', 'rɔɔ rʉʉa', '<path d="M3 18h26c-2 5-5 7-11 7h-4c-6 0-9-2-11-7zM21 4l-6 17"/>'],
+			'ล': ['monkey', 'lɔɔ ling', '<circle cx="16" cy="16" r="9"/><circle cx="5.5" cy="15" r="3"/><circle cx="26.5" cy="15" r="3"/><path d="M11 18c0-3 2-5 5-3 3-2 5 0 5 3 0 4-2 6-5 6s-5-2-5-6z"/><circle cx="13.5" cy="14" r="0.9" fill="currentColor" stroke="none"/><circle cx="18.5" cy="14" r="0.9" fill="currentColor" stroke="none"/>'],
+			'ว': ['ring', 'wɔɔ wɛ̌ɛn', '<circle cx="16" cy="20" r="8"/><path d="M13 12l-2-4 5-4 5 4-2 4z"/>'],
+			'ศ': ['pavilion', 'sɔ̌ɔ sǎa-laa', '<path d="M3 16h26M5 16l5-6h12l5 6M9 10l3-5h8l3 5M12 5l-1-2.5M20 5l1-2.5M3 16l-1.5-2M29 16l1.5-2"/><path d="M7 16v11M13 16v11M19 16v11M25 16v11M4 27h24"/>'],
+			'ษ': ['hermit', 'sɔ̌ɔ rʉʉ-sǐi', '<path d="M13.5 11L16 2l2.5 9zM12 11h8"/><circle cx="16" cy="13.5" r="2.5"/><path d="M14.5 15.5c0 5 .5 8 1.5 9.5 1-1.5 1.5-4.5 1.5-9.5M11 18l-3 8h16l-3-8M6 28c3-2 17-2 20 0M27 4v24M25.5 6.5c1-2 2-2 3 0"/>'],
+			'ส': ['tiger', 'sɔ̌ɔ sʉ̌ʉa', '<circle cx="16" cy="17" r="10"/><path d="M8 9l-1-4 4 2M24 9l1-4-4 2M16 7v4M12 8l1 3M20 8l-1 3M6 16h4M26 16h-4M14.5 19.5h3L16 21zM16 21v1.5M16 22.5c-1 1.2-2.5 1.2-3 0M16 22.5c1 1.2 2.5 1.2 3 0"/><circle cx="12.5" cy="16" r="0.9" fill="currentColor" stroke="none"/><circle cx="19.5" cy="16" r="0.9" fill="currentColor" stroke="none"/>'],
+			'ห': ['chest', 'hɔ̌ɔ hìip', '<rect x="4" y="13" width="24" height="14" rx="1"/><path d="M4 13c0-5 5-7 12-7s12 2 12 7M14 15h4v4h-4z"/>'],
+			'ฬ': ['star kite', 'lɔɔ jù-laa', '<path d="M16 2l3 10h10l-8 6 3 11-8-7-8 7 3-11-8-6h10zM24 29c2 1 3 2 5 1"/>'],
+			'อ': ['basin', 'ɔɔ àang', '<path d="M3 13h26M5 13c0 8 5 13 11 13s11-5 11-13M10 26l-1 3h14l-1-3"/>'],
+			'ฮ': ['owl', 'hɔɔ nók-hûuk', '<path d="M8 6l3 4h10l3-4v14c0 5-4 9-8 9s-8-4-8-9zM15 19l1 2 1-2"/><circle cx="12.5" cy="15" r="3"/><circle cx="19.5" cy="15" r="3"/><circle cx="12.5" cy="15" r="0.9" fill="currentColor" stroke="none"/><circle cx="19.5" cy="15" r="0.9" fill="currentColor" stroke="none"/>']
+		};
+		// the same in IPA, for when the page is switched to it
+		var NAME_IPA = { 'ก': 'kɔː kàj', 'ข': 'kʰɔ̌ː kʰàj', 'ฃ': 'kʰɔ̌ː kʰùat', 'ค': 'kʰɔː kʰwaːj', 'ฅ': 'kʰɔː kʰon', 'ฆ': 'kʰɔː rá.kʰaŋ', 'ง': 'ŋɔː ŋuː', 'จ': 'tɕɔː tɕaːn', 'ฉ': 'tɕʰɔ̌ː tɕʰìŋ', 'ช': 'tɕʰɔː tɕʰáːŋ', 'ซ': 'sɔː sôː', 'ฌ': 'tɕʰɔː tɕʰɤː', 'ญ': 'jɔː jǐŋ', 'ฎ': 'dɔː tɕʰá.daː', 'ฏ': 'tɔː pà.tàk', 'ฐ': 'tʰɔ̌ː tʰǎːn', 'ฑ': 'tʰɔː mon.tʰoː', 'ฒ': 'tʰɔː pʰûː.tʰâw', 'ณ': 'nɔː neːn', 'ด': 'dɔː dèk', 'ต': 'tɔː tàw', 'ถ': 'tʰɔ̌ː tʰǔŋ', 'ท': 'tʰɔː tʰá.hǎːn', 'ธ': 'tʰɔː tʰoŋ', 'น': 'nɔː nǔː', 'บ': 'bɔː baj.máːj', 'ป': 'pɔː plaː', 'ผ': 'pʰɔ̌ː pʰɯ̂ŋ', 'ฝ': 'fɔ̌ː fǎː', 'พ': 'pʰɔː pʰaːn', 'ฟ': 'fɔː fan', 'ภ': 'pʰɔː sǎm.pʰaw', 'ม': 'mɔː máː', 'ย': 'jɔː ják', 'ร': 'rɔː rɯa', 'ล': 'lɔː liŋ', 'ว': 'wɔː wɛ̌ːn', 'ศ': 'sɔ̌ː sǎː.laː', 'ษ': 'sɔ̌ː rɯː.sǐː', 'ส': 'sɔ̌ː sɯ̌a', 'ห': 'hɔ̌ː hìːp', 'ฬ': 'lɔː tɕù.laː', 'อ': 'ʔɔː ʔàːŋ', 'ฮ': 'hɔː nók.hûːk' };
+		var INI_IPA = { k: 'k', kh: 'k\u02b0', ng: '\u014b', j: 't\u0255', ch: 't\u0255\u02b0', s: 's', y: 'j', d: 'd', t: 't', th: 't\u02b0',
+			n: 'n', b: 'b', p: 'p', ph: 'p\u02b0', f: 'f', m: 'm', r: 'r', l: 'l', w: 'w', h: 'h', '\u0294': '\u0294' };
+		var FIN_IPA = { k: 'k\u031a', t: 't\u031a', p: 'p\u031a', ng: '\u014b', n: 'n', m: 'm', y: 'j', w: 'w' };
+		// and as thai-language.com writes them (it leaves อ unwritten, and
+		// writes ก, ต, ป as g, dt, bp)
+		var NAME_TL = { 'ก': 'gaaw^M gai^L', 'ข': 'khaaw^R khai^L', 'ฃ': 'khaaw^R khuaat^L', 'ค': 'khaaw^M khwaai^M', 'ฅ': 'khaaw^M khohn^M', 'ฆ': 'khaaw^M ra^H khang^M', 'ง': 'ngaaw^M nguu^M', 'จ': 'jaaw^M jaan^M', 'ฉ': 'chaaw^R ching^L', 'ช': 'chaaw^M chaang^H', 'ซ': 'saaw^M so:h^F', 'ฌ': 'chaaw^M chuuhr^M', 'ญ': 'yaaw^M ying^R', 'ฎ': 'daaw^M cha^H daa^M', 'ฏ': 'dtaaw^M bpa^L dtak^L', 'ฐ': 'thaaw^R thaan^R', 'ฑ': 'thaaw^M mohn^M tho:h^M', 'ฒ': 'thaaw^M phuu^F thao^F', 'ณ': 'naaw^M naehn^M', 'ด': 'daaw^M dek^L', 'ต': 'dtaaw^M dtao^L', 'ถ': 'thaaw^R thoong^R', 'ท': 'thaaw^M tha^H haan^R', 'ธ': 'thaaw^M thohng^M', 'น': 'naaw^M nuu^R', 'บ': 'baaw^M bai^M maai^H', 'ป': 'bpaaw^M bplaa^M', 'ผ': 'phaaw^R pheung^F', 'ฝ': 'faaw^R faa^R', 'พ': 'phaaw^M phaan^M', 'ฟ': 'faaw^M fan^M', 'ภ': 'phaaw^M sam^R phao^M', 'ม': 'maaw^M maa^H', 'ย': 'yaaw^M yak^H', 'ร': 'raaw^M reuua^M', 'ล': 'laaw^M ling^M', 'ว': 'waaw^M waaen^R', 'ศ': 'saaw^R saa^R laa^M', 'ษ': 'saaw^R reuu^M see^R', 'ส': 'saaw^R seuua^R', 'ห': 'haaw^R heep^L', 'ฬ': 'laaw^M joo^L laa^M', 'อ': 'aaw^M aang^L', 'ฮ': 'haaw^M nohk^H huuk^F' };
+		var INI_TL = { k: 'g', t: 'dt', p: 'bp', '\u0294': '\u2205' };
+		// and respelt in Thai script; sounds shown by a representative letter,
+		// finals by the traditional endings (แม่กก, แม่กด, แม่กบ …)
+		var NAME_TH = { 'ก': 'กอ-ไก่', 'ข': 'ขอ-ไข่', 'ฃ': 'ขอ-ขวด', 'ค': 'คอ-ควาย', 'ฅ': 'คอ-คน', 'ฆ': 'คอ-ระ-คัง', 'ง': 'งอ-งู', 'จ': 'จอ-จาน', 'ฉ': 'ฉอ-ฉิ่ง', 'ช': 'ชอ-ช้าง', 'ซ': 'ซอ-โซ่', 'ฌ': 'ชอ-เชอ', 'ญ': 'ยอ-หฺยิง', 'ฎ': 'ดอ-ชะ-ดา', 'ฏ': 'ตอ-ปะ-ตัก', 'ฐ': 'ถอ-ถาน', 'ฑ': 'ทอ-มน-โท', 'ฒ': 'ทอ-ผู้-เท่า', 'ณ': 'นอ-เนน', 'ด': 'ดอ-เด็ก', 'ต': 'ตอ-เต่า', 'ถ': 'ถอ-ถุง', 'ท': 'ทอ-ทะ-หาน', 'ธ': 'ทอ-ทง', 'น': 'นอ-หฺนู', 'บ': 'บอ-ใบ-ไม้', 'ป': 'ปอ-ปฺลา', 'ผ': 'ผอ-ผึ้ง', 'ฝ': 'ฝอ-ฝา', 'พ': 'พอ-พาน', 'ฟ': 'ฟอ-ฟัน', 'ภ': 'พอ-สำ-เพา', 'ม': 'มอ-ม้า', 'ย': 'ยอ-ยัก', 'ร': 'รอ-เรือ', 'ล': 'ลอ-ลิง', 'ว': 'วอ-แหฺวน', 'ศ': 'สอ-สา-ลา', 'ษ': 'สอ-รือ-สี', 'ส': 'สอ-เสือ', 'ห': 'หอ-หีบ', 'ฬ': 'ลอ-จุ-ลา', 'อ': 'ออ-อ่าง', 'ฮ': 'ฮอ-นก-ฮูก' };
+		var INI_TH = { k: 'ก', kh: 'ค', ng: 'ง', j: 'จ', ch: 'ช', s: 'ซ', y: 'ย', d: 'ด', t: 'ต', th: 'ท', n: 'น', b: 'บ',
+			p: 'ป', ph: 'พ', f: 'ฟ', m: 'ม', r: 'ร', l: 'ล', w: 'ว', h: 'ฮ', '\u0294': 'อ' };
+		var FIN_TH = { k: 'ก', t: 'ด', p: 'บ', ng: 'ง', n: 'น', m: 'ม', y: 'ย', w: 'ว' };
+		function mode() { return document.documentElement.dataset.rom; }
+		// a letter's name (กอ ไก่) as pronounced, in the chosen system (tone
+		// letters for thai-language.com left as ^X, for the caller to raise)
+		window.letterNameReading = function (ch, sys) {
+			if (!WORD[ch]) return '';
+			return sys === 'ipa' ? NAME_IPA[ch] : sys === 'tl' ? NAME_TL[ch] : sys === 'th' ? NAME_TH[ch] : WORD[ch][1];
+		};
+		function ini(label) {
+			var m = mode();
+			if (m === 'ipa') return window.ipaSlash(INI_IPA[label] + '-');
+			return (m === 'tl' ? (INI_TL[label] || label) : m === 'th' ? INI_TH[label] : label) + '-';
+		}
+		function fin(label) { var m = mode(); if (m === 'ipa') return window.ipaSlash('-' + FIN_IPA[label]); return '-' + (m === 'th' ? FIN_TH[label] : label); }
+		var grid = document.querySelector('.cons');
+		var cells = [].slice.call(grid.querySelectorAll('.c'));
+		var RANK = { hi: 0, mid: 1, lo: 2 };
+		function letter(c) { return c.firstChild.textContent.trim(); }   // (not the count badge)
+		function rank(c) { return RANK[['hi', 'mid', 'lo'].filter(function (k) { return c.classList.contains(k); })[0]]; }
+		function freq(c) { return FREQ.indexOf(letter(c)); }
+		cells.forEach(function (c, i) { c._abc = i; });
+
+		// the width of a cell in the ordinary grid, for the grouped layout
+		function measure() {
+			if (grid.classList.contains('by-sound')) return;
+			grid.style.setProperty('--cell', cells[0].getBoundingClientRect().width + 'px');
+		}
+
+		// The letters in the chosen order, as a list of groups:
+		// - alphabetical: one group;
+		// - by class (high, mid, low), most frequent first within each;
+		// - by initial sound: the mid class's sounds, then the sounds written
+		//   with both a high and a low letter (kh, ch, s, th, ph, f, h), high
+		//   before low, then the low class's own sounds (ng, n, m, y, r, l, w),
+		//   each block's groups in order of their most frequent letter;
+		// - by final sound: one group per ending, most frequent first, and the
+		//   letters that never end a syllable last.
+		// A group's "block" says when a new paragraph (or wider gap) begins.
+		var CLASS_NAME = ['high class', 'mid class', 'low class'];
+		function grouping(order) {
+			var groups = [];
+			if (order === 'abc') {
+				groups.push({ block: 0, cells: cells.slice().sort(function (a, b) { return a._abc - b._abc; }) });
+			} else if (order === 'class') {
+				[0, 1, 2].forEach(function (r) {
+					groups.push({ label: CLASS_NAME[r], block: r, cells: cells.filter(function (c) { return rank(c) === r; })
+						.sort(function (a, b) { return freq(a) - freq(b); }) });
+				});
+			} else if (order === 'final') {
+				FINALS.forEach(function (fd) {
+					groups.push({ label: fd[0] ? fin(fd[0]) : 'cannot be used in final position', none: !fd[0], sound: !!fd[0], block: fd[0] ? 0 : 1,
+						cells: cells.filter(function (c) { return fd[1].indexOf(letter(c)) !== -1; })
+							.sort(function (a, b) { return freq(a) - freq(b); }) });
+				});
+			} else {
+				SOUNDS.forEach(function (sd) {
+					var mine = cells.filter(function (c) { return sd[1].indexOf(letter(c)) !== -1; });
+					var ranks = mine.map(rank);
+					var block = ranks.indexOf(1) !== -1 ? 0          // mid
+						: ranks.indexOf(0) !== -1 ? 1          // high, with any low partners
+						: 2;                                   // low only
+					mine.sort(function (a, b) { return rank(a) - rank(b) || freq(a) - freq(b); });
+					groups.push({ label: ini(sd[0]), sound: true, block: block, cells: mine });
+				});
+			}
+			if (order === 'sound-class' || order === 'final') {
+				groups.sort(function (a, b) {
+					return a.block - b.block || Math.min.apply(null, a.cells.map(freq)) - Math.min.apply(null, b.cells.map(freq));
+				});
+			}
+			return groups;
+		}
+
+		// one row of the detail list: the tile, its name (in Thai, with the
+		// letter in bold where it's used, and in Paiboon+), its initial and
+		// final sounds, a drawing of the word and what the word means
+		function detailRow(c) {
+			var w = WORD[letter(c)];
+			var row = document.createElement('div');
+			row.className = 'det';
+			row.innerHTML = '<span class="det-th"></span><span class="det-rom pron" lang="th-Latn"></span><span class="det-ini" lang="th-Latn"></span><span class="det-fin" lang="th-Latn"></span><span class="det-live" lang="en"></span><span class="det-pic" aria-hidden="true"></span><span class="det-en" lang="en"></span>';
+			// (ฃ and ฅ no longer appear in their words, now spelt ขวด and คน)
+			var th = row.querySelector('.det-th'), say = c.dataset.say, sp = say.indexOf(' ');
+			var word = say.slice(sp + 1), at = word.indexOf(letter(c));
+			if (at < 0) th.textContent = say;
+			else {
+				th.appendChild(document.createTextNode(say.slice(0, sp + 1) + word.slice(0, at)));
+				var b = document.createElement('b');
+				b.textContent = letter(c);
+				th.appendChild(b);
+				th.appendChild(document.createTextNode(word.slice(at + 1)));
+			}
+			var rom = row.querySelector('.det-rom');
+			if (mode() === 'tl') rom.innerHTML = window.tlHTML(NAME_TL[letter(c)]);
+			else rom.textContent = mode() === 'ipa' ? window.ipaSlash(NAME_IPA[letter(c)]) : mode() === 'th' ? NAME_TH[letter(c)] : w[1];
+			var inis = SOUNDS.filter(function (sd) { return sd[1].indexOf(letter(c)) !== -1; })[0];
+			var fins = FINALS.filter(function (fd) { return fd[1].indexOf(letter(c)) !== -1; })[0];
+			row.querySelector('.det-ini').innerHTML = '<span class="pron" lang="th-Latn"></span>';
+			row.querySelector('.det-ini .pron').textContent = ini(inis[0]);
+			if (fins[0]) {
+				row.querySelector('.det-fin').innerHTML = '<span class="pron" lang="th-Latn"></span>';
+				row.querySelector('.det-fin .pron').textContent = fin(fins[0]);
+			} else row.querySelector('.det-fin').textContent = '–';
+			if (!fins[0]) row.querySelector('.det-fin').classList.add('none');
+			// a syllable ending in -k, -t or -p is dead; in -m, -n, -ng, -y or -w, live
+			var live = row.querySelector('.det-live');
+			live.textContent = !fins[0] ? '–' : /^[ktp]$/.test(fins[0]) ? 'dead' : 'live';
+			if (!fins[0]) live.classList.add('none');
+			var pic = row.querySelector('.det-pic');
+			pic.innerHTML = '<svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' + w[2] + '</svg>';
+			row.querySelector('.det-en').textContent = w[0];
+			row.insertBefore(c, row.firstChild);
+			return row;
+		}
+
+		var order = 'abc', detail = false;
+		function show(nextOrder, nextDetail) {
+			order = nextOrder;
+			detail = nextDetail;
+			grid.classList.remove('by-sound', 'detail');
+			grid.querySelectorAll('.snd-block, .det, .det-head, .det-group, .class-gap').forEach(function (g) { g.remove(); });
+			cells.forEach(function (c) { c.classList.remove('row-start'); grid.appendChild(c); });
+			var groups = grouping(order);
+			measure();
+
+			if (detail) {
+				// the list, in the same order and with the same groups
+				grid.classList.add('detail');
+				var head = document.createElement('div');
+				head.className = 'det det-head';
+				head.lang = 'en';
+				head.innerHTML = '<span></span><span>name</span><span>pronunciation</span><span class="det-ini">initial</span><span class="det-fin">final</span><span class="det-live">ending</span><span></span><span>meaning</span>';
+				head.querySelectorAll('.det-ini, .det-fin, .det-live').forEach(function (h) { h.style.font = 'inherit'; h.style.color = 'inherit'; });
+				grid.appendChild(head);
+				groups.forEach(function (g, i) {
+					if (g.label) {
+						var gh = document.createElement('div');
+						gh.className = 'det-group' + (i > 0 && g.block !== groups[i - 1].block ? ' new-block' : '');
+						gh.lang = 'en';
+						if (g.sound) { gh.innerHTML = '<span class="pron" lang="th-Latn"></span>'; gh.firstChild.textContent = g.label; }
+						else gh.textContent = g.label;
+						grid.appendChild(gh);
+					}
+					g.cells.forEach(function (c) {
+						var row = detailRow(c);
+						if (g.none) row.classList.add('det-none');
+						grid.appendChild(row);
+					});
+				});
+			} else if (order === 'sound-class' || order === 'final') {
+				grid.classList.add('by-sound');
+				// each block is set like a justified paragraph: the space between
+				// groups stretches to fill every full line, and the last line keeps
+				// the ordinary spacing
+				var block = null;
+				groups.forEach(function (g, i) {
+					if (!block || g.block !== groups[i - 1].block) {
+						block = document.createElement('div');
+						block.className = 'snd-block';
+						grid.appendChild(block);
+					}
+					var wrap = document.createElement('div'), row = document.createElement('div'), label = document.createElement('div');
+					wrap.className = g.none ? 'snd snd-none' : 'snd'; row.className = 'snd-cells'; label.className = 'snd-label';
+					label.lang = 'en';
+					if (g.sound) { label.innerHTML = '<span class="pron" lang="th-Latn"></span>'; label.firstChild.textContent = g.label; }
+					else label.textContent = g.label;
+					g.cells.forEach(function (c) { row.appendChild(c); });
+					wrap.appendChild(row); wrap.appendChild(label);
+					block.appendChild(wrap);
+				});
+			} else {
+				// the ordinary grid; by class, each class starts a fresh row
+				// with a little extra space above it
+				groups.forEach(function (g, i) {
+					g.cells.forEach(function (c, j) {
+						var starts = i > 0 && j === 0;
+						c.classList.toggle('row-start', starts);
+						if (starts) {
+							var gap = document.createElement('div');
+							gap.className = 'class-gap';
+							grid.appendChild(gap);
+						}
+						grid.appendChild(c);
+					});
+				});
+			}
+			document.querySelectorAll('.chip[data-order]').forEach(function (b) {
+				b.setAttribute('aria-pressed', String(b.dataset.order === order));
+			});
+			document.querySelector('.chip[data-toggle="detail"]').setAttribute('aria-pressed', String(detail));
+			document.querySelector('.key-nofinal').hidden = order !== 'final';
+			try { localStorage.setItem('akson-order', order); localStorage.setItem('akson-detail', detail ? '1' : ''); } catch (e) {}
+		}
+		// Tiles glide from where they were to where the new order puts them:
+		// note each tile's place, re-order, then play each back from its old
+		// place to its new one (the sound labels fade in as the tiles land).
+		function shuffleTo(nextOrder, nextDetail) {
+			if (nextOrder === order && nextDetail === detail) return;
+			var calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+			if (calm || !cells[0].animate) { show(nextOrder, nextDetail); return; }
+			var before = cells.map(function (c) {
+				c.getAnimations().forEach(function (a) { a.finish(); });
+				return c.getBoundingClientRect();
+			});
+			grid.getAnimations().forEach(function (a) { a.cancel(); });
+			var fromH = grid.getBoundingClientRect().height;
+			show(nextOrder, nextDetail);
+			// the table's height eases to its new size alongside the tiles, so
+			// what's below it moves with them rather than jumping
+			var toH = grid.getBoundingClientRect().height;
+			if (Math.abs(toH - fromH) > 0.5) {
+				grid.animate([{ height: fromH + 'px' }, { height: toH + 'px' }],
+					{ duration: 850, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)' });
+			}
+			cells.forEach(function (c, i) {
+				var now = c.getBoundingClientRect();
+				var dx = before[i].left - now.left, dy = before[i].top - now.top;
+				if (!dx && !dy) return;
+				c.animate([{ transform: 'translate(' + dx + 'px, ' + dy + 'px)' }, { transform: 'none' }],
+					{ duration: 850, easing: 'cubic-bezier(0.2, 0.8, 0.2, 1)' });
+			});
+			grid.querySelectorAll('.snd-label, .det-head, .det-group, .det-th, .det-rom, .det-ini, .det-fin, .det-live, .det-pic, .det-en').forEach(function (l) {
+				l.animate([{ opacity: 0 }, { opacity: 0, offset: 0.6 }, { opacity: 1 }], { duration: 1100 });
+			});
+		}
+		document.querySelectorAll('.chip[data-order]').forEach(function (b) {
+			b.addEventListener('click', function () { shuffleTo(b.dataset.order, detail); });
+		});
+		document.querySelector('.chip[data-toggle="detail"]').addEventListener('click', function () { shuffleTo(order, !detail); });
+		document.addEventListener('romchange', function () { show(order, detail); });
+		// on a resize, lay the grid out afresh so the grouped cells match it
+		window.addEventListener('resize', function () { if (detail || order === 'sound-class' || order === 'final') show(order, detail); });
+		var saved = 'abc', savedDetail = false;
+		try { saved = localStorage.getItem('akson-order') || 'abc'; savedDetail = !!localStorage.getItem('akson-detail'); } catch (e) {}
+		// (the detail view used to be one of the orders)
+		if (saved === 'detail') { saved = 'abc'; savedDetail = true; }
+		show(/^(abc|class|sound-class|final)$/.test(saved) ? saved : 'abc', savedDetail);
+	})();
+
+	</script>
 
 </body>
 
-<trevorkafka-footer></trevorkafka-footer>
+</html>
