@@ -328,8 +328,11 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 -->
 
 <script type="text/javascript">
-	const urlWest = "https://api-v3.mbta.com/predictions?filter[stop]=12759"
-	const urlEast = "https://api-v3.mbta.com/predictions?filter[stop]=2778"
+	// An MBTA API key raises the limit from 20 to 1,000 requests a minute (it only
+	// identifies the site to the MBTA, so being visible here is fine)
+	const MBTA_KEY = "b2e268d1948f4bab9890bd27b6cb4fc5"
+	const urlWest = "https://api-v3.mbta.com/predictions?filter[stop]=12759&api_key=" + MBTA_KEY
+	const urlEast = "https://api-v3.mbta.com/predictions?filter[stop]=2778&api_key=" + MBTA_KEY
 	const walkTimeWest = 3
 	const walkTimeEast = 4
 	const gracePeriod = 1
