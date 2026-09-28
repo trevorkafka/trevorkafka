@@ -60,7 +60,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			// *************************************************************************************
 			// *************************************************************************************
 			// *************************************************************************************
-			const lastUpdateDate = new Date('2026-07-17'); // CHANGE DATE HERE in the format 'YYYY-MM-DD'
+			const lastUpdateDate = new Date('2026-09-28'); // CHANGE DATE HERE in the format 'YYYY-MM-DD'
 			// *************************************************************************************
 			// *************************************************************************************
 			// *************************************************************************************
@@ -88,31 +88,44 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			// Keep them in chronological order by 'date'. Each entry is:
 			//   date     : 'YYYY-MM-DD', the day you ARRIVE / the day the location flips
 			//   location : text shown after "Currently located in"
-			//   offset   : that place's current UTC offset in hours (mind daylight saving!)
+			//   tz       : that place's time zone (IANA name), so daylight saving is automatic
 			// The most recent stop whose date has already passed is treated as "now".
 			// Tip: list your home base first, and again at the end for when you return.
 			// *************************************************************************************
 			const itinerary = [
-			    { date: '2026-01-01', location: 'Somerville, Massachusetts, USA',    offset: -4 },
-			    { date: '2026-07-16', location: 'Sitges, Spain',   				     offset: +2 },
-			    { date: '2026-07-18', location: 'Amersfoort, Netherlands',           offset: +2 },
-			    { date: '2026-07-21', location: 'Amsterdam, Netherlands',            offset: +2 },
-			    { date: '2026-07-24', location: 'Berlin, Germany',                   offset: +2 },
-			    { date: '2026-07-29', location: 'Maspalomas, Gran Canaria, Spain',   offset: +1 },
-			    { date: '2026-08-02', location: 'Costa Calma, Fuerteventura, Spain', offset: +1 },
-			    { date: '2026-08-08', location: 'Edinburgh, Scotland',               offset: +1 },
-			    { date: '2026-08-10', location: 'Palma, Mallorca, Spain',            offset: +2 },
-			    { date: '2026-08-14', location: 'Barcelona, Spain',                  offset: +2 },
-			    { date: '2026-08-20', location: 'Somerville, Massachusetts, USA',    offset: -4 },
+			    { date: '2026-01-01', location: 'Somerville, Massachusetts, USA',    tz: 'America/New_York' },
+			    { date: '2026-07-16', location: 'Sitges, Spain',                     tz: 'Europe/Madrid' },
+			    { date: '2026-07-18', location: 'Amersfoort, Netherlands',           tz: 'Europe/Amsterdam' },
+			    { date: '2026-07-21', location: 'Amsterdam, Netherlands',            tz: 'Europe/Amsterdam' },
+			    { date: '2026-07-24', location: 'Berlin, Germany',                   tz: 'Europe/Berlin' },
+			    { date: '2026-07-29', location: 'Maspalomas, Gran Canaria, Spain',   tz: 'Atlantic/Canary' },
+			    { date: '2026-08-02', location: 'Costa Calma, Fuerteventura, Spain', tz: 'Atlantic/Canary' },
+			    { date: '2026-08-08', location: 'Edinburgh, Scotland',               tz: 'Europe/London' },
+			    { date: '2026-08-10', location: 'Palma, Mallorca, Spain',            tz: 'Europe/Madrid' },
+			    { date: '2026-08-14', location: 'Barcelona, Spain',                  tz: 'Europe/Madrid' },
+			    { date: '2026-08-20', location: 'Somerville, Massachusetts, USA',    tz: 'America/New_York' },
+			    { date: '2026-11-30', location: 'Bangkok, Thailand',                 tz: 'Asia/Bangkok' },       // KE653 lands BKK 23:05
+			    { date: '2026-12-18', location: 'Chiang Mai, Thailand',              tz: 'Asia/Bangkok' },       // FD3414 lands CNX 19:55
+			    { date: '2026-12-23', location: 'Bangkok, Thailand',                 tz: 'Asia/Bangkok' },       // FD3444 lands DMK 12:05
+			    { date: '2027-03-02', location: 'Somerville, Massachusetts, USA',    tz: 'America/New_York' },   // KE91 lands BOS 08:50
 			];
 			// *************************************************************************************
+
+			// a time zone's UTC offset, in hours, at a given moment (daylight saving included)
+			function tzOffset(tz, at) {
+			    const p = {};
+			    new Intl.DateTimeFormat('en-US', { timeZone: tz, hourCycle: 'h23', year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric' })
+			        .formatToParts(at).forEach(x => { p[x.type] = +x.value; });
+			    return (Date.UTC(p.year, p.month - 1, p.day, p.hour, p.minute) - Math.floor(at / 60000) * 60000) / 3600000;
+			}
 
 			function currentStop() {
 			    const now = Date.now();
 			    let current = itinerary[0];
 			    for (const stop of itinerary) {
 			        // midnight of stop.date in that stop's own time zone, as a UTC instant
-			        const startUTC = new Date(stop.date).getTime() - stop.offset * 1000 * 60 * 60;
+			        const midnightUTC = new Date(stop.date).getTime();
+			        const startUTC = midnightUTC - tzOffset(stop.tz, midnightUTC) * 1000 * 60 * 60;
 			        if (now >= startUTC) {
 			            current = stop;
 			        }
@@ -133,7 +146,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			    // Update the text content of the time placeholders (local time at that stop)
 			    const minute = now.getUTCMinutes();
 			    const formattedMinutes = minute.toString().padStart(2, '0');
-			    const adjustedHour = now.getUTCHours() + stop.offset;
+			    const adjustedHour = now.getUTCHours() + tzOffset(stop.tz, now.getTime());
 			    const normalizedHour = ((adjustedHour % 24) + 24) % 24; // Keep within 24-hour range; extra math handles JS negative remainders
 			    const formattedNormalizedHour = normalizedHour.toString().padStart(2, `0`);
 
@@ -469,6 +482,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 
 	<div class="content">
 
+			<!-- Summer 2026 travel plans, hidden
 			<div class="FAQ">
 				<details>
 					<summary>✈️ Summer 2026 Travel Plans</summary>
@@ -666,6 +680,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 					})();
 					</script>
 				</details>
+			-->
 
 			<h1 class="widescreen"><span class="bigshadow">✨</span> Current Interests</h1>
 			<center class="narrowscreen"><h1>Current Interests<br><span class="bigshadow">✨</span></h1></center>
@@ -690,7 +705,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 							<span class="lang"><span style="font-family: nasin-nanpa">toki+pona</span> (toki pona)</span> and <span class="lang">Deutsch (German)</span>. 
 							None are perfect; some are far from perfect!
 						</p>
-						<p>Primarily, though, I have lately been learning Mandarin, Japanese, and Thai.</p>
+						<p>Primarily, though, I have lately been learning Dutch, Mandarin, Japanese, and Thai.</p>
 					</div>
 					<div class="container">
 						<div align="center" style="font-size: 30px;">🍜</div>
@@ -733,13 +748,13 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 						<p>I'm an avid language learner—sometimes more than others—but I have been learning languages enough to recieve recognition at <a href="https://www.polyglotassociation.org/members/trevor-kafka" target="_blank">HYPIA</a>, The International Association of Hyperpolyglots. Travel is a big motivator to dictate which languages I want to learn and lately I have been looking forward towards a trip to Vietnam in Summer 2025, which has given me motivation to learn Vietnamese.</p>
 						<p><em>Rất vui được làm quen với bạn! Tôi có thể nói một ít tiếng Việt.</em> I got my foundations through lessons with <a href="http://www.pimsleur.com/" target="_blank">Pimsleur</a> and have been taking lessons on <a href="http://www.italki.com/" target="_blank">italki</a> with a live teacher twice a week.</p>
 					</div> -->
-					<div class="container">
+					<!-- <div class="container">
 						<div align="center" style="font-size: 30px;">👨‍💻</div>
 						<h3>Website Building, JavaScript, and Python</h3>
 						<p>I'm VERY amateur at this sort of stuff, but I have been having quite a fun time building webpages for myself from scratch (such as this one and the rest of my <a href="http://www.trevorkafka.com." target="_blank">website</a>) using HTML, CSS, and a teeney tiny bit of JavaScript. </p>
 						<p>I built my basics with JavaScript and Python through <a href="http://www.codecademy.com/" target="_blank">Codecademy</a>. I hope to be able to create more interactive webpages using JavaScript in the future as well as be able to create mathematics animations with <a href="https://vpython.org/" target="_blank">VPython</a> and <a href="https://www.manim.community/" target="_blank">Manim</a>.</p>
 						<p>One of my recent projects has been to build a Japanese katakana reading practice tool called <a href="http://www.trevorkafka.com/katakana">Katakana Reader</a>. It's currently functional and mostly done, but there are still some tweaks here and there I am working to smoothen out as well. :)</p>
-					</div>
+					</div> -->
 					<div class="container">
 						<div align="center" style="font-size: 30px;">🌏</div>
 						<h3>World Travel</h3>
