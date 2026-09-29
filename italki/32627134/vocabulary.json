@@ -1,4 +1,22 @@
 [
+	{"date": "2026-09-29",
+	"vocabulary": [
+		{"word": "see", "IPA": "/si/", "translation": "看见"},
+		{"word": "saw", "IPA": "/sɑ/", "translation": "看见了（过去）"},
+		{"word": "attend a meeting", "IPA": "/əˈtɛnd ə ˈmitɪŋ/", "translation": "参加会议"},
+		{"word": "go to a meeting", "IPA": "/ɡoʊ tu ə ˈmitɪŋ/", "translation": "去开会"},
+		{"word": "just", "IPA": "/dʒʌst/", "translation": "刚刚；只是"},
+		{"word": "skip", "IPA": "/skɪp/", "translation": "跳过"},
+		{"word": "swimming", "IPA": "/ˈswɪmɪŋ/", "translation": "游泳"},
+		{"word": "visited", "IPA": "/ˈvɪzɪtɪd/", "translation": "参观了；拜访了"},
+		{"word": "take an order", "IPA": "/teɪk ən ˈɔrdər/", "translation": "点菜（服务员）"},
+		{"word": "deliver food", "IPA": "/dɪˈlɪvər fud/", "translation": "送餐"},
+		{"word": "in front of", "IPA": "/ɪn frʌnt ʌv/", "translation": "在...前面"},
+		{"word": "to the right of", "IPA": "/tu ðə raɪt ʌv/", "translation": "在...的右边"},
+		{"word": "to the left of", "IPA": "/tu ðə lɛft ʌv/", "translation": "在...的左边"},
+		{"word": "behind", "IPA": "/bɪˈhaɪnd/", "translation": "在...后面"},
+		{"word": "salmon", "IPA": "/ˈsæmən/", "translation": "三文鱼"}
+	]},
 	{"date": "2026-09-22",
 	"vocabulary": [
 		{"word": "go back", "IPA": "/ɡoʊ bæk/", "translation": "回去"},
