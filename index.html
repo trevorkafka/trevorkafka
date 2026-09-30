@@ -770,6 +770,16 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 		// Headings fade in and content loads asynchronously (the announcement is
 		// injected after load), so re-measure a few times early on.
 		[0, 300, 1200, 3000].forEach(function (t) { setTimeout(function () { alignTop(); update(); }, t); });
+		// and again whenever the page's layout changes, however late (a slow server, late fonts,
+		// the announcement arriving after the timers above)
+		window.addEventListener('load', function () { alignTop(); update(); });
+		if (document.fonts) document.fonts.ready.then(function () { alignTop(); update(); });
+		var realign = null;
+		new MutationObserver(function () {   // content added or changed anywhere (e.g. the announcement)
+			clearTimeout(realign);
+			realign = setTimeout(function () { alignTop(); update(); }, 50);
+		}).observe(document.body, { childList: true, subtree: true });
+		window.addEventListener('scroll', alignTop, { passive: true });   // and a cheap last check on any scroll
 		requestAnimationFrame(function () { toc.classList.add('ready'); });
 	})();
 	</script>
