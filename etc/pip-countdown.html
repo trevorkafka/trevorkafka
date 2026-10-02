@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="robots" content="noindex">
+	<title>Floating Countdown Test</title>
+	<style>
+		:root { --bg: #f4efe6; --card: #ebe3d6; --ink: #3c303e; --muted: #7f7359; --accent: #c0503a; }
+		@media (prefers-color-scheme: dark) { :root { --bg: #121014; --card: #23202a; --ink: #e2d3b5; --muted: #9a8fa3; --accent: #e0603c; } }
+		body { margin: 0; padding: 20px 16px 40px; background: var(--bg); color: var(--ink); font: 16px/1.5 Arial, sans-serif; }
+		main { max-width: 520px; margin: 0 auto; }
+		h1 { font-size: 22px; margin: 0 0 6px; }
+		p { margin: 0 0 12px; color: var(--muted); }
+		canvas { display: block; width: 100%; height: auto; border-radius: 12px; margin: 14px 0; }
+		video { position: fixed; left: 0; top: 0; width: 2px; height: 1px; opacity: 0; pointer-events: none; }
+		button { width: 100%; padding: 14px; border: 0; border-radius: 999px; background: var(--accent); color: #fff; font: bold 17px Arial, sans-serif; cursor: pointer; }
+		button:disabled { opacity: 0.5; }
+		.row { display: flex; gap: 10px; margin-top: 10px; }
+		.row button { background: var(--card); color: var(--ink); font-size: 14px; padding: 10px; }
+		ul { list-style: none; margin: 16px 0 0; padding: 12px 14px; border-radius: 12px; background: var(--card); font-size: 14px; }
+		li { padding: 2px 0; }
+		.ok { color: #3f9a55; } .no { color: var(--accent); }
+	</style>
+</head>
+<body>
+<main>
+	<h1>Floating countdown test</h1>
+	<p>Tap <b>Float</b>, then switch to another app. Watch whether the floating window keeps ticking: its clock line should match your phone's clock to the second.</p>
+
+	<!-- the countdown is drawn here, and the drawing is what floats (as a video) -->
+	<canvas id="c" width="640" height="300"></canvas>
+	<video id="v" muted playsinline></video>
+
+	<button type="button" id="float">Float</button>
+	<div class="row">
+		<button type="button" id="restart">Restart 10-minute countdown</button>
+		<button type="button" id="reset">Clear the log</button>
+	</div>
+
+	<ul id="info"></ul>
+</main>
+
+<script>
+(function () {
+	var c = document.getElementById('c'), ctx = c.getContext('2d'), v = document.getElementById('v');
+	var btn = document.getElementById('float'), info = document.getElementById('info');
+	var end = Date.now() + 10 * 6e4, start = Date.now();
+	var lastDraw = 0, longestGap = 0, hiddenSince = null, log = [];
+
+	function p(n) { return String(n).padStart(2, '0'); }
+	function clock(d) { return p(d.getHours()) + ':' + p(d.getMinutes()) + ':' + p(d.getSeconds()); }
+	function note(t) { log.unshift(clock(new Date()) + '  ' + t); log = log.slice(0, 8); show(); }
+
+	// draw the countdown, the time now, and a progress bar
+	function draw() {
+		var now = Date.now();
+		if (lastDraw) longestGap = Math.max(longestGap, now - lastDraw);
+		lastDraw = now;
+		var css = getComputedStyle(document.documentElement);
+		var bg = css.getPropertyValue('--card').trim(), ink = css.getPropertyValue('--ink').trim(), muted = css.getPropertyValue('--muted').trim(), accent = css.getPropertyValue('--accent').trim();
+		var left = Math.max(0, end - now), s = Math.ceil(left / 1000);
+		ctx.fillStyle = bg; ctx.fillRect(0, 0, c.width, c.height);
+		ctx.textAlign = 'center';
+		ctx.fillStyle = muted; ctx.font = '26px Arial'; ctx.fillText('Next: Test lesson', c.width / 2, 58);
+		ctx.fillStyle = ink; ctx.font = 'bold 96px Arial'; ctx.fillText(p(Math.floor(s / 60)) + 'm ' + p(s % 60) + 's', c.width / 2, 168);
+		ctx.fillStyle = muted; ctx.font = '26px Arial'; ctx.fillText('clock ' + clock(new Date(now)), c.width / 2, 228);
+		ctx.fillStyle = muted; ctx.globalAlpha = 0.25; ctx.fillRect(0, c.height - 16, c.width, 16); ctx.globalAlpha = 1;
+		ctx.fillStyle = accent; ctx.fillRect(0, c.height - 16, c.width * Math.min(1, (now - start) / (end - start)), 16);
+	}
+
+	function show() {
+		var rows = [
+			['Picture-in-picture for video', !!(document.pictureInPictureEnabled && v.requestPictureInPicture)],
+			['Drawing can become a video', !!c.captureStream],
+			['Floating now', !!document.pictureInPictureElement]
+		].map(function (r) { return '<li>' + r[0] + ': <b class="' + (r[1] ? 'ok">yes' : 'no">no') + '</b></li>'; });
+		rows.push('<li>Longest pause in drawing: <b>' + (longestGap / 1000).toFixed(1) + ' s</b> (1 s or less means it never stopped)</li>');
+		rows.push('<li style="margin-top:6px;color:var(--muted)">' + (log.length ? log.join('<br>') : 'Log is empty') + '</li>');
+		info.innerHTML = rows.join('');
+	}
+
+	// redraw on a timer, not animation frames (those stop in the background); the video picks
+	// up each new drawing
+	draw(); show();
+	setInterval(draw, 250);
+	setInterval(show, 1000);
+
+	if (c.captureStream) { v.srcObject = c.captureStream(4); }
+
+	btn.addEventListener('click', async function () {
+		try {
+			if (document.pictureInPictureElement) { await document.exitPictureInPicture(); return; }
+			await v.play();
+			await v.requestPictureInPicture();
+		} catch (e) { note('Could not float: ' + (e && e.message || e)); }
+	});
+	v.addEventListener('enterpictureinpicture', function () { btn.textContent = 'Stop floating'; note('Floating started'); });
+	v.addEventListener('leavepictureinpicture', function () { btn.textContent = 'Float'; note('Floating stopped'); });
+
+	document.addEventListener('visibilitychange', function () {
+		if (document.hidden) { hiddenSince = Date.now(); note('Page went to the background'); }
+		else if (hiddenSince) { note('Back after ' + Math.round((Date.now() - hiddenSince) / 1000) + ' s'); hiddenSince = null; }
+	});
+	document.getElementById('restart').addEventListener('click', function () { start = Date.now(); end = start + 10 * 6e4; draw(); });
+	document.getElementById('reset').addEventListener('click', function () { longestGap = 0; log = []; show(); });
+})();
+</script>
+</body>
+</html>
