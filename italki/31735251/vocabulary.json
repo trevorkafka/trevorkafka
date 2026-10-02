@@ -15,7 +15,7 @@
 		{"word": "clock", "IPA": "/klɑk/", "translation": "时钟"},
 		{"word": "on a clock", "IPA": "/ɑn ə klɑk/", "translation": "在时钟上"},
 		{"word": "same", "IPA": "/seɪm/", "translation": "相同的"},
-		{"word": "1900s", "IPA": "/ˈnaɪnˈtin ˈhʌndrədz/", "translation": "1900年代"},
+		{"word": "1900s", "audio": "nineteen hundreds", "IPA": "/ˈnaɪnˈtin ˈhʌndrədz/", "translation": "1900年代"},
 		{"word": "in time", "IPA": "/ɪn taɪm/", "translation": "及时"},
 		{"word": "on time", "IPA": "/ɑn taɪm/", "translation": "准时"},
 		{"word": "every", "IPA": "/ˈɛvri/", "translation": "每个"},
