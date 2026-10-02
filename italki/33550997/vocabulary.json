@@ -1,4 +1,24 @@
 [
+	{"date": "2026-10-01",
+	"vocabulary": [
+		{"word": "drizzle", "IPA": "/ˈdrɪzəl/", "translation": "毛毛雨"},
+		{"word": "weather", "IPA": "/ˈwɛðər/", "translation": "天气"},
+		{"word": "climate", "IPA": "/ˈklaɪmɪt/", "translation": "气候"},
+		{"word": "temperate", "IPA": "/ˈtɛmpərɪt/", "translation": "温和的；温带的"},
+		{"word": "mild", "IPA": "/maɪld/", "translation": "温和的"},
+		{"word": "client", "IPA": "/ˈklaɪənt/", "translation": "客户"},
+		{"word": "brand-new", "IPA": "/ˌbrænd ˈnu/", "translation": "全新的"},
+		{"word": "entirely", "IPA": "/ɪnˈtaɪərli/", "translation": "完全地"},
+		{"word": "completely", "IPA": "/kəmˈplitli/", "translation": "完全地"},
+		{"word": "totally", "IPA": "/ˈtoʊtəli/", "translation": "完全地"},
+		{"word": "whole", "IPA": "/hoʊl/", "translation": "整个的"},
+		{"word": "third floor", "IPA": "/θɜrd flɔr/", "translation": "三楼"},
+		{"word": "three-floor", "IPA": "/ˌθri ˈflɔr/", "translation": "三层的"},
+		{"word": "said", "IPA": "/sɛd/", "translation": "说（say的过去式）"},
+		{"word": "break", "IPA": "/breɪk/", "translation": "打破；休息"},
+		{"word": "broke", "IPA": "/broʊk/", "translation": "打破（break的过去式）"},
+		{"word": "broken", "IPA": "/ˈbroʊkən/", "translation": "破的（break的过去分词）"}
+	]},
 	{"date": "2026-09-28",
 	"vocabulary": [
 		{"word": "diabetes", "IPA": "/ˌdaɪəˈbitiz/", "translation": "糖尿病"},

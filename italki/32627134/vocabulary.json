@@ -1,4 +1,28 @@
 [
+	{"date": "2026-10-01",
+	"vocabulary": [
+		{"word": "blanket", "IPA": "/ˈblæŋkɪt/", "translation": "毯子"},
+		{"word": "usually", "IPA": "/ˈjuʒuəli/", "translation": "通常"},
+		{"word": "unusually", "IPA": "/ʌnˈjuʒuəli/", "translation": "不寻常地"},
+		{"word": "weather", "IPA": "/ˈwɛðər/", "translation": "天气"},
+		{"word": "temperature", "IPA": "/ˈtɛmprɪtʃər/", "translation": "温度；气温"},
+		{"word": "degrees Celsius", "IPA": "/dɪˈɡriz ˈsɛlsiəs/", "translation": "摄氏度"},
+		{"word": "similar", "IPA": "/ˈsɪmələr/", "translation": "相似的"},
+		{"word": "give", "IPA": "/ɡɪv/", "translation": "给"},
+		{"word": "gave", "IPA": "/ɡeɪv/", "translation": "给（give的过去式）"},
+		{"word": "person", "IPA": "/ˈpɜrsən/", "translation": "人（单数）"},
+		{"word": "people", "IPA": "/ˈpipəl/", "translation": "人（复数）"},
+		{"word": "bill", "IPA": "/bɪl/", "translation": "账单"},
+		{"word": "beer", "IPA": "/bɪr/", "translation": "啤酒"},
+		{"word": "lighter", "IPA": "/ˈlaɪtər/", "translation": "打火机"},
+		{"word": "cook", "IPA": "/kʊk/", "translation": "做饭"},
+		{"word": "clock", "IPA": "/klɑk/", "translation": "时钟"},
+		{"word": "soup", "IPA": "/sup/", "translation": "汤"},
+		{"word": "choose", "IPA": "/tʃuz/", "translation": "选择"},
+		{"word": "chose", "IPA": "/tʃoʊz/", "translation": "选择（choose的过去式）"},
+		{"word": "entree", "IPA": "/ˈɑntreɪ/", "translation": "主菜"},
+		{"word": "thirsty", "IPA": "/ˈθɜrsti/", "translation": "口渴的"}
+	]},
 	{"date": "2026-09-29",
 	"vocabulary": [
 		{"word": "see", "IPA": "/si/", "translation": "看见"},
