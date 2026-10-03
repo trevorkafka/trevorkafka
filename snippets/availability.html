@@ -136,7 +136,11 @@
      both neighbours). Same place, just as continuous. */
   .mini-cal-day-free { --mini-rule: var(--mini-seam-pale); color: var(--mini-ink-on-green); }
   .mini-cal-seam-strong { --mini-rule: color-mix(in srgb, var(--cal-available) 55%, #1f3d0c); }
-  .mini-cal-m-top  { box-shadow: inset 0 1px 0 var(--mini-rule); }
+  /* ...but only between two green days: where the day across the line isn't green, the line
+     borders that day too and stays the plain grey, so it doesn't read as a green edge on it */
+  .mini-cal-top-plain  { --mini-rule-top: var(--cal-border); }
+  .mini-cal-left-plain { --mini-rule-left: var(--cal-border); }
+  .mini-cal-m-top  { box-shadow: inset 0 1px 0 var(--mini-rule-top, var(--mini-rule)); }
   /* the label box is flipped, so its rule is drawn on what is locally the bottom */
   .mini-cal-month.mini-cal-m-top { box-shadow: inset 0 -1px 0 var(--mini-rule); }
   /* The step down where a month starts mid-week. The upright line runs 1px
@@ -150,7 +154,7 @@
     top: 0;
     bottom: -1px;
     width: 1px;
-    background: var(--mini-rule);
+    background: var(--mini-rule-left, var(--mini-rule));
     z-index: 1;
   }
 
@@ -1195,6 +1199,12 @@
       if (bright(i) ||
           (cls.includes('mini-cal-m-top') && bright(i - 7)) ||
           (cls.includes('mini-cal-m-left') && bright(i - 1))) cls.push('mini-cal-seam-strong');
+      // a green day's month line goes green only if the day across it is green too
+      const free = k => k >= 0 && k < days.length && grid[k].some(state => state === 1);
+      if (cls.includes('mini-cal-day-free')) {
+        if (cls.includes('mini-cal-m-top') && !free(i - 7)) cls.push('mini-cal-top-plain');
+        if (cls.includes('mini-cal-m-left') && !free(i - 1)) cls.push('mini-cal-left-plain');
+      }
       // days within the horizon page the calendar to their own week
       const week = inRange ? ' data-week="' + Math.floor(i / 7) + '"' : '';
       html += '<div class="' + cls.join(' ') + '"' + week + '>' + d.getDate() + '</div>';
