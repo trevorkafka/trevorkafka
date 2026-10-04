@@ -118,7 +118,7 @@
   /* dates outside the 90-day horizon: present, but only just */
   .mini-cal-day-outside { color: color-mix(in srgb, var(--mini-ink) 65%, transparent); }
 
-  .mini-cal-day[data-week] { cursor: pointer; }
+  .mini-cal-day[data-day] { cursor: pointer; }
 
   /* The week on show carries full color and weight; everything else is held
      well back, so the eye lands on it straight away. */
@@ -134,12 +134,17 @@
      crosses: the full green between pale days, a deeper green wherever the line
      touches a bright day of the week on show (set by the script, which knows
      both neighbours). Same place, just as continuous. */
-  .mini-cal-day-free { --mini-rule: var(--mini-seam-pale); color: var(--mini-ink-on-green); }
-  .mini-cal-seam-strong { --mini-rule: color-mix(in srgb, var(--cal-available) 55%, #1f3d0c); }
+  .mini-cal-day-free { color: var(--mini-ink-on-green); }
   /* ...but only between two green days: where the day across the line isn't green, the line
-     borders that day too and stays the plain grey, so it doesn't read as a green edge on it */
-  .mini-cal-top-plain  { --mini-rule-top: var(--cal-border); }
-  .mini-cal-left-plain { --mini-rule-left: var(--cal-border); }
+     borders that day too and stays the plain grey, so it doesn't read as a green edge on it.
+     The script picks each line's colour from the two days it separates. */
+  .mini-cal-day { --mini-seam-strong: color-mix(in srgb, var(--cal-available) 55%, #1f3d0c); }
+  .mini-cal-top-grey    { --mini-rule-top: var(--cal-border); }
+  .mini-cal-top-pale    { --mini-rule-top: var(--mini-seam-pale); }
+  .mini-cal-top-strong  { --mini-rule-top: var(--mini-seam-strong); }
+  .mini-cal-left-grey   { --mini-rule-left: var(--cal-border); }
+  .mini-cal-left-pale   { --mini-rule-left: var(--mini-seam-pale); }
+  .mini-cal-left-strong { --mini-rule-left: var(--mini-seam-strong); }
   .mini-cal-m-top  { box-shadow: inset 0 1px 0 var(--mini-rule-top, var(--mini-rule)); }
   /* the label box is flipped, so its rule is drawn on what is locally the bottom */
   .mini-cal-month.mini-cal-m-top { box-shadow: inset 0 -1px 0 var(--mini-rule); }
@@ -947,7 +952,8 @@
   let lessonIdx = 2;
   function currentMinRun() { return LESSON_MINUTES[lessonIdx] / 15; } // slots (15 min each)
 
-  let weekOffset = 0;
+  let dayOffset = 0;   // the calendar shows seven days from today + this many (a day picked in the sidebar, or the pager)
+  function maxDayOffset() { return loadedWeeks() * 7 - 7; }
   let cachedEvents = null;
   let loadInFlight = false;
 
@@ -960,7 +966,7 @@
   async function loadAndRenderInner() {
     const root = document.getElementById('root');
     const status = document.getElementById('status');
-    const days = buildWeek(new Date(), weekOffset);
+    const days = buildWeek(new Date(), dayOffset);
 
     // Render empty grid immediately so the structure is visible while loading.
     if (!root.querySelector('.calendar')) {
@@ -1099,7 +1105,7 @@
     updateHorizonText();
     const root = document.getElementById('root');
     if (!cachedEvents) return;
-    const days = buildWeek(new Date(), weekOffset);
+    const days = buildWeek(new Date(), dayOffset);
     updateWeekNav(days);
     const grid = classify(cachedEvents, days, currentMinRun());
     render(root, days, grid);
@@ -1137,8 +1143,8 @@
     const sunday = new Date(today);
     sunday.setDate(today.getDate() - lead);
 
-    // The week the calendar is showing: seven days from today + weekOffset.
-    const shownFrom = weekOffset * 7;
+    // The seven days the calendar is showing: from today + dayOffset.
+    const shownFrom = dayOffset;
     const shownTo = shownFrom + 6;
 
     // Whole weeks, so the days on either end of the horizon are dated too
@@ -1185,28 +1191,24 @@
       // partway through a row
       const above = new Date(d); above.setDate(d.getDate() - 7);
       const left  = new Date(d); left.setDate(d.getDate() - 1);
-      if (above.getMonth() !== d.getMonth()) cls.push('mini-cal-m-top');
+      // (not on the first row: the month above it isn't drawn, so there is nothing to divide it from)
+      if (c >= 7 && above.getMonth() !== d.getMonth()) cls.push('mini-cal-m-top');
       if (c % 7 !== 0 && left.getMonth() !== d.getMonth()) cls.push('mini-cal-m-left');
       if (!inRange) cls.push('mini-cal-day-outside');
       if (inRange && grid[i].some(state => state === 1)) cls.push('mini-cal-day-free');
       if (i === 0) cls.push('mini-cal-day-today');
       if (i >= shownFrom && i <= shownTo) cls.push('mini-cal-day-shown');
-      // A month line has to show against both days it separates, so where
-      // either of them is a bright day of the week on show it takes the deep
-      // seam colour (the full green would vanish into the bright block).
-      const bright = k => k >= 0 && k < days.length && k >= shownFrom && k <= shownTo &&
-        grid[k].some(state => state === 1);
-      if (bright(i) ||
-          (cls.includes('mini-cal-m-top') && bright(i - 7)) ||
-          (cls.includes('mini-cal-m-left') && bright(i - 1))) cls.push('mini-cal-seam-strong');
-      // a green day's month line goes green only if the day across it is green too
+      // Each month line is coloured by the two days it separates, on its own (a day can have
+      // both a top and a left line, with different neighbours): the plain grey unless both
+      // days are green; between two green days a green seam, the deep one if either of them
+      // is a bright day of the week on show (the pale one would vanish into the bright block).
       const free = k => k >= 0 && k < days.length && grid[k].some(state => state === 1);
-      if (cls.includes('mini-cal-day-free')) {
-        if (cls.includes('mini-cal-m-top') && !free(i - 7)) cls.push('mini-cal-top-plain');
-        if (cls.includes('mini-cal-m-left') && !free(i - 1)) cls.push('mini-cal-left-plain');
-      }
-      // days within the horizon page the calendar to their own week
-      const week = inRange ? ' data-week="' + Math.floor(i / 7) + '"' : '';
+      const bright = k => free(k) && k >= shownFrom && k <= shownTo;
+      const seam = (a, b) => !(free(a) && free(b)) ? 'grey' : (bright(a) || bright(b)) ? 'strong' : 'pale';
+      if (cls.includes('mini-cal-m-top')) cls.push('mini-cal-top-' + seam(i - 7, i));
+      if (cls.includes('mini-cal-m-left')) cls.push('mini-cal-left-' + seam(i - 1, i));
+      // a day from today on starts the calendar's seven days there (not past days)
+      const week = inRange ? ' data-day="' + i + '"' : '';
       html += '<div class="' + cls.join(' ') + '"' + week + '>' + d.getDate() + '</div>';
     }
     html += '</div>';
@@ -1223,11 +1225,11 @@
     // in the margin where their own table of contents sits
     if (!miniCalEnabled()) { el.remove(); return; }
     el.addEventListener('click', e => {
-      const cell = e.target.closest('[data-week]');
+      const cell = e.target.closest('[data-day]');
       if (!cell) return;
-      const wk = Number(cell.getAttribute('data-week'));
-      if (!Number.isFinite(wk) || wk === weekOffset) return;
-      weekOffset = Math.max(0, Math.min(loadedWeeks() - 1, wk));
+      const day = Math.max(0, Math.min(maxDayOffset(), Number(cell.getAttribute('data-day'))));
+      if (!Number.isFinite(day) || day === dayOffset) return;
+      dayOffset = day;
       renderWeek();
     });
   })();
@@ -1245,7 +1247,7 @@
   function buildWeek(today, offset = 0) {
     const start = new Date(today);
     start.setHours(0, 0, 0, 0);
-    start.setDate(start.getDate() + offset * 7);
+    start.setDate(start.getDate() + offset);
     const days = [];
     for (let i = 0; i < 7; i++) {
       const d = new Date(start);
@@ -1879,7 +1881,7 @@ function makeDemoEvents() {
 
 $('trevorkafka-availability-announcement').load('/snippets/availability-announcement.html');
 
-// Keep the week pager's label and button states in sync with weekOffset.
+// Keep the week pager's label and button states in sync with dayOffset.
 function updateWeekNav(days) {
   const label = document.getElementById('cal-week-label');
   const prev = document.getElementById('cal-week-prev');
@@ -1891,17 +1893,18 @@ function updateWeekNav(days) {
   // "Sep 14 - 20" within one month, "Sep 28 - Oct 4" across a boundary.
   const sameMonth = first.getMonth() === last.getMonth();
   label.textContent = md.format(first) + ' \u2013 ' + (sameMonth ? dd.format(last) : md.format(last));
-  prev.disabled = weekOffset <= 0;
-  next.disabled = weekOffset >= loadedWeeks() - 1;
+  prev.disabled = dayOffset <= 0;
+  next.disabled = dayOffset >= maxDayOffset();
 }
 
 (function setupNavButtons() {
   const prev = document.getElementById('cal-week-prev');
   const next = document.getElementById('cal-week-next');
   if (!prev || !next) return;
-  prev.addEventListener('click', () => { if (weekOffset > 0) { weekOffset--; renderWeek(); } });
-  next.addEventListener('click', () => { if (weekOffset < loadedWeeks() - 1) { weekOffset++; renderWeek(); } });
-  updateWeekNav(buildWeek(new Date(), weekOffset)); // initial label while data loads
+  // a week back or on from wherever the calendar starts now
+  prev.addEventListener('click', () => { if (dayOffset > 0) { dayOffset = Math.max(0, dayOffset - 7); renderWeek(); } });
+  next.addEventListener('click', () => { if (dayOffset < maxDayOffset()) { dayOffset = Math.min(maxDayOffset(), dayOffset + 7); renderWeek(); } });
+  updateWeekNav(buildWeek(new Date(), dayOffset)); // initial label while data loads
 })();
 
 // Holiday chips: a tap toggles the expanded name (hover does it on pointer
@@ -1936,7 +1939,7 @@ function updateWeekNav(days) {
       raf = null;
       const root = document.getElementById('root');
       if (!root || !root.querySelector('.calendar')) return;
-      renderPauseNotice(root, buildWeek(new Date(), weekOffset));
+      renderPauseNotice(root, buildWeek(new Date(), dayOffset));
       positionMiniCal();
     });
   });
