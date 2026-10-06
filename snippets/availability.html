@@ -32,6 +32,8 @@
      1000px-wide calendar. */
   .mini-cal {
     display: none;
+    user-select: none;   /* it is clicked, not read: a quick double click shouldn't select the numbers */
+    -webkit-user-select: none;
     position: absolute;
     left: -186px;   /* in the margin beside the 1000px calendar column */
     width: 154px;
