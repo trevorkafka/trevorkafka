@@ -1,4 +1,13 @@
 [
+	{"date": "2026-10-06",
+	"vocabulary": [
+		{"word": "physics", "IPA": "/ˈfɪzɪks/", "translation": "物理"},
+		{"word": "industrial design", "IPA": "/ɪnˈdʌstriəl dɪˈzaɪn/", "translation": "工业设计"},
+		{"word": "vegetable", "IPA": "/ˈvɛdʒtəbəl/", "translation": "蔬菜"},
+		{"word": "everything", "IPA": "/ˈɛvriˌθɪŋ/", "translation": "一切；所有东西"},
+		{"word": "elevator", "IPA": "/ˈɛləˌveɪtər/", "translation": "电梯"},
+		{"word": "webpage", "IPA": "/ˈwɛbˌpeɪdʒ/", "translation": "网页"}
+	]},
 	{"date": "2026-10-05",
 	"vocabulary": [
 		{"word": "slept", "IPA": "/slɛpt/", "translation": "睡觉（sleep的过去式）"},

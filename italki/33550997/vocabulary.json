@@ -1,4 +1,25 @@
 [
+	{"date": "2026-10-06",
+	"vocabulary": [
+		{"word": "private", "IPA": "/ˈpraɪvɪt/", "translation": "私人的"},
+		{"word": "field", "IPA": "/fild/", "translation": "领域"},
+		{"word": "immunology", "IPA": "/ˌɪmjəˈnɑlədʒi/", "translation": "免疫学"},
+		{"word": "oncology", "IPA": "/ɑnˈkɑlədʒi/", "translation": "肿瘤学"},
+		{"word": "PhD", "IPA": "/ˌpi eɪtʃ ˈdi/", "translation": "博士学位"},
+		{"word": "man", "IPA": "/mæn/", "translation": "男人"},
+		{"word": "beard", "IPA": "/bɪrd/", "translation": "胡子"},
+		{"word": "bearded", "IPA": "/ˈbɪrdɪd/", "translation": "有胡子的"},
+		{"word": "statue", "IPA": "/ˈstætʃu/", "translation": "雕像"},
+		{"word": "singer", "IPA": "/ˈsɪŋər/", "translation": "歌手"},
+		{"word": "legged", "IPA": "/lɛɡd/, /ˈlɛɡɪd/", "translation": "有…腿的"},
+		{"word": "wade", "IPA": "/weɪd/", "translation": "涉水"},
+		{"word": "pirate", "IPA": "/ˈpaɪrɪt/", "translation": "海盗"},
+		{"word": "owl", "IPA": "/aʊl/", "translation": "猫头鹰"},
+		{"word": "decellularize", "IPA": "/diˈsɛljələˌraɪz/", "translation": "脱细胞"},
+		{"word": "ECM", "IPA": "/ˌi si ˈɛm/", "translation": "细胞外基质"},
+		{"word": "adhere", "IPA": "/ædˈhɪr/", "translation": "附着；黏附"},
+		{"word": "stimuli", "IPA": "/ˈstɪmjəˌlaɪ/", "translation": "刺激（复数）"}
+	]},
 	{"date": "2026-10-01",
 	"vocabulary": [
 		{"word": "drizzle", "IPA": "/ˈdrɪzəl/", "translation": "毛毛雨"},
