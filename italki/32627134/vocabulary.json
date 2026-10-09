@@ -1,4 +1,18 @@
 [
+	{"date": "2026-10-08",
+	"vocabulary": [
+		{"word": "approximately", "IPA": "/əˈprɑk.sə.mət.li/", "translation": "大约"},
+		{"word": "pool", "IPA": "/pul/", "translation": "游泳池"},
+		{"word": "grocery", "IPA": "/ˈɡroʊ.sər.i/", "translation": "杂货"},
+		{"word": "syllable", "IPA": "/ˈsɪ.lə.bəl/", "translation": "音节"},
+		{"word": "complete", "IPA": "/kəmˈplit/", "translation": "完整的；完成"},
+		{"word": "sentence", "IPA": "/ˈsɛn.təns/", "translation": "句子"},
+		{"word": "cat", "IPA": "/kæt/", "translation": "猫"},
+		{"word": "ago", "IPA": "/əˈɡoʊ/", "translation": "以前"},
+		{"word": "went", "IPA": "/wɛnt/", "translation": "去（go的过去式）"},
+		{"word": "review", "IPA": "/rɪˈvju/", "translation": "复习；回顾"},
+		{"word": "accompany", "IPA": "/əˈkʌm.pə.ni/", "translation": "陪伴；陪同"}
+	]},
 	{"date": "2026-10-06",
 	"vocabulary": [
 		{"word": "physics", "IPA": "/ˈfɪzɪks/", "translation": "物理"},
