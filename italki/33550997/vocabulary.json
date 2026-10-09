@@ -1,4 +1,20 @@
 [
+	{"date": "2026-10-08",
+	"vocabulary": [
+		{"word": "familiar", "IPA": "/fəˈmɪl.jər/", "translation": "熟悉的"},
+		{"word": "persist", "IPA": "/pərˈsɪst/", "translation": "坚持；持续"},
+		{"word": "sterilization", "IPA": "/ˌstɛ.rə.ləˈzeɪ.ʃən/", "translation": "灭菌；消毒（名词）"},
+		{"word": "specificity", "IPA": "/ˌspɛ.səˈfɪ.sə.ti/", "translation": "特异性"},
+		{"word": "sterilize", "IPA": "/ˈstɛ.rəˌlaɪz/", "translation": "灭菌；消毒（动词）"},
+		{"word": "various", "IPA": "/ˈvɛ.ri.əs/", "translation": "各种各样的"},
+		{"word": "communicate", "IPA": "/kəˈmju.nəˌkeɪt/", "translation": "交流；沟通"},
+		{"word": "comfortable", "IPA": "/ˈkʌmf.tər.bəl/", "translation": "舒服的"},
+		{"word": "toward", "IPA": "/tɔrd/", "translation": "朝；向"},
+		{"word": "impressively", "IPA": "/ɪmˈprɛ.sɪv.li/", "translation": "令人印象深刻地"},
+		{"word": "convince", "IPA": "/kənˈvɪns/", "translation": "说服"},
+		{"word": "strengthen", "IPA": "/ˈstrɛŋ.θən/", "translation": "加强"},
+		{"word": "anxiety", "IPA": "/æŋˈzaɪ.ə.ti/", "translation": "焦虑"}
+	]},
 	{"date": "2026-10-06",
 	"vocabulary": [
 		{"word": "private", "IPA": "/ˈpraɪvɪt/", "translation": "私人的"},
