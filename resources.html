@@ -74,13 +74,228 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 
 		<p>I currently keep referrals on hand for these subjects that I don't teach:</p>
 
-		<ul>
-			<li>Chemistry</li>
-			<li>Statistics</li>
-			<li>Intermediate-to-advanced college mathematics (anything beyond proof-writing courses)</li>
-			<li>Foreign languages (Spanish, Mandarin, Japanese, Thai)</li>
-			<li>Private college guidance services</li>
-		</ul>
+		<style>
+			/* masonry: boxes flow down each column, so shorter ones pack under each other */
+			#referral-subjects {
+				columns: 3 15em;
+				column-gap: 1.2em;
+				margin: 2em 0 1.6em;
+			}
+
+			#referral-subjects[hidden] {
+				display: none;
+			}
+
+			/* bordered box with its title sitting centered on the top border */
+			.referral-group {
+				position: relative;
+				border: 1px solid var(--color1);
+				border-radius: 14px;
+				padding: 1.1em 1em 0.8em;
+				margin-bottom: 1.8em; /* no top margin: columns drop it after a break, misaligning the tops */
+				break-inside: avoid;
+			}
+
+			.referral-group:last-child {
+				margin-bottom: 0;
+			}
+
+			.referral-group h4 {
+				position: absolute;
+				top: 0;
+				left: 50%;
+				transform: translate(-50%, -50%);
+				margin: 0;
+				padding: 0 0.5em;
+				background-color: var(--color3);
+				white-space: nowrap;
+				font-family: "Freeman", sans-serif;
+				font-weight: normal;
+			}
+
+			.referral-group ul {
+				margin: 0;
+				padding-left: 1.3em;
+			}
+
+			.referral-loading {
+				display: flex;
+				align-items: center;
+				gap: 0.6em;
+				margin: 1em 0 1em 40px;
+				opacity: 0.75;
+			}
+
+			.referral-loading::before {
+				content: "";
+				width: 1.1em;
+				height: 1.1em;
+				border: 2px solid var(--color1);
+				border-right-color: transparent;
+				border-radius: 50%;
+				animation: referral-spin 0.8s linear infinite;
+			}
+
+			@keyframes referral-spin {
+				to { transform: rotate(360deg); }
+			}
+
+			@media (prefers-reduced-motion: reduce) {
+				.referral-loading::before { animation-duration: 2.4s; }
+			}
+		</style>
+
+		<!-- Filled from the published sheet, minus anything listed on index.html (the subject chips
+		     and the Teaching Subjects panel), so subjects I teach never show up here. Groups marked
+		     referral-fixed are written here by hand and always appear last. -->
+		<div class="referral-loading" id="referral-loading">Loading subjects&hellip;</div>
+		<div id="referral-subjects" hidden>
+			<div class="referral-group referral-fixed">
+				<h4>Foreign Languages</h4>
+				<ul>
+					<li><span lang="es">Español</span> (Spanish)</li>
+					<li><span lang="zh-Hans">普通话</span> (Mandarin Chinese)</li>
+					<li><span lang="fr">Français</span> (French)</li>
+					<li><span lang="ja">日本語</span> (Japanese)</li>
+					<li><span lang="nl">Nederlands</span> (Dutch)</li>
+					<li><span lang="yue-Hant">粵語</span> (Cantonese)</li>
+					<li><span lang="vi">Tiếng Việt</span> (Vietnamese)</li>
+					<li><span lang="th">ภาษาไทย</span> (Thai)</li>
+				</ul>
+			</div>
+		</div>
+
+		<script>
+			(function () {
+				// "Publish to web" CSV link of the public subjects sheet ("Untitled" tab)
+				var REFERRAL_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQPesCsaswiQBrZjM213aRuIyoYz-G8ib2USrEjnjzT7JzU_SGKYbbeBJMLP7Z5guOUhNc2MVo1ySrd/pub?gid=280752981&single=true&output=csv";
+
+				// Categories show in this order. A subject goes in the first category whose pattern matches,
+				// checking "first: true" ones before the rest (so "College Essays" is admissions, not
+				// college); anything unmatched lands in "Middle & High School". Add keywords here when a
+				// new subject is misfiled.
+				var CATEGORIES = [
+					{ name: "AP Exams", test: /^AP\b/ },
+					{ name: "Test Prep", test: /^(P?SAT|ACT|GRE|GMAT|LSAT|MCAT|ISEE|SSAT|HSPT|TOEFL|IELTS)\b/i },
+					{ name: "Middle & High School", test: null },
+					{ name: "College", test: /\b(college|university|abstract algebra|real analysis|complex analysis|number theory|topology|differential equations|organic chemistry)\b/i },
+					{ name: "Admissions & Study Skills", first: true, test: /\b(admissions?|counseling|essays?|recruiting|guidance|executive function\w*|study skills)\b/i }
+				];
+
+				var MATCH_ORDER = CATEGORIES.filter(function (c) { return c.first; })
+					.concat(CATEGORIES.filter(function (c) { return !c.first && c.test; }));
+
+				function category(subject) {
+					for (var k = 0; k < MATCH_ORDER.length; k++) {
+						if (MATCH_ORDER[k].test.test(subject)) return MATCH_ORDER[k].name;
+					}
+					return "Middle & High School";
+				}
+
+				var ROMAN = { i: "1", ii: "2", iii: "3", iv: "4" };
+
+				// "Calculus III (Multivariable)" and "Calculus 3 (Multivariable)" both become "calculus 3"
+				function norm(s) {
+					return s.toLowerCase()
+						.replace(/\([^)]*\)/g, " ")
+						.replace(/[‐-―]/g, "-")
+						.replace(/\b(iv|iii|ii|i)\b/g, function (m) { return ROMAN[m]; })
+						.replace(/\s+/g, " ")
+						.trim();
+				}
+
+				// "proofs, logic, and discrete mathematics" -> proofs / logic / discrete mathematics
+				function parts(s) {
+					return s.split(/\s*(?:,|&|\band\b)\s*/).filter(Boolean);
+				}
+
+				function taughtSubjects(html) {
+					var doc = new DOMParser().parseFromString(html, "text/html");
+					var names = [];
+					doc.querySelectorAll(".subject-chip").forEach(function (chip) {
+						if (!chip.querySelector(".fa-location-dot")) names.push(chip.textContent);
+					});
+					doc.querySelectorAll("#teaching-subjects li").forEach(function (li) {
+						var copy = li.cloneNode(true);
+						copy.querySelectorAll(".level-tag").forEach(function (tag) { tag.remove(); });
+						names.push(copy.textContent);
+					});
+
+					var taught = {};
+					names.forEach(function (name) {
+						var n = norm(name);
+						var range = n.match(/^(.*?)(\d+)\s*-\s*(\d+)$/); // "calculus 1-2"
+						var full = [n];
+						if (range) {
+							full = [];
+							for (var k = +range[2]; k <= +range[3]; k++) full.push(range[1] + k);
+						}
+						full.forEach(function (f) {
+							taught[f] = true;
+							parts(f).forEach(function (p) { taught[p] = true; });
+						});
+					});
+					return taught;
+				}
+
+				function isTaught(subject, taught) {
+					var n = norm(subject);
+					if (taught[n]) return true;
+					var p = parts(n);
+					if (p.length > 1 && p.every(function (x) { return taught[x]; })) return true;
+					// a generic entry for something taught more specifically ("AP Physics" vs "AP Physics 1")
+					return Object.keys(taught).some(function (t) { return t.indexOf(n + " ") === 0; });
+				}
+
+				function text(r) {
+					if (!r.ok) throw new Error(r.status);
+					return r.text();
+				}
+
+				var box = document.getElementById("referral-subjects");
+
+				Promise.all([fetch(REFERRAL_CSV_URL).then(text), fetch("/index.html").then(text)])
+					.then(function (res) {
+						var taught = taughtSubjects(res[1]);
+						var seen = {};
+						var groups = {};
+						res[0].trim().split(/\r?\n/)
+							.map(function (s) { return s.replace(/^"|"$/g, "").replace(/""/g, '"').trim(); })
+							.forEach(function (s) {
+								var key = s.toLowerCase();
+								if (!s || seen[key] || isTaught(s, taught)) return;
+								seen[key] = true;
+								(groups[category(s)] = groups[category(s)] || []).push(s);
+							});
+
+						var fixed = box.querySelector(".referral-fixed");
+						CATEGORIES.forEach(function (c) {
+							var subjects = groups[c.name];
+							if (!subjects) return;
+							subjects.sort(function (a, b) { return a.localeCompare(b, "en", { sensitivity: "base" }); });
+
+							var group = document.createElement("div");
+							group.className = "referral-group";
+							var h = document.createElement("h4");
+							h.textContent = c.name;
+							var ul = document.createElement("ul");
+							subjects.forEach(function (s) {
+								var li = document.createElement("li");
+								li.textContent = s;
+								ul.appendChild(li);
+							});
+							group.appendChild(h);
+							group.appendChild(ul);
+							box.insertBefore(group, fixed);
+						});
+					})
+					.catch(function () {}) // on failure, only the fixed groups show
+					.then(function () {
+						document.getElementById("referral-loading").remove();
+						box.hidden = false;
+					});
+			})();
+		</script>
 
 		<p>If you need help with one of these, email me at <trevorkafka-email></trevorkafka-email> and I'll share who I'd recommend.</p>
 
