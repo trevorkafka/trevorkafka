@@ -289,11 +289,12 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 		<div class="fade">
 			<div>
 			    <div class="availability-intro-row" style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 20px">
-			        <div style="flex: 1 1 320px; max-width: 600px;">
-			        	<p>Below is an overview of my availability over the next <span class="cal-horizon-days">90</span> days.</p>
+			        <div style="flex: 1 1 320px; max-width: 760px;">
+			        	<p style="margin-top: 0">Below is an overview of my availability over the next <span class="cal-horizon-days">90</span> days.</p>
 			        	<p>I generally teach all day Monday–Thursday and on Sunday mornings and afternoons; deviations in availability occur occasionally due to holidays, personal conflicts, or school breaks.</p>
+			        	<div class="tk-table-frame waitlist-note" style="margin-bottom: 0"><i class="fa-solid fa-hourglass-half"></i><p>Don’t see a time that works for you? Email me at <trevorkafka-email></trevorkafka-email> to ask to be waitlisted for your preferred day and time, and I’ll let you know if it opens up.</p></div>
 			        </div>
-				    <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+				    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
 			            <div class="glow-shadow tk-table-frame" style="padding: 20px; border-radius: 20px; text-align: center; font-weight: bold;">
 			                Register
 			                <table>

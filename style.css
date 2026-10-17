@@ -392,6 +392,21 @@
 		:root:not([data-theme="light"]) .tk-table-frame { box-shadow: none; }
 	}
 
+	/* "No time that works? Ask to be waitlisted" box beside the availability
+	   calendars and the login box. */
+	.waitlist-note {
+		display: flex;
+		gap: 10px;
+		align-items: flex-start;
+		background: var(--color3);
+		padding: 15px;
+		border-radius: 10px;
+		border: solid 1.5px var(--surface-border);
+		margin: 20px 0;
+	}
+	.waitlist-note i { font-size: 0.85em; width: 1.25em; text-align: center; line-height: calc(1.5em / 0.85); flex-shrink: 0; color: var(--defaultlink); }
+	.waitlist-note p { margin: 0; line-height: 1.5; }
+
 	/* No grey flash when a pronunciation button is tapped on mobile. */
 	/* Transparent border reserves the same 1.5px space that dark mode makes visible,
 	   preventing a layout shift when switching themes. */
