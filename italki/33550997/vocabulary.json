@@ -1,4 +1,28 @@
 [
+	{"date": "2026-10-19",
+	"vocabulary": [
+		{"word": "present (noun)", "audio": "present", "IPA": "/ˈprɛ.zənt/", "translation": "礼物（名词）"},
+		{"word": "present (verb)", "IPA": "/prəˈzɛnt/", "translation": "赠送；呈现（动词）"},
+		{"word": "the Caribbean", "IPA": "/ðə kəˈrɪ.bi.ən/", "translation": "加勒比地区"},
+		{"word": "the Philippines", "IPA": "/ðə ˈfɪ.ləˌpinz/", "translation": "菲律宾"},
+		{"word": "the Alps", "IPA": "/ði ælps/", "translation": "阿尔卑斯山"},
+		{"word": "the Maldives", "IPA": "/ðə ˈmɑlˌdivz/", "translation": "马尔代夫"},
+		{"word": "the Bahamas", "IPA": "/ðə bəˈhɑ.məz/", "translation": "巴哈马"},
+		{"word": "the Solomon Islands", "IPA": "/ðə ˈsɑ.lə.mən ˈaɪ.ləndz/", "translation": "所罗门群岛"},
+		{"word": "the Marshall Islands", "IPA": "/ðə ˈmɑr.ʃəl ˈaɪ.ləndz/", "translation": "马绍尔群岛"},
+		{"word": "the United Arab Emirates", "IPA": "/ðə juˈnaɪ.tɪd ˈɛ.rəb ˈɛ.mə.rəts/", "translation": "阿拉伯联合酋长国"},
+		{"word": "the Czech Republic", "IPA": "/ðə tʃɛk rɪˈpʌ.blɪk/", "translation": "捷克共和国"},
+		{"word": "the Dominican Republic", "IPA": "/ðə dəˈmɪ.nɪ.kən rɪˈpʌ.blɪk/", "translation": "多米尼加共和国"},
+		{"word": "the Russian Federation", "IPA": "/ðə ˈrʌ.ʃən ˌfɛ.dəˈreɪ.ʃən/", "translation": "俄罗斯联邦"},
+		{"word": "the People's Republic of China", "IPA": "/ðə ˈpi.pəlz rɪˈpʌ.blɪk əv ˈtʃaɪ.nə/", "translation": "中华人民共和国"},
+		{"word": "the PRC", "IPA": "/ðə ˌpi ɑr ˈsi/", "translation": "中华人民共和国（缩写）"},
+		{"word": "the Democratic Republic of the Congo", "IPA": "/ðə ˌdɛ.məˈkræ.tɪk rɪˈpʌ.blɪk əv ðə ˈkɑŋ.ɡoʊ/", "translation": "刚果民主共和国"},
+		{"word": "Honduras", "IPA": "/hɑnˈdʊ.rəs/", "translation": "洪都拉斯"},
+		{"word": "Cyprus", "IPA": "/ˈsaɪ.prəs/", "translation": "塞浦路斯"},
+		{"word": "Barbados", "IPA": "/bɑrˈbeɪ.doʊs/", "translation": "巴巴多斯"},
+		{"word": "Belarus", "IPA": "/ˌbɛ.ləˈrus/", "translation": "白俄罗斯"},
+		{"word": "El Salvador", "IPA": "/ɛl ˈsæl.vəˌdɔr/", "translation": "萨尔瓦多"}
+	]},
 	{"date": "2026-10-08",
 	"vocabulary": [
 		{"word": "familiar", "IPA": "/fəˈmɪl.jər/", "translation": "熟悉的"},
