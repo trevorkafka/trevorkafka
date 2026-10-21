@@ -257,6 +257,62 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 				<a href="#FAQ" class="button subtle">
 					<div align="center"><i class="fa-solid fa-circle-question"></i> FAQ</div>
 				</a>
+
+				<!-- Tilted sticky note pointing current students to their class notes -->
+				<a href="/mynotes" class="notes-note">
+					<span class="notes-note-tape"></span>
+					<span class="notes-note-title"><i class="fa-solid fa-note-sticky"></i> Already my student?</span>
+					<span class="notes-note-text">Your class notes are waiting for you at</span>
+					<span class="notes-note-url">trevorkafka.com/mynotes</span>
+				</a>
+				<style>
+					.notes-note {
+						position: relative;
+						display: block;
+						width: min(250px, 80vw);
+						margin: 30px auto 10px;
+						padding: 22px 18px 16px;
+						background: var(--color4light);
+						border: 1px solid var(--color4);
+						border-radius: 6px;
+						box-shadow: 2px 4px 12px var(--shadow);
+						color: var(--color1);
+						text-align: center;
+						text-decoration: none;
+						transform: rotate(-3deg);
+						transition: transform 0.2s ease, box-shadow 0.2s ease;
+					}
+					.notes-note:hover {
+						transform: rotate(0deg) scale(1.03);
+						box-shadow: 3px 6px 16px var(--tint-5);
+						color: var(--color1);
+					}
+					.notes-note-tape {
+						position: absolute;
+						top: -10px;
+						left: 50%;
+						width: 80px;
+						height: 20px;
+						transform: translateX(-50%) rotate(2deg);
+						background: #FB7F6480;
+						border-radius: 2px;
+					}
+					.notes-note-title {
+						display: block;
+						font-family: "Freeman", sans-serif;
+						font-size: 125%;
+						margin-bottom: 4px;
+					}
+					.notes-note-text {
+						display: block;
+					}
+					.notes-note-url {
+						display: block;
+						margin-top: 4px;
+						font-weight: bold;
+						color: var(--defaultlink);
+					}
+				</style>
 				<!-- <a href="teaching-samples.html" class="button">
 					<div align="center"><i class="fa-solid fa-file-video"></i> Watch teaching samples</div>
 				</a> -->
