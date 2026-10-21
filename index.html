@@ -280,12 +280,25 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 						text-align: center;
 						text-decoration: none;
 						transform: rotate(-3deg);
-						transition: transform 0.2s ease, box-shadow 0.2s ease;
+						-webkit-tap-highlight-color: transparent;
+						-webkit-user-select: none;
+						user-select: none;
+						outline: none;
 					}
-					.notes-note:hover {
-						transform: rotate(0deg) scale(1.03);
-						box-shadow: 3px 6px 16px var(--tint-5);
-						color: var(--color1);
+					.notes-note:focus-visible {
+						outline: 2px solid var(--defaultlink);
+						outline-offset: 3px;
+					}
+					/* Straighten-and-lift only where there's a real mouse, not on touch screens */
+					@media (hover: hover) and (pointer: fine) {
+						.notes-note {
+							transition: transform 0.2s ease, box-shadow 0.2s ease;
+						}
+						.notes-note:hover {
+							transform: rotate(0deg) scale(1.03);
+							box-shadow: 3px 6px 16px var(--tint-5);
+							color: var(--color1);
+						}
 					}
 					.notes-note-tape {
 						position: absolute;
