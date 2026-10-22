@@ -1643,9 +1643,8 @@ function attachHover(root, grid, startSlot) {
   });
 }
 
-// Show a floating notice when there's an extended stretch with no teaching
-// (no available and no booked time) of >= 5 days, and >= 2 of those days are
-// in the currently visible week. Centered over the visible non-teaching days.
+// Show a floating notice whenever every day in the visible week has no teaching
+// (no available and no booked time). Centered over the visible non-teaching days.
 function renderPauseNotice(root, days) {
   if (!cachedEvents) return;
   const wrap = root.querySelector('.calendar-body-wrap');
@@ -1656,24 +1655,20 @@ function renderPauseNotice(root, days) {
   wrap.querySelectorAll('.pause-notice').forEach(n => n.remove());
 
   const DAY_MS = 24 * 60 * 60 * 1000;
-  const MIN_RUN = 10;     // minimum length of a non-teaching stretch to announce
+  const MIN_RUN = 7;      // minimum length of a non-teaching stretch to announce
   const MIN_VISIBLE = 7;  // minimum of those days that must be on screen (a full visible week)
 
   const today0 = new Date();
   today0.setHours(0, 0, 0, 0);
 
-  // teaching[d] = true if day d (0 = today) has any available or booked time.
+  // teaching[d] = true if day d (0 = today) shows any available or booked time:
+  // judged on the same classified grid the calendar draws, so availability that's
+  // overridden, too short for the selected lesson length, or too soon doesn't count.
   const N = loadedDays || HORIZON_DAYS;   // only judge days we actually have data for
-  const teaching = new Array(N).fill(false);
-  for (const ev of cachedEvents) {
-    const title = (ev.title || '').toLowerCase().trim();
-    if (title !== 'available' && title !== 'busy') continue;
-    let s = dayIndexFrom(today0, ev.start.getTime());
-    let e = dayIndexFrom(today0, ev.end.getTime() - 1);
-    s = Math.max(0, s);
-    e = Math.min(N - 1, e);
-    for (let d = s; d <= e; d++) teaching[d] = true;
-  }
+  const allDays = [];
+  for (let i = 0; i < N; i++) allDays.push(addDays(today0, i));
+  const fullGrid = classify(cachedEvents, allDays, currentMinRun());
+  const teaching = fullGrid.map(slots => slots.some(st => st === 1 || st === 3));
 
   const visStart = Math.round((days[0].getTime() - today0.getTime()) / DAY_MS);
   const visEnd = visStart + days.length - 1;
