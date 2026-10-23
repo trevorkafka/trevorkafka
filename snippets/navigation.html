@@ -242,7 +242,13 @@
 	}
 
 	.nav-dropdown-menu {
-		display: none;
+		/* Hidden but laid out, so it can fade and slide in/out. visibility waits
+		   for the fade to finish before hiding, and keeps the closed menu out of
+		   the tab order and pointer hits. */
+		visibility: hidden;
+		opacity: 0;
+		transform: translateY(-6px);
+		transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s linear 0.18s;
 		position: absolute;
 		top: 100%;
 		left: 0;
@@ -279,6 +285,18 @@
 
 	.nav-dropdown:hover .nav-dropdown-menu,
 	.nav-dropdown:focus-within .nav-dropdown-menu {
-		display: block;
+		visibility: visible;
+		opacity: 1;
+		transform: none;
+		transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.nav-dropdown-menu,
+		.nav-dropdown:hover .nav-dropdown-menu,
+		.nav-dropdown:focus-within .nav-dropdown-menu {
+			transform: none;
+			transition: none;
+		}
 	}
 </style>
