@@ -51,7 +51,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 				<button onclick="lookup()" style="font-family: Freeman, sans-serif; font-size: 1em; border-radius: 999px;"><i class="fa-solid fa-magnifying-glass"></i> find my notes</button>
 			</p>
 			<p id="message" style="color: red; font-family: Freeman, sans-serif; font-size: 130%;"></p>
-			<div id="notes-actions" style="display: none; justify-content: center; flex-wrap: wrap; gap: 12px; margin-top: 4px;">
+			<div id="notes-actions" style="display: none; justify-content: center; flex-wrap: wrap; gap: 12px; margin: 4px 0 28px;">
 				<button type="button" id="copy-link-btn" style="font-family: Freeman, sans-serif; font-size: 1em;"><i class="fa-solid fa-link"></i> Copy link</button>
 				<button type="button" id="open-folder-btn" style="font-family: Freeman, sans-serif; font-size: 1em;"><i class="fa-brands fa-google-drive"></i> Open Google Drive folder</button>
 			</div>
@@ -132,26 +132,13 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 		    </ol>
 		</div>
 
-		<div class="FAQ">
-			<details>
-				<summary>How are my notes organized?</summary>
-				<div>
-					<p>For <em>most</em> students, Google Drive folders will be organized by month. If we are working on a full course together from scratch, the content may be organized by unit instead.</p>
-					<ul>
-						<li>Handwritten notes taken by me during class titled <span style="background-color: var(--tint-2); padding: 4px 7px; border-radius: 4px">⭐ Class Notes.pdf</span> are organized in chronological order. All handwritten notes from the entire month are in this single file.</li>
-						<li>Zoom screenshots (especially from when I do on-screen annotations when you share your screen) are organized into folders titled <span style="background-color: var(--tint-2); padding: 4px 7px; border-radius: 4px">YYYY-MM-DD screenshots</span>. All screenshots from a single day are in a single subfolder.</li>
-						<li>Additional files that vary on a student-to-student basis may also be included.</li>
-						<li>A subfolder titled <span style="background-color: var(--tint-2); padding: 4px 7px; border-radius: 4px">teacher notes</span> is sometimes present — these are files I use for my own preparation and may be ignored.</li>
-					</ul>
-				</div>
-			</details>
-			<details>
-				<summary>What if the form doesn't work?</summary>
-				<div>
-					<p>The form may not work if you haven't taken a class with me since June 2025. Please email <trevorkafka-email></trevorkafka-email> and I will assist as soon as possible.</p>
-				</div>
-			</details>
-		</div>
+		<p>For <em>most</em> students, Google Drive folders will be organized by month. If we are working on a full course together from scratch, the content may be organized by unit instead.</p>
+		<ul>
+			<li>Handwritten notes taken by me during class titled <span style="background-color: var(--tint-2); padding: 4px 7px; border-radius: 4px">⭐ Class Notes.pdf</span> are organized in chronological order. All handwritten notes from the entire month are in this single file.</li>
+			<li>Zoom screenshots (especially from when I do on-screen annotations when you share your screen) are organized into folders titled <span style="background-color: var(--tint-2); padding: 4px 7px; border-radius: 4px">YYYY-MM-DD screenshots</span>. All screenshots from a single day are in a single subfolder.</li>
+			<li>Additional files that vary on a student-to-student basis may also be included.</li>
+			<li>A subfolder titled <span style="background-color: var(--tint-2); padding: 4px 7px; border-radius: 4px">teacher notes</span> is sometimes present — these are files I use for my own preparation and may be ignored.</li>
+		</ul>
 
 	</div>
 
