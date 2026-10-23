@@ -789,7 +789,13 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 		// title when there is no announcement) as it sits when scrolled to the top.
 		function alignTop() {
 			var anchor = document.getElementById('announcement-box') || document.getElementById('overview');
-			if (anchor) toc.style.top = pageTop(anchor) + 'px';
+			if (!anchor) return;
+			var top = pageTop(anchor);
+			// ...but never let it slide down into the footer: once the end of the
+			// page content scrolls up past the TOC's bottom, push the TOC up with it.
+			var page = document.getElementById('above-footer');
+			if (page) top = Math.min(top, page.getBoundingClientRect().bottom - toc.offsetHeight - 32);
+			toc.style.top = top + 'px';
 		}
 
 		// Clicking an entry scrolls its section heading to just below the
@@ -851,7 +857,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			clearTimeout(realign);
 			realign = setTimeout(function () { alignTop(); update(); }, 50);
 		}).observe(document.body, { childList: true, subtree: true });
-		window.addEventListener('scroll', alignTop, { passive: true });   // and a cheap last check on any scroll
+		window.addEventListener('scroll', alignTop, { passive: true });   // and on every scroll (also keeps it above the footer)
 		requestAnimationFrame(function () { toc.classList.add('ready'); });
 	})();
 	</script>
