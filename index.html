@@ -298,6 +298,11 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 							box-shadow: 3px 6px 16px var(--tint-5);
 							color: var(--color1);
 						}
+						/* No light glow on hover in dark mode; keep the resting dark shadow */
+						:root[data-theme="dark"] .notes-note:hover { box-shadow: 2px 4px 12px var(--shadow); }
+					}
+					@media (hover: hover) and (pointer: fine) and (prefers-color-scheme: dark) {
+						:root:not([data-theme="light"]) .notes-note:hover { box-shadow: 2px 4px 12px var(--shadow); }
 					}
 					.notes-note-tape {
 						position: absolute;
