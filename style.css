@@ -543,7 +543,7 @@
 
 	.client-image {
 		width: min(150px, 15vw);
-		padding-right: 10px;
+		margin-right: 10px;
 	}
 
 /*                             */
