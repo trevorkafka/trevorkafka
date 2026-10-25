@@ -909,6 +909,7 @@
   const SAVED_KEY = 'tk-availability';
   const SAVED_MAX_AGE_MS = 24 * 60 * 60 * 1000; // ignore anything older
   let savedAt = 0;                             // when the on-screen data was fetched (0 = unknown)
+  let syncedAt = 0;                            // when the on-screen schedule was last synced by the Apps Script (0 = nothing loaded)
   function loadedWeeks() { return Math.max(1, Math.floor((loadedDays || HORIZON_DAYS) / 7)); }
 
   const FIFTEEN_MIN = 15 * 60 * 1000;
@@ -998,6 +999,8 @@
       if (loadedDays < HORIZON_DAYS) {
         cachedEvents = events;
         loadedDays = QUICK_DAYS;
+        syncedAt = events.syncedAt;
+        renderRefreshed();
         renderWeek();
       }
     }).catch(() => {});
@@ -1007,7 +1010,9 @@
       cachedEvents = events;
       loadedDays = HORIZON_DAYS;
       savedAt = Date.now();
+      syncedAt = events.syncedAt;
       saveEvents(events, HORIZON_DAYS);
+      renderRefreshed();
       status.textContent = '';
       renderWeek();
     } catch (err) {
@@ -1048,11 +1053,16 @@
     const res = await fetch(API_URL + '?days=' + days);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const data = await res.json();
-    return data.events.map(e => ({
+    const events = data.events.map(e => ({
       start: new Date(e.start),
       end:   new Date(e.end),
       title: e.title,
     }));
+    // When the Apps Script last synced this schedule (null when it fell back
+    // to reading the calendar); otherwise the best we know is now.
+    const synced = data.synced ? new Date(data.synced).getTime() : NaN;
+    events.syncedAt = isNaN(synced) ? Date.now() : synced;
+    return events;
   }
 
   // ---- remembered schedule (localStorage) ----
@@ -1060,6 +1070,7 @@
     try {
       localStorage.setItem(SAVED_KEY, JSON.stringify({
         saved: Date.now(),
+        synced: events.syncedAt,
         days,
         events: events.map(e => [e.start.getTime(), e.end.getTime(), e.title]),
       }));
@@ -1076,8 +1087,22 @@
       cachedEvents = data.events.map(([s, e, title]) => ({ start: new Date(s), end: new Date(e), title }));
       loadedDays = data.days || HORIZON_DAYS;
       savedAt = data.saved;
+      syncedAt = data.synced || data.saved;
+      renderRefreshed();
       renderWeek();
     } catch (e) { /* corrupt or unavailable storage: load normally */ }
+  }
+
+  // "Last refreshed Oct 24, 6:25 PM" after the time-zone sentence, in the
+  // visitor's zone (the one that sentence names). Hidden until data loads.
+  function renderRefreshed() {
+    const el = document.getElementById('cal-refreshed');
+    if (!el) return;
+    if (!syncedAt) { el.hidden = true; return; }
+    const fmt = new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+    // the date and time stay on one line rather than stranding "PM" on a phone
+    el.textContent = ' Last refreshed ' + fmt.format(new Date(syncedAt)).replace(/\s/g, String.fromCharCode(160)) + '.';
+    el.hidden = false;
   }
 
   function describeAge(ts) {
@@ -1818,7 +1843,8 @@ function makeDemoEvents() {
   const el = document.getElementById('tz-info');
   if (!el) return;
   const tzName = Intl.DateTimeFormat().resolvedOptions().timeZone;
-  el.innerHTML = `Showing available times over the next <span class="cal-horizon-days">90</span> days in ${escapeHTML(tzName)} (${escapeHTML(formatTZOffset(new Date()))}).`;
+  el.innerHTML = `Showing available times over the next <span class="cal-horizon-days">90</span> days in ${escapeHTML(tzName)} (${escapeHTML(formatTZOffset(new Date()))}).<span class="cal-refreshed" id="cal-refreshed" hidden></span>`;
+  renderRefreshed();
 })();
 
   // Fill in Boston's live UTC offset (accounts for daylight saving), marked
