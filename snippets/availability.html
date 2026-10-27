@@ -625,6 +625,41 @@
     white-space: nowrap;
   }
   .calendar-time-cell:first-child { visibility: hidden; }
+  /* The seven day columns (header and body each) sit in a track inside a
+     clipping box, so paging can slide one week out and the next in while the
+     time axes stay put. The outgoing week is a second, absolutely placed track
+     that only exists during the slide. overflow-x: clip leaves the vertical
+     axis visible, so a holiday chip can still hang below the header. */
+  .calendar-days {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    position: relative;
+  }
+  .calendar-days.sliding { overflow-x: clip; }
+  /* each column draws its own left line, so hold the one beside the time
+     axis still while the columns move under it */
+  .calendar-days.sliding::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--cal-border);
+    z-index: 4;
+  }
+  .calendar-days-track {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    position: relative;
+  }
+  .calendar-days-old {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
   .calendar-week-day {
     position: relative;
     display: flex;
@@ -676,6 +711,38 @@
     z-index: 1000;
   }
   .availability-tooltip.visible { opacity: 1; }
+  /* Hover preview of one lesson of the selected length inside a green run. */
+  .lesson-preview {
+    position: absolute;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    pointer-events: none;
+    opacity: 0;   /* no transitions: the block snaps between 15-min start times */
+    z-index: 3;
+  }
+  /* The site-wide colour cross-fade (style.css) would fade the teal in and out;
+     the preview should snap, so the cells, hour lines and label skip it. */
+  .calendar-cell, .calendar-cell-container, .lesson-preview, .lesson-preview-label { transition: none; }
+  .calendar-cell.lesson-on { background: #00808A; }
+  .calendar-cell-container.lesson-seam { border-top-color: #00808A; }
+  .lesson-preview.visible { opacity: 1; }
+  .lesson-preview-label {
+    font-size: 12px;
+    line-height: 1;
+    white-space: nowrap;
+  }
+  .lesson-preview-start { font-weight: bold; font-size: 14px; }
+  .lesson-preview-end { opacity: 0.75; font-size: 10px; }
+  /* When the block is too short or narrow for the text, the label gets its
+     own teal pill that spills over the block's edges. */
+  .lesson-preview.spill .lesson-preview-label {
+    background: #00808A;
+    padding: 3px 6px;
+  }
 
   .error {
     max-width: 1000px;
@@ -1128,15 +1195,92 @@
     document.querySelectorAll('.cal-horizon-days').forEach(el => { el.textContent = String(n); });
   }
 
-  function renderWeek() {
+  // fromOffset: the dayOffset being left when the user changed weeks (the
+  // calendar slides from there); omitted to redraw in place.
+  function renderWeek(fromOffset) {
     updateHorizonText();
     const root = document.getElementById('root');
     if (!cachedEvents) return;
     const days = buildWeek(new Date(), dayOffset);
     updateWeekNav(days);
     const grid = classify(cachedEvents, days, currentMinRun());
+    const delta = fromOffset == null ? 0 : dayOffset - fromOffset;
+    const outgoing = delta && !reduceMotion.matches ? captureWeekTracks(root) : null;
     render(root, days, grid);
+    if (outgoing) slideWeek(root, outgoing, delta);
     renderMiniCal();
+  }
+
+  // ---- week slide ----
+  // Changing weeks slides the calendar by exactly the days it moved: forward
+  // goes left, back goes right, header and body together, on an iOS-style
+  // ease-out. A jump further than a week brings the days in between along
+  // too, and takes a little longer the further it goes. Before render()
+  // replaces the calendar, the current tracks are taken with their on-screen
+  // offsets, so a click mid-slide carries on from wherever the weeks are
+  // rather than jumping.
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const SLIDE_MS = 480;       // one week's slide
+  const SLIDE_MAX_MS = 1000;  // the longest jump
+  const SLIDE_EASE = 'cubic-bezier(0.32, 0.72, 0, 1)';
+
+  function captureWeekTracks(root) {
+    return Array.from(root.querySelectorAll('.calendar-days'), clip => {
+      const left = clip.getBoundingClientRect().left;
+      const tracks = Array.from(clip.querySelectorAll(':scope > .calendar-days-track'), el => {
+        const x = el.getBoundingClientRect().left - left;
+        el.getAnimations().forEach(a => a.cancel());
+        return { el, x };
+      });
+      const main = tracks.find(t => !t.el.classList.contains('calendar-days-old'));
+      return { tracks, mainX: main ? main.x : 0 };
+    });
+  }
+
+  function slideWeek(root, outgoing, delta) {
+    // Days between the two weeks, counted from the new week's first day.
+    const gap = Math.abs(delta) - 7;
+    let filler = null;
+    if (gap > 0) {
+      const k0 = delta > 0 ? 7 - delta : 7;
+      const first = buildWeek(new Date(), dayOffset + k0)[0];
+      const days = Array.from({ length: gap }, (_, j) => addDays(first, j));
+      const [c0, c1] = (root.dataset.containers || '').split(',').map(Number);
+      filler = {
+        k0,
+        html: [headCellsHTML(days), dayColsHTML(classify(cachedEvents, days, currentMinRun()), c0, c1)],
+      };
+    }
+    const clips = root.querySelectorAll('.calendar-days');
+    clips.forEach((clip, i) => {
+      const old = outgoing[i];
+      const track = clip.querySelector('.calendar-days-track');
+      if (!old || !track) return;
+      const colW = clip.clientWidth / 7;
+      // the new week starts as far beyond the old one as the days it moved
+      const shift = old.mainX + delta * colW;
+      const weeks = Math.max(1, Math.abs(shift) / clip.clientWidth);
+      const opts = { duration: Math.min(SLIDE_MAX_MS, SLIDE_MS + 160 * Math.log2(weeks)), easing: SLIDE_EASE };
+      clip.classList.add('sliding');
+      const tracks = old.tracks.slice();
+      if (filler) {
+        const el = document.createElement('div');
+        el.className = 'calendar-days-track';
+        el.style.right = 'auto';
+        el.style.width = gap * colW + 'px';
+        el.innerHTML = filler.html[i] || '';
+        tracks.push({ el, x: filler.k0 * colW + shift });
+      }
+      for (const { el, x } of tracks) {
+        el.classList.add('calendar-days-old');
+        el.setAttribute('aria-hidden', 'true');
+        clip.appendChild(el);
+        el.animate([{ transform: `translateX(${x}px)` }, { transform: `translateX(${x - shift}px)` }], opts)
+          .finished.then(() => el.remove(), () => {});
+      }
+      track.animate([{ transform: `translateX(${shift}px)` }, { transform: 'translateX(0)' }], opts)
+        .finished.then(() => clip.classList.remove('sliding'), () => {});
+    });
   }
 
   // ---- mini calendar (the availability page only) ----
@@ -1256,8 +1400,9 @@
       if (!cell) return;
       const day = Math.max(0, Math.min(maxDayOffset(), Number(cell.getAttribute('data-day'))));
       if (!Number.isFinite(day) || day === dayOffset) return;
+      const from = dayOffset;
       dayOffset = day;
-      renderWeek();
+      renderWeek(from);
     });
   })();
 
@@ -1381,9 +1526,40 @@
     return grid;
   }
 
-  function render(root, days, grid, loading) {
+  // Header cells and body columns for a run of days (render() and the slide's
+  // in-between days share them).
+  function headCellsHTML(days) {
     const todayKey = new Date().toDateString();
     const weekdayFmt = new Intl.DateTimeFormat(undefined, { weekday: 'short' });
+    return days.map(d => {
+      const today = d.toDateString() === todayKey;
+      const holiday = federalHoliday(d);
+      const chip = holiday
+        ? `<span class="holiday-chip" tabindex="0" role="note" aria-label="${escapeHTML(holiday)}"><i class="fa-solid fa-flag-usa" aria-hidden="true"></i><span>${escapeHTML(holiday)}</span></span>`
+        : '';
+      return `<div class="calendar-head-cell${today ? ' calendar-head-cell-today' : ''}">
+        <div class="calendar-head-cell-weekday">${weekdayFmt.format(d)}</div>
+        <div class="calendar-head-cell-date">${d.getDate()}</div>${chip}
+    </div>`;
+    }).join('');
+  }
+
+  function dayColsHTML(grid, startContainer, endContainer) {
+    return grid.map((_, di) => {
+      const containers = [];
+      for (let ci = startContainer; ci < endContainer; ci++) {
+        const top = stateClass(grid[di][ci * 2]);
+        const bot = stateClass(grid[di][ci * 2 + 1]);
+        containers.push(`<div class="calendar-cell-container">
+          <div class="calendar-cell${top}"></div>
+          <div class="calendar-cell${bot}"></div>
+      </div>`);
+      }
+      return `<div class="calendar-week-day">${containers.join('')}</div>`;
+    }).join('');
+  }
+
+  function render(root, days, grid, loading) {
     const timeFmt = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' });
 
     // Determine the visible hour range from the earliest & latest available or
@@ -1425,17 +1601,8 @@
     const startContainer = startHour * 2;
     const endContainer = endHour * 2;
 
-    const headCells = days.map(d => {
-      const today = d.toDateString() === todayKey;
-      const holiday = federalHoliday(d);
-      const chip = holiday
-        ? `<span class="holiday-chip" tabindex="0" role="note" aria-label="${escapeHTML(holiday)}"><i class="fa-solid fa-flag-usa" aria-hidden="true"></i><span>${escapeHTML(holiday)}</span></span>`
-        : '';
-      return `<div class="calendar-head-cell${today ? ' calendar-head-cell-today' : ''}">
-        <div class="calendar-head-cell-weekday">${weekdayFmt.format(d)}</div>
-        <div class="calendar-head-cell-date">${d.getDate()}</div>${chip}
-    </div>`;
-  }).join('');
+    const headCells = headCellsHTML(days);
+    root.dataset.containers = startContainer + ',' + endContainer;
 
     const timeCells = [];
     const baseDate = new Date();
@@ -1446,30 +1613,19 @@
       timeCells.push(`<div class="calendar-time-cell">${timeFmt.format(d)}</div>`);
     }
 
-    const dayCols = days.map((_, di) => {
-      const containers = [];
-      for (let ci = startContainer; ci < endContainer; ci++) {
-        const top = stateClass(grid[di][ci * 2]);
-        const bot = stateClass(grid[di][ci * 2 + 1]);
-        containers.push(`<div class="calendar-cell-container">
-          <div class="calendar-cell${top}"></div>
-          <div class="calendar-cell${bot}"></div>
-      </div>`);
-      }
-      return `<div class="calendar-week-day">${containers.join('')}</div>`;
-    }).join('');
+    const dayCols = dayColsHTML(grid, startContainer, endContainer);
 
     root.innerHTML = `<div class="calendar">
       <div class="calendar-head-date">
         <div class="calendar-head-cell calendar-head-cell-blank"></div>
-        ${headCells}
+        <div class="calendar-days"><div class="calendar-days-track">${headCells}</div></div>
         <div class="calendar-head-cell calendar-head-cell-blank calendar-head-cell-blank-right"></div>
       </div>
       <div class="calendar-body-wrap">
         ${loading ? '<div class="loading-spinner"></div>' : ''}
         <div class="calendar-body">
           <div class="calendar-time">${timeCells.join('')}</div>
-          ${dayCols}
+          <div class="calendar-days"><div class="calendar-days-track">${dayCols}</div></div>
           <div class="calendar-time calendar-time-right">${timeCells.join('')}</div>
         </div>
       </div>
@@ -1493,7 +1649,14 @@ function attachHover(root, grid, startSlot) {
     return tipFmt.format(tipDate);
   }
 
-  // Damped rotational jiggle on the Book button, triggered on each hover.
+  function timeParts(m) {
+    const totalMinutes = m % 1440;
+    tipDate.setHours(Math.floor(totalMinutes / 60), totalMinutes % 60, 0, 0);
+    return tipFmt.formatToParts(tipDate);
+  }
+
+  // Damped rotational jiggle on the Book button, triggered by a click on
+  // the calendar (a nudge that booking happens through that button).
   // Models a damped harmonic oscillator: θ'' + 2ζω_n θ' + ω_n² θ = 0
   // with θ(0)=0 and randomized θ'(0)=ω₀. Closed-form (underdamped):
   //   θ(t) = (ω₀ / ω_d) · e^(−ζω_n t) · sin(ω_d t),  ω_d = ω_n √(1−ζ²)
@@ -1631,6 +1794,44 @@ function attachHover(root, grid, startSlot) {
   // on the next available block can intercept it and slide instead of fade.
   let hideTimer = null;
 
+  // Narrow screens (phones): a column too slim for a lesson label falls back to
+  // the popup showing the whole available window. Measured once per render
+  // with a near-widest label so every hover in the week behaves the same.
+  const narrow = (() => {
+    const col0 = cols[0];
+    if (!col0) return false;
+    const probe = document.createElement('span');
+    probe.className = 'lesson-preview-label';
+    probe.style.cssText = 'position:absolute;visibility:hidden';
+    probe.innerHTML = '<span class="lesson-preview-start">10:45 AM</span><span class="lesson-preview-end"> – 11:45</span>';
+    col0.appendChild(probe);
+    const tooWide = probe.offsetWidth > col0.clientWidth - 4;
+    probe.remove();
+    return tooWide;
+  })();
+
+  // Lesson preview: while the cursor is over a green run, a teal block the
+  // length of the selected lesson follows it (snapped to 15-min starts and
+  // kept inside the run), labelled with that lesson's start and end times.
+  // The 20-min intro call is drawn as its 30-min window but labelled 20 min.
+  const PREVIEW_MINUTES = [20, 45, 60, 90];
+
+  // Teal on cells a..b of one column (null clears), plus the hour lines that
+  // fall inside that range, so the lesson reads as one solid block.
+  let painted = [];
+  function paintCells(col, a, b) {
+    painted.forEach(el => el.classList.remove('lesson-on', 'lesson-seam'));
+    painted = [];
+    if (!col) return;
+    const cells = col.querySelectorAll('.calendar-cell');
+    const boxes = col.querySelectorAll('.calendar-cell-container');
+    for (let k = a; k <= b; k++) {
+      cells[k].classList.add('lesson-on');
+      painted.push(cells[k]);
+      if (k > a && k % 2 === 0) { boxes[k / 2].classList.add('lesson-seam'); painted.push(boxes[k / 2]); }
+    }
+  }
+
   cols.forEach((col, di) => {
     let si = 0;
     while (si < SLOTS_PER_DAY) {
@@ -1644,36 +1845,101 @@ function attachHover(root, grid, startSlot) {
       block.style.top = ((runStart - startSlot) * SLOT_PX) + 'px';
       block.style.height = ((runEnd - runStart) * SLOT_PX) + 'px';
 
-      const html = formatSlot(runStart) + '–' + formatSlot(runEnd) + '<br>Available';
-      block.addEventListener('mouseenter', () => {
-        jiggle();
-        if (hideTimer !== null) {
-          // Cursor moved directly from another available slot — cancel the
-          // pending fade-out and slide the tooltip to the new position instead.
-          clearTimeout(hideTimer);
-          hideTimer = null;
-          slideTip(block, html);
-        } else {
-          showTip(block, html);
+      const preview = document.createElement('div');
+      preview.className = 'lesson-preview';
+      const label = document.createElement('span');
+      label.className = 'lesson-preview-label';
+      preview.appendChild(label);
+      block.appendChild(preview);
+
+      const cells = col.querySelectorAll('.calendar-cell');
+      let shownStart = -1;
+      function place(clientY) {
+        const minutes = PREVIEW_MINUTES[lessonIdx];
+        const lenSlots = currentMinRun();
+        const rect = block.getBoundingClientRect();
+        // Centre the lesson on the cursor, then snap and clamp to the run.
+        const cursorSlots = (clientY - rect.top) / SLOT_PX;
+        const maxStart = Math.max(0, runEnd - runStart - lenSlots);
+        const start = Math.max(0, Math.min(maxStart, Math.round(cursorSlots - lenSlots / 2)));
+        // The teal is painted on the green cells themselves (and the grid lines
+        // between them), so its edges land on exactly the same device pixels as
+        // the green at any zoom. The overlay only carries the label.
+        const a = runStart + start - startSlot, b = a + lenSlots - 1;
+        paintCells(col, a, b);
+        const first = cells[a].getBoundingClientRect();
+        const last  = cells[b].getBoundingClientRect();
+        preview.style.top = (first.top - rect.top) + 'px';
+        preview.style.height = (last.bottom - first.top) + 'px';
+        if (start !== shownStart || label._minutes !== minutes) {
+          shownStart = start;
+          label._minutes = minutes;
+          const s = (runStart + start) * 15;
+          // Start in bold, end dimmed, dropping the end's AM/PM when it matches.
+          const startParts = timeParts(s), endParts = timeParts(s + minutes);
+          const period = ps => (ps.find(x => x.type === 'dayPeriod') || {}).value;
+          const samePeriod = period(startParts) && period(startParts) === period(endParts);
+          const endText = (samePeriod
+            ? endParts.filter(x => x.type === 'hour' || x.type === 'minute' || (x.type === 'literal' && x.value === ':'))
+            : endParts).map(x => x.value).join('');
+          label.innerHTML = '';
+          const strong = document.createElement('span');
+          strong.className = 'lesson-preview-start';
+          strong.textContent = startParts.map(x => x.value).join('');
+          const end = document.createElement('span');
+          end.className = 'lesson-preview-end';
+          end.textContent = ' – ' + endText;
+          label.append(strong, end);
+          // Too narrow (phones) for the text: give the
+          // label its own pill that spills past the block, kept inside the grid.
+          preview.classList.remove('spill');
+          label.style.transform = '';
+          if (lenSlots * SLOT_PX < 16 || label.offsetWidth > preview.clientWidth - 4) {
+            preview.classList.add('spill');
+            const lr = label.getBoundingClientRect(), br = body.getBoundingClientRect();
+            const dx = Math.max(br.left + 2 - lr.left, Math.min(0, br.right - 2 - lr.right));
+            label.style.transform = 'translateX(' + dx + 'px)';
+          }
         }
-      });
-      block.addEventListener('mouseleave', () => {
-        hideTimer = setTimeout(() => {
-          hideTimer = null;
-          hideTip();
-        }, 0);
-      });
+        preview.classList.add('visible');
+      }
+
+      // Mouse events (not pointer events) so a tap on a touch screen keeps the
+      // preview up until the next tap elsewhere, as the popup always did.
+      if (narrow) {
+        const html = formatSlot(runStart) + '–' + formatSlot(runEnd) + '<br>Available';
+        block.addEventListener('mouseenter', () => {
+          if (hideTimer !== null) {
+            // Cursor moved directly from another available slot — cancel the
+            // pending fade-out and slide the tooltip to the new position instead.
+            clearTimeout(hideTimer);
+            hideTimer = null;
+            slideTip(block, html);
+          } else {
+            showTip(block, html);
+          }
+        });
+        block.addEventListener('mouseleave', () => {
+          hideTimer = setTimeout(() => {
+            hideTimer = null;
+            hideTip();
+          }, 0);
+        });
+      } else {
+        block.addEventListener('mouseenter', (e) => place(e.clientY));
+        block.addEventListener('mousemove',  (e) => place(e.clientY));
+        block.addEventListener('mouseleave', () => { preview.classList.remove('visible'); paintCells(null); });
+      }
       col.appendChild(block);
     }
   });
+  body.addEventListener('click', jiggle);
 }
-
-// Show a floating notice whenever every day in the visible week has no teaching
 // (no available and no booked time). Centered over the visible non-teaching days.
 function renderPauseNotice(root, days) {
   if (!cachedEvents) return;
-  const wrap = root.querySelector('.calendar-body-wrap');
-  const colEls = root.querySelectorAll('.calendar-week-day');
+  const wrap = root.querySelector('.calendar-body .calendar-days-track');
+  const colEls = wrap ? wrap.querySelectorAll('.calendar-week-day') : [];
   if (!wrap || colEls.length !== days.length) return;
 
   // Clear any previously placed notices (e.g. when repositioning on resize).
@@ -1925,8 +2191,8 @@ function updateWeekNav(days) {
   const next = document.getElementById('cal-week-next');
   if (!prev || !next) return;
   // a week back or on from wherever the calendar starts now
-  prev.addEventListener('click', () => { if (dayOffset > 0) { dayOffset = Math.max(0, dayOffset - 7); renderWeek(); } });
-  next.addEventListener('click', () => { if (dayOffset < maxDayOffset()) { dayOffset = Math.min(maxDayOffset(), dayOffset + 7); renderWeek(); } });
+  prev.addEventListener('click', () => { if (dayOffset > 0) { const from = dayOffset; dayOffset = Math.max(0, dayOffset - 7); renderWeek(from); } });
+  next.addEventListener('click', () => { if (dayOffset < maxDayOffset()) { const from = dayOffset; dayOffset = Math.min(maxDayOffset(), dayOffset + 7); renderWeek(from); } });
   updateWeekNav(buildWeek(new Date(), dayOffset)); // initial label while data loads
 })();
 
