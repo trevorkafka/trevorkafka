@@ -424,6 +424,59 @@
     font-size: 12px;
     text-align: right;
   }
+  /* Row under the calendar: the slide toggle on the left, the status line on
+     the right (wrapping under each other when there isn't room). */
+  .cal-below {
+    max-width: 1000px;
+    margin: 8px auto;
+    padding: 0 16px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px 16px;
+  }
+  .cal-below .status { margin: 0 0 0 auto; padding: 0; max-width: none; }
+  .cal-anim-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--cal-muted);
+    font-size: 12px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .cal-anim-toggle input {
+    appearance: none;
+    -webkit-appearance: none;
+    position: relative;
+    flex: 0 0 auto;
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    padding: 0;   /* the site-wide input padding would inflate the box */
+    box-sizing: border-box;
+    border: 1.5px solid var(--cal-muted);
+    border-radius: 5px;
+    background: var(--cal-surface);
+    cursor: pointer;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+  }
+  .cal-anim-toggle input::after {  /* the tick, drawn as two borders of a turned box */
+    content: '';
+    position: absolute;
+    left: 4.5px;
+    top: 1.5px;
+    width: 4px;
+    height: 8px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg) scale(0);
+    transition: transform 0.15s ease;
+  }
+  .cal-anim-toggle input:checked { background: var(--cal-accent); border-color: var(--cal-accent); }
+  .cal-anim-toggle input:checked::after { transform: rotate(45deg) scale(1); }
+  .cal-anim-toggle input:focus-visible { outline: 2px solid var(--cal-accent); outline-offset: 2px; }
 
   .calendar {
     max-width: 1000px;
@@ -735,8 +788,6 @@
     line-height: 1;
     white-space: nowrap;
   }
-  .lesson-preview-start { font-weight: bold; font-size: 14px; }
-  .lesson-preview-end { opacity: 0.75; font-size: 10px; }
   /* When the block is too short or narrow for the text, the label gets its
      own teal pill that spills over the block's edges. */
   .lesson-preview.spill .lesson-preview-label {
@@ -927,7 +978,10 @@
   </div>
 </div>
 <div id="root"></div>
-<div id="status" class="status"></div>
+<div class="cal-below">
+  <label class="cal-anim-toggle"><input type="checkbox" id="cal-anim"><span>Animate week changes</span></label>
+  <div id="status" class="status"></div>
+</div>
 <div class="subtitle"><i class="fa-solid fa-clock fa-fw"></i><span class="tz-info" id="tz-info"></span></div>
 <div class="subtitle"><i class="fa-solid fa-calendar-week fa-fw"></i><span>Availability typically spans mornings, afternoons, and evenings, Sunday through Thursday (Boston time<span class="boston-offset"></span>). From December 2026 through February 2027, availability will be limited to 4:00 p.m. &ndash; 12:00 a.m. (Boston time, UTC-5 during those months). The schedule may also vary around holidays and school breaks, such as over the summer.</span></div>
 <div class="subtitle"><i class="fa-solid fa-bell fa-fw"></i><span>If there is a time on the calendar that is currently booked and you would like to be waitlisted for that time, please email me at <span class="tooltip"><a onclick="copyEmail()" onmouseout="outFunc()">tutor@trevorkafka.com</a><span class="tooltiptext">Copy to clipboard</span></span>.</span></div>
@@ -1205,7 +1259,7 @@
     updateWeekNav(days);
     const grid = classify(cachedEvents, days, currentMinRun());
     const delta = fromOffset == null ? 0 : dayOffset - fromOffset;
-    const outgoing = delta && !reduceMotion.matches ? captureWeekTracks(root) : null;
+    const outgoing = delta && slideOn ? captureWeekTracks(root) : null;
     render(root, days, grid);
     if (outgoing) slideWeek(root, outgoing, delta);
     renderMiniCal();
@@ -1223,6 +1277,25 @@
   const SLIDE_MS = 480;       // one week's slide
   const SLIDE_MAX_MS = 1000;  // the longest jump
   const SLIDE_EASE = 'cubic-bezier(0.32, 0.72, 0, 1)';
+
+  // The checkbox under the calendar turns the slide on or off. The choice is
+  // remembered on this browser; until one is made it follows the system's
+  // reduced-motion setting.
+  const SLIDE_PREF_KEY = 'availability-slide';
+  let slideOn = !reduceMotion.matches;
+  try {
+    const pref = localStorage.getItem(SLIDE_PREF_KEY);
+    if (pref === 'on' || pref === 'off') slideOn = pref === 'on';
+  } catch (e) {}
+  (function setupSlideToggle() {
+    const box = document.getElementById('cal-anim');
+    if (!box) return;
+    box.checked = slideOn;
+    box.addEventListener('change', () => {
+      slideOn = box.checked;
+      try { localStorage.setItem(SLIDE_PREF_KEY, slideOn ? 'on' : 'off'); } catch (e) {}
+    });
+  })();
 
   function captureWeekTracks(root) {
     return Array.from(root.querySelectorAll('.calendar-days'), clip => {
@@ -1583,17 +1656,16 @@
         }
       }
     }
-    // Start: round the earliest slot DOWN to the hour; if it's exactly on the
-    // hour, drop a full hour. End: round the end of the latest slot UP to the
-    // hour; if it's exactly on the hour, add a full hour. Clamp to [0,24] so an
-    // exact-hour boundary can never push the range before or past midnight.
+    // Start: round the earliest slot DOWN to the hour (a slot on the hour starts
+    // the grid). End: round the end of the latest slot UP to the hour; if it's
+    // exactly on the hour, add a full hour, clamped so it never passes midnight.
     // While loading / with nothing to show, default to 5am–midnight.
     let startHour, endHour;
     if (loading || latest < 0) {
       startHour = 5;
       endHour = 24;
     } else {
-      startHour = Math.max(0, Math.floor(earliest / 4) - (earliest % 4 === 0 ? 1 : 0));
+      startHour = Math.floor(earliest / 4);
       const endBoundary = latest + 1; // slots from midnight to the end of the last slot
       endHour = Math.min(24, Math.ceil(endBoundary / 4) + (endBoundary % 4 === 0 ? 1 : 0));
     }
@@ -1875,17 +1947,18 @@ function attachHover(root, grid, startSlot) {
           shownStart = start;
           label._minutes = minutes;
           const s = (runStart + start) * 15;
-          // Start in bold, end dimmed, dropping the end's AM/PM when it matches.
+          // Start and end in the same plain style; a shared AM/PM is shown once, at the end.
           const startParts = timeParts(s), endParts = timeParts(s + minutes);
           const period = ps => (ps.find(x => x.type === 'dayPeriod') || {}).value;
           const samePeriod = period(startParts) && period(startParts) === period(endParts);
-          const endText = (samePeriod
-            ? endParts.filter(x => x.type === 'hour' || x.type === 'minute' || (x.type === 'literal' && x.value === ':'))
-            : endParts).map(x => x.value).join('');
+          const startText = (samePeriod
+            ? startParts.filter(x => x.type === 'hour' || x.type === 'minute' || (x.type === 'literal' && x.value === ':'))
+            : startParts).map(x => x.value).join('');
+          const endText = endParts.map(x => x.value).join('');
           label.innerHTML = '';
           const strong = document.createElement('span');
           strong.className = 'lesson-preview-start';
-          strong.textContent = startParts.map(x => x.value).join('');
+          strong.textContent = startText;
           const end = document.createElement('span');
           end.className = 'lesson-preview-end';
           end.textContent = ' – ' + endText;
