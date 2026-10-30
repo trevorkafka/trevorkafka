@@ -492,6 +492,22 @@
 		opacity: 0.7;
 	}
 
+	/* wide MathJax display equations scroll sideways (drag or trackpad) instead of spilling off the page */
+	mjx-container[display="true"] {
+		max-width: 100%;
+		min-width: 0 !important; /* numbered equations get an inline min-width from MathJax */
+		overflow-x: auto;
+		overflow-y: hidden;
+		padding: 2px 0; /* room so overflow-y doesn't clip braces and boxes */
+	}
+
+	/* an overflowing equation stretched to the full window width by script.js */
+	mjx-container[display="true"].eq-bleed {
+		max-width: none;
+		padding: 2px 16px;
+		box-sizing: border-box;
+	}
+
 	/* list item flashed twice after clicking an <a class="ref"> to it (see script.js) */
 	@keyframes ref-flash {
 		0%, 50%, 100% { background-color: transparent; box-shadow: 0 0 0 0 transparent; }

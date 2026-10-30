@@ -444,3 +444,29 @@ document.querySelectorAll('a.ref[href^="#"]').forEach(function(a) {
     });
     li.addEventListener('animationend', function() { li.classList.remove('ref-flash'); });
 });
+
+//
+// SECTION 4: FULL-WIDTH SCROLLING FOR WIDE EQUATIONS
+//
+// A display equation wider than the text column (see style.css) is stretched
+// edge to edge of the window, so its sideways scroll gets the whole screen.
+(function wideEquations() {
+    function fit() {
+        var vw = document.documentElement.clientWidth;
+        document.querySelectorAll('mjx-container[display="true"]').forEach(function(c) {
+            c.classList.remove('eq-bleed');
+            c.style.marginLeft = c.style.marginRight = '';
+            if (c.scrollWidth <= c.clientWidth + 1) return;
+            var r = c.getBoundingClientRect();
+            c.classList.add('eq-bleed');
+            c.style.marginLeft = -r.left + 'px';
+            c.style.marginRight = -(vw - r.right) + 'px';
+        });
+    }
+    var timer;
+    window.addEventListener('resize', function() { clearTimeout(timer); timer = setTimeout(fit, 150); });
+    document.addEventListener('toggle', fit, true); // equations inside a <details> only have a width once it opens
+    window.addEventListener('load', function() {
+        if (window.MathJax && MathJax.startup && MathJax.startup.promise) MathJax.startup.promise.then(fit);
+    });
+})();
