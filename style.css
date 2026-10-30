@@ -67,6 +67,25 @@
 		transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 	}
 
+	/* Floating light/dark toggle (pages without the nav; see script.js): the
+	   icon spins and the sun/moon glyphs cross-fade, matching the nav toggle. */
+	#theme-toggle-float .tt-icon {
+		display: inline-grid;
+		transition: transform 0.4s ease;
+	}
+	#theme-toggle-float .tt-glyph {
+		grid-area: 1 / 1;
+		transition: opacity 0.35s ease, color 0.2s ease;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		#theme-toggle-float .tt-icon,
+		#theme-toggle-float .tt-glyph { transition: none; }
+	}
+
+	/* Set briefly by script.js when a <details> opens, so its content takes the
+	   current theme's colors instantly instead of fading in from stale ones. */
+	details.theme-snap * { transition: none !important; }
+
 	/* Keep the content above the footer at least a viewport tall (wrapper added
 	   by script.js) so the footer sits below the fold on short pages. */
 	#above-footer {

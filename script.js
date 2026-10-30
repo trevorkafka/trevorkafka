@@ -29,28 +29,71 @@
         btn.type = 'button';
         btn.setAttribute('aria-label', 'Toggle dark mode');
         btn.style.cssText = 'position:fixed;top:14px;right:14px;z-index:1000;width:42px;height:42px;border-radius:50%;border:1px solid var(--surface-border);background:var(--color3);color:var(--color1);cursor:pointer;box-shadow:1px 1px 10px var(--shadow);font-size:18px;display:flex;align-items:center;justify-content:center;padding:0;margin:0;';
-        function updateIcon() {
-            btn.innerHTML = effective() === 'dark'
-                ? '<i class="fa-solid fa-sun"></i>'
-                : '<i class="fa-solid fa-moon"></i>';
+        // Same spin + cross-fade as the nav toggle (snippets/navigation.html):
+        // two glyphs stack in .tt-icon, which rotates 180° per click.
+        var host = document.createElement('span');
+        host.className = 'tt-icon';
+        btn.appendChild(host);
+        function glyph(dark) {
+            return '<i class="fa-solid ' + (dark ? 'fa-sun' : 'fa-moon') + ' fa-fw"></i>';
         }
+        function updateIcon() {
+            var g = host.querySelector('.tt-glyph');
+            if (!g) { g = document.createElement('span'); g.className = 'tt-glyph'; host.appendChild(g); }
+            g.innerHTML = glyph(effective() === 'dark');
+        }
+        var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        // Moon (light mode) rests upright at even multiples of 180°.
+        var rot = effective() === 'dark' ? 180 : 0;
         btn.addEventListener('click', function () {
             var next = effective() === 'dark' ? 'light' : 'dark';
             root.setAttribute('data-theme', next);
             try { localStorage.setItem('theme', next); } catch (e) {}
-            updateIcon();
+            if (reduceMotion) { updateIcon(); return; }
+            rot += 180;
+            host.style.transform = 'rotate(' + rot + 'deg)';
+            var old = host.querySelector('.tt-glyph');
+            var g = document.createElement('span');
+            g.className = 'tt-glyph';
+            g.style.opacity = '0';
+            g.innerHTML = glyph(next === 'dark');
+            host.appendChild(g);
+            void g.offsetWidth;   // reflow so the opacity transition runs
+            g.style.opacity = '1';
+            if (old) old.style.opacity = '0';
+            setTimeout(function () { if (old && old.parentNode) old.parentNode.removeChild(old); }, 400);
         });
         mq.addEventListener('change', function () {
             if (!root.getAttribute('data-theme')) updateIcon();
         });
         document.body.appendChild(btn);
         updateIcon();
+        // Set the initial rotation without animating.
+        if (!reduceMotion && rot) {
+            host.style.transition = 'none';
+            host.style.transform = 'rotate(' + rot + 'deg)';
+            void host.offsetWidth;
+            host.style.transition = '';
+        }
     }
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', addFloatingToggle);
     } else {
         addFloatingToggle();
     }
+})();
+
+// Closed <details> content doesn't get restyled when the theme flips, so on
+// first open its text (notably MathJax equations) would cross-fade from the old
+// theme's colors. Turn transitions off for that one open so colors snap.
+(function snapColorsOnDetailsOpen() {
+    document.addEventListener('click', function (e) {
+        var s = e.target.closest && e.target.closest('summary');
+        var d = s && s.parentElement;
+        if (!d || d.tagName !== 'DETAILS' || d.open) return;
+        d.classList.add('theme-snap');
+        setTimeout(function () { d.classList.remove('theme-snap'); }, 100);
+    }, true);
 })();
 
 //
