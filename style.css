@@ -484,6 +484,28 @@
 		background-color: var(--tint-4);
 	}
 
+	/* small line under a title button's label, e.g. an article's date */
+	span.titlebutton .subtext {
+		display: block;
+		margin-top: 4px;
+		font-size: 0.75em;
+		opacity: 0.7;
+	}
+
+	/* list item flashed twice after clicking an <a class="ref"> to it (see script.js) */
+	@keyframes ref-flash {
+		0%, 50%, 100% { background-color: transparent; box-shadow: 0 0 0 0 transparent; }
+		25%, 75% {
+			background-color: color-mix(in srgb, var(--color2) 40%, transparent);
+			box-shadow: 0 0 0 4px color-mix(in srgb, var(--color2) 40%, transparent);
+		}
+	}
+
+	li.ref-flash {
+		animation: ref-flash 1.6s ease-in-out;
+		border-radius: 4px;
+	}
+
 /* */
 /* TABLES */
 /* */

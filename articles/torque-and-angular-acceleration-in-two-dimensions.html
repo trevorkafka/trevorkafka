@@ -1,0 +1,272 @@
+<head lang="en-US">
+<!-- Apply saved light/dark choice before paint (avoids a flash when the device default differs from the toggle) -->
+<script>
+try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}
+try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElement.classList.add('ann-collapsed');}catch(e){}
+(function(){var d=document.documentElement;d.classList.add('fonts-loading');var done=false;function fin(){if(done)return;done=true;d.classList.remove('fonts-loading');}setTimeout(fin,500);try{if(document.fonts&&document.fonts.load){Promise.all([document.fonts.load('1em Freeman'),document.fonts.load('1em "Great Vibes"')]).then(fin,fin);}else{fin();}}catch(e){fin();}})();
+</script>
+	<title>Torque and Angular Acceleration in Two Dimensions - Trevor Kafka</title>
+	<meta name="description" content="Torque and angular acceleration of a freely moving rigid body in two dimensions.">
+
+	<meta charset="utf-8"> <!--ensures that there aren't any issues with the display of emojis -->
+	<meta name="viewport" content="width=device-width"> <!-- essential for making sure that the ACTUAL screen width is interpreted by the CSS as opposed to some idealized number presented by smartphones (980px+) -->
+
+	<link rel="preload" href="/fonts/freeman-latin.woff2" as="font" type="font/woff2" crossorigin>
+	<link rel="preload" href="/fonts/greatvibes-latin.woff2" as="font" type="font/woff2" crossorigin>
+	<link rel="stylesheet" href="/style.css">
+	<link rel="shortcut icon" href="/favicon.ico">
+
+	<!-- Google font stuff -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> <!-- use JQuery -->
+	<script src="https://kit.fontawesome.com/157b2a3980.js" crossorigin="anonymous"></script> <!-- Font Awesome icons (theme toggle, back button) -->
+	<script type="text/javascript" src="/script.js" defer></script> <!-- defer means to wait to run the script until the whole page is ready -->
+
+	<!-- Masonry -->
+	<script src="https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.js"></script> <!-- use Masonry JS from https://masonry.desandro.com/ -->
+
+    <script type="text/javascript">
+    	// MathJax Configuration
+        window.MathJax = {
+        	loader: {load: ['[tex]/cancel']},
+            tex: {
+            	inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                packages: {'[+]': ['cancel']},
+                tags: 'ams'  // Enables equation numbering
+            }
+        };
+
+        // LANGUAGE SPECIFICATION FOR HYPHENATION
+		// sets lang="en-US" for all <p> tags so that hyphens: auto in the CSS will hyphenate words for line breaks
+
+		document.addEventListener('DOMContentLoaded', () => {
+		    document.querySelectorAll('p').forEach(p => p.setAttribute('lang', 'en-US'));
+		});
+    </script>
+	<script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script> <!-- use MathJax -->
+</head>
+
+<style type="text/css">
+	p{
+		text-align: justify;
+		hyphens: auto;
+	}
+		
+	summary {
+		font-style: italic;
+	}
+
+	details[open] summary {
+		padding-bottom: 1em;
+	}
+
+	details[open] {
+		border-color: var(--color1);
+		border-left-style: solid;
+		padding-left: 10px;
+	}
+
+	details {
+		margin-bottom: 1em;
+	}
+
+	/* the page ends on a display equation rather than a <p>, so add the missing bottom space (matches the other articles) */
+	.content {
+		padding-bottom: 1.25em;
+	}
+
+	/* thin rounded box around the baseline assumptions list */
+	.assumptions {
+		border-radius: 20px; /* border and shadow come from the shared .glow-shadow card style */
+		padding: 1.25em 1.5em;
+		margin: 1em 0;
+	}
+
+	/* even spacing inside the box, whatever element comes first or last */
+	.assumptions > :first-child {
+		margin-top: 0;
+	}
+
+	.assumptions > :last-child {
+		margin-bottom: 0;
+	}
+
+	/* diagram with MathJax labels laid over an SVG; label left/top are % of the SVG */
+	.diagram {
+		position: relative;
+		width: min(100%, 300px);
+		margin: 1em auto;
+		container-type: inline-size; /* lets labels size with the diagram (cqw) */
+	}
+
+	.diagram svg {
+		display: block;
+		width: 100%;
+	}
+
+	.diagram-label {
+		position: absolute;
+		transform: translate(-50%, -50%);
+		white-space: nowrap;
+		font-size: 4cqw; /* 12px at full size, scaling with the drawing */
+	}
+</style>
+
+<body>
+
+	<div class="content">
+
+		<a href="/articles"><span class="titlebutton" style="margin-top:50px"><i class="fa-solid fa-arrow-left"></i> Articles</span></a>
+
+		<h1 style="margin-top: 20px">Torque and Angular Acceleration in Two Dimensions</h1>
+
+		<div style="float:right; margin-left: 50px; margin-bottom: 20px">
+			<img src="/media/TK indonesia.png" alt="Trevor Kafka headshot in Indonesia" style="width: min(40vw, 225px); border-radius:100%">
+			<p><em><center>
+				Article written by <a href="/" target="_blank">Trevor Kafka</a><br>
+				October 2026 <br>
+				<trevorkafka-email></trevorkafka-email>
+			</center></em></p>
+		</div>
+
+		<p>The diagram below shows a freely moving rigid body of arbitrary shape with total mass $M$, angular velocity $\boldsymbol \omega$, and angular acceleration $\boldsymbol \alpha$. In it, $p$ is an arbitrary point about which torques are measured; it need not be fixed and may move in any way, even accelerating. Meanwhile, $q$ is the point of the body that coincides with $p$ at the instant considered. The two occupy the same location at that instant, but $q$ moves with the body while $p$ moves independently of it. The body is made up of particles labeled by $i$, each with mass $m_i$, and $\mathrm{cm}$ marks the body's center of mass (see definition <a class="ref" href="#ax-com"></a>). With $\mathbf r_i$, $\mathbf r_q$, and $\mathbf r_\text{cm}$ denoting the positions of particle $i$, point $q$, and the center of mass, the vectors $\mathbf r_i' = \mathbf r_i - \mathbf r_q$ and $\mathbf r_\text{cm}' = \mathbf r_\text{cm} - \mathbf r_q$ give the positions of particle $i$ and of the center of mass relative to $q$. Since $q$ and $p$ coincide at the instant considered, these are also the positions relative to $p$, so they can be used to compute torques about $p$.</p>
+
+		<!-- <p>Each particle $i$ experiences a total force $\mathbf F_i$, which splits into the internal force $\mathbf F^\text{int}_i$ exerted on it by the other particles of the body and the external force $\mathbf F^\text{ext}_i$ exerted on it by everything outside the body. The acceleration of particle $i$ is $\mathbf a_i$ and that of point $q$ is $\mathbf a_q$, both measured in an inertial reference frame. In Newton's 3rd Law (<a class="ref" href="#ax-n3"></a>), $\mathbf r$ denotes the position of an arbitrary point. Non-bold symbols such as $\omega$ and $r_i'$ denote the magnitudes of the corresponding bold vectors, and every sum $\sum_i$ runs over all particles of the body.</p> -->
+
+		<!-- 2D rigid body with its center of mass (cm), a reference point (p), a particle (i), and the vectors from p to i and cm -->
+		<div class="diagram">
+		<svg viewBox="95 20 300 240" role="img" aria-label="An arbitrary 2D body with points cm, p, and i, and the vectors from p to i and from p to cm">
+			<defs>
+				<marker id="blob-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+					<path d="M 0 0 L 10 5 L 0 10 Z" fill="currentColor"/>
+				</marker>
+			</defs>
+			<path transform="translate(80 40)" d="M 60 70 C 80 25, 140 30, 170 50 C 200 70, 215 20, 260 35 C 305 50, 300 115, 270 140 C 245 160, 255 200, 200 200 C 160 212, 130 205, 105 192 C 50 205, 20 160, 35 125 C 45 100, 45 90, 60 70 Z" fill="none" stroke="currentColor" stroke-width="2"/>
+			<g stroke="currentColor" stroke-width="1.5">
+				<line x1="171" y1="173" x2="340" y2="97" marker-end="url(#blob-arrow)"/>
+				<line x1="171" y1="177" x2="249" y2="203" marker-end="url(#blob-arrow)"/>
+			</g>
+			<g fill="currentColor">
+				<circle cx="165" cy="175" r="4"/>
+				<circle cx="255" cy="205" r="4"/>
+				<circle cx="345" cy="95" r="4"/>
+			</g>
+		</svg>
+		<span class="diagram-label" style="left: 15%; top: 64.6%">$p, q$</span>
+		<span class="diagram-label" style="left: 81%; top: 41.6%">$i,\ m_i$</span>
+		<span class="diagram-label" style="left: 60%; top: 79.2%">$\mathrm{cm}$</span>
+		<span class="diagram-label" style="left: 36.3%; top: 43.3%">$\mathbf r_i' = \mathbf r_i - \mathbf r_q$</span>
+		<span class="diagram-label" style="left: 32.3%; top: 81.6%">$\mathbf r_\text{cm}' = \mathbf r_\text{cm} - \mathbf r_q$</span>
+		<span class="diagram-label" style="left: 86.7%; top: 10.4%">$M,\ \boldsymbol \omega,\ \boldsymbol \alpha$</span>
+		</div>
+
+		<h2>Baseline Assumptions</h2>
+
+		<p>In order to derive the main results presented in this article, we must first establish a baseline set of axioms, kinematic results, and definitions. Here, $\text{int}$ and $\text{ext}$ serve to label internal and external forces and torques, respectively.</p>
+
+		<div class="assumptions glow-shadow" data-ref-box>
+
+		<h3>Axioms</h3>
+
+		<ol>
+			<li id="ax-n2">Newton's 2nd Law: $\mathbf F_i = \mathbf F^\text{int}_i + \mathbf F^\text{ext}_i = m_i \mathbf a_i$</li>
+			<li id="ax-n3">Newton's 3rd Law (Strong Form): $\forall \mathbf r : \sum_i (\mathbf r_i - \mathbf r) \times \mathbf F^\text{int}_i = 0$</li>
+		</ol>
+
+		<h3>Rigid-Body Kinematics in 2D</h3>
+
+		<ol start="3">
+			<li id="ax-accel">2D Rigid-Body Acceleration: $\mathbf a_i = \mathbf a_q + \boldsymbol \alpha \times \mathbf r_i' - \omega^2 \mathbf r_i'$</li>
+			<li id="ax-planar">2D Motion Identity: $\mathbf r_i' \times (\boldsymbol \alpha \times \mathbf r_i') = {r_i'}^2 \boldsymbol \alpha$</li>
+		</ol>
+
+		<h3>Definitions</h3>
+
+		<ol start="5">
+			<li id="ax-torque">Torque: $\boldsymbol \tau^\text{ext}_{p,i} = \mathbf r_i' \times \mathbf F^\text{ext}_i$</li>
+			<li id="ax-com">Center of Mass: $\sum_i m_i \mathbf r_i' = M \mathbf r_\text{cm}'$</li>
+			<li id="ax-inertia">Moment of Inertia About $p$: $I_p = \sum_i m_i {r_i'}^2$</li>
+		</ol>
+
+		</div>
+
+		<details>
+			<summary>Show derivation of item 3</summary>
+			<p>The angular velocity $\boldsymbol \omega$ of a rigid object is defined such that for any two points $i$ and $j$ on the object, we have
+
+			$$\frac{d}{dt} (\mathbf r_i - \mathbf r_j) = \boldsymbol \omega \times (\mathbf r_i - \mathbf r_j).$$
+
+			Hence for points $i$ and $q$ we have the following.
+
+			$$\mathbf v_i - \mathbf v_q = \boldsymbol \omega \times (\mathbf r_i - \mathbf r_q)$$
+
+			$$\mathbf v_i'= \boldsymbol \omega \times \mathbf r_i'$$
+
+			Here $\mathbf v_i' = \mathbf v_i - \mathbf v_q = \frac{d}{dt} \mathbf r_i'$ is the velocity of particle $i$ relative to $q$. Differentiate with respect to time, writing $\mathbf a_i' = \mathbf a_i - \mathbf a_q = \frac{d}{dt} \mathbf v_i'$.
+
+			$$\mathbf a_i' = \boldsymbol \alpha \times \mathbf r_i' + \boldsymbol \omega \times \mathbf v_i'$$
+
+			$$\mathbf a_i' = \boldsymbol \alpha \times \mathbf r_i' + \boldsymbol \omega \times ( \boldsymbol \omega \times \mathbf r_i' )$$
+
+			Expand the resulting vector product using the identity $\mathbf A \times (\mathbf B \times \mathbf C) = \mathbf B (\mathbf A \cdot \mathbf C) - \mathbf C (\mathbf A \cdot \mathbf B)$. The first term of the expansion vanishes since $\boldsymbol \omega \perp \mathbf r_i'$ for 2D motion.
+
+			$$\mathbf a_i' = \boldsymbol \alpha \times \mathbf r_i' + \underbrace{\boldsymbol \omega ( \boldsymbol \omega \cdot \mathbf r_i' )}_0 - \omega^2 \mathbf r_i'$$
+
+			$$\mathbf a_i' = \boldsymbol \alpha \times \mathbf r_i' - \omega^2 \mathbf r_i'$$
+
+			Substituting $\mathbf a_i' = \mathbf a_i - \mathbf a_q$ gives item <a class="ref" href="#ax-accel"></a>.
+
+			$$\mathbf a_i = \mathbf a_q + \boldsymbol \alpha \times \mathbf r_i' - \omega^2 \mathbf r_i'$$
+			</p>
+		</details>
+
+		<details>
+			<summary>Show derivation of item 4</summary>
+			<p>Expand the vector triple product using the identity $\mathbf A \times (\mathbf B \times \mathbf C) = \mathbf B (\mathbf A \cdot \mathbf C) - \mathbf C (\mathbf A \cdot \mathbf B)$.
+
+			$$\mathbf r_i' \times (\boldsymbol \alpha \times \mathbf r_i') = \boldsymbol \alpha (\mathbf r_i' \cdot \mathbf r_i') - \mathbf r_i' (\underbrace{\mathbf r_i' \cdot \boldsymbol \alpha}_{0}) = {r_i'}^2 \boldsymbol \alpha$$
+
+			The last term vanishes since $\mathbf r_i' \perp \boldsymbol \alpha$ for 2D motion.</p>
+		</details>
+
+		<h2>Derivation of the Relationship Between Torque and Angular Acceleration</h2>
+
+		<p>First, begin with the definition of torque (<a class="ref" href="#ax-torque"></a>) to compute the net external torque $\boldsymbol \tau^\text{ext}_p$ about point $p$.</p>
+
+		$$\boldsymbol \tau^\text{ext}_p = \sum_i \boldsymbol \tau^\text{ext}_{p,i} = \sum_i \mathbf r_i' \times \mathbf F^\text{ext}_i$$
+
+		<p>Substitute in Newton's 2nd Law (<a class="ref" href="#ax-n2"></a>). The second term vanishes by the strong form of Newton's 3rd Law (<a class="ref" href="#ax-n3"></a>).</p>
+
+		$$\boldsymbol \tau^\text{ext}_p = \sum_i \mathbf r_i' \times m_i \mathbf a_i - \underbrace{\sum_i \mathbf r_i' \times \mathbf F^\text{int}_i}_{0}$$
+
+
+		<p>Substitute the 2D rigid-body acceleration (<a class="ref" href="#ax-accel"></a>), resulting in three terms: a translational term, a tangential term, and a centripetal term.</p>
+
+		<ul>
+			<li>The translational term can be rewritten in terms of the center of mass by means of its definition (<a class="ref" href="#ax-com"></a>).</li>
+			<li>The tangential term simplifies by the 2D motion identity (<a class="ref" href="#ax-planar"></a>), which can furthermore be simplified by means of the definition of the moment of inertia (<a class="ref" href="#ax-inertia"></a>).</li>
+			<li>The centripetal term vanishes as a direct consequence of the nature of its cross product.</li>
+		</ul>
+		
+		$$\boldsymbol \tau^\text{ext}_p = \overbrace{\underbrace{ \sum_i m_i \mathbf r_i' }_{M \mathbf r_\text{cm}'} \times \mathbf a_q}^\text{translational term} + \overbrace{\underbrace{\sum_i m_i \underbrace{\mathbf r_i' \times (\boldsymbol \alpha \times \mathbf r_i')}_{{r_i'}^2 \boldsymbol \alpha}}_{I_p \boldsymbol \alpha}}^\text{tangential term} - \overbrace{\omega^2 \sum_i m_i \underbrace{\mathbf r_i' \times \mathbf r_i'}_0}^\text{centripetal term}$$
+
+		$$\boxed{\boldsymbol \tau^\text{ext}_p = M \mathbf r_\text{cm}' \times \mathbf a_q + I_p \boldsymbol \alpha}$$
+
+		<h2>When Does the High School Formula $\boldsymbol \tau^\text{ext}_p = I_p \boldsymbol \alpha$ Hold?</h2>
+
+		<p>Based on the final result of the previous section, the high school formula $\boldsymbol \tau^\text{ext}_p = I_p \boldsymbol \alpha$ holds only when $M \mathbf r_\text{cm}' \times \mathbf a_q$ vanishes, which occurs when $\mathbf r_\text{cm}' = 0$, $\mathbf a_q=0$, or $\mathbf r_\text{cm}' \parallel \mathbf a_q$. In words, these three conditions are as follows.</p>
+
+		<div class="assumptions glow-shadow">
+
+		<p><strong>Theorem.</strong> For a rigid object moving in two dimensions, $\boldsymbol \tau^\text{ext}_p = I_p \boldsymbol \alpha$ if and only if any one of the following conditions is satisfied.</p>
+		<ol>
+			<li>Point $p$ is the center of mass of the object.</li>
+			<li>The velocity of the point of the body that coincides with point $p$ is constant.</li>
+			<li>The nonzero acceleration of the point of the body that coincides with point $p$ points either directly towards or away from the center of mass of the object.</li>
+		</ol>
+
+		</div>
+
+	</div>
+
+</body>

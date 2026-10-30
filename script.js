@@ -409,3 +409,38 @@ $(document).ready(function() {
  function resizeIframe(iframe) {
             iframe.style.height = iframe.contentWindow.document.body.scrollHeight + 'px';
         }
+
+//
+// SECTION 3: LIST ITEM REFERENCES
+//
+// <a class="ref" href="#some-id"></a> is filled in with the number of the
+// <li id="some-id"> it points to, so references renumber if the list changes.
+document.querySelectorAll('a.ref[href^="#"]').forEach(function(a) {
+    var li = document.getElementById(a.getAttribute('href').slice(1));
+    if (!li || li.tagName !== 'LI' || !li.parentElement) return;
+    var start = parseInt(li.parentElement.getAttribute('start'), 10);
+    var index = Array.prototype.indexOf.call(li.parentElement.children, li);
+    a.textContent = (isNaN(start) ? 1 : start) + index;
+
+    // Clicking scrolls to the enclosing [data-ref-box] (or the item itself),
+    // then flashes the item twice once the scroll has settled.
+    a.addEventListener('click', function(e) {
+        e.preventDefault();
+        var target = li.closest('[data-ref-box]') || li;
+        var r = target.getBoundingClientRect();
+        var inView = r.top >= 0 && r.bottom <= window.innerHeight;
+        var done = false;
+        function flash() {
+            if (done) return;
+            done = true;
+            li.classList.remove('ref-flash');
+            void li.offsetWidth; // restart the animation if it's already running
+            li.classList.add('ref-flash');
+        }
+        if (inView) return flash();
+        window.addEventListener('scrollend', flash, { once: true });
+        setTimeout(flash, 1000); // browsers without scrollend
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+    li.addEventListener('animationend', function() { li.classList.remove('ref-flash'); });
+});
