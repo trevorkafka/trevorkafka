@@ -1,4 +1,16 @@
 [
+	{"date": "2026-11-02",
+	"vocabulary": [
+		{"word": "degrees Celsius", "IPA": "/dɪˈɡriz ˈsɛl.si.əs/", "translation": "摄氏度"},
+		{"word": "degrees Fahrenheit", "IPA": "/dɪˈɡriz ˈfɛ.rənˌhaɪt/", "translation": "华氏度"},
+		{"word": "vegetable", "IPA": "/ˈvɛdʒ.tə.bəl/", "translation": "蔬菜"},
+		{"word": "usually", "IPA": "/ˈju.ʒə.wə.li/", "translation": "通常"},
+		{"word": "grass", "IPA": "/ɡræs/", "translation": "草（不可数名词）"},
+		{"word": "lawn", "IPA": "/lɑn/", "translation": "草坪（可数名词）"},
+		{"word": "length", "IPA": "/lɛŋkθ/", "translation": "长度"},
+		{"word": "sandal", "IPA": "/ˈsæn.dəl/", "translation": "凉鞋"},
+		{"word": "sneaker", "IPA": "/ˈsni.kər/", "translation": "运动鞋"}
+	]},
 	{"date": "2026-08-31",
 	"vocabulary": [
 		{"word": "percent", "IPA": "/pərˈsɛnt/", "translation": "百分之...；百分比"},
