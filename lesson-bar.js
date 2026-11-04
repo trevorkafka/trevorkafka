@@ -71,7 +71,7 @@
 		+ 'html.lb-early body .navbar { top: calc(20px + var(--lb-h)); }'
 		+ 'html.lb-early body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: var(--lb-h); background: #3C303E; z-index: 109; }'
 		// the sign-in box on login.html
-		+ '#next-lesson-box { margin: 0 0 1em; padding: 16px 20px; border: 1.5px solid var(--surface-border); border-radius: 20px; background: var(--color3); line-height: 1.45; box-shadow: 1px 1px 10px var(--tint-4, #00000020); }'
+		+ '#next-lesson-box { scroll-margin-top: 140px; margin: 0 0 1em; padding: 16px 20px; border: 1.5px solid var(--surface-border); border-radius: 20px; background: var(--color3); line-height: 1.45; box-shadow: 1px 1px 10px var(--tint-4, #00000020); }'
 		+ ':root[data-theme="dark"] #next-lesson-box { box-shadow: none; }'
 		+ '@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) #next-lesson-box { box-shadow: none; } }'
 		+ '#next-lesson-box h3 { margin: 0 0 6px; font-size: 1.1em; }'
@@ -385,7 +385,7 @@
 			var who = state.data && state.data.email;
 			html += '<div class="ls-acct">' + (who ? '<span class="ls-who"><strong>' + esc(who) + '</strong><span class="ls-on"><i class="fa-solid fa-check"></i>enabled</span></span>' : '<span>Signed in.</span>')
 				+ '<button type="button" class="ls-link" data-ls="signout">Sign out</button></div>'
-				+ '<p>A Zoom link will appear in the bar at the top of the screen 30 minutes before your lesson starts.</p>';
+				+ '<p>You can now see your upcoming lessons at the top of the screen. A Zoom link will appear there 30 minutes before your lesson starts.</p>';
 		} else {
 			html += '<p>Show your next lesson at the top of the main pages on trevorkafka.com, even without being logged into the student portal.</p>'
 				+ (open ? '' : '<p><button type="button" class="ls-link ls-go" data-ls="toggle" aria-expanded="false" aria-controls="ls-more">Let’s do it! <i class="fa-solid fa-chevron-down"></i></button></p>')
@@ -438,6 +438,23 @@
 		}
 	});
 
+	// the announcement links to the box: the portal login loads after the first
+	// jump and pushes it down, so hold it in view until the visitor takes over
+	function pinBox() {
+		var el = document.getElementById('next-lesson-box'), ticks = 0;
+		if (!el || location.hash !== '#next-lesson-box') return;
+		var ends = ['wheel', 'touchmove', 'keydown', 'pointerdown'];
+		function stop() {
+			clearInterval(pin);
+			ends.forEach(function (ev) { removeEventListener(ev, stop); });
+		}
+		var pin = setInterval(function () {
+			el.scrollIntoView({ block: 'start' });
+			if (++ticks >= 40) stop();
+		}, 200);
+		ends.forEach(function (ev) { addEventListener(ev, stop, { passive: true }); });
+	}
+
 	// ---------- start ----------
 	function start() {
 		var code = params.get('signin');
@@ -474,6 +491,7 @@
 		document.addEventListener('visibilitychange', back);
 		['focus', 'pageshow', 'online'].forEach(function (ev) { addEventListener(ev, back); });
 		setInterval(function () { if (token() || preview) refresh(); }, REFRESH_MS);
+		pinBox();
 	}
 	if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
 	else start();

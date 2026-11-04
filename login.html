@@ -75,6 +75,11 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			.login-links .button { display: inline-block; }
 			.login-links .button div { margin: 6px; }
 
+			/* no heading follows the announcement here, so its negative margins
+			   would pull the links up under it */
+			#announcement-box { margin-bottom: 20px !important; }
+			#announcement-pill-wrap { margin-bottom: 0; }
+
 			/* One 500px column; from 960px wide the sign-in box and notes sit to
 			   the right of the TutorBird login */
 			.login-wrap { max-width: 500px; margin: 0 auto 1em; }
