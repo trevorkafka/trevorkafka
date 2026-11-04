@@ -20,6 +20,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 	<!-- Google font stuff -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> <!-- use JQuery -->
 	<script type="text/javascript" src="script.js" defer></script> <!-- defer means to wait to run the script until the whole page is ready -->
+	<script src="/lesson-bar.js"></script> <!-- next-lesson bar for signed-in students -->
 
 	<!-- Font Awesome loaded directly so the calendar's icons are ready immediately (the nav also loads it, but asynchronously) -->
 	<script src="https://kit.fontawesome.com/157b2a3980.js" crossorigin="anonymous"></script>
@@ -34,7 +35,6 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 	<trevorkafka-announcement></trevorkafka-announcement>
 	<h1 id="availability" style="font-size: clamp(28px, 9vw, 40px)"><i class="fa-solid fa-calendar-days" style="margin-right: 0.35em"></i><span class="widescreen">Trevor Kafka's <span class="cal-horizon-days">90</span>-Day Availability</span><span class="narrowscreen">Trevor's Availability</span></h1>
 	<p style="margin-top: 0">I am providing this page as a way to allow browsing of my availability in a format that is a bit easier to work with than what is offered by my scheduling software. Feel free to browse my next <span class="cal-horizon-days">90</span> days of availablitly below to find a slot that works before you <a href="login.html">login</a> and book online.</p>
-	<div class="tk-table-frame waitlist-note"><i class="fa-solid fa-hourglass-half"></i><p>Don’t see a time that works for you? Email me at <trevorkafka-email></trevorkafka-email> to ask to be waitlisted for your preferred day and time, and I’ll let you know if it opens up.</p></div>
 </div>
 
 <div class="full-width-media" style="margin: 0 auto; padding-bottom: 40px">

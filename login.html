@@ -23,6 +23,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 	<!-- Google font stuff -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> <!-- use JQuery -->
 	<script type="text/javascript" src="script.js" defer></script> <!-- defer means to wait to run the script until the whole page is ready -->
+	<script src="/lesson-bar.js"></script> <!-- next-lesson bar for signed-in students -->
 
 </head>
 
@@ -74,6 +75,16 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			.login-links .button { display: inline-block; }
 			.login-links .button div { margin: 6px; }
 
+			/* One 500px column; from 960px wide the sign-in box and notes sit to
+			   the right of the TutorBird login */
+			.login-wrap { max-width: 500px; margin: 0 auto 1em; }
+			.login-side { margin-top: 20px; }
+			@media (min-width: 960px) {
+				.login-wrap { max-width: 880px; }
+				.login-cols { display: grid; grid-template-columns: 500px minmax(0, 1fr); gap: 28px; align-items: start; }
+				.login-side { margin-top: 0; }
+			}
+
 			.login-notes {
 				list-style: none;
 				padding: 0;
@@ -99,7 +110,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			<strong>New as of Summer 2025:</strong> to schedule lessons, first login and then click <strong>"Find and Book"</strong> at the top of the calendar to view available dates and times. Click on any day on the calendar with availability to schedule your lesson. Lessons can now be scheduled in 15-minute increments.
 		</div> -->
 
-		<div style="max-width: 500px; margin: 0 auto 1em;">
+		<div class="login-wrap">
 			<div class="login-links">
 				<a href="availability.html" class="button subtle">
 					<div align="center"><i class="fa-solid fa-calendar-days"></i> Preview my 90-day availability</div>
@@ -109,6 +120,8 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 				</a>
 			</div>
 
+			<div class="login-cols">
+			<div class="login-main">
 			<div class="tk-table-frame" style="border: solid 1.5px var(--surface-border); border-radius: 20px; overflow: hidden;">
 			<div class="invert-in-dark" style="background-color: white; border-radius: 20px; padding: 20px; position: relative; min-height: 120px;">
 				<div id="login-widget-spinner" class="widget-spinner"></div>
@@ -134,11 +147,16 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 					}, 150);
 				})();
 			</script>
+			</div>
+			<div class="login-side">
+			<div id="next-lesson-box"></div>
 			<ul class="login-notes">
 				<li><i class="fa-solid fa-user-plus"></i><span>Accounts are automatically created when registering for a <a href="call.html">free intro call</a>.</span></li>
 				<li><i class="fa-solid fa-envelope"></i><span>To change your lesson length or set up weekly-recurring lessons, email <trevorkafka-email></trevorkafka-email>.</span></li>
 				<li><i class="fa-solid fa-hourglass-half"></i><span>Don’t see a time that works for you? Email me at <trevorkafka-email></trevorkafka-email> to ask to be waitlisted for your preferred day and time, and I’ll let you know if it opens up.</span></li>
 			</ul>
+			</div>
+			</div>
 		</div>
 
 		<div style="padding-bottom: 20px"></div>
