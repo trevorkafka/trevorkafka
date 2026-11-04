@@ -7,13 +7,13 @@
   font-family:inherit; font-size:1.05em; line-height:2.2;
 }
 .schip2-text{padding:0 1px;}
-.schip2-chip{display:inline-flex;align-items:center;padding:4px 10px;margin:6px 2px;font-size:0.95em;white-space:nowrap;}
+.schip2-chip{display:inline-flex;align-items:baseline;padding:4px 10px;margin:6px 2px;font-size:0.95em;white-space:nowrap;}
 .schip2-round { border-radius:999px;      background:var(--schip2-a-bg); color:var(--schip2-a); border:1px solid var(--schip2-a); }
 .schip2-square{ border-radius:3px;        background:var(--schip2-b-bg); color:var(--schip2-b); border:1px solid var(--schip2-b); }
 .schip2-slant { border-radius:3px 14px 3px 14px; background:var(--schip2-c-bg); color:var(--schip2-c); border:1px solid var(--schip2-c);}
 .schip2-brace { border-radius:14px 3px 14px 3px; background:var(--schip2-d-bg); color:var(--schip2-d); border:1px solid var(--schip2-d); }
 .schip2-split{padding:0;overflow:hidden;white-space:normal;}
-.schip2-split .schip2-part{padding:4px 10px;display:inline-flex;align-items:center;}
+.schip2-split .schip2-part{padding:4px 10px;display:inline-flex;align-items:baseline;}
 .schip2-divider{width:1.5px;align-self:stretch;background:currentColor;opacity:0.5;}
 .schip2-error{font-style:italic;color:var(--schip2-b);}
 
@@ -22,10 +22,16 @@
 .schip2-dragging{opacity:0.4;}
 
 .schip2-shell{position:relative;}
-.schip2-connectors{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;color:var(--schip2-a);}
+.schip2-connectors{position:absolute;z-index:1;top:0;left:0;width:100%;height:100%;pointer-events:none;overflow:visible;color:var(--schip2-a);}
 .schip2-output{position:relative;}
 
-.schip2-haslinks .schip2-chip{margin-top:22px;margin-bottom:22px;}
+.schip2-haslinks > .schip2-chip{margin-top:22px;margin-bottom:22px;}
+
+/* ^{label}: a small label above the chip */
+.schip2-chip.schip2-labelled{position:relative;margin-top:1.45em;}
+.schip2-split.schip2-labelled{overflow:visible;}
+.schip2-label{position:absolute;z-index:2;padding:0 3px;border-radius:3px;bottom:100%;left:50%;transform:translateX(-50%);margin-bottom:2px;
+  font-size:0.78em;line-height:1.3;white-space:nowrap;color:inherit;pointer-events:none;}
 
 /* trevorkafka.com: the label halo matches the page, and in dark mode the chips are the same
    four hues, lightened for the text and deepened (mixed into the page colour) for the fill */
