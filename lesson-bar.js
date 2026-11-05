@@ -7,6 +7,14 @@
 // The sign-in box goes wherever the page has <div id="next-lesson-box"></div>
 // (login.html). The backend is the "Student sign-in" Apps Script web app.
 //
+// Signed in, a "Contact me" tab sits on the right edge of the same pages. Its
+// phone number comes only from the signed-in answer, scrambled, and is drawn
+// as a picture, so it's never text in the site's files or the page.
+//
+// Signed in, the availability calendar (snippets/availability.html, on the home
+// page and availability.html) also shows the family's own lessons, like the
+// portal draft does: blocks over the week, a dot on the mini calendar's days.
+//
 // Previews without signing in: ?lessonbar=sample | soon | live | family | today | none | loading | stale
 (function () {
 	var API = 'https://script.google.com/macros/s/AKfycbz0z19vvsQdhKimWMDE9T2rO-bX88sMF_DhYBMal9B7enM4x6WSHoNzjacXZPrml7X3/exec';   // the Apps Script web app's /exec URL; empty: only ?lessonbar previews work
@@ -24,7 +32,7 @@
 	};
 	var params = new URLSearchParams(location.search);
 	var preview = params.get('lessonbar');
-	var state = { data: null, at: 0, failed: false, busy: false, manualAt: 0 };   // data: { email, students, next: {start, end, student} | null, zoom }
+	var state = { data: null, at: 0, failed: false, busy: false, manualAt: 0 };   // data: { email, students, next: {start, end, student} | null, lessons: [{start, end, student}], zoom }
 
 	// ---------- styles ----------
 	var css = ''
@@ -95,6 +103,8 @@
 		+ '#next-lesson-box.ls-shut { cursor: pointer; }'
 		+ '#next-lesson-box .ls-go { margin: 0; color: var(--defaultlink); }'
 		+ '#next-lesson-box .ls-go i { min-width: 0; font-size: 0.75em; }'
+		+ '#next-lesson-box #ls-bonus { margin: 4px 0 0; padding-left: 20px; }'
+		+ '#next-lesson-box #ls-bonus li { margin: 3px 0; font-size: 14px; line-height: 21px; }'
 		+ '#next-lesson-box .ls-opening { animation: ls-open 0.2s ease-out; }'
 		+ '@keyframes ls-open { from { opacity: 0; transform: translateY(-6px); } }'
 		+ '#next-lesson-box .ls-who { display: inline-flex; align-items: center; gap: 5px; max-width: 100%; font-size: 13px; box-sizing: border-box; padding: 3px 4px 3px 9px; border: 1px solid var(--tint-3); border-radius: 999px; background: var(--tint-1); overflow-wrap: anywhere; }'
@@ -103,7 +113,60 @@
 		+ '#next-lesson-box .ls-warn { font-size: 0.85em; font-weight: bold; color: #b02a1e; }'
 		+ ':root[data-theme="dark"] #next-lesson-box .ls-warn { color: #ff9a8c; }'
 		+ '@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) #next-lesson-box .ls-warn { color: #ff9a8c; } }'
-		+ '#next-lesson-box .ls-diagram { display: block; width: 100%; max-width: 280px; height: auto; margin: 10px auto; }';
+		// the family's lessons on the availability calendar (as on the portal draft)
+		+ '.lb-mine { position: absolute; left: 1px; right: 0; z-index: 3; display: flex; align-items: center; padding: 0; overflow: hidden; pointer-events: none;'
+		+ ' background: var(--button-bg); color: var(--button-text); font-size: 10px; line-height: 1.2; white-space: nowrap; text-align: center; }'
+		+ '.lb-mine > span { flex: 1 1 auto; min-width: 0; overflow: hidden; padding: 0 1px; align-self: stretch; display: flex; align-items: center; justify-content: center; }'
+		+ '.lb-mine > span:first-child { flex: 0 0 66%; }'
+		+ '.lb-mine > span:only-child { flex: 1 1 auto; }'
+		+ '@media (min-width: 900px) { .lb-mine > span:first-child { flex-basis: 56%; } }'
+		+ '.lb-mine > .lb-mine-len { flex: 1 1 0; align-self: center; }'
+		+ '.lb-mine > .lb-mine-len.is-stack { flex-direction: column; line-height: 1.05; }'
+		+ '.lb-mine .lb-mine-unit { font-size: 0.85em; }'
+		+ '.lb-mine.is-col { flex-direction: column; justify-content: center; line-height: 1.1; } .lb-mine.is-col > span { flex: none !important; align-self: stretch; }'
+		+ '.lb-mine.is-past { background: var(--tint-4); color: var(--color1); opacity: 0.8; }'
+		+ '.legend-swatch.lb-mine-key { background: var(--button-bg); }'
+		+ '.mini-cal-day .lb-mini-dot { position: absolute; left: 50%; bottom: 1px; width: 4px; height: 4px; margin-left: -2px; border-radius: 50%; background: var(--button-bg); pointer-events: none; }'
+		+ '#next-lesson-box .ls-diagram { display: block; width: 100%; max-width: 280px; height: auto; margin: 10px auto; }'
+		// the contact tab on the right edge, and the panel it opens
+		+ '.ct-tab { position: fixed; right: 0; top: 50%; z-index: 100; transform: translateY(-50%) rotate(180deg); writing-mode: vertical-rl; transform-origin: center; white-space: nowrap;'
+		+ ' font: inherit; font-weight: bold; letter-spacing: 0.05em; cursor: pointer; border: none; margin: 0; padding: 14px 8px; border-radius: 0 8px 8px 0;'
+		+ ' background: var(--button-bg); color: var(--button-text, #fff); box-shadow: 1px -1px 8px var(--shadow, #00000030);'
+		+ ' transition: background var(--transitiontime, 0.2s), transform 0.3s cubic-bezier(0.32, 0.72, 0, 1); }'
+		+ '.ct-tab[hidden] { display: none; }'
+		+ '.ct-tab.is-away { transform: translate(calc(100% + 12px), -50%) rotate(180deg); pointer-events: none; }'
+		+ '.ct-tab:hover { background: var(--button-bg-hover); }'
+		// open, the tab slides in with the panel, on its left edge
+		+ '.ct-tab.is-open { transform: translate(calc(-1 * min(300px, 100vw - 32px)), -50%) rotate(180deg); }'
+		+ '.ct-tab i { display: inline-block; min-width: 0; transform: rotate(90deg); margin-bottom: 6px; }'
+		// the headshot beside the panel's heading
+		+ '.ct-panel h3 { display: flex; align-items: center; gap: 10px; }'
+		// centred over the 18px icon column below: (40 - 18) / 2 = 11px out to the left
+		+ '.ct-panel h3 img { flex: none; width: 40px; height: 40px; margin-left: -11px; border-radius: 50%; object-fit: cover; }'
+		+ '.ct-panel { position: fixed; right: 0; top: 50%; z-index: 101; transform: translate(105%, -50%); box-sizing: border-box; width: min(300px, calc(100vw - 32px)); padding: 18px;'
+		+ ' border-radius: 12px 0 0 12px; background: var(--color3); color: var(--color1); box-shadow: -2px 2px 16px var(--shadow, #00000030);'
+		+ ' border: 1px solid var(--surface-border); border-right: none; line-height: 1.4; transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1), visibility 0.3s; visibility: hidden; }'
+		+ '.ct-panel.open { transform: translate(0, -50%); visibility: visible; }'
+		// as tall as the tab, which joins its left edge: one shape, rounded only on the tab's outer corners
+		+ '.ct-panel { display: flex; flex-direction: column; justify-content: center; padding-top: 10px; padding-bottom: 10px; border-radius: 0; border-left: none; }'
+		+ '.ct-panel h3 { margin-bottom: 6px; }'
+		+ '.ct-panel .ct-row { margin: 4px 0; }'
+		+ '.ct-panel .ct-row:last-child { margin-bottom: 0; }'
+		+ '.ct-panel h3 { margin: 0 0 12px; font-family: Freeman, sans-serif; font-weight: normal; font-size: 1.3em; }'
+		+ '.ct-panel .ct-x { position: absolute; top: 8px; right: 10px; margin: 0; padding: 2px 6px; border: none; background: none; cursor: pointer; font-size: 1.4em; line-height: 1; color: var(--color1); opacity: 0.6; }'
+		+ '.ct-panel .ct-x:hover { opacity: 1; background: none; }'
+		+ '.ct-panel .ct-row { display: flex; align-items: center; gap: 10px; margin: 8px 0; }'
+		+ '.ct-panel .ct-row > i { flex: none; width: 18px; min-width: 0; text-align: center; opacity: 0.7; }'
+		+ '.ct-panel .ct-pick { margin: 0; padding: 0; border: none; background: none; color: var(--defaultlink, inherit); font: inherit; cursor: pointer; text-align: left; position: relative; }'
+		+ '.ct-panel .ct-pick:hover { background: none; text-decoration: underline; }'
+		+ '.ct-panel canvas { display: block; }'
+		+ '.ct-panel .ct-note { font-size: 0.85em; opacity: 0.7; white-space: nowrap; }'
+		+ '.ct-panel .ct-copy { flex: none; margin: 0 0 0 auto; padding: 4px 6px; border: none; border-radius: 6px; background: none; color: var(--color1); font: inherit; font-size: 0.9em; line-height: 1; cursor: pointer; opacity: 0.6; position: relative; }'
+		+ '.ct-panel .ct-copy:hover { opacity: 1; background: var(--tint-2); }'
+		+ '.ct-panel .ct-copy i { min-width: 0; }'
+		+ '.ct-panel .ct-copy .ct-done { left: auto; right: 0; }'
+		+ '.ct-panel .ct-done { position: absolute; left: 0; bottom: 100%; padding: 2px 8px; border-radius: 6px; background: #3C303E; color: #F5EEE2; font-size: 12px; white-space: nowrap; }'
+		+ '@media print { .ct-tab, .ct-panel { display: none; } }';
 	var styleEl = document.createElement('style');
 	styleEl.textContent = css;
 	document.head.appendChild(styleEl);
@@ -132,17 +195,35 @@
 	// made-up data for ?lessonbar=…
 	function sample(kind) {
 		var now = Date.now(), at = function (min, len) { return { start: new Date(now + min * 60e3).toISOString(), end: new Date(now + (min + len) * 60e3).toISOString(), student: 'Ava Sample' }; };
-		var base = { email: 'parent@example.com', students: ['Ava Sample'], zoom: 'https://zoom.us/' };
-		if (kind === 'none') return Object.assign(base, { next: null });
+		// a made-up number: previews are public
+		var base = { email: 'parent@example.com', students: ['Ava Sample'], zoom: 'https://zoom.us/', contact: { email: 'tutor@trevorkafka.com', p: btoa('0010105555'), note: 'text only' } , lessons: [] };
+		// a few on the calendar too: 4 PM local every 3 days for two weeks
+		for (var k = 1; k <= 14; k += 3) {
+			var s0 = new Date(); s0.setDate(s0.getDate() + k); s0.setHours(16, 0, 0, 0);
+			base.lessons.push({ start: s0.toISOString(), end: new Date(s0.getTime() + 60 * 60e3).toISOString(), student: 'Ava Sample' });
+		}
+		if (kind === 'none') return Object.assign(base, { next: null, lessons: [] });
 		if (kind === 'loading') return { loading: true };
 		if (kind === 'soon') return Object.assign(base, { next: at(20, 60) });
 		if (kind === 'today') return Object.assign(base, { next: at(200, 60) });
 		if (kind === 'live') return Object.assign(base, { next: at(-15, 60) });
-		if (kind === 'family') return Object.assign(base, { students: ['Ava Sample', 'Leo Sample'], next: at(3 * 1440 + 125, 90) });
-		return Object.assign(base, { next: at(3 * 1440 + 65, 60) });
+		var withNext = function (n) { if (n) base.lessons.unshift(n); return Object.assign(base, { next: n }); };
+		if (kind === 'family') { base.students = ['Ava Sample', 'Leo Sample']; return withNext(at(3 * 1440 + 125, 90)); }
+		return withNext(at(3 * 1440 + 65, 60));
 	}
 
 	function token() { return store.get(TOKEN_KEY); }
+
+	// other scripts on the page (mynotes.html) can ask who is signed in:
+	// window.lessonBar.info() and the 'lessonbar:change' event on document
+	function info() {
+		var d = state.data;
+		return { signedIn: !!(preview || token()), preview: preview || null, students: d && d.students ? d.students.slice() : null, failed: state.failed };
+	}
+	function announce() {
+		try { document.dispatchEvent(new CustomEvent('lessonbar:change', { detail: info() })); } catch (e) {}
+	}
+	window.lessonBar = { info: info };
 
 	// e.g. "Chrome on Android", for the sign-in list
 	function deviceName() {
@@ -158,14 +239,17 @@
 	function signedOut() {
 		store.del(TOKEN_KEY); store.del(DATA_KEY); store.del(HEIGHT_KEY);
 		state.data = null; state.at = 0;
-		render(); renderBox();
+		render(); renderBox(); announce(); paintCalendar();
 	}
 
 	function refresh(fresh) {
 		if (preview) {
 			state.data = sample(preview); state.failed = preview === 'stale';
+			// signed in for real in this browser: the preview shows the real contact details
+			var real = cached();
+			if (real && real.data.contact && state.data.contact) state.data.contact = real.data.contact;
 			state.at = state.failed ? 1 : Date.now();
-			render(); renderBox(); meta();
+			render(); renderBox(); meta(); announce(); paintCalendar();
 			return Promise.resolve();
 		}
 		var t = token();
@@ -178,9 +262,9 @@
 			if (d.error) { state.failed = true; return; }
 			state.data = d; state.at = Date.now(); state.failed = false;
 			store.set(DATA_KEY, JSON.stringify({ at: state.at, data: d }));
-			render(); renderBox();
+			render(); renderBox(); paintCalendar();
 		}).catch(function () { state.failed = true; /* offline or backend down: keep what's showing */ }).then(function () {
-			state.busy = false;
+			state.busy = false; announce();
 			if (state.data) render();
 			meta();
 		});
@@ -210,6 +294,7 @@
 
 	function render() {
 		ensureBar();
+		renderContact();
 		var d = state.data;
 		var n = d && d.next && { start: new Date(d.next.start), end: new Date(d.next.end), student: d.next.student };
 		if (n && n.end <= Date.now()) { n = null; if (!preview && Date.now() - state.at > 30e3) { state.at = Date.now(); refresh(); } }
@@ -287,6 +372,150 @@
 			if (was) bar.dataset.fit = '';
 		} else inEl.hidden = count.hidden = true;
 		if (!bar.dataset.fit || bar.scrollWidth > bar.clientWidth) fit();
+	}
+
+	// ---------- the contact tab ----------
+	var ct = { tab: null, panel: null, key: '' };
+
+	// the number, unscrambled only when it's drawn or used
+	function phoneDigits(c) { try { return atob(c.p).replace(/\D/g, '').split('').reverse().join(''); } catch (e) { return ''; } }
+	function phoneText(d) { return d.length === 10 ? '(' + d.slice(0, 3) + ') ' + d.slice(3, 6) + '-' + d.slice(6) : d; }
+
+	function renderContact() {
+		var c = state.data && state.data.contact;
+		if (!c) { if (ct.tab) { ct.tab.hidden = true; openContact(false); } return; }
+		if (!ct.tab) {
+			ct.tab = document.createElement('button');
+			ct.tab.type = 'button'; ct.tab.className = 'ct-tab'; ct.tab.setAttribute('aria-expanded', 'false'); ct.tab.setAttribute('aria-controls', 'ct-panel');
+			ct.tab.innerHTML = '<i class="fa-solid fa-message"></i>Contact me';
+			ct.panel = document.createElement('div');
+			ct.panel.className = 'ct-panel'; ct.panel.id = 'ct-panel'; ct.panel.setAttribute('role', 'dialog'); ct.panel.setAttribute('aria-labelledby', 'ct-title');
+			document.body.appendChild(ct.tab); document.body.appendChild(ct.panel);
+			ct.tab.addEventListener('click', function () { openContact(!ct.panel.classList.contains('open')); });
+			ct.panel.addEventListener('click', function (e) {
+				if (e.target.closest('.ct-x')) openContact(false);
+				var pick = e.target.closest('.ct-pick');
+				if (pick) usePhone(pick);
+				var cp = e.target.closest('.ct-copy'), c = state.data && state.data.contact;
+				if (cp && c) copyText(cp, cp.dataset.copy === 'phone' ? phoneText(phoneDigits(c)) : c.email);
+			});
+			document.addEventListener('keydown', function (e) { if (e.key === 'Escape') openContact(false); });
+			document.addEventListener('pointerdown', function (e) { if (ct.panel.classList.contains('open') && !ct.panel.contains(e.target) && !ct.tab.contains(e.target)) openContact(false); });
+			watchAway();
+		}
+		ct.tab.hidden = false;
+		var key = [c.email, c.p, c.note].join('|');
+		if (ct.key === key) return;
+		ct.key = key;
+		ct.panel.innerHTML = '<h3 id="ct-title"><img src="/media/TK%20indonesia.png" alt="" width="40" height="40">Contact Trevor</h3>'
+			+ '<div class="ct-row"><i class="fa-solid fa-envelope"></i><a href="mailto:' + esc(c.email) + '">' + esc(c.email) + '</a>' + COPY_BTN('email', 'Copy email address') + '</div>'
+			+ (c.p ? '<div class="ct-row"><i class="fa-solid fa-mobile-screen-button"></i><button type="button" class="ct-pick" aria-label="Phone number, text only: ' + (touch() ? 'opens your messages app' : 'copies it') + '"><canvas></canvas></button>'
+				+ (c.note ? '<span class="ct-note">(' + esc(c.note) + ')</span>' : '') + COPY_BTN('phone', 'Copy phone number') + '</div>' : '');
+		if (ct.panel.classList.contains('open')) drawPhone();
+		queueAway();
+	}
+
+	function touch() { return matchMedia('(pointer: coarse)').matches; }
+
+	// drawn at open, in the panel's own font and colours (which follow the theme)
+	function drawPhone() {
+		var cv = ct.panel.querySelector('canvas'), c = state.data && state.data.contact;
+		if (!cv || !c) return;
+		var cs = getComputedStyle(cv.parentNode), text = phoneText(phoneDigits(c));
+		var font = cs.fontWeight + ' ' + cs.fontSize + ' ' + cs.fontFamily, size = parseFloat(cs.fontSize), r = devicePixelRatio || 1;
+		var g = cv.getContext('2d');
+		g.font = font;
+		var w = Math.ceil(g.measureText(text).width) + 2, h = Math.ceil(size * 1.4);
+		cv.width = w * r; cv.height = h * r; cv.style.width = w + 'px'; cv.style.height = h + 'px';
+		g.scale(r, r); g.font = font; g.fillStyle = cs.color; g.textBaseline = 'middle';
+		g.fillText(text, 1, h / 2);
+	}
+
+	function COPY_BTN(what, label) { return '<button type="button" class="ct-copy" data-copy="' + what + '" aria-label="' + label + '" title="Copy"><i class="fa-regular fa-copy"></i></button>'; }
+
+	// phones: start a text; elsewhere: copy the number
+	function usePhone(pick) {
+		var d = phoneDigits(state.data.contact);
+		if (!d) return;
+		if (touch()) { location.href = 'sms:+1' + d; return; }
+		copyText(pick, phoneText(d));
+	}
+
+	// copies, with a small "Copied" note over the button that was used
+	function copyText(btn, text) {
+		var done = function (msg) {
+			var tip = btn.querySelector('.ct-done') || btn.appendChild(document.createElement('span'));
+			tip.className = 'ct-done'; tip.textContent = msg;
+			clearTimeout(btn.tipTimer); btn.tipTimer = setTimeout(function () { tip.remove(); }, 1500);
+		};
+		if (navigator.clipboard) navigator.clipboard.writeText(text).then(function () { done('Copied'); }, function () { done('Couldn’t copy'); });
+		else done('Couldn’t copy');
+	}
+
+	function openContact(on) {
+		if (!ct.panel) return;
+		ct.panel.classList.toggle('open', on);
+		ct.tab.setAttribute('aria-expanded', on);
+		ct.tab.classList.toggle('is-open', on);
+		if (on) ct.tab.classList.remove('is-away');
+		// the same height: the tab's, or the panel's own if its text needs more
+		ct.tab.style.height = ct.panel.style.height = '';
+		if (on) {
+			drawPhone();   // the canvas starts at 300 × 150: draw before measuring
+			var h = Math.ceil(Math.max(ct.tab.getBoundingClientRect().height, ct.panel.getBoundingClientRect().height));   // offsetHeight rounds down: one pixel short wraps the label
+			ct.tab.style.height = ct.panel.style.height = h + 'px';
+		}
+		if (on) drawPhone();
+		queueAway();
+	}
+
+	// slide the tab off the edge while it would sit over something that runs to
+	// the right edge of the screen: a picture, a video, a table, or a block with
+	// its own background or border. Measured where the tab would be, unmoved.
+	var awayQueued = false;
+	function queueAway() { if (!awayQueued && ct.tab) { awayQueued = true; requestAnimationFrame(checkAway); } }
+	var MEDIA = /^(IMG|VIDEO|IFRAME|CANVAS|SVG|PICTURE|EMBED|OBJECT|TABLE)$/i;
+	function solid(el) {
+		if (MEDIA.test(el.tagName)) return true;
+		var cs = getComputedStyle(el);
+		if (cs.backgroundImage !== 'none') return true;
+		var bg = cs.backgroundColor;
+		if (bg && bg !== 'transparent' && !/rgba\(.*,\s*0\)$/.test(bg)) return true;
+		if (parseFloat(cs.borderTopWidth) || parseFloat(cs.borderBottomWidth)) return true;
+		return (cs.overflowX === 'auto' || cs.overflowX === 'scroll') && el.scrollWidth > el.clientWidth;
+	}
+	function checkAway() {
+		awayQueued = false;
+		var tab = ct.tab;
+		if (!tab || tab.hidden) return;
+		// where the tab rests, whatever it's sliding to (layout sizes ignore the transform)
+		// (an empty fixed marker at the tab's anchor: the right edge, halfway down)
+		if (!ct.mark) { ct.mark = document.createElement('span'); ct.mark.style.cssText = 'position: fixed; right: 0; top: 50%; width: 0; height: 0; pointer-events: none; visibility: hidden;'; document.body.appendChild(ct.mark); }
+		var m = ct.mark.getBoundingClientRect(), w = tab.offsetWidth, h = tab.offsetHeight;
+		var t = { left: m.right - w, width: w, height: h, top: m.top - h / 2, bottom: m.top + h / 2 };
+		var l = t.left, hit = false;
+		var skip = [document.documentElement, document.body, tab, ct.panel, bar];
+		// points down the tab's left edge and middle, a little past each end
+		for (var y = t.top - 6; y <= t.bottom + 6 && !hit; y += (t.height + 12) / 8) {
+			[l + 2, l + t.width / 2].forEach(function (x) {
+				if (hit) return;
+				var els = document.elementsFromPoint(x, y);
+				for (var i = 0; i < els.length && !hit; i++) {
+					var el = els[i];
+					if (skip.indexOf(el) >= 0 || tab.contains(el) || ct.panel.contains(el) || bar && bar.contains(el)) continue;
+					if (el.closest('.navbar') || getComputedStyle(el).position === 'fixed') continue;
+					hit = solid(el);
+				}
+			});
+		}
+		tab.classList.toggle('is-away', hit && !ct.panel.classList.contains('open'));
+	}
+	function watchAway() {
+		addEventListener('scroll', queueAway, { passive: true });
+		addEventListener('resize', queueAway);
+		addEventListener('load', queueAway);
+		// (the bar's countdown changes every second: not a reason to look again)
+		new MutationObserver(function (recs) { if (recs.some(function (r) { return !(bar && bar.contains(r.target)) && !(ct.panel && ct.panel.contains(r.target)); })) queueAway(); }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['hidden', 'class', 'style'] });
 	}
 
 	function updated() {
@@ -377,19 +606,26 @@
 		var open = mode !== 'form' || box.open || !!box.msg;
 		var title = '<i class="fa-solid fa-clock"></i> Next lesson preview<span class="ls-beta">beta</span>';
 		var html = '<h3>' + title + '</h3>';
-		if (mode === 'redeeming') html += '<p>Signing you in…</p>';
+		if (mode === 'redeeming') html += '<p>Linking your account…</p>';
 		else if (mode === 'sent') {
-			html += '<p>Check your email. If <strong>' + esc(box.email) + '</strong> is on file for a student or parent, a sign-in link is on its way. It works once, within 30 minutes.</p>'
+			html += '<p>Check your email. If <strong>' + esc(box.email) + '</strong> is on file for a student or parent, a magic link is on its way. It works once, within 30 minutes.</p>'
 				+ '<p><button type="button" class="ls-link" data-ls="again">Use a different email</button></p>';
 		} else if (mode === 'signedin') {
 			var who = state.data && state.data.email;
-			html += '<div class="ls-acct">' + (who ? '<span class="ls-who"><strong>' + esc(who) + '</strong><span class="ls-on"><i class="fa-solid fa-check"></i>enabled</span></span>' : '<span>Signed in.</span>')
-				+ '<button type="button" class="ls-link" data-ls="signout">Sign out</button></div>'
-				+ '<p>You can now see your upcoming lessons at the top of the screen. A Zoom link will appear there 30 minutes before your lesson starts.</p>';
+			html += '<div class="ls-acct">' + (who ? '<span class="ls-who"><strong>' + esc(who) + '</strong><span class="ls-on"><i class="fa-solid fa-check"></i>linked</span></span>' : '<span>Linked.</span>')
+				+ '<button type="button" class="ls-link" data-ls="signout">Unlink</button></div>'
+				+ '<p>You can now see your upcoming lessons at the top of the screen. A Zoom link will appear there 30 minutes before your lesson starts.</p>'
+				+ '<p><button type="button" class="ls-link ls-go" data-ls="bonus" aria-expanded="' + !!box.bonus + '" aria-controls="ls-bonus">Bonus features <i class="fa-solid fa-chevron-' + (box.bonus ? 'up' : 'down') + '"></i></button></p>'
+				+ '<ul id="ls-bonus"' + (box.bonus ? (box.anim ? ' class="ls-opening"' : '') : ' hidden') + '>'
+				+ '<li>A Zoom link will appear in the bar at the top of the screen 30 minutes before your lesson starts.</li>'
+				+ '<li>Your upcoming scheduled lessons show on the <a href="/availability.html">availability calendar</a>.</li>'
+				+ '<li>A Contact Me tab will appear on the side of the page.</li>'
+				+ '<li>Links to your files at <a href="/mynotes.html">My Class Notes</a> will be available automatically (no need to enter your name).</li>'
+				+ '</ul>';
 		} else {
 			html += '<p>Show your next lesson at the top of the main pages on trevorkafka.com, even without being logged into the student portal.</p>'
 				+ (open ? '' : '<p><button type="button" class="ls-link ls-go" data-ls="toggle" aria-expanded="false" aria-controls="ls-more">Let’s do it! <i class="fa-solid fa-chevron-down"></i></button></p>')
-				+ '<div id="ls-more"' + (open ? (box.anim ? ' class="ls-opening"' : '') : ' hidden') + '>' + (open ? '<p>Enter the email you use for the student portal and check your email for a magic link.</p><p class="ls-warn"><i class="fa-solid fa-triangle-exclamation"></i> This is separate from the Portal Login. You cannot schedule lessons here.</p>'
+				+ '<div id="ls-more"' + (open ? (box.anim ? ' class="ls-opening"' : '') : ' hidden') + '>' + (open ? '<p>To link this website to your student portal account, enter the email you use for the student portal and check your email for a magic link.</p><p class="ls-warn"><i class="fa-solid fa-triangle-exclamation"></i> This is separate from the Portal Login. You cannot schedule lessons here.</p>'
 				+ BAR_DIAGRAM
 				+ (box.msg ? '<p class="ls-err">' + esc(box.msg) + '</p>' : '')
 				+ '<form><input type="email" name="email" required autocomplete="email" placeholder="Email address" aria-label="Email address" value="' + esc(box.email) + '"><button type="submit">Send magic link</button></form>' : '') + '</div>';
@@ -424,6 +660,11 @@
 		if (!b && e.target.closest && e.target.closest('#next-lesson-box.ls-shut')) { box.open = box.anim = true; renderBox(); return; }
 		if (!b) return;
 		if (b.dataset.ls === 'again') { box.mode = 'form'; box.msg = ''; box.open = true; renderBox(); }
+		if (b.dataset.ls === 'bonus') {
+			box.bonus = !box.bonus; box.anim = box.bonus;
+			renderBox();
+			document.querySelector('#next-lesson-box [data-ls="bonus"]').focus();
+		}
 		if (b.dataset.ls === 'toggle') {
 			box.open = box.anim = true;
 			renderBox();
@@ -455,6 +696,115 @@
 		ends.forEach(function (ev) { addEventListener(ev, stop, { passive: true }); });
 	}
 
+	// ---------- the family's lessons on the availability calendar ----------
+	// snippets/availability.html is loaded into the page by script.js; its
+	// functions are page globals. Wrapping its render() and renderMiniCal() puts
+	// the lessons back after every redraw (week change, refresh, lesson length).
+	var calHooked = false, calKey = '';
+	function myLessons() {
+		var d = state.data;
+		if (!d || !token() && !preview || !Array.isArray(d.lessons)) return [];
+		return d.lessons.map(function (l) { return { start: new Date(l.start), end: new Date(l.end), student: l.student }; });
+	}
+	function hookCalendar() {
+		if (calHooked || typeof window.render !== 'function' || typeof window.renderWeek !== 'function' || !document.querySelector('.legend-keys')) return false;
+		calHooked = true;
+		var original = window.render;
+		window.render = function (root, days, grid, loading) {
+			original.apply(this, arguments);
+			if (!loading) drawWeek(root, days);
+		};
+		if (typeof window.renderMiniCal === 'function') {
+			var mini = window.renderMiniCal;
+			window.renderMiniCal = function () { mini.apply(this, arguments); drawMini(); };
+		}
+		// the days drawn in beside the week while it's dragged
+		document.addEventListener('weekdragdays', function (e) {
+			drawWeek(e.detail.root, e.detail.days, e.detail.track.querySelectorAll(':scope > .calendar-week-day'));
+		});
+		calKey = '';
+		paintCalendar();
+		return true;
+	}
+	// redraw only when the lessons changed
+	function paintCalendar() {
+		if (!calHooked) return;
+		var lessons = myLessons(), key = JSON.stringify(lessons);
+		if (key === calKey) return;
+		calKey = key;
+		legend(lessons.length > 0);
+		window.renderWeek();
+	}
+	// "Booked by you" in the key, and the plain "Booked" becomes "Booked by others"
+	function legend(on) {
+		var keys = document.querySelector('.legend-keys');
+		if (!keys) return;
+		var busy = keys.querySelector('.legend-swatch.busy'), label = busy && busy.nextSibling;
+		if (label && label.nodeType === 3) label.textContent = on ? 'Booked by others' : 'Booked';
+		var mine = keys.querySelector('.lb-mine-key');
+		if (on && !mine) keys.insertAdjacentHTML('beforeend', '<span><span class="legend-swatch lb-mine-key"></span>Booked by you</span>');
+		if (!on && mine) mine.parentNode.remove();
+	}
+	function drawWeek(root, days, colsIn) {
+		var lessons = myLessons();
+		if (!lessons.length || !root) return;
+		var cols = colsIn || root.querySelectorAll('.calendar-body .calendar-week-day');
+		var c = (root.dataset.containers || '0,48').split(',').map(Number), startC = c[0], endC = c[1];
+		var SLOT_PX = 8;   // 15 minutes, as in the snippet
+		var family = state.data.students && state.data.students.length > 1;
+		var range = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' }), calTime = range;
+		days.forEach(function (day, di) {
+			var col = cols[di];
+			if (!col) return;
+			var dayStart = day.getTime(), dayEnd = new Date(day.getFullYear(), day.getMonth(), day.getDate() + 1).getTime();
+			lessons.forEach(function (l) {
+				if (l.end <= dayStart || l.start >= dayEnd) return;
+				var s = new Date(Math.max(l.start, dayStart)), e = new Date(Math.min(l.end, dayEnd));
+				var sMin = s.getHours() * 60 + s.getMinutes();
+				var eMin = e.getTime() === dayEnd ? 1440 : e.getHours() * 60 + e.getMinutes();
+				var top = (sMin / 15 - startC * 2) * SLOT_PX;
+				var bottom = Math.min((eMin / 15 - startC * 2) * SLOT_PX, (endC - startC) * 2 * SLOT_PX);
+				if (bottom <= 0 || top >= bottom) return;
+				var b = document.createElement('div');
+				b.className = 'lb-mine' + (l.end < Date.now() ? ' is-past' : '');
+				b.style.top = Math.max(0, top) + 'px';
+				b.style.height = (bottom - Math.max(0, top)) + 'px';
+				b.title = (family && l.student ? l.student.split(/\s+/)[0] + ': ' : '') + range.formatRange(l.start, l.end);
+				col.appendChild(b);
+				// the fullest version that fits: "4:00p 60 min" on one line, "60" over
+				// "min", smaller type, then "60", then only the time
+				var len = Math.round((l.end - l.start) / 60000), t0 = esc(calTime.format(l.start));   // as in the calendar's time columns
+				var one = '<span class="lb-mine-len">' + len + ' min</span>';
+				var stack = '<span class="lb-mine-len is-stack"><span>' + len + '</span><span class="lb-mine-unit">min</span></span>';
+				var bare = '<span class="lb-mine-len">' + len + '</span>';
+				// narrow columns: the time over "60 min"
+				var tries = [[one, 12], [stack, 12], [one], [stack], [one, 10, 1], [one, 9, 1], [one, 8, 1], [stack, 9], [stack, 8.5], [stack, 8], [bare], [bare, 9], [bare, 8.5], [bare, 8], [''], ['', 9], ['', 8]];
+				for (var i = 0; i < tries.length; i++) {
+					b.style.fontSize = tries[i][1] ? tries[i][1] + 'px' : '';
+					b.classList.toggle('is-col', !!tries[i][2]);
+					b.innerHTML = '<span><b>' + t0 + '</b></span>' + tries[i][0];
+					if (b.scrollHeight <= b.clientHeight + 0.5 && Array.prototype.every.call(b.children, function (x) { return x.scrollWidth <= x.clientWidth && x.scrollHeight <= x.clientHeight + 0.5; })) break;
+				}
+			});
+		});
+	}
+	// a dot under each mini calendar day with a lesson
+	function drawMini() {
+		var el = document.getElementById('mini-cal'), lessons = myLessons();
+		if (!el || !lessons.length) return;
+		var today = new Date(); today.setHours(0, 0, 0, 0);
+		el.querySelectorAll('.mini-cal-day[data-day]').forEach(function (cell) {
+			var d0 = new Date(today); d0.setDate(today.getDate() + Number(cell.dataset.day));
+			var d1 = new Date(d0); d1.setDate(d0.getDate() + 1);
+			var n = lessons.filter(function (l) { return l.start < d1 && l.end > d0; }).length;
+			if (!n) return;
+			cell.insertAdjacentHTML('beforeend', '<span class="lb-mini-dot"></span>');
+			cell.title = n === 1 ? 'You have a lesson this day' : 'You have ' + n + ' lessons this day';
+		});
+	}
+	// script.js loads the snippet with jQuery; its scripts have run by the time ajaxComplete fires
+	if (window.jQuery) jQuery(document).ajaxComplete(function (e, xhr, opts) { if (/availability\.html/.test(opts.url)) hookCalendar(); });
+
 	// ---------- start ----------
 	function start() {
 		var code = params.get('signin');
@@ -466,8 +816,8 @@
 			call('redeem', { code: code, device: deviceName() }).then(function (d) {
 				if (d.token) { store.set(TOKEN_KEY, d.token); box.mode = 'signedin'; state.data = { email: d.email, loading: true }; render(); return refresh(); }
 				box.mode = 'form';
-				box.msg = 'That sign-in link has expired or was already used. Enter your email for a new one.';
-			}).catch(function () { box.mode = 'form'; box.msg = 'Couldn’t reach the server to sign you in. Please open the link again in a minute.'; })
+				box.msg = 'That magic link has expired or was already used. Enter your email for a new one.';
+			}).catch(function () { box.mode = 'form'; box.msg = 'Couldn’t reach the server to link your account. Please open the link again in a minute.'; })
 				.then(function () { renderBox(); });
 		} else renderBox();
 
@@ -478,9 +828,10 @@
 			var fresh = c && Date.now() - c.at < STALE_MS;
 			state.data = fresh ? c.data : { email: c && c.data.email, loading: true };
 			state.at = fresh ? c.at : 0;
-			render(); renderBox();
+			render(); renderBox(); announce();
 			if (!code && Date.now() - state.at > 60e3) refresh();
 		}
+		hookCalendar();   // in case the calendar loaded first
 		setInterval(function () { if (state.data) { render(); meta(); boxStatus(); } }, 1000);
 		// timers stop while a tab is hidden or a device sleeps: look again on the way back
 		function back() {
