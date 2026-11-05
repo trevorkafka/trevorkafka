@@ -138,6 +138,10 @@
 		+ '.ct-tab:hover { background: var(--button-bg-hover); }'
 		// open, the tab slides in with the panel, on its left edge
 		+ '.ct-tab.is-open { transform: translate(calc(-1 * min(300px, 100vw - 32px)), -50%) rotate(180deg); }'
+		// open, no shadow on the seam: the tab sits over the panel's shadow and casts none toward it
+		// (the tab is turned 180°, so its own left edge faces the panel)
+		+ '.ct-tab.is-open { z-index: 102; clip-path: inset(-20px -20px -20px 0); }'
+		+ '.ct-tab:focus:not(:focus-visible) { outline: none; }'
 		+ '.ct-tab i { display: inline-block; min-width: 0; transform: rotate(90deg); margin-bottom: 6px; }'
 		// the headshot beside the panel's heading
 		+ '.ct-panel h3 { display: flex; align-items: center; gap: 10px; }'
@@ -157,8 +161,11 @@
 		+ '.ct-panel .ct-x:hover { opacity: 1; background: none; }'
 		+ '.ct-panel .ct-row { display: flex; align-items: center; gap: 10px; margin: 8px 0; }'
 		+ '.ct-panel .ct-row > i { flex: none; width: 18px; min-width: 0; text-align: center; opacity: 0.7; }'
-		+ '.ct-panel .ct-pick { margin: 0; padding: 0; border: none; background: none; color: var(--defaultlink, inherit); font: inherit; cursor: pointer; text-align: left; position: relative; }'
-		+ '.ct-panel .ct-pick:hover { background: none; text-decoration: underline; }'
+		// the number is plain text, and a link (to start a text) only on phones
+		+ '.ct-panel .ct-pick { margin: 0; padding: 0; border: none; background: none; color: var(--color1); font: inherit; cursor: text; text-align: left; position: relative; }'
+		+ '.ct-panel .ct-pick:hover { background: none; }'
+		+ '.ct-panel .ct-pick.is-link { color: var(--defaultlink, inherit); cursor: pointer; }'
+		+ '.ct-panel .ct-pick.is-link:hover { text-decoration: underline; }'
 		+ '.ct-panel canvas { display: block; }'
 		+ '.ct-panel .ct-note { font-size: 0.85em; opacity: 0.7; white-space: nowrap; }'
 		+ '.ct-panel .ct-copy { flex: none; margin: 0 0 0 auto; padding: 4px 6px; border: none; border-radius: 6px; background: none; color: var(--color1); font: inherit; font-size: 0.9em; line-height: 1; cursor: pointer; opacity: 0.6; position: relative; }'
@@ -409,7 +416,7 @@
 		ct.key = key;
 		ct.panel.innerHTML = '<h3 id="ct-title"><img src="/media/TK%20indonesia.png" alt="" width="40" height="40">Contact Trevor</h3>'
 			+ '<div class="ct-row"><i class="fa-solid fa-envelope"></i><a href="mailto:' + esc(c.email) + '">' + esc(c.email) + '</a>' + COPY_BTN('email', 'Copy email address') + '</div>'
-			+ (c.p ? '<div class="ct-row"><i class="fa-solid fa-mobile-screen-button"></i><button type="button" class="ct-pick" aria-label="Phone number, text only: ' + (touch() ? 'opens your messages app' : 'copies it') + '"><canvas></canvas></button>'
+			+ (c.p ? '<div class="ct-row"><i class="fa-solid fa-mobile-screen-button"></i><button type="button" class="ct-pick' + (touch() ? ' is-link' : '') + '" aria-label="Phone number, text only' + (touch() ? ': opens your messages app' : '') + '"' + (touch() ? '' : ' tabindex="-1"') + '><canvas></canvas></button>'
 				+ (c.note ? '<span class="ct-note">(' + esc(c.note) + ')</span>' : '') + COPY_BTN('phone', 'Copy phone number') + '</div>' : '');
 		if (ct.panel.classList.contains('open')) drawPhone();
 		queueAway();
@@ -433,12 +440,11 @@
 
 	function COPY_BTN(what, label) { return '<button type="button" class="ct-copy" data-copy="' + what + '" aria-label="' + label + '" title="Copy"><i class="fa-regular fa-copy"></i></button>'; }
 
-	// phones: start a text; elsewhere: copy the number
+	// phones: start a text (elsewhere the copy button is the way)
 	function usePhone(pick) {
 		var d = phoneDigits(state.data.contact);
 		if (!d) return;
-		if (touch()) { location.href = 'sms:+1' + d; return; }
-		copyText(pick, phoneText(d));
+		if (touch()) location.href = 'sms:+1' + d;
 	}
 
 	// copies, with a small "Copied" note over the button that was used
