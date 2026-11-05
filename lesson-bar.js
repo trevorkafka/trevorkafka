@@ -614,7 +614,7 @@
 			var who = state.data && state.data.email;
 			html += '<div class="ls-acct">' + (who ? '<span class="ls-who"><strong>' + esc(who) + '</strong><span class="ls-on"><i class="fa-solid fa-check"></i>linked</span></span>' : '<span>Linked.</span>')
 				+ '<button type="button" class="ls-link" data-ls="signout">Unlink</button></div>'
-				+ '<p>You can now see your upcoming lessons at the top of the screen. A Zoom link will appear there 30 minutes before your lesson starts.</p>'
+				+ '<p>You can now see your upcoming lessons at the top of the screen.</p>'
 				+ '<p><button type="button" class="ls-link ls-go" data-ls="bonus" aria-expanded="' + !!box.bonus + '" aria-controls="ls-bonus">Bonus features <i class="fa-solid fa-chevron-' + (box.bonus ? 'up' : 'down') + '"></i></button></p>'
 				+ '<ul id="ls-bonus"' + (box.bonus ? (box.anim ? ' class="ls-opening"' : '') : ' hidden') + '>'
 				+ '<li>A Zoom link will appear in the bar at the top of the screen 30 minutes before your lesson starts.</li>'
