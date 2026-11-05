@@ -41,9 +41,15 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 
 		<h1><i class="fa-solid fa-note-sticky"></i> My Class Notes</h1>
 		
-		<p>This page is for current and past tutoring students. Comprehensive notes and class materials from our tutoring sessions are online for access at any time. To find the link to your folder, type your first and last name below.</p>
+		<p>This page is for current and past tutoring students. Comprehensive notes and class materials from our tutoring sessions are online for access at any time. <span id="intro-out">To find the link to your folder, type your first and last name below.</span><span id="intro-in" hidden>Since your student portal account is linked to trevorkafka.com, your notes folders are below.</span></p>
 
-		<div style="text-align: center;">
+		<!-- signed in (lesson-bar.js): one row of buttons per student, no name fields -->
+		<div id="my-folders" hidden>
+			<div id="my-folders-grid" role="list"></div>
+			<p class="mf-other"><a href="#" id="mf-other-link">Look up a different name</a></p>
+		</div>
+
+		<div id="name-lookup" style="text-align: center;">
 			<p style="font-family: Freeman, sans-serif; font-size: clamp(0.85em, 3.5vw, 1.6em);">
 				<span style="white-space: nowrap;">
 					<input type="text" id="firstName" placeholder="first name" style="font-family: Freeman, sans-serif; font-size: 1em; width: 8em;"/>
@@ -123,6 +129,41 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			    color: var(--color1);
 			    opacity: 0.5;
 			}
+
+			/* Signed-in folder grid: name | Copy link | Open folder, one row per student */
+			#my-folders { margin: 8px 0 28px; }
+			#my-folders-grid {
+			    display: grid;
+			    grid-template-columns: auto auto auto;
+			    justify-content: center;
+			    align-items: center;
+			    gap: 12px 14px;
+			    font-family: Freeman, sans-serif;
+			}
+			#my-folders-grid .mf-name {
+			    font-size: 1.25em;
+			    color: var(--color1);
+			    text-align: right;
+			    padding-right: 6px;
+			}
+			#my-folders-grid button { font-family: Freeman, sans-serif; font-size: 1em; white-space: nowrap; }
+			#my-folders-grid button:disabled { opacity: 0.5; cursor: progress; }
+			#my-folders-grid .mf-msg { grid-column: 2 / 4; color: red; font-size: 1.05em; }
+			#my-folders-grid .mf-loading { grid-column: 2 / 4; display: flex; align-items: center; gap: 10px; font-size: 1.1em; color: var(--color1); opacity: 0.75; min-height: 2.6em; }
+			#my-folders-grid .mf-spin {
+			    width: 1.1em; height: 1.1em; flex: none; border-radius: 50%;
+			    border: 3px solid currentColor; border-right-color: transparent;
+			    animation: mf-spin 0.8s linear infinite;
+			}
+			@keyframes mf-spin { to { transform: rotate(360deg); } }
+			#my-folders .mf-other { text-align: center; font-family: Freeman, sans-serif; font-size: 0.95em; margin-top: 14px; }
+			@media (max-width: 600px) {
+			    #my-folders-grid { grid-template-columns: 1fr 1fr; justify-content: stretch; gap: 8px 10px; }
+			    #my-folders-grid .mf-name { grid-column: 1 / 3; text-align: left; padding: 10px 0 0; }
+			    #my-folders-grid .mf-msg, #my-folders-grid .mf-loading { grid-column: 1 / 3; }
+			    #my-folders-grid button { width: 100%; margin: 0; box-sizing: border-box; padding-left: 8px; padding-right: 8px; }
+			    #my-folders-grid .mf-long { display: none; }
+			}
 		</style>
 		<div class="callout-box">
 		    <strong class="callout-label"><i class="fa-solid fa-circle-exclamation"></i> Important:</strong> 
@@ -197,6 +238,95 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
           console.error(err);
         });
     }
+
+    // ---------- signed in: folder buttons for each student, no name fields ----------
+    const COPY_LABEL = '<i class="fa-solid fa-link"></i> Copy link';
+    const OPEN_LABEL = '<i class="fa-brands fa-google-drive"></i> Open <span class="mf-long">Google Drive </span>folder';
+    const folderCache = {};   // full name -> Promise of link or null
+    let shownFor = null, lookupInstead = false;
+
+    function folderFor(name, preview) {
+      if (preview) return Promise.resolve("https://drive.google.com/");
+      if (!folderCache[name]) {
+        const words = name.trim().split(/\s+/);
+        // "Mary Ann Lee": try "Mary" + "Ann Lee", then "Mary Ann" + "Lee"
+        const tries = [[words[0], words.slice(1).join(" ")]];
+        if (words.length > 2) tries.push([words.slice(0, -1).join(" "), words[words.length - 1]]);
+        folderCache[name] = tries.reduce((p, [first, last]) => p.then(link => link ||
+          fetch(`${API_URL}?first=${encodeURIComponent(first)}&last=${encodeURIComponent(last)}`)
+            .then(res => res.json()).then(d => d.link || null)), Promise.resolve(null))
+          .catch(err => { delete folderCache[name]; throw err; });
+      }
+      return folderCache[name];
+    }
+
+    function wireButtons(copyBtn, openBtn, link) {
+      openBtn.onclick = () => window.open(link, "_blank", "noopener");
+      copyBtn.innerHTML = COPY_LABEL;
+      copyBtn.onclick = () => {
+        const done = () => {
+          copyBtn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+          setTimeout(() => { copyBtn.innerHTML = COPY_LABEL; }, 1500);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(link).then(done, done);
+        else done();
+      };
+    }
+
+    function showMode(signedIn) {
+      document.getElementById("my-folders").hidden = !signedIn;
+      document.getElementById("name-lookup").style.display = signedIn ? "none" : "";
+      document.getElementById("intro-in").hidden = !signedIn;
+      document.getElementById("intro-out").hidden = signedIn;
+    }
+
+    function showFolders(info) {
+      const students = info && info.signedIn && info.students;
+      if (!students || !students.length || lookupInstead) {
+        // signed out, or the student list hasn't arrived: the name fields as usual
+        showMode(false); shownFor = null;
+        return;
+      }
+      showMode(true);
+      const key = students.join("|") + (info.preview || "");
+      if (key === shownFor) return;
+      shownFor = key;
+      const grid = document.getElementById("my-folders-grid");
+      grid.innerHTML = "";
+      students.forEach(name => {
+        const nameEl = document.createElement("div");
+        nameEl.className = "mf-name"; nameEl.setAttribute("role", "listitem");
+        nameEl.textContent = name;
+        const copyBtn = document.createElement("button"), openBtn = document.createElement("button");
+        copyBtn.type = openBtn.type = "button";
+        copyBtn.innerHTML = COPY_LABEL; openBtn.innerHTML = OPEN_LABEL;
+        // until the folder is found, a spinner and "Finding…" stand where the buttons go
+        const loading = document.createElement("div");
+        loading.className = "mf-loading";
+        loading.innerHTML = '<span class="mf-spin" aria-hidden="true"></span> Finding notes folder…';
+        grid.append(nameEl, loading);
+        const fail = text => {
+          const msg = document.createElement("div");
+          msg.className = "mf-msg";
+          msg.textContent = text;
+          loading.replaceWith(msg);
+        };
+        folderFor(name, info.preview).then(link => {
+          if (link) { wireButtons(copyBtn, openBtn, link); loading.replaceWith(copyBtn, openBtn); return; }
+          fail("No notes folder found yet. Email me at tutor@trevorkafka.com and I'll sort it out.");
+        }).catch(() => {
+          fail("Couldn't reach the server. Please reload the page in a minute.");
+          shownFor = null;
+        });
+      });
+    }
+
+    document.getElementById("mf-other-link").addEventListener("click", e => {
+      e.preventDefault(); lookupInstead = true; showMode(false);
+      document.getElementById("firstName").focus();
+    });
+    document.addEventListener("lessonbar:change", e => showFolders(e.detail));
+    if (window.lessonBar) showFolders(window.lessonBar.info());
 
     //Listen for Enter key on both inputs
 	    document.getElementById("firstName").addEventListener("keypress", function (e) {
