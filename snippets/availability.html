@@ -201,12 +201,16 @@
     align-items: flex-start;
     gap: 8px;
   }
-  .subtitle > i {
+  /* the icon (an <i>, or the <svg> Font Awesome swaps in) sits on the first
+     line's centreline: pushed down by half the gap between the line and the icon */
+  .subtitle > i, .subtitle > svg {
     color: var(--cal-muted);
-    line-height: inherit; /* same line box as the text, so it centers on the first line */
-    margin-top: 0;
     flex-shrink: 0;
   }
+  /* the icon sits on the first line's baseline, exactly as Font Awesome icons sit
+     in running text (its svg 0.125em below the baseline), whatever the font */
+  .subtitle { align-items: baseline; }
+  .subtitle > svg { position: relative; top: 0.125em; }
   trevorkafka-availability-announcement {
     display: block;
     max-width: 1000px;
@@ -316,6 +320,12 @@
     transition: color 0.2s ease;
     user-select: none;
   }
+  /* each label's text centred in its share of the height (the control can be
+     stretched taller than its labels) */
+  .cal-seg-label { display: grid; align-content: center; justify-items: center; }
+  /* the bold copy shares the text's grid cell (overlapping it, invisibly), so it
+     sets the width without adding any height */
+  .cal-seg-label[data-text]::after { grid-area: 1 / 1; height: auto; }
   .cal-seg[data-active="0"] .cal-seg-label:nth-child(1),
   .cal-seg[data-active="1"] .cal-seg-label:nth-child(2),
   .cal-seg[data-active="2"] .cal-seg-label:nth-child(3),
@@ -462,20 +472,16 @@
     cursor: pointer;
     transition: background-color 0.15s ease, border-color 0.15s ease;
   }
-  .cal-anim-toggle input::after {  /* the tick, drawn as two borders of a turned box */
+  .cal-anim-toggle input::after {  /* the tick, an SVG centred in the box */
     content: '';
     position: absolute;
-    left: 4.5px;
-    top: 1.5px;
-    width: 4px;
-    height: 8px;
-    border: solid #fff;
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg) scale(0);
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath d='M1.6 5.3 4 7.7 8.4 2.5' fill='none' stroke='%23fff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 10px 10px no-repeat;
+    transform: scale(0);
     transition: transform 0.15s ease;
   }
   .cal-anim-toggle input:checked { background: var(--cal-accent); border-color: var(--cal-accent); }
-  .cal-anim-toggle input:checked::after { transform: rotate(45deg) scale(1); }
+  .cal-anim-toggle input:checked::after { transform: scale(1); }
   .cal-anim-toggle input:focus-visible { outline: 2px solid var(--cal-accent); outline-offset: 2px; }
 
   .calendar {
@@ -557,6 +563,10 @@
   .calendar-head-date:has(.holiday-chip) .calendar-head-cell:first-child { border-top-left-radius: inherit; }
   .calendar-head-date:has(.holiday-chip) .calendar-head-cell:last-child { border-top-right-radius: inherit; }
   .calendar-head-cell:not(.calendar-head-cell-blank) { position: relative; }
+  /* a day in the header can be clicked to start the seven days there */
+  .calendar-head-cell[data-day] { cursor: pointer; transition: background var(--cal-tx); }
+  .calendar-head-cell[data-day]:hover { background: color-mix(in srgb, var(--cal-border) 45%, transparent); }
+  .calendar-head-cell-today[data-day]:hover { background: #ecd0b9; }
   .holiday-chip {
     position: absolute;
     left: 50%;
@@ -689,10 +699,13 @@
     display: flex;
     position: relative;
   }
-  .calendar-days.sliding { overflow-x: clip; }
+  .calendar-days.sliding, .calendar-days.dragging { overflow-x: clip; }
+  /* the week can be dragged sideways; vertical swipes still scroll the page */
+  .calendar-days { touch-action: pan-y; }
+  .calendar-days.dragging { cursor: grabbing; user-select: none; -webkit-user-select: none; }
   /* each column draws its own left line, so hold the one beside the time
      axis still while the columns move under it */
-  .calendar-days.sliding::after {
+  .calendar-days.sliding::after, .calendar-days.dragging::after {
     content: '';
     position: absolute;
     left: 0;
@@ -1479,6 +1492,23 @@
     });
   })();
 
+  // Clicking a day in the calendar's header starts the seven days on it (as far
+  // as the loaded range allows). The holiday chip keeps its own tap.
+  (function setupHeadClicks() {
+    const root = document.getElementById('root');
+    if (!root) return;
+    root.addEventListener('click', e => {
+      if (e.target.closest('.holiday-chip')) return;
+      const cell = e.target.closest('.calendar-head-date [data-day]');
+      if (!cell || !cachedEvents) return;
+      const day = Math.max(0, Math.min(maxDayOffset(), Number(cell.getAttribute('data-day'))));
+      if (!Number.isFinite(day) || day === dayOffset) return;
+      const from = dayOffset;
+      dayOffset = day;
+      renderWeek(from);
+    });
+  })();
+
   // Line the weekday letters up with the calendar's own header row.
   function positionMiniCal() {
     const el = document.getElementById('mini-cal');
@@ -1603,6 +1633,7 @@
   // in-between days share them).
   function headCellsHTML(days) {
     const todayKey = new Date().toDateString();
+    const today0 = new Date(); today0.setHours(0, 0, 0, 0);
     const weekdayFmt = new Intl.DateTimeFormat(undefined, { weekday: 'short' });
     return days.map(d => {
       const today = d.toDateString() === todayKey;
@@ -1610,7 +1641,8 @@
       const chip = holiday
         ? `<span class="holiday-chip" tabindex="0" role="note" aria-label="${escapeHTML(holiday)}"><i class="fa-solid fa-flag-usa" aria-hidden="true"></i><span>${escapeHTML(holiday)}</span></span>`
         : '';
-      return `<div class="calendar-head-cell${today ? ' calendar-head-cell-today' : ''}">
+      // data-day: days from today, for the click that starts the week on this day
+      return `<div class="calendar-head-cell${today ? ' calendar-head-cell-today' : ''}" data-day="${dayIndexFrom(today0, d.getTime())}">
         <div class="calendar-head-cell-weekday">${weekdayFmt.format(d)}</div>
         <div class="calendar-head-cell-date">${d.getDate()}</div>${chip}
     </div>`;
@@ -2267,6 +2299,126 @@ function updateWeekNav(days) {
   prev.addEventListener('click', () => { if (dayOffset > 0) { const from = dayOffset; dayOffset = Math.max(0, dayOffset - 7); renderWeek(from); } });
   next.addEventListener('click', () => { if (dayOffset < maxDayOffset()) { const from = dayOffset; dayOffset = Math.min(maxDayOffset(), dayOffset + 7); renderWeek(from); } });
   updateWeekNav(buildWeek(new Date(), dayOffset)); // initial label while data loads
+})();
+
+// Drag the week sideways to browse: the days follow the pointer, and on
+// release the calendar settles on the nearest day (a quick flick goes on by
+// at least one day), sliding from wherever the drag left it. Past either end
+// the drag stretches less and springs back.
+(function setupWeekDrag() {
+  const root = document.getElementById('root');
+  if (!root) return;
+  let drag = null, justDragged = false;
+  const tracks = () => Array.from(root.querySelectorAll('.calendar-days > .calendar-days-track:not(.calendar-days-old)'));
+  const clips = () => Array.from(root.querySelectorAll('.calendar-days'));
+  // the same three steps for a mouse (pointer events) and a finger (touch
+  // events, which every mobile browser delivers reliably)
+  function start(x, y, target) {
+    if (!cachedEvents || !target.closest || !target.closest('.calendar-days')) return;
+    const now = performance.now();
+    drag = { x0: x, y0: y, dx: 0, on: false, vx: 0, lastX: x, lastT: now };
+  }
+  // returns true once the drag is sideways (so the caller can stop the page scrolling)
+  function move(x, y) {
+    if (!drag) return false;
+    const dx = x - drag.x0, dy = y - drag.y0;
+    if (!drag.on) {
+      if (Math.abs(dy) > 8 && Math.abs(dy) > Math.abs(dx)) { drag = null; return false; }
+      if (Math.abs(dx) < 8) return false;
+      drag.on = true;
+      // a slide in progress stops where it is, and the drag carries on from there
+      root.querySelectorAll('.calendar-days-old').forEach(el => el.remove());
+      tracks().forEach(t => t.getAnimations().forEach(a => a.cancel()));
+      clips().forEach(c => { c.classList.remove('sliding'); c.classList.add('dragging'); });
+      drag.sides = addSides();
+    }
+    const now = performance.now();
+    if (now > drag.lastT) { drag.vx = (x - drag.lastX) / (now - drag.lastT); drag.lastX = x; drag.lastT = now; }
+    // resist past the first and last days
+    const atStart = dayOffset <= 0 && dx > 0, atEnd = dayOffset >= maxDayOffset() && dx < 0;
+    drag.dx = atStart || atEnd ? dx / 3 : dx;
+    tracks().forEach(t => { t.style.transform = 'translateX(' + drag.dx + 'px)'; });
+    drag.sides.forEach(sd => { sd.el.style.transform = 'translateX(' + (sd.x + drag.dx) + 'px)'; });
+    return true;
+  }
+  // The days either side of the week, drawn in for the drag so they slide into
+  // view with their availability (and, on the lessons page, the student's own
+  // lessons, via the 'weekdragdays' event). They're ordinary outgoing tracks,
+  // so on release the slide picks them up from where they are.
+  const SIDE_DAYS = 14;
+  function addSides() {
+    const before = Math.min(SIDE_DAYS, dayOffset);
+    const after = Math.min(SIDE_DAYS, maxDayOffset() - dayOffset);
+    const [c0, c1] = (root.dataset.containers || '').split(',').map(Number);
+    const sides = [];
+    const make = (days, k0) => {
+      if (!days.length) return;
+      const html = [headCellsHTML(days), dayColsHTML(classify(cachedEvents, days, currentMinRun()), c0, c1)];
+      clips().forEach((clip, i) => {
+        const colW = clip.clientWidth / 7;
+        const el = document.createElement('div');
+        el.className = 'calendar-days-track calendar-days-old';
+        el.setAttribute('aria-hidden', 'true');
+        el.style.right = 'auto';
+        el.style.width = days.length * colW + 'px';
+        el.innerHTML = html[i] || '';
+        const x = k0 * colW;
+        el.style.transform = 'translateX(' + x + 'px)';
+        clip.appendChild(el);
+        sides.push({ el, x });
+        if (el.querySelector('.calendar-week-day')) document.dispatchEvent(new CustomEvent('weekdragdays', { detail: { root, track: el, days } }));
+      });
+    };
+    if (before) make(buildWeek(new Date(), dayOffset - before).concat(buildWeek(new Date(), dayOffset - before + 7)).slice(0, before), -before);
+    if (after) make(buildWeek(new Date(), dayOffset + 7).concat(buildWeek(new Date(), dayOffset + 14)).slice(0, after), 7);
+    return sides;
+  }
+  function end() {
+    if (!drag) return;
+    const d = drag; drag = null;
+    if (!d.on) return;
+    justDragged = true; setTimeout(() => { justDragged = false; }, 50);
+    const clip = root.querySelector('.calendar-days');
+    const colW = clip ? clip.clientWidth / 7 : 1;
+    let n = Math.round(-d.dx / colW);
+    if (n === 0 && Math.abs(d.vx) > 0.4 && Math.abs(d.dx) > 12) n = d.vx < 0 ? 1 : -1;
+    const target = Math.max(0, Math.min(maxDayOffset(), dayOffset + n));
+    if (target === dayOffset) {
+      // back to where it was
+      const back = { duration: 300, easing: 'cubic-bezier(0.32, 0.72, 0, 1)' };
+      tracks().forEach(t => {
+        t.style.transform = '';
+        t.animate([{ transform: 'translateX(' + d.dx + 'px)' }, { transform: 'none' }], back);
+      });
+      d.sides.forEach(sd => {
+        sd.el.style.transform = 'translateX(' + sd.x + 'px)';
+        sd.el.animate([{ transform: 'translateX(' + (sd.x + d.dx) + 'px)' }, { transform: 'translateX(' + sd.x + 'px)' }], back).finished.then(() => sd.el.remove(), () => {});
+      });
+      clips().forEach(c => { c.classList.remove('dragging'); c.classList.add('sliding'); setTimeout(() => c.classList.remove('sliding'), 320); });
+      return;
+    }
+    const from = dayOffset;
+    dayOffset = target;
+    renderWeek(from);   // slides on from the dragged position (the tracks are measured where they are)
+    tracks().forEach(t => { t.style.transform = ''; });
+    clips().forEach(c => c.classList.remove('dragging'));
+  }
+  // mouse and pen
+  root.addEventListener('pointerdown', e => { if (e.pointerType !== 'touch' && e.button === 0) { start(e.clientX, e.clientY, e.target); if (drag) drag.id = e.pointerId; } });
+  root.addEventListener('pointermove', e => {
+    if (e.pointerType === 'touch' || !drag || e.pointerId !== drag.id) return;
+    const was = drag.on;
+    if (move(e.clientX, e.clientY)) { if (!was) { try { root.setPointerCapture(e.pointerId); } catch (err) {} } e.preventDefault(); }
+  });
+  root.addEventListener('pointerup', e => { if (e.pointerType !== 'touch') end(); });
+  root.addEventListener('pointercancel', e => { if (e.pointerType !== 'touch') end(); });
+  // touch
+  root.addEventListener('touchstart', e => { if (e.touches.length === 1) start(e.touches[0].clientX, e.touches[0].clientY, e.target); else drag = null; }, { passive: true });
+  root.addEventListener('touchmove', e => { if (drag && e.touches.length === 1 && move(e.touches[0].clientX, e.touches[0].clientY) && e.cancelable) e.preventDefault(); }, { passive: false });
+  root.addEventListener('touchend', end);
+  root.addEventListener('touchcancel', end);
+  // a drag isn't a tap on whatever it ended over
+  document.addEventListener('click', e => { if (justDragged && root.contains(e.target)) { e.stopPropagation(); e.preventDefault(); } }, true);
 })();
 
 // Holiday chips: a tap toggles the expanded name (hover does it on pointer
