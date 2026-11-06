@@ -130,26 +130,31 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			    opacity: 0.5;
 			}
 
-			/* Signed-in folder grid: name | Copy link | Open folder, one row per student */
+			/* Signed-in folder cards: one card per student (name, Open folder, Copy link) */
 			#my-folders { margin: 8px 0 28px; }
 			#my-folders-grid {
 			    display: grid;
-			    grid-template-columns: auto auto auto;
+			    grid-template-columns: repeat(auto-fit, minmax(260px, 340px));
 			    justify-content: center;
-			    align-items: center;
-			    gap: 12px 14px;
+			    gap: 14px;
 			    font-family: Freeman, sans-serif;
 			}
-			#my-folders-grid .mf-name {
-			    font-size: 1.25em;
-			    color: var(--color1);
-			    text-align: right;
-			    padding-right: 6px;
+			#my-folders-grid .mf-card {
+			    background: var(--tint-1);
+			    border: 1px solid color-mix(in srgb, var(--color1) 15%, transparent);
+			    border-radius: 14px;
+			    padding: 16px 18px;
+			    display: flex; flex-direction: column; gap: 12px;
+			    text-align: left;
 			}
-			#my-folders-grid button { font-family: Freeman, sans-serif; font-size: 1em; white-space: nowrap; }
-			#my-folders-grid button:disabled { opacity: 0.5; cursor: progress; }
-			#my-folders-grid .mf-msg { grid-column: 2 / 4; color: red; font-size: 1.05em; }
-			#my-folders-grid .mf-loading { grid-column: 2 / 4; display: flex; align-items: center; gap: 10px; font-size: 1.1em; color: var(--color1); opacity: 0.75; min-height: 2.6em; }
+			#my-folders-grid .mf-name { margin: 0; font-size: 1.3em; color: var(--color1); display: flex; align-items: center; gap: 10px; overflow-wrap: anywhere; }
+			#my-folders-grid .mf-name i { opacity: 0.55; }
+			#my-folders-grid .mf-btns { display: flex; gap: 10px; }
+			#my-folders-grid .mf-btns button { margin: 0; font-family: Freeman, sans-serif; font-size: 1em; white-space: nowrap; box-sizing: border-box; padding-left: 10px; padding-right: 10px; }
+			#my-folders-grid .mf-open { flex: 1.5; }
+			#my-folders-grid .mf-copy { flex: 1; background: transparent; color: var(--color1); border: 2px solid var(--color1); }
+			#my-folders-grid .mf-msg { margin: 0; color: var(--color1); opacity: 0.8; font-size: 1em; line-height: 1.4; }
+			#my-folders-grid .mf-loading { display: flex; align-items: center; gap: 10px; font-size: 1.05em; color: var(--color1); opacity: 0.75; min-height: 2.6em; }
 			#my-folders-grid .mf-spin {
 			    width: 1.1em; height: 1.1em; flex: none; border-radius: 50%;
 			    border: 3px solid currentColor; border-right-color: transparent;
@@ -158,11 +163,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			@keyframes mf-spin { to { transform: rotate(360deg); } }
 			#my-folders .mf-other { text-align: center; font-family: Freeman, sans-serif; font-size: 0.95em; margin-top: 14px; }
 			@media (max-width: 600px) {
-			    #my-folders-grid { grid-template-columns: 1fr 1fr; justify-content: stretch; gap: 8px 10px; }
-			    #my-folders-grid .mf-name { grid-column: 1 / 3; text-align: left; padding: 10px 0 0; }
-			    #my-folders-grid .mf-msg, #my-folders-grid .mf-loading { grid-column: 1 / 3; }
-			    #my-folders-grid button { width: 100%; margin: 0; box-sizing: border-box; padding-left: 8px; padding-right: 8px; }
-			    #my-folders-grid .mf-long { display: none; }
+			    #my-folders-grid { grid-template-columns: 1fr; }
 			}
 		</style>
 		<div class="callout-box">
@@ -241,7 +242,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 
     // ---------- signed in: folder buttons for each student, no name fields ----------
     const COPY_LABEL = '<i class="fa-solid fa-link"></i> Copy link';
-    const OPEN_LABEL = '<i class="fa-brands fa-google-drive"></i> Open <span class="mf-long">Google Drive </span>folder';
+    const OPEN_LABEL = '<i class="fa-brands fa-google-drive"></i> Open folder';
     const folderCache = {};   // full name -> Promise of link or null
     let shownFor = null, lookupInstead = false;
 
@@ -294,26 +295,34 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
       const grid = document.getElementById("my-folders-grid");
       grid.innerHTML = "";
       students.forEach(name => {
-        const nameEl = document.createElement("div");
-        nameEl.className = "mf-name"; nameEl.setAttribute("role", "listitem");
-        nameEl.textContent = name;
+        const card = document.createElement("div");
+        card.className = "mf-card"; card.setAttribute("role", "listitem");
+        const nameEl = document.createElement("h3");
+        nameEl.className = "mf-name";
+        nameEl.innerHTML = '<i class="fa-solid fa-folder" aria-hidden="true"></i> ';
+        nameEl.append(name);
         const copyBtn = document.createElement("button"), openBtn = document.createElement("button");
         copyBtn.type = openBtn.type = "button";
+        copyBtn.className = "mf-copy"; openBtn.className = "mf-open";
         copyBtn.innerHTML = COPY_LABEL; openBtn.innerHTML = OPEN_LABEL;
+        const btns = document.createElement("div");
+        btns.className = "mf-btns";
+        btns.append(openBtn, copyBtn);
         // until the folder is found, a spinner and "Finding…" stand where the buttons go
         const loading = document.createElement("div");
         loading.className = "mf-loading";
         loading.innerHTML = '<span class="mf-spin" aria-hidden="true"></span> Finding notes folder…';
-        grid.append(nameEl, loading);
-        const fail = text => {
-          const msg = document.createElement("div");
+        card.append(nameEl, loading);
+        grid.append(card);
+        const fail = html => {
+          const msg = document.createElement("p");
           msg.className = "mf-msg";
-          msg.textContent = text;
+          msg.innerHTML = html;
           loading.replaceWith(msg);
         };
         folderFor(name, info.preview).then(link => {
-          if (link) { wireButtons(copyBtn, openBtn, link); loading.replaceWith(copyBtn, openBtn); return; }
-          fail("No notes folder found yet. Email me at tutor@trevorkafka.com and I'll sort it out.");
+          if (link) { wireButtons(copyBtn, openBtn, link); loading.replaceWith(btns); return; }
+          fail('No notes folder found yet. <a href="mailto:tutor@trevorkafka.com">Email me</a> and I\'ll sort it out.');
         }).catch(() => {
           fail("Couldn't reach the server. Please reload the page in a minute.");
           shownFor = null;
