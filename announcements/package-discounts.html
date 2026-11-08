@@ -38,6 +38,11 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			   page background) held constant across light and dark. */
 			.package-pill { background-image: linear-gradient(330deg, #E0603C, rgb(150, 0, 90)); }
 
+			/* pricing table: tighter cells on small phones so all three columns fit */
+			@media (max-width: 420px) {
+				.pkg-table th, .pkg-table td { padding-left: 12px !important; padding-right: 12px !important; }
+			}
+
 			/* "NEW" tag matching the announcement box (darkred, brighter red in dark mode). */
 			.page-new {
 				background: #f6d5d5;
@@ -93,7 +98,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 
 		<p>Buy your lessons in a package of <strong>10, 20, or 40</strong>, paid up front, and your per-lesson rate is discounted accordingly. The more lessons you buy, the bigger the discount, and you schedule the lessons at your own pace within the package's expiration window.</p>
 
-		<div class="tk-table-frame" style="width: fit-content; margin: 2em auto 2em auto; border-radius: 10px; overflow: hidden; border: solid 1px white;">
+		<div class="tk-table-frame pkg-table" style="width: fit-content; max-width: 100%; margin: 2em auto 2em auto; border-radius: 10px; overflow: hidden; border: solid 1px white;">
 		<table style="border-collapse: collapse;">
 			<thead>
 				<tr style="background-color: var(--color1); color: var(--color3);">
@@ -124,7 +129,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 
 		<p>The package price is determined by the following formula.</p>
 
-		<p style="text-align: center; overflow-x: auto;">\[ \text{package price} = \text{package size} \times \text{lesson price} \times \left(1 - \frac{\text{discount}}{100} \right) \]</p>
+		<p>\[ \text{package price} = \text{package size} \times \text{lesson price} \times \left(1 - \frac{\text{discount}}{100} \right) \]</p>
 		
 		<p>As always, your lesson price is based on your chosen <a href="/index.html#lesson-lengths">lesson length</a> and <a href="/index.html#pricing-faq">lesson rate</a>.</p>
 

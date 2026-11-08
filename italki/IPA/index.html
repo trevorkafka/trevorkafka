@@ -85,6 +85,11 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 		cursor: pointer;
 	}
 
+	/* small phones: narrower cells so all five columns fit */
+	@media (max-width: 400px) {
+		#vowel-grid td { padding: 10px 14px; }
+	}
+
 	#vowel-grid td.has-audio:hover {
 		background-color: var(--tint-5);
 	}
