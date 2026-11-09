@@ -1,4 +1,17 @@
 [
+	{"date": "2026-11-09",
+	"vocabulary": [
+		{"word": "advisor", "IPA": "/ædˈvaɪ.zər/", "translation": "导师"},
+		{"word": "tutor", "IPA": "/ˈtu.tər/", "translation": "家教"},
+		{"word": "boss", "IPA": "/bɑs/", "translation": "老板"},
+		{"word": "commodities", "IPA": "/kəˈmɑ.də.tiz/", "translation": "商品"},
+		{"word": "products", "IPA": "/ˈprɑ.dəkts/", "translation": "产品；商品"},
+		{"word": "comedies", "IPA": "/ˈkɑ.mə.diz/", "translation": "喜剧"},
+		{"word": "purchase", "IPA": "/ˈpɜr.tʃəs/", "translation": "购买"},
+		{"word": "live (adj.)", "audio": "live (adj)", "IPA": "/laɪv/", "translation": "直播"},
+		{"word": "go live", "IPA": "/ɡoʊ laɪv/", "translation": "直播（开始直播）"},
+		{"word": "pharmacy", "IPA": "/ˈfɑr.mə.si/", "translation": "药店"}
+	]},
 	{"date": "2026-11-05",
 	"vocabulary": [
 		{"word": "sign in", "IPA": "/saɪn ɪn/", "translation": "注册"},
