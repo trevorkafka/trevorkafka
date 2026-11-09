@@ -52,8 +52,8 @@
 		/* Shadows stay dark in BOTH themes (never invert to white). */
 		--shadow: #00000020;
 		/* Orange buttons keep their light-mode colors in dark mode. */
-		--button-bg:       #d46a53;
-		--button-bg-hover: #FB7F64;
+		--button-bg:       #b3462f; /* deeper terracotta: light text on it passes WCAG AA (4.75:1; was 3.0:1 on #d46a53) */
+		--button-bg-hover: #a8412b; /* hover darkens instead of brightening, so the text stays readable (5.4:1) */
 		--button-text:     var(--color3); /* light: matches page background; dark: overridden to parchment */
 		/* "red" warning FAQ (e.g. the cancellation policy) */
 		--faq-red-bg:       #FFBABA;
