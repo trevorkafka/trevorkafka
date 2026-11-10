@@ -510,6 +510,8 @@
 					var el = els[i];
 					if (skip.indexOf(el) >= 0 || tab.contains(el) || ct.panel.contains(el) || bar && bar.contains(el)) continue;
 					if (el.closest('.navbar') || getComputedStyle(el).position === 'fixed') continue;
+					// only things that run to the right edge of the screen (videos, calendars), not ones the tab merely sits over
+					if (el.getBoundingClientRect().right < m.right - 2) continue;
 					hit = solid(el);
 				}
 			});
