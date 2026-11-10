@@ -334,7 +334,7 @@
 				}
 			} else if (bar.dataset.key !== 'none') {
 				bar.dataset.key = 'none';
-				bar.innerHTML = '<span class="lb-row"><span><span class="lb-f8">You have no</span><span class="lb-a8">No</span> upcoming lessons</span></span>'
+				bar.innerHTML = '<span class="lb-row"><span><span class="lb-f8">You have no</span><span class="lb-a8">No</span> upcoming lessons<span class="lb-f7"> in the next 90 days</span></span></span>'
 					+ '<a class="lb-btn lb-browse" href="/availability.html"><i class="fa-solid fa-calendar-days"></i><span class="lb-f7">Browse Availability</span></a>';
 				bar.dataset.fit = '';
 			}
@@ -629,7 +629,7 @@
 				+ '<li>Links to your files at <a href="/mynotes.html">My Class Notes</a> will be available automatically (no need to enter your name).</li>'
 				+ '</ul>';
 		} else {
-			html += '<p>Show your next lesson at the top of the main pages on trevorkafka.com, even without being logged into the student portal.</p>'
+			html += '<p>Show your next lesson in the next 90 days at the top of the main pages on trevorkafka.com, even without being logged into the student portal.</p>'
 				+ (open ? '' : '<p><button type="button" class="ls-link ls-go" data-ls="toggle" aria-expanded="false" aria-controls="ls-more">Let’s do it! <i class="fa-solid fa-chevron-down"></i></button></p>')
 				+ '<div id="ls-more"' + (open ? (box.anim ? ' class="ls-opening"' : '') : ' hidden') + '>' + (open ? '<p>To link this website to your student portal account, enter the email you use for the student portal and check your email for a magic link.</p><p class="ls-warn"><i class="fa-solid fa-triangle-exclamation"></i> This is separate from the Portal Login. You cannot schedule lessons here.</p>'
 				+ BAR_DIAGRAM
