@@ -15,7 +15,10 @@
 // page and availability.html) also shows the family's own lessons, like the
 // portal draft does: blocks over the week, a dot on the mini calendar's days.
 //
-// Previews without signing in: ?lessonbar=sample | soon | live | family | today | none | loading | stale
+// Signed in, on a student's birthday the pages get birthday decorations (see
+// "birthday decorations" below).
+//
+// Previews without signing in: ?lessonbar=sample | soon | live | family | today | none | loading | stale | birthday
 (function () {
 	var API = 'https://script.google.com/macros/s/AKfycbz0z19vvsQdhKimWMDE9T2rO-bX88sMF_DhYBMal9B7enM4x6WSHoNzjacXZPrml7X3/exec';   // the Apps Script web app's /exec URL; empty: only ?lessonbar previews work
 	var TOKEN_KEY = 'tk-lesson-token', DATA_KEY = 'tk-lesson-bar', HEIGHT_KEY = 'tk-lesson-bar-h';
@@ -216,6 +219,7 @@
 		if (kind === 'live') return Object.assign(base, { next: at(-15, 60) });
 		var withNext = function (n) { if (n) base.lessons.unshift(n); return Object.assign(base, { next: n }); };
 		if (kind === 'family') { base.students = ['Ava Sample', 'Leo Sample']; return withNext(at(3 * 1440 + 125, 90)); }
+		if (kind === 'birthday') { var td = new Date(); base.birthdays = [{ first: 'Ava', md: ('0' + (td.getMonth() + 1)).slice(-2) + '-' + ('0' + td.getDate()).slice(-2) }]; }
 		return withNext(at(3 * 1440 + 65, 60));
 	}
 
@@ -228,6 +232,7 @@
 		return { signedIn: !!(preview || token()), preview: preview || null, students: d && d.students ? d.students.slice() : null, failed: state.failed };
 	}
 	function announce() {
+		try { paintBirthday(); bdChip(); } catch (e) {}
 		try { document.dispatchEvent(new CustomEvent('lessonbar:change', { detail: info() })); } catch (e) {}
 	}
 	window.lessonBar = { info: info };
@@ -629,6 +634,7 @@
 				+ '<li>Your upcoming scheduled lessons show on the <a href="/availability.html">availability calendar</a>.</li>'
 				+ '<li>A Contact Me tab will appear on the side of the page.</li>'
 				+ '<li>Links to your files at <a href="/mynotes.html">My Class Notes</a> will be available automatically (no need to enter your name).</li>'
+				+ '<li>A special surprise on your birthday (for those with a birthday on file).</li>'
 				+ '</ul>';
 		} else {
 			html += '<p>Show your next lesson in the next 90 days at the top of the main pages on trevorkafka.com, even without being logged into the student portal.</p>'
@@ -812,6 +818,219 @@
 	}
 	// script.js loads the snippet with jQuery; its scripts have run by the time ajaxComplete fires
 	if (window.jQuery) jQuery(document).ajaxComplete(function (e, xhr, opts) { if (/availability\.html/.test(opts.url)) hookCalendar(); });
+
+	// ---------- birthday decorations ----------
+	// On a family's student's birthday (the visitor's own date; Feb 29 birthdays
+	// on Feb 28 in other years): a pennant garland under the navbar, balloons in
+	// wide side margins (tap to pop), a birthday card with confetti once a day per
+	// browser, and a "Happy birthday" chip by the bar that reopens the card.
+	// Birthdays come from `next` as [{ first, md: "MM-DD" }], never with a year.
+	var BD_COLORS = ['#FB7F64', '#AF0069', '#F2B33D', '#3BA99C', '#5B8DEF', '#9B6BD3'];
+	var BD_CARD_KEY = 'tk-bday-card';
+	var bd = { who: '', els: [], chip: null, cv: null, ctx: null, bits: [], running: false, hooked: false };
+	var bdCss = ''
+		+ '.bd-garland { position: absolute; left: 0; right: 0; top: 0; height: 90px; z-index: 5; pointer-events: none; overflow: visible; }'
+		+ 'body.bd-on.has-lesson-bar { padding-top: calc(var(--lb-h) + 50px); }'
+		+ '@media (max-width: 599px) { body.bd-on.has-lesson-bar { padding-top: calc(var(--lb-h) + 34px); } }'
+		+ '.bd-garland svg { display: block; width: 100%; height: 100%; overflow: visible; }'
+		+ '.bd-flag { transform-box: fill-box; transform-origin: 50% 0; animation: bd-sway 3.2s ease-in-out infinite alternate; }'
+		+ '@keyframes bd-sway { from { transform: rotate(var(--r)) rotate(-4deg); } to { transform: rotate(var(--r)) rotate(4deg); } }'
+		+ '.bd-flag text { font-family: Freeman, sans-serif; font-size: 19px; fill: #fff; paint-order: stroke; stroke: rgba(0,0,0,0.18); stroke-width: 2px; }'
+		+ '.bd-balloons { position: fixed; bottom: 0; z-index: 104; width: 0; height: 0; }'
+		+ '.bd-balloons.left { left: 0; } .bd-balloons.right { right: 0; }'
+		+ '.bd-balloon { position: absolute; bottom: 0; width: 46px; cursor: pointer; animation: bd-rise 2.6s cubic-bezier(.2,.7,.3,1) both, bd-bob 4s ease-in-out 2.6s infinite alternate; }'
+		+ '.bd-balloon svg { display: block; width: 100%; overflow: visible; }'
+		+ '.bd-balloon.pop { animation: bd-pop 0.18s ease-out forwards; }'
+		+ '@keyframes bd-rise { from { transform: translateY(110vh); } to { transform: translateY(0); } }'
+		+ '@keyframes bd-bob { from { transform: translateY(0) rotate(-3deg); } to { transform: translateY(-14px) rotate(3deg); } }'
+		+ '@keyframes bd-pop { to { transform: scale(1.5); opacity: 0; } }'
+		+ '.bd-chip { position: fixed; left: 14px; top: calc(var(--lb-h) / 2); transform: translateY(-50%); z-index: 111; display: inline-flex; align-items: center; gap: 6px;'
+		+ ' margin: 0; padding: 3px 11px; border: 0; border-radius: 999px; cursor: pointer; font: inherit; font-size: 0.85em; font-weight: bold; line-height: 1.3; color: #3C303E;'
+		+ ' background: linear-gradient(90deg, #F2B33D, #FB8C73); white-space: nowrap; }'
+		+ '.bd-chip:hover { filter: brightness(1.08); }'
+		+ '.bd-chip[hidden] { display: none; }'
+		+ '@media (max-width: 999px) { .bd-chip { display: none; } }'
+		+ '.bd-veil { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 16px; background: rgba(20, 14, 22, 0.45); animation: bd-fade 0.3s both; }'
+		+ '@keyframes bd-fade { from { opacity: 0; } }'
+		+ '.bd-card { position: relative; width: min(380px, 100%); box-sizing: border-box; padding: 26px 24px 22px; border-radius: 22px; text-align: center;'
+		+ ' background: var(--color3, #F5EEE2); color: var(--color1, #3C303E); box-shadow: 0 18px 50px rgba(0,0,0,0.35); animation: bd-in 0.5s cubic-bezier(.2,1.4,.4,1) both; overflow: hidden; }'
+		+ ':root[data-theme="dark"] .bd-card { box-shadow: 0 0 0 1px #ffffff26, 0 18px 50px rgba(0,0,0,0.6); }'
+		+ '@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .bd-card { box-shadow: 0 0 0 1px #ffffff26, 0 18px 50px rgba(0,0,0,0.6); } }'
+		+ '@keyframes bd-in { from { transform: scale(0.6) rotate(-4deg); opacity: 0; } }'
+		+ '.bd-card::before { content: ""; position: absolute; inset: 0 0 auto; height: 8px; background: repeating-linear-gradient(90deg, #FB7F64 0 24px, #F2B33D 24px 48px, #3BA99C 48px 72px, #5B8DEF 72px 96px, #AF0069 96px 120px); }'
+		+ '.bd-card h2 { margin: 6px 0 8px; font-family: Freeman, sans-serif; font-weight: normal; font-size: 2.1em; line-height: 1.1;'
+		+ ' background: linear-gradient(90deg, rgb(175, 0, 105), #FB7F64); -webkit-background-clip: text; background-clip: text; color: transparent; }'
+		+ '.bd-card p { margin: 0 0 6px; font-size: 1.02em; line-height: 1.45; }'
+		+ '.bd-card .bd-sig { font-family: Freeman, sans-serif; font-size: 1.15em; opacity: 0.8; margin-top: 10px; }'
+		+ '.bd-card button { margin-top: 14px; padding: 8px 22px; border: 0; border-radius: 999px; background: #3C303E; color: #F5EEE2; font: inherit; font-weight: bold; cursor: pointer; }'
+		+ ':root[data-theme="dark"] .bd-card button { background: #FB7F64; color: #110E14; }'
+		+ '@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .bd-card button { background: #FB7F64; color: #110E14; } }'
+		+ '.bd-flame { transform-box: fill-box; transform-origin: 50% 100%; animation: bd-flick 0.5s ease-in-out infinite alternate; }'
+		+ '@keyframes bd-flick { from { transform: scale(1, 1) rotate(-3deg); } to { transform: scale(0.85, 1.12) rotate(3deg); } }'
+		+ '.bd-confetti { position: fixed; inset: 0; z-index: 201; pointer-events: none; }'
+		+ '@media (prefers-reduced-motion: reduce) { .bd-flag, .bd-balloon, .bd-flame, .bd-card, .bd-veil { animation: none !important; } }';
+
+	function bdStill() { return matchMedia('(prefers-reduced-motion: reduce)').matches; }
+	function bdToday() { var d = new Date(); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
+	// first names of the family's students whose birthday is today
+	function bdNames() {
+		var d = state.data, list = d && !d.loading && d.birthdays;
+		if (!list || !list.length) return [];
+		var now = new Date(), md = bdToday().slice(5), y = now.getFullYear();
+		var leap = (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0;
+		return list.filter(function (b) { return b.md === md || (!leap && b.md === '02-29' && md === '02-28'); })
+			.map(function (b) { return b.first; }).filter(function (n, i, a) { return a.indexOf(n) === i; });
+	}
+
+	function paintBirthday() {
+		var names = bdNames();
+		var who = names.length > 1 ? names.slice(0, -1).join(', ') + ' and ' + names[names.length - 1] : names[0] || '';
+		if (who === bd.who) return;
+		bdOff();
+		bd.who = who;
+		if (who) bdOn();
+	}
+
+	function bdOff() {
+		bd.els.forEach(function (el) { el.remove(); }); bd.els = []; bd.chip = null;
+		document.body.classList.remove('bd-on');
+	}
+
+	function bdOn() {
+		if (!document.getElementById('bd-style')) {
+			var st = document.createElement('style'); st.id = 'bd-style'; st.textContent = bdCss; document.head.appendChild(st);
+		}
+		if (!bd.hooked) {
+			bd.hooked = true;
+			addEventListener('resize', function () { if (bd.who) { bdGarland(); bdBalloons(); } });
+			addEventListener('load', function () { if (bd.who) bdPlaceGarland(); });
+		}
+		document.body.classList.add('bd-on');
+		var g = document.createElement('div'); g.className = 'bd-garland'; g.id = 'bd-garland'; g.setAttribute('aria-hidden', 'true');
+		document.body.appendChild(g); bd.els.push(g);
+		bdGarland(); bdBalloons();
+		var c = document.createElement('button'); c.type = 'button'; c.className = 'bd-chip';
+		c.innerHTML = '🎂 <span>Happy birthday, ' + esc(bd.who) + '!</span>';
+		c.addEventListener('click', bdCard);
+		document.body.appendChild(c); bd.els.push(c); bd.chip = c;
+		bdChip();
+		// the card opens by itself once a day in each browser (always in the preview)
+		if (preview || store.get(BD_CARD_KEY) !== bdToday()) {
+			store.set(BD_CARD_KEY, bdToday());
+			setTimeout(function () { if (bd.who) bdCard(); }, 900);
+		}
+	}
+
+	// the chip shows only while the bar does
+	function bdChip() { if (bd.chip) bd.chip.hidden = !bar || bar.hidden; }
+
+	// just under the (fixed) navbar, in the page, so it scrolls away under the navbar
+	function bdPlaceGarland() {
+		var g = document.getElementById('bd-garland'), nav = document.querySelector('.navbar');
+		if (!g) return;
+		if (!nav) return void setTimeout(bdPlaceGarland, 100);
+		g.style.top = nav.getBoundingClientRect().bottom + (getComputedStyle(nav).position === 'fixed' ? 0 : scrollY) + 4 + 'px';
+	}
+
+	function bdGarland() {
+		var g = document.getElementById('bd-garland');
+		if (!g) return;
+		bdPlaceGarland();
+		var W = document.documentElement.clientWidth, sag = W < 600 ? 10 : 16, step = W < 600 ? 24 : 38;
+		var word = W >= 560 ? 'HAPPY BIRTHDAY' : '';
+		var n = Math.max(2, Math.floor((W - 20) / step)), first = Math.round((n - word.length) / 2);
+		var svg = '<svg viewBox="0 0 ' + W + ' 90" preserveAspectRatio="none"><path d="M0 6 Q' + W / 2 + ' ' + (6 + 2 * sag) + ' ' + W + ' 6" fill="none" stroke="#8a7a6a" stroke-width="1.5"/>';
+		for (var i = 0; i < n; i++) {
+			var x = 10 + step * (i + 0.5) + ((W - 20) - n * step) / 2, t = x / W, y = 6 + 4 * sag * t * (1 - t);
+			var ang = Math.atan2(4 * sag * (1 - 2 * t) / W, 1) * 180 / Math.PI;
+			var ch = word && i >= first ? word.charAt(i - first) : '';
+			if (ch === ' ') continue;
+			var w = step - 5, h = w * 1.1;
+			svg += '<g class="bd-flag" style="--r:' + ang.toFixed(1) + 'deg; animation-delay:' + (-(i * 0.37) % 3.2).toFixed(2) + 's">'
+				+ '<path d="M' + (x - w / 2) + ' ' + y + ' L' + (x + w / 2) + ' ' + y + ' L' + x + ' ' + (y + h) + 'Z" fill="' + BD_COLORS[i % BD_COLORS.length] + '"/>'
+				+ (ch ? '<text x="' + x + '" y="' + (y + h * 0.5) + '" text-anchor="middle">' + ch + '</text>' : '')
+				+ '</g>';
+		}
+		g.innerHTML = svg + '</svg>';
+	}
+
+	// only where the side margins have room for them
+	function bdBalloons() {
+		bd.els = bd.els.filter(function (el) { if (el.classList.contains('bd-balloons')) { el.remove(); return false; } return true; });
+		var W = document.documentElement.clientWidth;
+		if ((W - Math.min(1000, W)) / 2 < 80) return;
+		var one = function (c, h) {
+			return '<svg viewBox="0 0 46 ' + (h + 60) + '"><path d="M23 58 C 20 ' + (58 + h * 0.3) + ', 27 ' + (58 + h * 0.6) + ', 22 ' + (58 + h) + '" stroke="#8a7a6a" stroke-width="1.2" fill="none"/>'
+				+ '<ellipse cx="23" cy="28" rx="21" ry="26" fill="' + c + '"/><path d="M19 56 L27 56 L23 51Z" fill="' + c + '"/>'
+				+ '<ellipse cx="15" cy="17" rx="4.5" ry="8" fill="#fff" opacity="0.35" transform="rotate(25 15 17)"/></svg>';
+		};
+		[['left', [[0, 150, 14], [3, 210, 44], [2, 120, 70]]], ['right', [[4, 180, 18], [1, 120, 46], [5, 230, 72]]]].forEach(function (side, si) {
+			var g = document.createElement('div'); g.className = 'bd-balloons ' + side[0]; g.setAttribute('aria-hidden', 'true');
+			side[1].forEach(function (b, k) {
+				var el = document.createElement('div'); el.className = 'bd-balloon'; el.title = 'Pop!';
+				el.style[side[0]] = b[2] - 23 + 'px';
+				el.style.animationDelay = (k * 0.25 + si * 0.1) + 's, ' + (2.6 + k * 0.7) + 's';
+				el.innerHTML = one(BD_COLORS[b[0]], b[1]);
+				el.addEventListener('click', function (e) { el.classList.add('pop'); bdBurst(e.clientX, e.clientY, 40); setTimeout(function () { el.remove(); }, 200); });
+				g.appendChild(el);
+			});
+			document.body.appendChild(g); bd.els.push(g);
+		});
+	}
+
+	var BD_CAKE = '<svg width="120" height="104" viewBox="0 0 120 104" aria-hidden="true">'
+		+ '<ellipse cx="60" cy="98" rx="50" ry="5" fill="#000" opacity="0.08"/>'
+		+ '<rect x="16" y="58" width="88" height="38" rx="8" fill="#AF0069"/>'
+		+ '<rect x="24" y="30" width="72" height="32" rx="8" fill="#FB7F64"/>'
+		+ '<path d="M24 40 q9 10 18 0 q9 10 18 0 q9 10 18 0 q9 10 18 0 V38 H24Z" fill="#F5EEE2"/>'
+		+ '<path d="M16 68 q11 10 22 0 q11 10 22 0 q11 10 22 0 q11 10 22 0 V66 H16Z" fill="#F5EEE2"/>'
+		+ [40, 60, 80].map(function (x, i) {
+			return '<rect x="' + (x - 3) + '" y="12" width="6" height="19" rx="2" fill="' + ['#5B8DEF', '#F2B33D', '#3BA99C'][i] + '"/>'
+				+ '<path class="bd-flame" style="animation-delay:-' + i * 0.17 + 's" d="M' + x + ' 0 C ' + (x + 6) + ' 6, ' + (x + 4) + ' 11, ' + x + ' 11 C ' + (x - 4) + ' 11, ' + (x - 6) + ' 6, ' + x + ' 0Z" fill="#F2B33D"/>';
+		}).join('')
+		+ '</svg>';
+
+	function bdCard() {
+		if (document.querySelector('.bd-veil')) return;
+		var v = document.createElement('div'); v.className = 'bd-veil';
+		v.innerHTML = '<div class="bd-card" role="dialog" aria-modal="true" aria-label="Happy birthday">' + BD_CAKE
+			+ '<h2>Happy birthday, ' + esc(bd.who) + '!</h2>'
+			+ '<p>Wishing you a wonderful day and a great year ahead.</p>'
+			+ '<p class="bd-sig">– Trevor</p>'
+			+ '<button type="button">Thanks!</button></div>';
+		document.body.appendChild(v);
+		var btn = v.querySelector('button');
+		var close = function () { v.remove(); removeEventListener('keydown', key); };
+		var key = function (e) { if (e.key === 'Escape') close(); };
+		v.addEventListener('click', function (e) { if (e.target === v || e.target === btn) close(); });
+		addEventListener('keydown', key);
+		btn.focus({ preventScroll: true });
+		var r = v.querySelector('.bd-card').getBoundingClientRect();
+		setTimeout(function () { bdBurst(innerWidth / 2, r.top + 20, 160); }, 250);
+	}
+
+	function bdBurst(x, y, count) {
+		if (bdStill()) return;
+		if (!bd.cv) { bd.cv = document.createElement('canvas'); bd.cv.className = 'bd-confetti'; bd.cv.setAttribute('aria-hidden', 'true'); bd.ctx = bd.cv.getContext('2d'); }
+		if (!bd.cv.isConnected) document.body.appendChild(bd.cv);
+		bd.cv.width = innerWidth; bd.cv.height = innerHeight;
+		for (var i = 0; i < count; i++) {
+			var a = Math.random() * Math.PI * 2, s = 3 + Math.random() * 9;
+			bd.bits.push({ x: x, y: y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 6, r: Math.random() * 6, vr: (Math.random() - 0.5) * 0.4, w: 6 + Math.random() * 5, h: 3 + Math.random() * 4, c: BD_COLORS[i % BD_COLORS.length], life: 0 });
+		}
+		if (!bd.running) { bd.running = true; requestAnimationFrame(bdTick); }
+	}
+	function bdTick() {
+		var cv = bd.cv, ctx = bd.ctx;
+		ctx.clearRect(0, 0, cv.width, cv.height);
+		bd.bits = bd.bits.filter(function (b) { return b.life < 160 && b.y < cv.height + 20; });
+		bd.bits.forEach(function (b) {
+			b.life++; b.vy += 0.25; b.vx *= 0.985; b.vy *= 0.985; b.x += b.vx; b.y += b.vy; b.r += b.vr;
+			ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(b.r); ctx.globalAlpha = Math.min(1, (160 - b.life) / 40);
+			ctx.fillStyle = b.c; ctx.fillRect(-b.w / 2, -b.h / 2, b.w, b.h * Math.abs(Math.cos(b.life * 0.15))); ctx.restore();
+		});
+		if (bd.bits.length) requestAnimationFrame(bdTick); else { bd.running = false; cv.remove(); }
+	}
 
 	// ---------- start ----------
 	function start() {
