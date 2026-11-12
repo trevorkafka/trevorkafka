@@ -82,6 +82,14 @@
 		+ 'html.lb-early body { padding-top: var(--lb-h); }'
 		+ 'html.lb-early body .navbar { top: calc(20px + var(--lb-h)); }'
 		+ 'html.lb-early body::before { content: ""; position: fixed; top: 0; left: 0; right: 0; height: var(--lb-h); background: #3C303E; z-index: 109; }'
+		// signed in: My Class Notes takes Get Started's place in the navbar (navNotes)
+		+ 'html.lb-linked .navbar #call:not([data-lb-href]) { visibility: hidden; }'
+		+ 'html.lb-linked .navbar .nav-dropdown-menu #mynotes { display: none; }'
+		// a plain link like the others, just in terracotta (lighter in dark mode),
+		// keyed off <html> so it's there from the first style pass
+		+ 'html.lb-linked .navbar a#call, html.lb-linked .navbar a#call:hover { color: var(--button-bg, #b3462f); }'
+		+ ':root[data-theme="dark"].lb-linked .navbar a#call, :root[data-theme="dark"].lb-linked .navbar a#call:hover { color: #FB8C73; }'
+		+ '@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]).lb-linked .navbar a#call, :root:not([data-theme="light"]).lb-linked .navbar a#call:hover { color: #FB8C73; } }'
 		// the sign-in box on login.html
 		+ '#next-lesson-box { scroll-margin-top: 140px; margin: 0 0 1em; padding: 16px 20px; border: 1.5px solid var(--surface-border); border-radius: 20px; background: var(--color3); line-height: 1.45; box-shadow: 1px 1px 10px var(--tint-4, #00000020); }'
 		+ ':root[data-theme="dark"] #next-lesson-box { box-shadow: none; }'
@@ -234,9 +242,38 @@
 	}
 	function announce() {
 		try { paintBirthday(); bdChip(); } catch (e) {}
+		try { navNotes(); } catch (e) {}
 		try { document.dispatchEvent(new CustomEvent('lessonbar:change', { detail: info() })); } catch (e) {}
 	}
 	window.lessonBar = { info: info };
+
+	// signed in, the navbar's intro call link ("Get Started", call.html) becomes
+	// My Class Notes; signed out, it goes back. The navbar loads after this
+	// script (snippets/navigation.html): watch for it and swap the moment it's
+	// added, before it's painted, so Get Started never flashes. The lb-linked
+	// class also hides it (and takes My Class Notes out of the Students menu).
+	var navWatch = null;
+	function navNotes() {
+		var on = info().signedIn;
+		document.documentElement.classList.toggle('lb-linked', on);
+		var a = document.querySelector('.navbar #call');
+		if (!a) {
+			if (!navWatch && window.MutationObserver) {
+				navWatch = new MutationObserver(function () { if (document.querySelector('.navbar #call')) { navWatch.disconnect(); navWatch = null; navNotes(); } });
+				navWatch.observe(document.documentElement, { childList: true, subtree: true });
+			}
+			return;
+		}
+		var page = location.pathname.split('/').pop().split('.')[0] || 'index';
+		if (!a.dataset.lbHref) { a.dataset.lbHref = a.getAttribute('href'); a.dataset.lbText = a.innerHTML; }
+		a.setAttribute('href', on ? '/mynotes.html' : a.dataset.lbHref);
+		a.innerHTML = on ? 'My Class Notes' : a.dataset.lbText;
+		a.classList.toggle('active-link', page === (on ? 'mynotes' : 'call'));
+		// on mynotes.html the highlight moves from Students to this link
+		var t = page === 'mynotes' && document.querySelector('.navbar .nav-dropdown-trigger');
+		if (t) t.classList.toggle('active-link', !on);
+	}
+	if (preview || token()) navNotes();
 
 	// e.g. "Chrome on Android", for the sign-in list
 	function deviceName() {
@@ -634,7 +671,7 @@
 				+ '<li>A Zoom link will appear in the bar at the top of the screen 30 minutes before your lesson starts.</li>'
 				+ '<li>Your upcoming scheduled lessons show on the <a href="/availability.html">availability calendar</a>.</li>'
 				+ '<li>A Contact Me tab will appear on the side of the page.</li>'
-				+ '<li>Links to your files at <a href="/mynotes.html">My Class Notes</a> will be available automatically (no need to enter your name).</li>'
+				+ '<li>Links to your files at <a href="/mynotes.html">My Class Notes</a> will be available automatically (no need to enter your name), and My Class Notes replaces the Get Started button at the top of the page.</li>'
 				+ '<li>A special surprise on your birthday (for those with a birthday on file).</li>'
 				+ '</ul>';
 		} else {
@@ -689,7 +726,7 @@
 			var t = token();
 			if (t) call('signout', { token: t }).catch(function () {});
 			box.mode = 'form'; box.email = ''; box.msg = '';
-			if (preview) { preview = null; state.data = null; render(); renderBox(); return; }
+			if (preview) { preview = null; state.data = null; render(); renderBox(); navNotes(); return; }
 			signedOut();
 		}
 	});

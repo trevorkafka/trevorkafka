@@ -869,15 +869,42 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 		// Line the TOC up with the top of the announcement box (or the page
 		// title when there is no announcement) as it sits when scrolled to the top.
 		function alignTop() {
-			var anchor = document.getElementById('announcement-box') || document.getElementById('overview');
+			// (a collapsed announcement's box is hidden and measures 0, so use the
+			// collapsed pill instead, or the title)
+			var anchor = ['announcement-box', 'announcement-pill-wrap', 'overview']
+				.map(function (id) { return document.getElementById(id); })
+				.filter(function (el) { return el && el.offsetParent; })[0];
 			if (!anchor) return;
-			var top = pageTop(anchor);
+			var rest = pageTop(anchor), top = rest;
 			// ...but never let it slide down into the footer: once the end of the
 			// page content scrolls up past the TOC's bottom, push the TOC up with it.
 			var page = document.getElementById('above-footer');
 			if (page) top = Math.min(top, page.getBoundingClientRect().bottom - toc.offsetHeight - 32);
 			toc.style.top = top + 'px';
+			// while it's being pushed up, fade it out before it slides under the top
+			// edge (or under the next-lesson bar, when that's showing)
+			var bar = document.querySelector('.lesson-bar:not([hidden])');
+			var floor = (bar ? bar.getBoundingClientRect().bottom : 0) + 12;
+			toc.style.opacity = top < rest && top < floor ? Math.max(0, 1 - (floor - top) / 60) : '';
+			if (!shown && settled()) reveal();
 		}
+
+		// The navbar (with the spacer under it) and the announcement are loaded in
+		// after the page and each push the anchor down when they arrive, so the
+		// TOC stays invisible until both are in, and then fades in already in place.
+		var shown = false;
+		function settled() {
+			var navOk = !document.querySelector('trevorkafka-nav') || document.querySelector('.nav-spacer');
+			var annOk = !document.querySelector('trevorkafka-announcement') || document.getElementById('announcement-box');
+			return !!(navOk && annOk);
+		}
+		function reveal() {
+			if (shown) return;
+			shown = true;
+			alignTop();
+			toc.classList.add('ready');
+		}
+		setTimeout(reveal, 3000);   // whatever happens, don't keep it hidden for long
 
 		// Clicking an entry scrolls its section heading to just below the
 		// navbar (rather than under it, which is where a plain #hash jump
@@ -937,9 +964,8 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 		new MutationObserver(function () {   // content added or changed anywhere (e.g. the announcement)
 			clearTimeout(realign);
 			realign = setTimeout(function () { alignTop(); update(); }, 50);
-		}).observe(document.body, { childList: true, subtree: true });
+		}).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['hidden'] });   // and the announcement collapsing/expanding
 		window.addEventListener('scroll', alignTop, { passive: true });   // and on every scroll (also keeps it above the footer)
-		requestAnimationFrame(function () { toc.classList.add('ready'); });
 	})();
 	</script>
 
