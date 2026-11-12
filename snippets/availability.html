@@ -542,6 +542,36 @@
     line-height: 1.3;
     letter-spacing: 0.04em;
   }
+  /* Month after the weekday ("WED NOV"); narrow screens put it on its own line. */
+  .calendar-head-cell-weekday { white-space: nowrap; }
+  /* Corner arrows (see cornerButtonHTML). */
+  .calendar-head-cell .cal-corner-btn {
+    appearance: none;
+    flex: 1 1 0;
+    align-self: stretch;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    background: none;
+    color: var(--cal-muted);
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background var(--cal-tx), color var(--cal-tx);
+  }
+  @media (hover: hover) {
+    .calendar-head-cell .cal-corner-btn:hover:not(:disabled) {
+      background: color-mix(in srgb, var(--cal-border) 45%, transparent);
+      color: var(--cal-text);
+    }
+  }
+  .calendar-head-cell .cal-corner-btn:disabled { color: var(--cal-border); cursor: default; }
+  .calendar-head-cell .cal-corner-btn-narrow { display: none; }
   .calendar-head-cell-date {
     font-family: Freeman, sans-serif;
     font-size: 16px;
@@ -642,6 +672,11 @@
     border-right: none;
   }
   @container (max-width: 600px) {
+    .calendar-head-date { height: 56px; }
+    /* stacked month: smaller and fainter, so the weekday and date lead */
+    .calendar-head-cell-month { display: block; font-size: 8px; line-height: 1.15; opacity: 0.6; }
+    .calendar-head-cell .cal-corner-btn-narrow { display: flex; }
+    .calendar-head-cell .cal-corner-btn { font-size: 14px; }
     .calendar-head-cell-blank-right,
     .calendar-time-right {
       display: none;
@@ -1498,6 +1533,12 @@
     const root = document.getElementById('root');
     if (!root) return;
     root.addEventListener('click', e => {
+      const corner = e.target.closest('.cal-corner-btn');
+      if (corner) {
+        const btn = document.getElementById(corner.getAttribute('data-go'));
+        if (btn && !btn.disabled) btn.click();
+        return;
+      }
       if (e.target.closest('.holiday-chip')) return;
       const cell = e.target.closest('.calendar-head-date [data-day]');
       if (!cell || !cachedEvents) return;
@@ -1629,12 +1670,22 @@
     return grid;
   }
 
+  // The header's corner cells page a week back / on, like the pager arrows
+  // (clicks go through those buttons). Narrow screens hide the right corner,
+  // so the left one also carries the "next" arrow there (narrowOnly).
+  function cornerButtonHTML(dir, narrowOnly) {
+    const prev = dir === 'prev';
+    const off = prev ? dayOffset <= 0 : dayOffset >= maxDayOffset();
+    return `<button type="button" class="cal-corner-btn${narrowOnly ? ' cal-corner-btn-narrow' : ''}" data-go="cal-week-${dir}" aria-label="${prev ? 'Previous' : 'Next'} week"${off ? ' disabled' : ''}><i class="fa-solid fa-chevron-${prev ? 'left' : 'right'}" aria-hidden="true"></i></button>`;
+  }
+
   // Header cells and body columns for a run of days (render() and the slide's
   // in-between days share them).
   function headCellsHTML(days) {
     const todayKey = new Date().toDateString();
     const today0 = new Date(); today0.setHours(0, 0, 0, 0);
     const weekdayFmt = new Intl.DateTimeFormat(undefined, { weekday: 'short' });
+    const monthFmt = new Intl.DateTimeFormat(undefined, { month: 'short' });
     return days.map(d => {
       const today = d.toDateString() === todayKey;
       const holiday = federalHoliday(d);
@@ -1643,7 +1694,7 @@
         : '';
       // data-day: days from today, for the click that starts the week on this day
       return `<div class="calendar-head-cell${today ? ' calendar-head-cell-today' : ''}" data-day="${dayIndexFrom(today0, d.getTime())}">
-        <div class="calendar-head-cell-weekday">${weekdayFmt.format(d)}</div>
+        <div class="calendar-head-cell-weekday">${weekdayFmt.format(d)} <span class="calendar-head-cell-month">${monthFmt.format(d)}</span></div>
         <div class="calendar-head-cell-date">${d.getDate()}</div>${chip}
     </div>`;
     }).join('');
@@ -1721,9 +1772,9 @@
 
     root.innerHTML = `<div class="calendar">
       <div class="calendar-head-date">
-        <div class="calendar-head-cell calendar-head-cell-blank"></div>
+        <div class="calendar-head-cell calendar-head-cell-blank">${cornerButtonHTML('prev')}${cornerButtonHTML('next', true)}</div>
         <div class="calendar-days"><div class="calendar-days-track">${headCells}</div></div>
-        <div class="calendar-head-cell calendar-head-cell-blank calendar-head-cell-blank-right"></div>
+        <div class="calendar-head-cell calendar-head-cell-blank calendar-head-cell-blank-right">${cornerButtonHTML('next')}</div>
       </div>
       <div class="calendar-body-wrap">
         ${loading ? '<div class="loading-spinner"></div>' : ''}
