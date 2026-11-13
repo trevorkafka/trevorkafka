@@ -1,4 +1,18 @@
 [
+	{"date": "2026-11-12",
+	"vocabulary": [
+		{"word": "business trip", "IPA": "/ˈbɪz.nəs trɪp/", "translation": "出差"},
+		{"word": "go on a business trip", "IPA": "/ɡoʊ ɑn ə ˈbɪz.nəs trɪp/", "translation": "去出差"},
+		{"word": "business", "IPA": "/ˈbɪz.nəs/", "translation": "商业，生意"},
+		{"word": "maybe", "IPA": "/ˈmeɪ.bi/", "translation": "也许"},
+		{"word": "bring", "IPA": "/brɪŋ/", "translation": "带来"},
+		{"word": "brought", "IPA": "/brɑt/", "translation": "带来（bring 的过去式）"},
+		{"word": "noon", "IPA": "/nun/", "translation": "中午"},
+		{"word": "do sports", "IPA": "/du spɔrts/", "translation": "做运动"},
+		{"word": "exercise", "IPA": "/ˈɛk.sər.saɪz/", "translation": "锻炼"},
+		{"word": "continue", "IPA": "/kənˈtɪn.ju/", "translation": "继续"},
+		{"word": "steak", "IPA": "/steɪk/", "translation": "牛排"}
+	]},
 	{"date": "2026-11-05",
 	"vocabulary": [
 		{"word": "fried chicken", "IPA": "/fraɪd ˈtʃɪ.kən/", "translation": "炸鸡"},
