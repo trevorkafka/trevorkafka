@@ -1310,6 +1310,7 @@
     const outgoing = delta && slideOn ? captureWeekTracks(root) : null;
     render(root, days, grid);
     if (outgoing) slideWeek(root, outgoing, delta);
+    if (outgoing) followPauseNotices(root);
     renderMiniCal();
   }
 
@@ -2092,18 +2093,22 @@ function attachHover(root, grid, startSlot) {
   body.addEventListener('click', jiggle);
 }
 // (no available and no booked time). Centered over the visible non-teaching days.
+// The notices sit above the week (not inside its moving track), and while the
+// week is dragged or sliding they're re-placed every frame from where the days
+// actually are: they glide to stay centered over the pause days on screen and
+// fade out over the last day as fewer than a full week of them is showing.
 function renderPauseNotice(root, days) {
   if (!cachedEvents) return;
-  const wrap = root.querySelector('.calendar-body .calendar-days-track');
-  const colEls = wrap ? wrap.querySelectorAll('.calendar-week-day') : [];
+  const clip = root.querySelector('.calendar-body .calendar-days');
+  const wrap = clip && clip.querySelector(':scope > .calendar-days-track:not(.calendar-days-old)');
+  const colEls = wrap ? wrap.querySelectorAll(':scope > .calendar-week-day') : [];
   if (!wrap || colEls.length !== days.length) return;
 
   // Clear any previously placed notices (e.g. when repositioning on resize).
-  wrap.querySelectorAll('.pause-notice').forEach(n => n.remove());
+  root.querySelectorAll('.pause-notice').forEach(n => n.remove());
 
   const DAY_MS = 24 * 60 * 60 * 1000;
   const MIN_RUN = 7;      // minimum length of a non-teaching stretch to announce
-  const MIN_VISIBLE = 7;  // minimum of those days that must be on screen (a full visible week)
 
   const today0 = new Date();
   today0.setHours(0, 0, 0, 0);
@@ -2118,8 +2123,10 @@ function renderPauseNotice(root, days) {
   const teaching = fullGrid.map(slots => slots.some(st => st === 1 || st === 3));
 
   const visStart = Math.round((days[0].getTime() - today0.getTime()) / DAY_MS);
-  const visEnd = visStart + days.length - 1;
   const fmt = new Intl.DateTimeFormat(undefined, { month: 'long', day: 'numeric' });
+  // the box is as wide as the week it covers (leaving a little margin)
+  const maxW = Math.max(110, clip.clientWidth - 16);
+  const notices = [];
 
   let d = 0;
   while (d < N) {
@@ -2131,9 +2138,6 @@ function renderPauseNotice(root, days) {
     d = j;
 
     if (runLen < MIN_RUN) continue;
-    const iStart = Math.max(runStart, visStart);
-    const iEnd = Math.min(runEndIncl, visEnd);
-    if (iEnd - iStart + 1 < MIN_VISIBLE) continue;
 
     const startDate = addDays(today0, runStart);
     let msg = `I'm unavailable starting ${fmt.format(startDate)}`;
@@ -2151,26 +2155,54 @@ function renderPauseNotice(root, days) {
     }
     msg += '.';
 
-    const c0 = iStart - visStart, c1 = iEnd - visStart;
-    const wrapRect = wrap.getBoundingClientRect();
-    const r0 = colEls[c0].getBoundingClientRect();
-    const r1 = colEls[c1].getBoundingClientRect();
-    const centerX = (r0.left + r1.right) / 2 - wrapRect.left;
-
-    const notice = document.createElement('div');
-    notice.className = 'pause-notice';
-    notice.innerHTML = `<i class="fa-solid fa-circle-info"></i>${escapeHTML(msg)}`;
-    wrap.appendChild(notice);
-
-    // Constrain the box to the width of the days it covers (leaving a little margin).
-    const spanW = r1.right - r0.left;
-    notice.style.maxWidth = Math.max(110, spanW - 16) + 'px';
-
-    const nRect = notice.getBoundingClientRect();
-    let left = centerX - nRect.width / 2;
-    left = Math.max(6, Math.min(left, wrapRect.width - nRect.width - 6));
-    notice.style.left = left + 'px';
+    const el = document.createElement('div');
+    el.className = 'pause-notice';
+    el.setAttribute('role', 'note');
+    el.innerHTML = `<i class="fa-solid fa-circle-info"></i>${escapeHTML(msg)}`;
+    el.style.maxWidth = maxW + 'px';
+    el.style.visibility = 'hidden';
+    clip.appendChild(el);
+    notices.push({ el, start: runStart, end: runEndIncl + 1, w: el.offsetWidth });
   }
+  root._pauseNotices = { visStart, notices };
+  placePauseNotices(root);
+  followPauseNotices(root);
+}
+
+// Where the week is now, in days from today: fractional while it's dragged or
+// sliding, read off the live track's on-screen offset.
+function placePauseNotices(root) {
+  const info = root._pauseNotices;
+  const clip = root.querySelector('.calendar-body .calendar-days');
+  if (!info || !clip || !info.notices.length) return;
+  const main = clip.querySelector(':scope > .calendar-days-track:not(.calendar-days-old)');
+  const W = clip.clientWidth, colW = W / 7;
+  if (!main || !colW) return;
+  const x = main.getBoundingClientRect().left - clip.getBoundingClientRect().left;
+  const p = info.visStart - x / colW;
+  for (const n of info.notices) {
+    if (!n.el.isConnected) continue;
+    const a = Math.max(n.start, p), b = Math.min(n.end, p + 7);
+    // fully shown with a whole week of the pause on screen, gone at six days
+    const op = Math.max(0, Math.min(1, b - a - 6));
+    n.el.style.visibility = op > 0 ? '' : 'hidden';
+    n.el.style.opacity = op < 1 ? op.toFixed(3) : '';
+    if (!op) continue;
+    let left = ((a + b) / 2 - p) * colW - n.w / 2;
+    left = Math.max(6, Math.min(left, W - n.w - 6));
+    n.el.style.left = left.toFixed(1) + 'px';
+  }
+}
+
+// Keep placing the notices each frame while the week is dragged or sliding.
+let pauseFollowRaf = 0;
+function followPauseNotices(root) {
+  if (pauseFollowRaf) return;
+  const step = () => {
+    placePauseNotices(root);
+    pauseFollowRaf = root.querySelector('.calendar-days.sliding, .calendar-days.dragging') ? requestAnimationFrame(step) : 0;
+  };
+  pauseFollowRaf = requestAnimationFrame(step);
 }
 
 function stateClass(state) {
@@ -2352,61 +2384,127 @@ function updateWeekNav(days) {
   updateWeekNav(buildWeek(new Date(), dayOffset)); // initial label while data loads
 })();
 
-// Drag the week sideways to browse: the days follow the pointer, and on
-// release the calendar settles on the nearest day (a quick flick goes on by
-// at least one day), sliding from wherever the drag left it. Past either end
-// the drag stretches less and springs back.
+// Drag the week sideways to browse: the days follow the pointer, with the
+// days either side drawn in. On release the week glides on at the speed it
+// was let go, slowing to a stop on a whole day (a slow release settles on
+// the nearest day, a quick flick goes on by at least one, a toss at most
+// TOSS_MAX_DAYS). The glide moves the days already drawn; the calendar is
+// only redrawn for its new week once it has stopped, so nothing stalls
+// mid-motion. Touching it while it glides catches it where it is. Past either
+// end (or past the days drawn in) the drag stretches less and springs back.
 (function setupWeekDrag() {
   const root = document.getElementById('root');
   if (!root) return;
-  let drag = null, justDragged = false;
+  const TOSS_MS = 250;        // a toss carries about this long's worth of its speed
+  const TOSS_MAX_DAYS = 21;   // and never more than three weeks
+  const SIDE_DAYS = TOSS_MAX_DAYS;      // days drawn in either side for the drag
+  const VEL_WINDOW_MS = 100;  // release speed is averaged over the last moments
+  // an ease-out whose speed only ever falls, starting at 3x its average
+  const EASE = 'cubic-bezier(0.33, 1, 0.68, 1)';
+  let drag = null, glide = null, wheelDrag = null, wheelTimer = 0, justDragged = false;
   const tracks = () => Array.from(root.querySelectorAll('.calendar-days > .calendar-days-track:not(.calendar-days-old)'));
   const clips = () => Array.from(root.querySelectorAll('.calendar-days'));
+  const colWidth = () => { const clip = root.querySelector('.calendar-days'); return clip ? clip.clientWidth / 7 : 1; };
+  let shownDay = null;
+  function show(dx, sides) {
+    // the week label follows the days under the pointer
+    const day = dayOffset + Math.round(-dx / colWidth());
+    if (day !== shownDay) { shownDay = day; updateWeekNav(buildWeek(new Date(), day)); }
+    tracks().forEach(t => { t.style.transform = 'translateX(' + dx + 'px)'; });
+    sides.forEach(sd => { sd.el.style.transform = 'translateX(' + (sd.x + dx) + 'px)'; });
+  }
   // the same three steps for a mouse (pointer events) and a finger (touch
   // events, which every mobile browser delivers reliably)
   function start(x, y, target) {
     if (!cachedEvents || !target.closest || !target.closest('.calendar-days')) return;
     const now = performance.now();
-    drag = { x0: x, y0: y, dx: 0, on: false, vx: 0, lastX: x, lastT: now };
+    drag = { x0: x, y0: y, base: 0, dx: 0, on: false, pts: [{ x, t: now }] };
+    shownDay = null;
+    if (glide || wheelDrag) {
+      // caught mid-glide or mid-scroll: hold the days exactly where they are
+      const h = hold();
+      drag.base = drag.dx = h.dx;
+      drag.sides = h.sides; drag.room = h.room; drag.caught = true;
+    }
+  }
+  // Stop the week where it is now, ready to move on from there: a glide is
+  // caught where it has got to, a wheel scroll taken over, and otherwise the
+  // days either side are drawn in.
+  function hold() {
+    const d = { x0: 0, y0: 0, base: 0, dx: 0, on: false, pts: [] };
+    if (wheelDrag) {
+      const w = wheelDrag; wheelDrag = null; clearTimeout(wheelTimer);
+      d.base = d.dx = w.dx; d.sides = w.sides; d.room = w.room;
+    } else if (glide) {
+      const g = glide; glide = null;
+      const main = tracks()[0], clip = root.querySelector('.calendar-days');
+      const xNow = main && clip ? main.getBoundingClientRect().left - clip.getBoundingClientRect().left : g.to;
+      g.anims.forEach(a => a.cancel());
+      d.base = d.dx = xNow; d.sides = g.sides; d.room = g.room;
+      if (g.step) d.stepN = g.n;
+      show(xNow, g.sides);
+      clips().forEach(c => { c.classList.remove('sliding'); c.classList.add('dragging'); });
+    } else {
+      // a week-button slide in progress stops, and the move starts from there
+      root.querySelectorAll('.calendar-days-old').forEach(el => el.remove());
+      tracks().forEach(t => t.getAnimations().forEach(a => a.cancel()));
+      clips().forEach(c => { c.classList.remove('sliding'); c.classList.add('dragging'); });
+      Object.assign(d, addSides());
+    }
+    followPauseNotices(root);
+    return d;
+  }
+  // resist past the first and last days, and past the days drawn in
+  function resist(d, raw) {
+    const lo = -d.room.after, hi = d.room.before;
+    return raw > hi ? hi + (raw - hi) / 3 : raw < lo ? lo + (raw - lo) / 3 : raw;
   }
   // returns true once the drag is sideways (so the caller can stop the page scrolling)
   function move(x, y) {
     if (!drag) return false;
-    const dx = x - drag.x0, dy = y - drag.y0;
+    const fx = x - drag.x0, dy = y - drag.y0;
     if (!drag.on) {
-      if (Math.abs(dy) > 8 && Math.abs(dy) > Math.abs(dx)) { drag = null; return false; }
-      if (Math.abs(dx) < 8) return false;
+      if (Math.abs(dy) > 8 && Math.abs(dy) > Math.abs(fx)) { const d = drag; drag = null; if (d.caught) settle(d, 0); return false; }
+      if (Math.abs(fx) < 8) return false;
       drag.on = true;
-      // a slide in progress stops where it is, and the drag carries on from there
-      root.querySelectorAll('.calendar-days-old').forEach(el => el.remove());
-      tracks().forEach(t => t.getAnimations().forEach(a => a.cancel()));
-      clips().forEach(c => { c.classList.remove('sliding'); c.classList.add('dragging'); });
-      drag.sides = addSides();
+      if (!drag.sides) {
+        // a week-button slide in progress stops, and the drag starts from there
+        root.querySelectorAll('.calendar-days-old').forEach(el => el.remove());
+        tracks().forEach(t => t.getAnimations().forEach(a => a.cancel()));
+        clips().forEach(c => { c.classList.remove('sliding'); c.classList.add('dragging'); });
+        Object.assign(drag, addSides());
+      }
+      followPauseNotices(root);
     }
     const now = performance.now();
-    if (now > drag.lastT) { drag.vx = (x - drag.lastX) / (now - drag.lastT); drag.lastX = x; drag.lastT = now; }
-    // resist past the first and last days
-    const atStart = dayOffset <= 0 && dx > 0, atEnd = dayOffset >= maxDayOffset() && dx < 0;
-    drag.dx = atStart || atEnd ? dx / 3 : dx;
-    tracks().forEach(t => { t.style.transform = 'translateX(' + drag.dx + 'px)'; });
-    drag.sides.forEach(sd => { sd.el.style.transform = 'translateX(' + (sd.x + drag.dx) + 'px)'; });
+    drag.pts.push({ x, t: now });
+    while (drag.pts.length > 2 && now - drag.pts[0].t > VEL_WINDOW_MS) drag.pts.shift();
+    drag.raw = drag.base + fx;
+    drag.dx = resist(drag, drag.raw);
+    show(drag.dx, drag.sides);
     return true;
+  }
+  // px per ms over the last moments of the drag; zero if it was held still
+  function releaseSpeed(d) {
+    const pts = d.pts, last = pts[pts.length - 1], first = pts[0];
+    if (!last || performance.now() - last.t > 60 || last.t - first.t < 8) return 0;
+    return (last.x - first.x) / (last.t - first.t);
   }
   // The days either side of the week, drawn in for the drag so they slide into
   // view with their availability (and, on the lessons page, the student's own
-  // lessons, via the 'weekdragdays' event). They're ordinary outgoing tracks,
-  // so on release the slide picks them up from where they are.
-  const SIDE_DAYS = 14;
+  // lessons, via the 'weekdragdays' event).
   function addSides() {
     const before = Math.min(SIDE_DAYS, dayOffset);
     const after = Math.min(SIDE_DAYS, maxDayOffset() - dayOffset);
     const [c0, c1] = (root.dataset.containers || '').split(',').map(Number);
+    const colW = colWidth();
     const sides = [];
-    const make = (days, k0) => {
-      if (!days.length) return;
+    const make = (k0, n) => {
+      if (n <= 0) return;
+      const first = buildWeek(new Date(), dayOffset + k0)[0];
+      const days = Array.from({ length: n }, (_, j) => addDays(first, j));
       const html = [headCellsHTML(days), dayColsHTML(classify(cachedEvents, days, currentMinRun()), c0, c1)];
       clips().forEach((clip, i) => {
-        const colW = clip.clientWidth / 7;
         const el = document.createElement('div');
         el.className = 'calendar-days-track calendar-days-old';
         el.setAttribute('aria-hidden', 'true');
@@ -2420,39 +2518,61 @@ function updateWeekNav(days) {
         if (el.querySelector('.calendar-week-day')) document.dispatchEvent(new CustomEvent('weekdragdays', { detail: { root, track: el, days } }));
       });
     };
-    if (before) make(buildWeek(new Date(), dayOffset - before).concat(buildWeek(new Date(), dayOffset - before + 7)).slice(0, before), -before);
-    if (after) make(buildWeek(new Date(), dayOffset + 7).concat(buildWeek(new Date(), dayOffset + 14)).slice(0, after), 7);
-    return sides;
+    make(-before, before);
+    make(7, after);
+    return { sides, room: { before: before * colW, after: after * colW } };
   }
   function end() {
     if (!drag) return;
     const d = drag; drag = null;
-    if (!d.on) return;
-    justDragged = true; setTimeout(() => { justDragged = false; }, 50);
-    const clip = root.querySelector('.calendar-days');
-    const colW = clip ? clip.clientWidth / 7 : 1;
-    let n = Math.round(-d.dx / colW);
-    if (n === 0 && Math.abs(d.vx) > 0.4 && Math.abs(d.dx) > 12) n = d.vx < 0 ? 1 : -1;
-    const target = Math.max(0, Math.min(maxDayOffset(), dayOffset + n));
-    if (target === dayOffset) {
-      // back to where it was
-      const back = { duration: 300, easing: 'cubic-bezier(0.32, 0.72, 0, 1)' };
-      tracks().forEach(t => {
-        t.style.transform = '';
-        t.animate([{ transform: 'translateX(' + d.dx + 'px)' }, { transform: 'none' }], back);
-      });
-      d.sides.forEach(sd => {
-        sd.el.style.transform = 'translateX(' + sd.x + 'px)';
-        sd.el.animate([{ transform: 'translateX(' + (sd.x + d.dx) + 'px)' }, { transform: 'translateX(' + sd.x + 'px)' }], back).finished.then(() => sd.el.remove(), () => {});
-      });
-      clips().forEach(c => { c.classList.remove('dragging'); c.classList.add('sliding'); setTimeout(() => c.classList.remove('sliding'), 320); });
-      return;
+    if (!d.on && !d.caught) return;
+    if (d.on) { justDragged = true; setTimeout(() => { justDragged = false; }, 50); }
+    settle(d, d.on ? releaseSpeed(d) : 0);
+  }
+  // Glide the drawn days to rest on a whole day, leaving at the release speed.
+  function settle(d, v, stepTo) {
+    const colW = colWidth();
+    // where the toss would come to rest, rounded to a whole day
+    let n = stepTo != null ? stepTo : Math.round(-(d.dx + v * TOSS_MS) / colW);
+    // a quick flick goes on to at least the next day in its direction
+    if (stepTo == null && n === Math.round(-d.dx / colW) && Math.abs(v) > 0.4 && Math.abs(d.dx - d.base) > 12) {
+      const f = -d.dx / colW;
+      n = v < 0 ? Math.floor(f) + 1 : Math.ceil(f) - 1;
     }
-    const from = dayOffset;
-    dayOffset = target;
-    renderWeek(from);   // slides on from the dragged position (the tracks are measured where they are)
-    tracks().forEach(t => { t.style.transform = ''; });
-    clips().forEach(c => c.classList.remove('dragging'));
+    n = Math.max(-TOSS_MAX_DAYS, Math.min(TOSS_MAX_DAYS, n));
+    n = Math.max(-Math.round(d.room.before / colW), Math.min(Math.round(d.room.after / colW), n));
+    const target = dayOffset + n, to = -n * colW;
+    const dist = Math.abs(to - d.dx);
+    // velocity-matched: the ease leaves at 3x its average speed
+    let ms = 300;
+    if (v * (to - d.dx) > 0 && Math.abs(v) > 0.2) ms = 3 * dist / Math.abs(v);
+    ms = Math.max(260, Math.min(1100, ms));
+    if (stepTo != null) ms = 280;
+    if (!dist) ms = 0;
+    shownDay = target;
+    updateWeekNav(buildWeek(new Date(), target));
+    clips().forEach(c => { c.classList.remove('dragging'); c.classList.add('sliding'); });
+    const opts = { duration: ms, easing: EASE, fill: 'forwards' };
+    const anims = [];
+    tracks().forEach(t => { t.style.transform = 'translateX(' + to + 'px)'; anims.push(t.animate([{ transform: 'translateX(' + d.dx + 'px)' }, { transform: 'translateX(' + to + 'px)' }], opts)); });
+    d.sides.forEach(sd => { sd.el.style.transform = 'translateX(' + (sd.x + to) + 'px)'; anims.push(sd.el.animate([{ transform: 'translateX(' + (sd.x + d.dx) + 'px)' }, { transform: 'translateX(' + (sd.x + to) + 'px)' }], opts)); });
+    // already one frame in, so the release doesn't hold still for a frame
+    if (ms > 50) anims.forEach(a => { a.currentTime = 1000 / 60; });
+    const g = glide = { anims, sides: d.sides, room: d.room, to, n, step: stepTo != null };
+    followPauseNotices(root);
+    Promise.all(anims.map(a => a.finished)).then(() => {
+      if (glide !== g) return;
+      glide = null;
+      // at rest: redraw on the new week (it looks the same, so it's unseen)
+      const moved = target !== dayOffset;
+      dayOffset = target;
+      if (moved) renderWeek();
+      else {
+        d.sides.forEach(sd => sd.el.remove());
+        tracks().forEach(t => { t.getAnimations().forEach(a => a.cancel()); t.style.transform = ''; });
+        clips().forEach(c => c.classList.remove('sliding'));
+      }
+    }, () => {});
   }
   // mouse and pen
   root.addEventListener('pointerdown', e => { if (e.pointerType !== 'touch' && e.button === 0) { start(e.clientX, e.clientY, e.target); if (drag) drag.id = e.pointerId; } });
@@ -2463,11 +2583,64 @@ function updateWeekNav(days) {
   });
   root.addEventListener('pointerup', e => { if (e.pointerType !== 'touch') end(); });
   root.addEventListener('pointercancel', e => { if (e.pointerType !== 'touch') end(); });
-  // touch
-  root.addEventListener('touchstart', e => { if (e.touches.length === 1) start(e.touches[0].clientX, e.touches[0].clientY, e.target); else drag = null; }, { passive: true });
-  root.addEventListener('touchmove', e => { if (drag && e.touches.length === 1 && move(e.touches[0].clientX, e.touches[0].clientY) && e.cancelable) e.preventDefault(); }, { passive: false });
-  root.addEventListener('touchend', end);
-  root.addEventListener('touchcancel', end);
+  // touch: one finger moves the days at a time, the one that touched last.
+  // Another finger landing takes the days over from where they are, and when
+  // the moving finger lifts with another still down, that one carries on, so
+  // the week can be passed from thumb to thumb without letting go.
+  function handOff(t) {
+    drag.id = t.identifier;
+    drag.base = drag.raw != null ? drag.raw : drag.dx;
+    drag.x0 = t.clientX; drag.y0 = t.clientY;
+    drag.pts = [{ x: t.clientX, t: performance.now() }];
+  }
+  const touchById = (list, id) => Array.prototype.find.call(list, t => t.identifier === id);
+  // (heard on the whole page: a finger can come down beside the calendar)
+  document.addEventListener('touchstart', e => {
+    const t = e.changedTouches[e.changedTouches.length - 1];
+    if (drag && drag.id != null && touchById(e.touches, drag.id)) { handOff(t); return; }
+    if (!root.contains(e.target)) return;
+    start(t.clientX, t.clientY, e.target);
+    if (drag) drag.id = t.identifier;
+  }, { passive: true });
+  document.addEventListener('touchmove', e => {
+    const t = drag && touchById(e.touches, drag.id);
+    if (t && move(t.clientX, t.clientY) && e.cancelable) e.preventDefault();
+  }, { passive: false });
+  function touchUp(e) {
+    if (!drag) return;
+    if (touchById(e.touches, drag.id)) return;   // another finger lifted
+    const rest = e.touches[e.touches.length - 1];
+    if (rest && e.type === 'touchend') handOff(rest);
+    else end();
+  }
+  document.addEventListener('touchend', touchUp);
+  document.addEventListener('touchcancel', touchUp);
+  // Sideways wheel: a tilt wheel, Shift + wheel, or a sideways trackpad
+  // swipe. A wheel click moves one day (quick clicks add up); a trackpad
+  // moves the days with the fingers and settles on the nearest day once it
+  // stops. Up-and-down scrolling still scrolls the page.
+  root.addEventListener('wheel', e => {
+    if (!cachedEvents || drag || e.ctrlKey || !e.target.closest || !e.target.closest('.calendar-days')) return;
+    let wx = e.deltaX, wy = e.deltaY;
+    if (e.shiftKey && !wx) { wx = wy; wy = 0; }
+    if (!wx || Math.abs(wx) <= Math.abs(wy)) return;
+    e.preventDefault();
+    const colW = colWidth();
+    const px = wx * (e.deltaMode === 1 ? 40 : e.deltaMode === 2 ? colW * 7 : 1);
+    const click = e.deltaMode !== 0 || Math.abs(px) >= 50;
+    if (click) {
+      const d = hold();
+      const from = d.stepN != null ? d.stepN : Math.round(-d.dx / colW);
+      settle(d, 0, from + Math.sign(px));
+      return;
+    }
+    if (!wheelDrag) { wheelDrag = hold(); wheelDrag.raw = wheelDrag.dx; }
+    wheelDrag.raw -= px;
+    wheelDrag.dx = resist(wheelDrag, wheelDrag.raw);
+    show(wheelDrag.dx, wheelDrag.sides);
+    clearTimeout(wheelTimer);
+    wheelTimer = setTimeout(() => { const w = wheelDrag; wheelDrag = null; if (w) settle(w, 0); }, 160);
+  }, { passive: false });
   // a drag isn't a tap on whatever it ended over
   document.addEventListener('click', e => { if (justDragged && root.contains(e.target)) { e.stopPropagation(); e.preventDefault(); } }, true);
 })();
@@ -2512,4 +2685,4 @@ function updateWeekNav(days) {
 
 loadAndRender();
 setInterval(loadAndRender, REFRESH_INTERVAL_MS);
-</script>
+</script>
