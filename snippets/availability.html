@@ -2021,7 +2021,7 @@ function attachHover(root, grid, startSlot) {
       const cells = col.querySelectorAll('.calendar-cell');
       let shownStart = -1;
       function place(clientY) {
-        const minutes = PREVIEW_MINUTES[lessonIdx];
+        const minutes = PREVIEW_MINUTES[lessonIdx] || LESSON_MINUTES[lessonIdx];   // lessons.html adds lengths past these four
         const lenSlots = currentMinRun();
         const rect = block.getBoundingClientRect();
         // Centre the lesson on the cursor, then snap and clamp to the run.
