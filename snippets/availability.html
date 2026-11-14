@@ -954,6 +954,15 @@
     pointer-events: none;
   }
   .pause-notice i { color: var(--cal-accent); margin-right: 4px; }
+  /* "Next available …" shown over a week with no bookable time; a click jumps there. */
+  .next-avail-notice {
+    font-family: inherit;
+    cursor: pointer;
+    pointer-events: auto;
+  }
+  .next-avail-notice i { transition: transform 0.15s ease; }
+  .next-avail-notice:hover i,
+  .next-avail-notice:focus-visible i { transform: translateX(3px); }
 
   /* Dark mode: recolor the calendar's fixed neutrals. --cal-text and
      --cal-surface flip automatically via --color1 / --color3. */
@@ -1033,6 +1042,7 @@
 <div class="subtitle"><i class="fa-solid fa-clock fa-fw"></i><span class="tz-info" id="tz-info"></span></div>
 <div class="subtitle"><i class="fa-solid fa-calendar-week fa-fw"></i><span>Availability typically spans mornings, afternoons, and evenings, Sunday through Thursday (Boston time<span class="boston-offset"></span>). From December 2026 through February 2027, availability will be limited to 4:00 p.m. &ndash; 12:00 a.m. (Boston time, UTC-5 during those months). The schedule may also vary around holidays and school breaks, such as over the summer.</span></div>
 <div class="subtitle"><i class="fa-solid fa-bell fa-fw"></i><span>If there is a time on the calendar that is currently booked and you would like to be waitlisted for that time, please email me at <span class="tooltip"><a onclick="copyEmail()" onmouseout="outFunc()">tutor@trevorkafka.com</a><span class="tooltiptext">Copy to clipboard</span></span>.</span></div>
+<div class="subtitle"><i class="fa-solid fa-arrows-rotate fa-fw"></i><span>Same-day reschedules of upcoming lessons may be possible even when I have cleared availability for new bookings on a particular day; please email me at <span class="tooltip"><a onclick="copyEmail()" onmouseout="outFunc()">tutor@trevorkafka.com</a><span class="tooltiptext">Copy to clipboard</span></span> to confirm a possible lesson timing change.</span></div>
 <br>
 <trevorkafka-availability-announcement></trevorkafka-availability-announcement>
 </div>
@@ -2163,6 +2173,39 @@ function renderPauseNotice(root, days) {
     el.style.visibility = 'hidden';
     clip.appendChild(el);
     notices.push({ el, start: runStart, end: runEndIncl + 1, w: el.offsetWidth });
+  }
+
+  // No bookable time this week for the chosen length (booked or unavailable only):
+  // point to the next day that has some, and jump the pager there on a click.
+  // Skipped when a pause notice already covers the whole week.
+  const avail = fullGrid.map(slots => slots.some(st => st === 1));
+  const weekEnd = Math.min(N, visStart + 7);
+  const pauseCovers = notices.some(n => n.start <= visStart && n.end >= visStart + 7);
+  let weekHasAvail = false;
+  for (let k = Math.max(0, visStart); k < weekEnd; k++) if (avail[k]) { weekHasAvail = true; break; }
+  if (!weekHasAvail && !pauseCovers) {
+    let next = -1;
+    for (let k = Math.max(0, visStart + 7); k < N; k++) if (avail[k]) { next = k; break; }
+    if (next >= 0) {
+      const nextFmt = new Intl.DateTimeFormat(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
+      const el = document.createElement('button');
+      el.type = 'button';
+      el.className = 'pause-notice next-avail-notice';
+      el.innerHTML = `<i class="fa-solid fa-arrow-right"></i>Next available ${escapeHTML(nextFmt.format(addDays(today0, next)))}.`;
+      el.style.maxWidth = maxW + 'px';
+      el.style.visibility = 'hidden';
+      el.addEventListener('click', e => {
+        e.stopPropagation();
+        // step whole weeks, as the pager does, until that day is on screen
+        const target = Math.min(maxDayOffset(), dayOffset + 7 * Math.floor((next - dayOffset) / 7));
+        if (target === dayOffset) return;
+        const from = dayOffset;
+        dayOffset = target;
+        renderWeek(from);
+      });
+      clip.appendChild(el);
+      notices.push({ el, start: visStart, end: visStart + 7, w: el.offsetWidth });
+    }
   }
   root._pauseNotices = { visStart, notices };
   placePauseNotices(root);
