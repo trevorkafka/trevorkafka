@@ -1,4 +1,20 @@
 [
+	{"date": "2026-11-16",
+	"vocabulary": [
+		{"word": "introverted", "IPA": "/ˈɪn.troʊˌvɜr.dɪd/", "translation": "内向的"},
+		{"word": "introvert", "IPA": "/ˈɪn.troʊˌvɜrt/", "translation": "内向的人"},
+		{"word": "embarrass", "IPA": "/ɪmˈbɛ.rəs/", "translation": "使尴尬"},
+		{"word": "personal", "IPA": "/ˈpɜr.sə.nəl/", "translation": "个人的；贴心的"},
+		{"word": "impersonal", "IPA": "/ɪmˈpɜr.sə.nəl/", "translation": "没有人情味的"},
+		{"word": "proactive", "IPA": "/proʊˈæk.tɪv/", "translation": "主动的"},
+		{"word": "order", "IPA": "/ˈɔr.dər/", "translation": "订单；点的菜"},
+		{"word": "standby", "IPA": "/ˈstænd.baɪ/", "translation": "待命；候补"},
+		{"word": "spontaneous", "IPA": "/spɑnˈteɪ.ni.əs/", "translation": "自发的；即兴的"},
+		{"word": "flexible", "IPA": "/ˈflɛk.sə.bəl/", "translation": "灵活的"},
+		{"word": "met", "IPA": "/mɛt/", "translation": "遇见（meet 的过去式）"},
+		{"word": "might", "IPA": "/maɪt/", "translation": "可能"},
+		{"word": "helmet", "IPA": "/ˈhɛl.mət/", "translation": "头盔"}
+	]},
 	{"date": "2026-11-12",
 	"vocabulary": [
 		{"word": "news", "IPA": "/nuz/", "translation": "新闻"},
