@@ -60,7 +60,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			// *************************************************************************************
 			// *************************************************************************************
 			// *************************************************************************************
-			const lastUpdateDate = new Date('2026-10-23'); // CHANGE DATE HERE in the format 'YYYY-MM-DD'
+			const lastUpdateDate = new Date('2026-11-15'); // CHANGE DATE HERE in the format 'YYYY-MM-DD'
 			// *************************************************************************************
 			// *************************************************************************************
 			// *************************************************************************************
@@ -274,19 +274,20 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 						<!-- <p>I also check <a href="https://m.me/trevorkafka" target="_blank">Facebook Messenger</a> and <a href="https://ig.me/m/trevorkafka" target="_blank">Instagram Direct</a>. -->
 					</p>
 
-					<hr style="margin-bottom: 20px;">
+					<!-- Follow Me section, hidden (lines below commented out one by one because some were already comments) -->
+					<!-- <hr style="margin-bottom: 20px;"> -->
 
-					<h3>Follow Me</h3>
+					<!-- <h3>Follow Me</h3> -->
 
-					<p style="text-align: center;">
-						<a href="http://www.trevorkafka.com" class="icon fa-solid fa-globe" target="_blank" title="website"></a>
+					<!-- <p style="text-align: center;"> -->
+						<!-- <a href="http://www.trevorkafka.com" class="icon fa-solid fa-globe" target="_blank" title="website"></a> -->
 						<!-- <a href="https://bsky.app/profile/trevorkafka.com" class="icon fa-brands fa-bluesky" target="_blank" title="bluesky"></a> -->
 						<!-- <a href="http://www.facebook.com/trevor.kafka" class="icon fa-brands fa-facebook" target="_blank" title="facebook"></a> -->
 						<!-- <a href="http://www.instagram.com/trevorkafka/" class="icon fa-brands fa-instagram" target="_blank" title="instagram"></a> -->
-						<a href="https://www.reddit.com/user/trevorkafka/" class="icon fa-brands fa-reddit" target="_blank" title="reddit"></a>
-						<a href="https://discordapp.com/users/633310860714180618" class="icon fa-brands fa-discord" target="_blank" title="discord"></a>
+						<!-- <a href="https://www.reddit.com/user/trevorkafka/" class="icon fa-brands fa-reddit" target="_blank" title="reddit"></a> -->
+						<!-- <a href="https://discordapp.com/users/633310860714180618" class="icon fa-brands fa-discord" target="_blank" title="discord"></a> -->
 						<!-- <a href="https://www.strava.com/athletes/142469165" class="icon fa-brands fa-strava" target="_blank" title="strava"></a> -->
-					</p>
+					<!-- </p> -->
 
 					<details>
 						<summary>More links</summary>
@@ -295,7 +296,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 							<li><a href="https://bsky.app/profile/trevorkafka.com" target="_blank">BlueSky</a>, <a href="http://www.facebook.com/trevorkafka" target="_blank">Facebook</a>, & <a href="http://www.instagram.com/trevorkafka/" target="_blank">Instagram</a> – socials</li> -->
 							<li><a href="https://nomads.com/@trevorkafka" target="_blank">Nomads</a> - documentation of my digital nomad travels</li>
 							<li><a href="https://www.polyglotassociation.org/members/trevor-kafka" target="_blank">HYPIA</a> – The International Association of Hyperpolyglots</li>
-							<li><a href="https://www.italki.com/user/4746304" target="_blank">italki</a> – I am currently a language learner on italki but also was a <a href="https://www.italki.com/teacher/4746304" target="_blank">teacher</a> in 2019–2024</li>
+							<li><a href="https://www.italki.com/user/4746304" target="_blank">italki</a> – I am a language learner on italki and also a <a href="https://www.italki.com/teacher/4746304" target="_blank">teacher</a> there</li>
 							<!-- <li><a href="https://www.strava.com/athletes/142469165" target="_blank">Strava</a> – Cycling and walking routes</li> -->
 							<!-- <li><a href="https://www.codecademy.com/profiles/trevorkafka" target="_blank">Codecademy</a>, <a href="https://www.duolingo.com/profile/TrevorKafka" target="_blank">Duolingo</a> – miscellaneous learning</li> -->
 						</ul>
@@ -467,6 +468,13 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 					  var(--calendarColor7) 50%
 					);
 				}
+				.gradient-2-1 {
+					background: linear-gradient(
+					  135deg,
+					  var(--calendarColor2) 50%,
+					  var(--calendarColor1) 50%
+					);
+				}
 				.gradient-7-1 {
 					background: linear-gradient(
 					  135deg,
@@ -482,7 +490,252 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 
 	<div class="content">
 
-			<!-- Summer 2026 travel plans, hidden
+			<div class="FAQ">
+				<details>
+					<summary>✈️ Winter 2026–27 Travel Calendar</summary>
+					<!-- Winter 2026-27 travel calendar (dates and places only) -->
+					<div style="overflow-x: auto; overflow-y: hidden; width: 100%;"> <!-- invisible wrapper for margins and scrolling -->
+						<div style="margin: 0 auto; width: max-content">
+							<div class="tk-table-frame" style="width: max-content; margin: 0 7.5vw 20px 7.5vw; border: solid 1.5px var(--surface-border); border-radius: 20px; padding: 20px; background-color: var(--tint-1);">
+							  <table class="calendar">
+							    <colgroup>
+							      <col style="min-width: 20px" />
+							      <col style="min-width: 50px" />
+							      <col style="min-width: 50px" />
+							      <col style="min-width: 50px" />
+							      <col style="min-width: 50px" />
+							      <col style="min-width: 50px" />
+							      <col style="min-width: 50px" />
+							      <col style="min-width: 50px" />
+							      <col style="min-width: 100px" />
+							      <col style="min-width: 100px" />
+							    </colgroup>
+							    <tr>
+							      <td class="calendarColor1 week"></td>
+							      <td>S</td>
+							      <td>M</td>
+							      <td>T</td>
+							      <td>W</td>
+							      <td>T</td>
+							      <td>F</td>
+							      <td>S</td>
+							    </tr>
+							    <!-- Week 1: Nov 29-Dec 5 (fly out, arrive Bangkok) -->
+							    <tr>
+							      <td class="calendarColor1 week">1</td>
+							      <td></td>
+							      <td class="calendarColor2 highlight" style="border-top-left-radius: 20px;">
+							        <div class="date">30<br />NOV</div>
+							      </td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 info">Bangkok</td>
+							      <td class="calendarColor2 info">Thailand</td>
+							      <td class="calendarColor2 info" style="border-top-right-radius: 20px;">
+							        <span class="fi fi-th fis">
+							      </td>
+							    </tr>
+							    <!-- Week 2: Dec 6-Dec 12 -->
+							    <tr>
+							      <td class="calendarColor1 week">2</td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 info"></td>
+							      <td class="calendarColor2 info"></td>
+							      <td class="calendarColor2 info"></td>
+							    </tr>
+							    <!-- Week 3: Dec 13-Dec 19 (Bangkok → Chiang Mai) -->
+							    <tr>
+							      <td class="calendarColor1 week">3</td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="gradient-2-3 highlight">
+							        <div class="date">18<br />DEC</div>
+							      </td>
+							      <td class="calendarColor3 highlight"></td>
+							      <td class="calendarColor3 info">Chiang Mai</td>
+							      <td class="calendarColor3 info">Thailand</td>
+							      <td class="calendarColor3 info">
+							        <span class="fi fi-th fis">
+							      </td>
+							    </tr>
+							    <!-- Week 4: Dec 20-Dec 26 (Chiang Mai → Bangkok) -->
+							    <tr>
+							      <td class="calendarColor1 week">4</td>
+							      <td class="calendarColor3 highlight"></td>
+							      <td class="calendarColor3 highlight"></td>
+							      <td class="calendarColor3 highlight"></td>
+							      <td class="gradient-3-2 highlight">
+							        <div class="date">23<br />DEC</div>
+							      </td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 info">Bangkok</td>
+							      <td class="calendarColor2 info">Thailand</td>
+							      <td class="calendarColor2 info">
+							        <span class="fi fi-th fis">
+							      </td>
+							    </tr>
+							    <!-- Week 5: Dec 27-Jan 2 -->
+							    <tr>
+							      <td class="calendarColor1 week">5</td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 info"></td>
+							      <td class="calendarColor2 info"></td>
+							      <td class="calendarColor2 info"></td>
+							    </tr>
+							    <!-- Week 6: Jan 3-Jan 9 -->
+							    <tr>
+							      <td class="calendarColor1 week">6</td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 info"></td>
+							      <td class="calendarColor2 info"></td>
+							      <td class="calendarColor2 info"></td>
+							    </tr>
+							    <!-- Week 7: Jan 10-Jan 16 -->
+							    <tr>
+							      <td class="calendarColor1 week">7</td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 info"></td>
+							      <td class="calendarColor2 info"></td>
+							      <td class="calendarColor2 info"></td>
+							    </tr>
+							    <!-- Week 8: Jan 17-Jan 23 -->
+							    <tr>
+							      <td class="calendarColor1 week">8</td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 info"></td>
+							      <td class="calendarColor2 info"></td>
+							      <td class="calendarColor2 info"></td>
+							    </tr>
+							    <!-- Week 9: Jan 24-Jan 30 -->
+							    <tr>
+							      <td class="calendarColor1 week">9</td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 info"></td>
+							      <td class="calendarColor2 info"></td>
+							      <td class="calendarColor2 info"></td>
+							    </tr>
+							    <!-- Week 10: Jan 31-Feb 6 -->
+							    <tr>
+							      <td class="calendarColor1 week">10</td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 info"></td>
+							      <td class="calendarColor2 info"></td>
+							      <td class="calendarColor2 info"></td>
+							    </tr>
+							    <!-- Week 11: Feb 7-Feb 13 -->
+							    <tr>
+							      <td class="calendarColor1 week">11</td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 info"></td>
+							      <td class="calendarColor2 info"></td>
+							      <td class="calendarColor2 info"></td>
+							    </tr>
+							    <!-- Week 12: Feb 14-Feb 20 -->
+							    <tr>
+							      <td class="calendarColor1 week">12</td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 info"></td>
+							      <td class="calendarColor2 info"></td>
+							      <td class="calendarColor2 info"></td>
+							    </tr>
+							    <!-- Week 13: Feb 21-Feb 27 -->
+							    <tr>
+							      <td class="calendarColor1 week">13</td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="calendarColor2 info"></td>
+							      <td class="calendarColor2 info"></td>
+							      <td class="calendarColor2 info" style="border-bottom-right-radius: 20px;"></td>
+							    </tr>
+							    <!-- Week 14: Feb 28-Mar 6 -->
+							    <tr>
+							      <td class="calendarColor1 week">14</td>
+							      <td class="calendarColor2 highlight" style="border-bottom-left-radius: 20px;"></td>
+							      <td class="calendarColor2 highlight"></td>
+							      <td class="gradient-2-1">
+							        <div class="date">2<br />MAR</div>
+							      </td>
+							      <td></td>
+							      <td></td>
+							      <td></td>
+							      <td></td>
+							    </tr>
+							  </table>
+							    <p class="narrowscreen" style="text-align: left; margin: 20px 0px 0px 0px; font-weight: bold;">↔ Drag to scroll on narrow screens. ↔</p>
+							</div>
+						</div>
+					</div>
+				</details>
+			</div>
+
+			<!-- Summer 2026 travel plans -->
 			<div class="FAQ">
 				<details>
 					<summary>✈️ Summer 2026 Travel Plans</summary>
@@ -677,10 +930,17 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 					  });
 
 					  map.fitBounds(stops.map(s => s.coords), { padding: [40, 40] });
+
+					  // the map starts inside a closed <details>, so re-measure it when opened
+					  document.getElementById('travel-map').closest('details').addEventListener('toggle', e => {
+					    if (!e.target.open) return;
+					    map.invalidateSize();
+					    map.fitBounds(stops.map(s => s.coords), { padding: [40, 40] });
+					  });
 					})();
 					</script>
 				</details>
-			-->
+			</div>
 
 			<h1 class="widescreen"><span class="bigshadow">✨</span> Current Interests</h1>
 			<center class="narrowscreen"><h1>Current Interests<br><span class="bigshadow">✨</span></h1></center>
@@ -691,7 +951,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 						<div align="center" style="font-size: 30px;">💖</div>
 						<h3>Love of Learning</h3>
 						<p><strong>Physics & Math</strong> – I have been and always will be a huge physics and math nerd. I lean towards a strong understanding of the fundamentals over trying to get as advanced as possible. Always open to chatting if you're a fellow nerd too!</p> $$e^{i\pi} + 1 = 0$$
-						<!-- <p>Check out some <a href="/articles">articles</a> I have been writing lately! More to come soon.</p> -->
+						<p>Check out some <a href="/articles">articles</a> I have been writing lately! More to come soon.</p>
 						<p>
 							<strong>Foreign Languages</strong> – Some languages I have enjoyed studying over the years include 
 							<span class="lang">Español (Spanish)</span>,
@@ -711,17 +971,18 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 						<div align="center" style="font-size: 30px;">🍜</div>
 						<h3>Food</h3>
 						<p>Food is one of my great joys in life. It’s endlessly diverse—each dish, ingredient, and preparation carrying its own story—and it has been at the center of many of the most memorable moments I’ve experienced. Some of my favorite meals have been shared with friends, where the conversation and laughter seemed to elevate every bite. Others have come from traveling, when discovering new flavors in unfamiliar places added an extra layer of excitement to the journey. For me, food isn’t just sustenance; it’s a way to connect with people, explore cultures, and create lasting memories.</p>
-						<p>While I am not the most consistent or motivated home chef by any means, there are times when I will encounter a dish I particularly enjoy and will try to make it at home. Some of my favorite home-creations include:</p>
-						<ul>
-							<li><strong>西安油泼扯面 Xi'an-style hand-pulled-hand-ripped noodles</strong> with hot-oil-sizzled aromatics.</li>
+						<p>While I am not the most consistent or motivated home chef by any means, there are times when I will encounter a dish I particularly enjoy and will try to make it at home.</p>
+						<!-- <p>Some of my favorite home-creations include:</p> -->
+						<!-- <ul> -->
+							<!-- <li><strong>西安油泼扯面 Xi'an-style hand-pulled-hand-ripped noodles</strong> with hot-oil-sizzled aromatics.</li> -->
 							<!-- <li><strong>かつ Katsu</strong> & <strong>天ぷら Tempura</strong> - easiest to make together since they are largely the same ingredients and cooking tool.</li> -->
-							<li><strong>うどんスープ Udon soup</strong>, a dish that I particularly enjoy for its ease of making and with how much flexibility you can have with your toppings.</li>
-							<li><strong>カレー Japanese curry</strong>—a simple classic and always a crowdpleaser.</li>
-							<li><strong>แกงเขียวหวาน Thai Green Curry</strong></li>
-							<li><strong>ผัดซีอิ๊ว Pad See Eew</strong></li>
-							<li><strong>ต้มยำกุ้ง Shrimp Tom Yum Soup</strong></li>
-							<li><strong>ข้าวเหนียว Thai-style sticky rice</strong>, a perfect dessert pairing with fruit. Crazy easy to make—have you noticed that I particularly enjoy easy-to-make dishes? 🤓</li>
-						</ul>
+							<!-- <li><strong>うどんスープ Udon soup</strong>, a dish that I particularly enjoy for its ease of making and with how much flexibility you can have with your toppings.</li> -->
+							<!-- <li><strong>カレー Japanese curry</strong>—a simple classic and always a crowdpleaser.</li> -->
+							<!-- <li><strong>แกงเขียวหวาน Thai Green Curry</strong></li> -->
+							<!-- <li><strong>ผัดซีอิ๊ว Pad See Eew</strong></li> -->
+							<!-- <li><strong>ต้มยำกุ้ง Shrimp Tom Yum Soup</strong></li> -->
+							<!-- <li><strong>ข้าวเหนียว Thai-style sticky rice</strong>, a perfect dessert pairing with fruit. Crazy easy to make—have you noticed that I particularly enjoy easy-to-make dishes? 🤓</li> -->
+						<!-- </ul> -->
 					</div>
 					<!-- <div class="container">
 						<div align="center" style="font-size: 30px;">🧘‍♂️</div>
@@ -730,12 +991,13 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 						<img src="media/TK yoga.jpg" style="display: block; margin: 0px auto 20px auto; width: 250px; border-radius: 10px">
 						<p>At the moment, at least, I have been in a nice yoga kick, and it has been fun to try to rebuild my skills after a long set of months off. Mobility is always a slow process to reinstate, but it will come back with patience and determination.</p>
 					</div> -->
-					<!-- <div class="container">
+					<div class="container">
+						<div align="center" style="font-size: 30px;">🎪</div>
 						<h3>Aerial Circus Arts</h3>
 						<p>Aerial circus arts is something I've practiced for years—from 2006 to 2020, in fact. I had a fairly extensive career teaching, instructing, and even performing aerial circus arts in the Boston area, which culminated in me opening up my own studio in Waltham, Massachusetts in 2017–2020.</p>
 						<img src="media/TK aerial.jpg" style="display: block; margin: 0px auto 20px auto; width: 250px; border-radius: 10px">
 						<p>Unfortunately, as with many things, the pandemic forced me to close my studio and for the many years to follow I allowed my life to take a different path away from circus arts. I've been reviving recreational practice of circus arts since 2024. While I do not know exactly where it will lead me, it is likely that it will remain a recreational practice at least in the immediate future.</p>
-					</div> -->
+					</div>
 					<div class="container">
 						<div align="center" style="font-size: 30px;">🚲</div>
 						<h3>Biking</h3>
@@ -772,8 +1034,12 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 							<svg class="wxgDwc" width="110" height="25" viewBox="0 0 25 25" fill="none" aria-hidden="true"><ellipse cx="2.0972" cy="2.09704" rx="2.0972" ry="2.09704" transform="matrix(-1 -2.37677e-10 2.36387e-10 1 4.19634 19.2878)" fill="#EA4335"></ellipse><rect width="15.1687" height="4.98361" rx="2.49181" transform="matrix(-1 -2.37676e-10 2.36388e-10 1 15.2466 7.08691)" fill="#34A853"></rect><ellipse cx="2.49393" cy="9.57877" rx="2.49188" ry="2.49185" fill="#137333"></ellipse><rect width="9.40461" height="4.57536" rx="2.28768" transform="matrix(-1 -2.37677e-10 2.36387e-10 1 9.40682 13.5686)" fill="#FBBC04"></rect><ellipse cx="7.119" cy="15.8564" rx="2.28779" ry="2.28779" fill="#EA8600"></ellipse><rect width="21.5396" height="5.33792" rx="2.66896" transform="matrix(-1 -2.37678e-10 2.36385e-10 1 21.5418 0.071167)" fill="#4285F4"></rect><ellipse cx="18.9528" cy="2.74012" rx="2.66896" ry="2.66896" fill="#185ABC"></ellipse></svg>
 						</center>
 						<h3>Google Fi - global mobile data</h3>
-						<p>Google Fi is an absolute must-have for the US-based traveller. I've absolutely loved being able to use the service to seamlessly have the same generous 50-Gb mobile data plan that I enjoy at home available to me practically anywhere I travel. Feel free to use my <a href="https://g.co/fi/r/91CFWY" target="_blank">referral link</a> and we both get a $60 billing credit.</p>
+						<details>
+							<summary>More information</summary>
+							<p>Google Fi is an absolute must-have for the US-based traveller. I've absolutely loved being able to use the service to seamlessly have the same generous 50-Gb mobile data plan that I enjoy at home available to me practically anywhere I travel. Feel free to use my <a href="https://g.co/fi/r/91CFWY" target="_blank">referral link</a> and we both get a $60 billing credit.</p>
+						</details>
 					</div>
+					<!-- ClassPass, hidden
 					<div class="container">
 						<div align="center">
 							<img width="30" src="media/referral/classpass.webp">
@@ -781,37 +1047,50 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 						<h3>ClassPass – fitness classes</h3>
 						<p>ClassPass offers a really nice way to access a variety of fitness classes at hundreds of different studios for a combined affordable monthly rate. I use it in the Boston area, but classes are available all over the world. Use my <a href="https://classpass.com/refer/HO9LK9913" target="_blank">referral link</a> and we both get a reward when you become a paying member.</p>
 					</div>
+					-->
 					<div class="container">
 						<div align="center">
 							<img width="50" src="media/referral/italki.png">
 						</div>
 						<h3>italki – language learning</h3>
-						<p>italki is truly my favorite website for language learning. As of 2024, I have taken over 700 lessons as a student and have also taught over 1600 lessons as a teacher. Use my <a href="https://www.italki.com/en/i/ref/DG6cD0?hl=en&utm_medium=user_referral&utm_source=copylink_share" target="_blank">referral link</a> and purchase $20, we'll both get a reward in italki credits to use to take language classes.</p>
+						<details>
+							<summary>More information</summary>
+							<p>italki is truly my favorite website for language learning. As of 2024, I have taken over 700 lessons as a student and have also taught over 1600 lessons as a teacher. Use my <a href="https://www.italki.com/en/i/ref/DG6cD0?hl=en&utm_medium=user_referral&utm_source=copylink_share" target="_blank">referral link</a> and purchase $20, we'll both get a reward in italki credits to use to take language classes.</p>
+						</details>
 					</div>
 					<div class="container">
 						<div align="center">
 							<img width="30" src="media/referral/wealthfront.svg">
 						</div>
 						<h3>Wealthfront – banking & investments</h3>
-						<p>Wealthfront offers a really simple internet-based approach to savings and investment accounts.</p>
-						<ul>
-							<li>Open a Cash Account with my <a href="https://www.wealthfront.com/c/affiliates/invited/AFFC-6W1K-542U-1YWQ" target="_blank">referral link</a> and we will both get a 0.50% APY boost for three months.</li>
-							<li>Open an Automated Index Investment Account with my <a href="https://www.wealthfront.com/c/affiliates/invited/AFFA-JWRG-4ZK1-LJ2Y" target="_blank"> referral link</a> and we will both get $5000 managed for free.</li>
-						</ul>
+						<details>
+							<summary>More information</summary>
+							<p>Wealthfront offers a really simple internet-based approach to savings and investment accounts.</p>
+							<ul>
+								<li>Open a Cash Account with my <a href="https://www.wealthfront.com/c/affiliates/invited/AFFC-6W1K-542U-1YWQ" target="_blank">referral link</a> and we will both get a 0.50% APY boost for three months.</li>
+								<li>Open an Automated Index Investment Account with my <a href="https://www.wealthfront.com/c/affiliates/invited/AFFA-JWRG-4ZK1-LJ2Y" target="_blank"> referral link</a> and we will both get $5000 managed for free.</li>
+							</ul>
+						</details>
 					</div>
 					<div class="container">
 						<div align="center">
 							<img width="30" src="media/referral/tutorbird.png">
 						</div>
 						<h3>Tutorbird – tutoring managment software</h3>
-						<p>Tutorbird is the software I use to manage student class registrations, lesson reminders, and billing for my tutoring business. You can use my <a href="https://app.tutorbird.com/r/share/79001843A7">referral link</a> and we will both get a free month if you become a paid subscriber.</p>
+						<details>
+							<summary>More information</summary>
+							<p>Tutorbird is the software I use to manage student class registrations, lesson reminders, and billing for my tutoring business. You can use my <a href="https://app.tutorbird.com/r/share/79001843A7">referral link</a> and we will both get a free month if you become a paid subscriber.</p>
+						</details>
 					</div>
 					<div class="container">
 						<div align="center">
 							<img width="30" src="media/referral/pimsleur.webp">
 						</div>
 						<h3>Pimsleur – language learning</h3>
-						<p>Pimsleur is my top-recommended way to get started from scratch in a language. It emphasizes speaking, quick fact recall, and emulation of native speakers to get you a strong basis in key vocabulary, grammar, and pronunciation right from the beginning. It gets you quickly to work and has helped me learn Vietnamese, Japanese, Thai, Cantonese, and I plan to work on Korean with this language program in the future. Use my <a href="https://refer.pimsleur.com/trevor2!77e34b03fb!a" target="_blank">referral link</a> to get a free 7-day trial.</p>
+						<details>
+							<summary>More information</summary>
+							<p>Pimsleur is my top-recommended way to get started from scratch in a language. It emphasizes speaking, quick fact recall, and emulation of native speakers to get you a strong basis in key vocabulary, grammar, and pronunciation right from the beginning. It gets you quickly to work and has helped me learn Vietnamese, Japanese, Thai, Cantonese, and I plan to work on Korean with this language program in the future. Use my <a href="https://refer.pimsleur.com/trevor2!77e34b03fb!a" target="_blank">referral link</a> to get a free 7-day trial.</p>
+						</details>
 					</div>
 				</div>
 
@@ -832,14 +1111,12 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			.icon {
 				padding: 5px 5px 5px 5px;
 				font-size: 150%;
-				text-shadow: 0px 0px 10px var(--emoji-glow);
 			}
 
 			.fis {
 				border-radius: 100%;
 				font-size: 200%;
 				margin: 0px 5px 0px 5px;
-				box-shadow: 0px 0px 20px var(--emoji-glow);
 			}
 
 			.bigshadow {
@@ -880,9 +1157,18 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			}
 			*/
 
+			/* cards and photos get the homepage announcement box's soft shadow (light mode only), like .tk-table-frame */
+			.grid > div.container, .circle-image {
+				box-shadow: 1px 1px 10px var(--tint-4);
+			}
+			:root[data-theme="dark"] .grid > div.container, :root[data-theme="dark"] .circle-image { box-shadow: none; }
+			@media (prefers-color-scheme: dark) {
+				:root:not([data-theme="light"]) .grid > div.container, :root:not([data-theme="light"]) .circle-image { box-shadow: none; }
+			}
+
 			.circle-image{
 				border-radius: 50%;	
-				border: solid var(--color1);
+				border: solid 1.5px var(--surface-border); /* same frame as the homepage announcement box */
 			}
 
 			.lang{
@@ -911,7 +1197,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 				background-color: var(--tint-1);
 				border-radius: 20px;
 				float: left;	
-				border: solid var(--color1);
+				border: solid 1.5px var(--surface-border); /* same frame as the homepage announcement box */
 				margin-bottom: 20px;
 			}
 

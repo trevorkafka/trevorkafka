@@ -343,9 +343,14 @@ $(document).ready(function() {
 			// transitionDuration: 0
 		});
 
-		$('summary').click(function () {
-			setTimeout(() => $('.grid').masonry(),1);
-		});
+		// re-pack whenever a <details> opens or closes. Panels animate their height (smoothToggle,
+		// SMOOTH_MS), so also re-pack once that finishes; packing only at the start measured the
+		// card mid-animation and left an opened card overlapping whatever sits below the grid.
+		const repack = () => $('.grid').masonry();
+		document.addEventListener('toggle', repack, true);
+		document.addEventListener('click', e => {
+			if (e.target.closest && e.target.closest('summary')) setTimeout(repack, (typeof SMOOTH_MS === 'number' ? SMOOTH_MS : 0) + 30);
+		}, true);
 	}
 
 //MATHJAX: default config. Pages that need their own settings (e.g. /ask.html, /articles/*) define window.MathJax inline before this runs and it is respected.
