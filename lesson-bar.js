@@ -87,11 +87,7 @@
 		// signed in: My Class Notes takes Get Started's place in the navbar (navNotes)
 		+ 'html.lb-linked .navbar #call:not([data-lb-href]) { visibility: hidden; }'
 		+ 'html.lb-linked .navbar .nav-dropdown-menu #mynotes { display: none; }'
-		// a plain link like the others, just in terracotta (lighter in dark mode),
-		// keyed off <html> so it's there from the first style pass
-		+ 'html.lb-linked .navbar a#call, html.lb-linked .navbar a#call:hover { color: var(--button-bg, #b3462f); }'
-		+ ':root[data-theme="dark"].lb-linked .navbar a#call, :root[data-theme="dark"].lb-linked .navbar a#call:hover { color: #FB8C73; }'
-		+ '@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]).lb-linked .navbar a#call, :root:not([data-theme="light"]).lb-linked .navbar a#call:hover { color: #FB8C73; } }'
+		// its text gets the hero's pink-to-coral gradient (.color in style.css, set in navNotes)
 		// the sign-in box on login.html
 		+ '#next-lesson-box { scroll-margin-top: 140px; margin: 0 0 1em; padding: 16px 20px; border: 1.5px solid var(--surface-border); border-radius: 20px; background: var(--color3); line-height: 1.45; box-shadow: 1px 1px 10px var(--tint-4, #00000020); }'
 		+ ':root[data-theme="dark"] #next-lesson-box { box-shadow: none; }'
@@ -269,7 +265,7 @@
 		var page = location.pathname.split('/').pop().split('.')[0] || 'index';
 		if (!a.dataset.lbHref) { a.dataset.lbHref = a.getAttribute('href'); a.dataset.lbText = a.innerHTML; }
 		a.setAttribute('href', on ? '/mynotes.html' : a.dataset.lbHref);
-		a.innerHTML = on ? 'My Class Notes' : a.dataset.lbText;
+		a.innerHTML = on ? '<span class="color">My Class Notes</span>' : a.dataset.lbText;
 		a.classList.toggle('active-link', page === (on ? 'mynotes' : 'call'));
 		// on mynotes.html the highlight moves from Students to this link
 		var t = page === 'mynotes' && document.querySelector('.navbar .nav-dropdown-trigger');
