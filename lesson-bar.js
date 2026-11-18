@@ -63,7 +63,9 @@
 		+ '.lesson-bar .lb-zoom { background: #2D8CFF; }'
 		+ '.lesson-bar .lb-browse { background: var(--button-bg, #b3462f); color: var(--button-text, #FFF6EC); border: none; border-radius: 7px; text-shadow: 1px 1px 2px rgba(0,0,0,0.6); box-shadow: 2px 2px 3px var(--shadow, rgba(0,0,0,0.25)); transition: background-color 0.2s; }'
 		+ '.lesson-bar .lb-browse:hover { background: var(--button-bg-hover, #a8412b); color: var(--button-text, #FFF6EC); filter: none; }'
-		+ '.lesson-bar .lb-tshort, .lesson-bar .lb-a8, .lesson-bar .lb-mshort { display: none; }'
+		+ '.lesson-bar .lb-tshort, .lesson-bar .lb-a8, .lesson-bar .lb-mshort, .lesson-bar .lb-a6 { display: none; }'
+		// "No upcoming lessons": the button says just "Availability" at f6, before going icon-only at f7
+		+ '.lesson-bar[data-fit="f6"] .lb-a6 { display: inline; }'
 		+ '.lesson-bar[data-fit="f1"] .lb-f1,'
 		+ '.lesson-bar[data-fit="f2"] :is(.lb-f1, .lb-f2),'
 		+ '.lesson-bar[data-fit="f3"] :is(.lb-f1, .lb-f2, .lb-f3),'
@@ -377,8 +379,8 @@
 				}
 			} else if (bar.dataset.key !== 'none') {
 				bar.dataset.key = 'none';
-				bar.innerHTML = '<span class="lb-row"><span><span class="lb-f8">You have no</span><span class="lb-a8">No</span> upcoming lessons<span class="lb-f7"> in the next 90 days</span></span></span>'
-					+ '<a class="lb-btn lb-browse" href="/availability.html"><i class="fa-solid fa-calendar-days"></i><span class="lb-f7">Browse Availability</span></a>';
+				bar.innerHTML = '<span class="lb-row"><span><span class="lb-f8">You have no</span><span class="lb-a8">No</span> upcoming lessons<span class="lb-f5"> in the next 90 days</span></span></span>'
+					+ '<a class="lb-btn lb-browse" href="/availability.html"><i class="fa-solid fa-calendar-days"></i><span class="lb-tfull">Browse Availability</span><span class="lb-a6">Availability</span></a>';
 				bar.dataset.fit = '';
 			}
 			if (!bar.dataset.fit || bar.scrollWidth > bar.clientWidth) fit();
