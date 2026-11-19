@@ -1,4 +1,28 @@
 [
+	{"date": "2026-11-19",
+	"vocabulary": [
+		{"word": "near", "IPA": "/nir/", "translation": "近的"},
+		{"word": "nearly", "IPA": "/ˈnir.li/", "translation": "几乎；差不多"},
+		{"word": "sticker", "IPA": "/ˈstɪ.kər/", "translation": "贴纸"},
+		{"word": "puzzle", "IPA": "/ˈpʌ.zəl/", "translation": "拼图；谜题"},
+		{"word": "tweezers", "IPA": "/ˈtwi.zərz/", "translation": "镊子"},
+		{"word": "scrapbook", "IPA": "/ˈskræp.bʊk/", "translation": "剪贴簿"},
+		{"word": "scrapbooking", "IPA": "/ˈskræp.bʊ.kɪŋ/", "translation": "制作剪贴簿"},
+		{"word": "mall", "IPA": "/mɑl/", "translation": "商场"},
+		{"word": "escalator", "IPA": "/ˈɛ.skəˌleɪ.dər/", "translation": "自动扶梯"},
+		{"word": "elevator", "IPA": "/ˈɛ.ləˌveɪ.dər/", "translation": "电梯"},
+		{"word": "lift", "IPA": "/lɪft/", "translation": "电梯（英式）；举起"},
+		{"word": "elevate", "IPA": "/ˈɛ.ləˌveɪt/", "translation": "举起；提升"},
+		{"word": "shelf", "IPA": "/ʃɛlf/", "translation": "架子"},
+		{"word": "shelves", "IPA": "/ʃɛlvz/", "translation": "架子（复数）"},
+		{"word": "bookshelf", "IPA": "/ˈbʊk.ʃɛlf/", "translation": "书架"},
+		{"word": "food truck", "IPA": "/ˈfud trʌk/", "translation": "餐车（流动餐车）"},
+		{"word": "permit (n.)", "IPA": "/ˈpɜr.mɪt/", "translation": "许可证", "audio": "permit"},
+		{"word": "food stand", "IPA": "/ˈfud stænd/", "translation": "小吃摊"},
+		{"word": "food cart", "IPA": "/ˈfud kɑrt/", "translation": "小吃推车"},
+		{"word": "RV", "IPA": "/ˌɑrˈvi/", "translation": "房车"},
+		{"word": "food safety", "IPA": "/fud ˈseɪf.ti/", "translation": "食品安全"}
+	]},
 	{"date": "2026-11-16",
 	"vocabulary": [
 		{"word": "introverted", "IPA": "/ˈɪn.troʊˌvɜr.dɪd/", "translation": "内向的"},
