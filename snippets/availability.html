@@ -178,18 +178,14 @@
     margin: 0 auto 8px;
     padding: 0 16px;
     display: flex;
-    align-items: stretch;           /* pager matches the toggle's height */
-    justify-content: space-between; /* key | pager | toggle | button, evenly spaced */
+    align-items: center;
+    justify-content: space-between; /* key | button */
     gap: 12px 24px;
     font-size: 14px;
     flex-wrap: wrap;
     color: var(--cal-text);
   }
-  /* Four evenly spaced items: the color key, the week pager, the lesson-length
-     toggle and the Book button. The wrapper around the pager and toggle is
-     transparent to layout (it only groups them in the markup). */
   .legend-keys { display: flex; align-items: center; align-self: center; gap: 12px 24px; }
-  .legend-controls { display: contents; }
   .subtitle {
     max-width: 1000px;
     margin: 20px auto 0;
@@ -245,6 +241,16 @@
     background-image: repeating-linear-gradient(45deg, transparent, transparent 1px, var(--cal-busy) 1px, var(--cal-busy-alt) 3px);
   }
 
+  /* Holiday key: the header chip's flag on its own, as on lessons.html. Shown
+     only while a holiday is in the visible week (setupHolidayKey). */
+  .legend-hol[hidden], .legend-today[hidden] { display: none; }
+  /* Today key: the header's today shading with its corner flag, as on lessons.html */
+  .legend-today-sw { display: inline-block; width: 12px; height: 12px; margin-right: 8px; vertical-align: middle; border: 1px solid var(--cal-border); box-sizing: border-box; background: linear-gradient(225deg, var(--cal-accent) 0 6px, #F3DECC 6px); }
+  :root[data-theme="dark"] .legend-today-sw { background: linear-gradient(225deg, var(--cal-accent) 0 6px, #2E2733 6px); }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .legend-today-sw { background: linear-gradient(225deg, var(--cal-accent) 0 6px, #2E2733 6px); } }
+  .legend-hol-icon { display: inline-flex; align-items: center; justify-content: center; width: 14px; height: 14px; margin-right: 8px; vertical-align: middle; }
+  .legend-hol-icon i { font-size: 11px; color: var(--cal-accent); }
+
   /* Book-a-lesson CTA — matches site .button style (terracotta, shadowed). */
   .book-cta {
     position: relative;
@@ -292,137 +298,6 @@
   }
   .book-menu.open { display: block; }
   .book-menu a:hover { background: var(--cal-surface); }
-
-  /* Segmented 4-state vertical toggle for the lesson length. The active
-     option is tracked with data-active="0|1|2|3". */
-  .cal-seg {
-    position: relative;
-    display: inline-flex;
-    flex-direction: column;
-    border: 1px solid var(--cal-border);
-    border-radius: 8px;
-    overflow: hidden;
-    flex-shrink: 0;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .cal-seg-label {
-    position: relative;
-    z-index: 1;
-    flex: 1;
-    padding: 1px 7px;
-    font-size: 12px;
-    font-family: inherit;
-    line-height: 1.5;
-    white-space: nowrap;
-    text-align: center;
-    color: var(--cal-muted);
-    transition: color 0.2s ease;
-    user-select: none;
-  }
-  /* each label's text centred in its share of the height (the control can be
-     stretched taller than its labels) */
-  .cal-seg-label { display: grid; align-content: center; justify-items: center; }
-  /* the bold copy shares the text's grid cell (overlapping it, invisibly), so it
-     sets the width without adding any height */
-  .cal-seg-label[data-text]::after { grid-area: 1 / 1; height: auto; }
-  .cal-seg[data-active="0"] .cal-seg-label:nth-child(1),
-  .cal-seg[data-active="1"] .cal-seg-label:nth-child(2),
-  .cal-seg[data-active="2"] .cal-seg-label:nth-child(3),
-  .cal-seg[data-active="3"] .cal-seg-label:nth-child(4) { color: var(--button-text, #FFF6EC); font-weight: bold; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.35); /* same lift as the Book button */ }
-  /* The active row is bold, which is wider. Reserve the bold width for every
-     label/cell up front with an invisible zero-height bold copy of its text, so
-     the toggle's width doesn't change when the active row moves. */
-  .cal-seg [data-text]::after {
-    content: attr(data-text);
-    display: block;
-    height: 0;
-    overflow: hidden;
-    visibility: hidden;
-    font-weight: bold;
-  }
-  .cal-seg-indicator {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 0;
-    height: 25%;
-    background: var(--cal-accent);
-    transition: top 0.2s ease;
-    pointer-events: none;
-  }
-  .cal-seg[data-active="1"] .cal-seg-indicator { top: 25%; }
-  .cal-seg[data-active="2"] .cal-seg-indicator { top: 50%; }
-  .cal-seg[data-active="3"] .cal-seg-indicator { top: 75%; }
-
-  /* Week pager. Visually: previous / next chevrons on one row and the visible
-     week's date range on a row beneath. Functionally: the entire left half of
-     the box goes back a week and the entire right half goes forward, via two
-     invisible absolutely-positioned buttons; the visual layer sits above them
-     with pointer-events: none so clicks fall through. Styled to match the
-     segmented toggle beside it. */
-  .cal-weeknav {
-    position: relative;
-    display: inline-grid;          /* one cell: the visual layer fills it */
-    box-sizing: border-box;
-    width: 114px;                  /* fixed: a roomy click target that doesn't
-                                      shift as the date label's length changes */
-    border: 1px solid var(--cal-border);
-    border-radius: 8px;
-    overflow: hidden;
-    flex-shrink: 0;
-    font-size: 12px;
-    color: var(--cal-text);
-  }
-  .cal-weeknav-half {
-    all: unset;
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 50%;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-    transition: background-color 0.15s ease;
-  }
-  .cal-weeknav-half-prev { left: 0; }
-  .cal-weeknav-half-next { right: 0; }
-  .cal-weeknav-half:hover { background: var(--cal-surface); }
-  .cal-weeknav-half:focus-visible { outline: 2px solid var(--cal-accent); outline-offset: -2px; }
-  .cal-weeknav-half:disabled { cursor: default; background: none; }
-  .cal-weeknav-visual {
-    position: relative;            /* paints above the hit areas ... */
-    z-index: 1;
-    pointer-events: none;          /* ... but never intercepts their clicks */
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 1fr 1fr;   /* chevron row and label row share the height */
-  }
-  .cal-weeknav-arrow {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 4px 14px;
-    font-size: 14px;
-    color: var(--cal-accent);
-    transition: color 0.15s ease;
-  }
-  .cal-weeknav-arrow-next { border-left: 1px solid var(--cal-border); }
-  /* dim a chevron when its half is disabled (at either end of the range) */
-  .cal-weeknav-half-prev:disabled ~ .cal-weeknav-visual .cal-weeknav-arrow-prev,
-  .cal-weeknav-half-next:disabled ~ .cal-weeknav-visual .cal-weeknav-arrow-next { color: var(--cal-border); }
-  .cal-weeknav-label {
-    grid-column: 1 / -1;           /* spans the full width: its own row */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 3px 10px;
-    border-top: 1px solid var(--cal-border);
-    white-space: nowrap;
-    user-select: none;
-    font-family: Freeman, sans-serif;
-    font-size: 15px;
-    color: var(--cal-text);
-  }
 
   #root { overflow: hidden; }
 
@@ -737,7 +612,10 @@
   .calendar-days.sliding, .calendar-days.dragging { overflow-x: clip; }
   /* the week can be dragged sideways; vertical swipes still scroll the page */
   .calendar-days { touch-action: pan-y; }
+  .calendar-days { cursor: grab; }   /* the open hand: the days can be dragged */
+  .calendar-days .availability-block { cursor: default; }   /* the arrow back over the green */
   .calendar-days.dragging { cursor: grabbing; user-select: none; -webkit-user-select: none; }
+  .calendar-days.dragging * { cursor: grabbing !important; }   /* closed hand even over a clickable block mid-drag */
   /* each column draws its own left line, so hold the one beside the time
      axis still while the columns move under it */
   .calendar-days.sliding::after, .calendar-days.dragging::after {
@@ -761,6 +639,10 @@
     inset: 0;
     pointer-events: none;
   }
+  /* each column draws only its left line, so the very last day there is
+     closes the grid with a right one (seen at the end, or dragged past it) */
+  .calendar-head-cell.calendar-day-last { box-shadow: 1px 0 var(--cal-border); }   /* just past the edge: at rest it lies on the time column's own line, so it never doubles it */
+  .calendar-week-day.calendar-day-last::after { content: ''; position: absolute; top: 0; right: -1px; bottom: 0; width: 1px; background: var(--cal-border); z-index: 3; pointer-events: none; }
   .calendar-week-day {
     position: relative;
     display: flex;
@@ -832,7 +714,7 @@
   .calendar-cell-container.lesson-seam { border-top-color: #00808A; }
   .lesson-preview.visible { opacity: 1; }
   .lesson-preview-label {
-    font-size: 12px;
+    font-size: 11px;   /* room to spare around "11:00 PM – 12:00 AM" */
     line-height: 1;
     white-space: nowrap;
   }
@@ -890,18 +772,9 @@
   }
 
   @container (max-width: 700px) {
-      /* Spread the legend keys and the two toggles evenly across the width:
-         equal space at both edges and between each element (|e|e|e|). The
-         full-width Book button sits on its own line, so it's unaffected. */
-      .legend { gap: 10px 0; justify-content: space-evenly; align-items: stretch; } /* column-gap 0 so space-evenly alone sets the 4 equal gaps; stretch so the key, pager and toggle share one height */
-      /* Stack Available / Unavailable / Booked vertically on narrow screens. */
-      .legend-keys {
-          display: flex;
-          flex-direction: column;
-          align-items: flex-start;
-          gap: 6px;
-      }
-      .legend-controls { display: contents; }
+      /* The full-width Book button on top, the key centred on one row under it. */
+      .legend { gap: 10px 0; justify-content: center; }
+      .legend-keys { gap: 6px 18px; flex-wrap: wrap; justify-content: center; }
       .book-cta {
           order: -1;
           width: 100%;
@@ -1002,27 +875,8 @@
     <span><span class="legend-swatch available"></span>Available</span>
     <span><span class="legend-swatch unavailable"></span>Unavailable</span>
     <span><span class="legend-swatch busy"></span>Booked</span>
-  </div>
-  <div class="legend-controls">
-  <!-- Week pager. The two buttons are invisible hit areas covering the left
-       and right halves of the whole box (a large click target); the layer
-       after them is purely visual and lets clicks pass through. -->
-  <div class="cal-weeknav" id="cal-week-nav" role="group" aria-label="Change week">
-    <button type="button" class="cal-weeknav-half cal-weeknav-half-prev" id="cal-week-prev" aria-label="Previous week"></button>
-    <button type="button" class="cal-weeknav-half cal-weeknav-half-next" id="cal-week-next" aria-label="Next week"></button>
-    <div class="cal-weeknav-visual" aria-hidden="true">
-      <span class="cal-weeknav-arrow cal-weeknav-arrow-prev"><i class="fa-solid fa-chevron-left"></i></span>
-      <span class="cal-weeknav-arrow cal-weeknav-arrow-next"><i class="fa-solid fa-chevron-right"></i></span>
-      <span class="cal-weeknav-label" id="cal-week-label"></span>
-    </div>
-  </div>
-  <div class="cal-seg" id="cal-length-nav" data-active="2" tabindex="0" role="button" aria-label="Switch lesson length">
-    <span class="cal-seg-label" data-text="20-min intro call">20-min intro call</span>
-    <span class="cal-seg-label" data-text="45-min tutoring">45-min tutoring</span>
-    <span class="cal-seg-label" data-text="60-min tutoring">60-min tutoring</span>
-    <span class="cal-seg-label" data-text="90-min tutoring">90-min tutoring</span>
-    <span class="cal-seg-indicator" aria-hidden="true"></span>
-  </div>
+    <span class="legend-today" id="legend-today" hidden><span class="legend-today-sw" aria-hidden="true"></span>Today</span>
+    <span class="legend-hol" id="legend-hol" hidden><span class="legend-hol-icon" aria-hidden="true"><i class="fa-solid fa-flag-usa"></i></span>Holiday</span>
   </div>
   <div class="book-cta">
     <button class="book-button" id="book-button" type="button" aria-has="true" aria-expanded="false">
@@ -1126,12 +980,11 @@
     return { ovStart, ovEnd, sSlot, eSlot, endWall };
   }
 
-  // Lesson-length toggle: index 0/1/2 maps to the minimum available window
-  // (minutes) needed for each option. Only runs at least this long are shown
-  // as bookable. The intro call is 20 min, but slots are 15 min, so it needs a
-  // 30-min (2-slot) window. Default is 60-min.
+  // Shortest opening shown: 45 min (lessonIdx 1). Anything shorter is hidden.
+  // The hover preview is 60 min, or 45 where only 45 fits. (lessons.html
+  // picks its own length: it sets lessonIdx and previewMinutes.)
   const LESSON_MINUTES = [30, 45, 60, 90];
-  let lessonIdx = 2;
+  let lessonIdx = 1;
   function currentMinRun() { return LESSON_MINUTES[lessonIdx] / 15; } // slots (15 min each)
 
   let dayOffset = 0;   // the calendar shows seven days from today + this many (a day picked in the sidebar, or the pager)
@@ -1380,7 +1233,7 @@
       const [c0, c1] = (root.dataset.containers || '').split(',').map(Number);
       filler = {
         k0,
-        html: [headCellsHTML(days), dayColsHTML(classify(cachedEvents, days, currentMinRun()), c0, c1)],
+        html: [headCellsHTML(days), dayColsHTML(classify(cachedEvents, days, currentMinRun()), c0, c1, days)],
       };
     }
     const clips = root.querySelectorAll('.calendar-days');
@@ -1546,8 +1399,12 @@
     root.addEventListener('click', e => {
       const corner = e.target.closest('.cal-corner-btn');
       if (corner) {
-        const btn = document.getElementById(corner.getAttribute('data-go'));
-        if (btn && !btn.disabled) btn.click();
+        // a week back or on from wherever the calendar starts now
+        if (corner.disabled || !cachedEvents) return;
+        const from = dayOffset;
+        dayOffset = corner.getAttribute('data-go') === 'cal-week-prev'
+          ? Math.max(0, dayOffset - 7) : Math.min(maxDayOffset(), dayOffset + 7);
+        if (dayOffset !== from) renderWeek(from);
         return;
       }
       if (e.target.closest('.holiday-chip')) return;
@@ -1681,8 +1538,7 @@
     return grid;
   }
 
-  // The header's corner cells page a week back / on, like the pager arrows
-  // (clicks go through those buttons). Narrow screens hide the right corner,
+  // The header's corner cells page a week back / on (setupHeadClicks). Narrow screens hide the right corner,
   // so the left one also carries the "next" arrow there (narrowOnly).
   function cornerButtonHTML(dir, narrowOnly) {
     const prev = dir === 'prev';
@@ -1704,14 +1560,16 @@
         ? `<span class="holiday-chip" tabindex="0" role="note" aria-label="${escapeHTML(holiday)}"><i class="fa-solid fa-flag-usa" aria-hidden="true"></i><span>${escapeHTML(holiday)}</span></span>`
         : '';
       // data-day: days from today, for the click that starts the week on this day
-      return `<div class="calendar-head-cell${today ? ' calendar-head-cell-today' : ''}" data-day="${dayIndexFrom(today0, d.getTime())}">
+      return `<div class="calendar-head-cell${today ? ' calendar-head-cell-today' : ''}${isLastDay(d) ? ' calendar-day-last' : ''}" data-day="${dayIndexFrom(today0, d.getTime())}">
         <div class="calendar-head-cell-weekday">${weekdayFmt.format(d)} <span class="calendar-head-cell-month">${monthFmt.format(d)}</span></div>
         <div class="calendar-head-cell-date">${d.getDate()}</div>${chip}
     </div>`;
     }).join('');
   }
 
-  function dayColsHTML(grid, startContainer, endContainer) {
+  // the last day there is: its right edge gets a line (isLastDay)
+  function isLastDay(d) { const t0 = new Date(); t0.setHours(0, 0, 0, 0); return !!d && dayIndexFrom(t0, d.getTime()) === maxDayOffset() + 6; }
+  function dayColsHTML(grid, startContainer, endContainer, days) {
     return grid.map((_, di) => {
       const containers = [];
       for (let ci = startContainer; ci < endContainer; ci++) {
@@ -1722,7 +1580,7 @@
           <div class="calendar-cell${bot}"></div>
       </div>`);
       }
-      return `<div class="calendar-week-day">${containers.join('')}</div>`;
+      return `<div class="calendar-week-day${days && isLastDay(days[di]) ? ' calendar-day-last' : ''}">${containers.join('')}</div>`;
     }).join('');
   }
 
@@ -1779,7 +1637,7 @@
       timeCells.push(`<div class="calendar-time-cell">${timeFmt.format(d)}</div>`);
     }
 
-    const dayCols = dayColsHTML(grid, startContainer, endContainer);
+    const dayCols = dayColsHTML(grid, startContainer, endContainer, days);
 
     root.innerHTML = `<div class="calendar">
       <div class="calendar-head-date">
@@ -1976,11 +1834,9 @@ function attachHover(root, grid, startSlot) {
     return tooWide;
   })();
 
-  // Lesson preview: while the cursor is over a green run, a teal block the
-  // length of the selected lesson follows it (snapped to 15-min starts and
-  // kept inside the run), labelled with that lesson's start and end times.
-  // The 20-min intro call is drawn as its 30-min window but labelled 20 min.
-  const PREVIEW_MINUTES = [20, 45, 60, 90];
+  // Lesson preview: while the cursor is over a green run, a teal lesson block
+  // follows it (60 min, or 45 in a shorter opening; snapped to 15-min starts
+  // and kept inside the run), labelled with its start and end times.
 
   // Teal on cells a..b of one column (null clears), plus the hour lines that
   // fall inside that range, so the lesson reads as one solid block.
@@ -2021,8 +1877,12 @@ function attachHover(root, grid, startSlot) {
       const cells = col.querySelectorAll('.calendar-cell');
       let shownStart = -1;
       function place(clientY) {
-        const minutes = PREVIEW_MINUTES[lessonIdx] || LESSON_MINUTES[lessonIdx];   // lessons.html adds lengths past these four
-        const lenSlots = currentMinRun();
+        // 60 min, or 45 where the opening is shorter than an hour
+        let minutes = runEnd - runStart >= 4 ? 60 : 45;
+        let lenSlots = minutes / 15;
+        // lessons.html: its chosen length, cut to what fits this opening
+        const want = typeof window.previewMinutes === 'function' ? window.previewMinutes(runEnd - runStart) : 0;
+        if (want) { minutes = want; lenSlots = Math.ceil(want / 15); }
         const rect = block.getBoundingClientRect();
         // Centre the lesson on the cursor, then snap and clamp to the run.
         const cursorSlots = (clientY - rect.top) / SLOT_PX;
@@ -2417,16 +2277,6 @@ function updateWeekNav(days) {
   next.disabled = dayOffset >= maxDayOffset();
 }
 
-(function setupNavButtons() {
-  const prev = document.getElementById('cal-week-prev');
-  const next = document.getElementById('cal-week-next');
-  if (!prev || !next) return;
-  // a week back or on from wherever the calendar starts now
-  prev.addEventListener('click', () => { if (dayOffset > 0) { const from = dayOffset; dayOffset = Math.max(0, dayOffset - 7); renderWeek(from); } });
-  next.addEventListener('click', () => { if (dayOffset < maxDayOffset()) { const from = dayOffset; dayOffset = Math.min(maxDayOffset(), dayOffset + 7); renderWeek(from); } });
-  updateWeekNav(buildWeek(new Date(), dayOffset)); // initial label while data loads
-})();
-
 // Drag the week sideways to browse: the days follow the pointer, with the
 // days either side drawn in. On release the week glides on at the speed it
 // was let go, slowing to a stop on a whole day (a slow release settles on
@@ -2546,7 +2396,7 @@ function updateWeekNav(days) {
       if (n <= 0) return;
       const first = buildWeek(new Date(), dayOffset + k0)[0];
       const days = Array.from({ length: n }, (_, j) => addDays(first, j));
-      const html = [headCellsHTML(days), dayColsHTML(classify(cachedEvents, days, currentMinRun()), c0, c1)];
+      const html = [headCellsHTML(days), dayColsHTML(classify(cachedEvents, days, currentMinRun()), c0, c1, days)];
       clips().forEach((clip, i) => {
         const el = document.createElement('div');
         el.className = 'calendar-days-track calendar-days-old';
@@ -2617,6 +2467,59 @@ function updateWeekNav(days) {
       }
     }, () => {});
   }
+  // Once, when the calendar first comes into view: the days nudge toward the
+  // future and slide back, a hint that they can be dragged. It runs as a
+  // glide, so a touch mid-way catches it like any other. Skipped when week
+  // animations are off (or reduced motion is asked for).
+  (function setupDragHint() {
+    let done = false, inView = false, tries = 0, ready = false;
+    function hint() {
+      if (done || !inView) return;
+      // Wait for the fresh schedule: the remembered one and the quick first
+      // load each redraw the week, and a redraw mid-bounce cuts it short.
+      if (drag || glide || wheelDrag || loadInFlight || !cachedEvents || !root.querySelector('.calendar-days')) {
+        ready = false;
+        if (++tries < 60) setTimeout(hint, 500);   // not ready yet: try again shortly
+        return;
+      }
+      // then a moment for that last redraw to settle, so the bounce runs smoothly
+      if (!ready) { ready = true; setTimeout(hint, 450); return; }
+      done = true;
+      if (!slideOn || dayOffset >= maxDayOffset()) return;
+      clips().forEach(c => c.classList.add('sliding'));
+      const { sides, room } = addSides();
+      const peak = -Math.min(room.after, colWidth() * 0.6);
+      // out with an ease-out, back with an ease-in-out, no overshoot
+      const frames = x => [
+        { transform: 'translateX(' + x + 'px)', easing: 'cubic-bezier(0.25, 0.8, 0.4, 1)' },
+        { transform: 'translateX(' + (x + peak) + 'px)', offset: 0.42, easing: 'cubic-bezier(0.5, 0, 0.3, 1)' },
+        { transform: 'translateX(' + x + 'px)' },
+      ];
+      const opts = { duration: 1100 };
+      const anims = [];
+      tracks().forEach(t => anims.push(t.animate(frames(0), opts)));
+      sides.forEach(sd => anims.push(sd.el.animate(frames(sd.x), opts)));
+      // the side days were only just drawn: start once they are on screen, all together
+      anims.forEach(a => a.pause());
+      requestAnimationFrame(() => requestAnimationFrame(() => anims.forEach(a => { if (a.playState === 'paused') a.play(); })));
+      const g = glide = { anims, sides, room, to: 0, n: 0, step: false };
+      followPauseNotices(root);
+      Promise.all(anims.map(a => a.finished)).then(() => {
+        if (glide !== g) return;
+        glide = null;
+        sides.forEach(sd => sd.el.remove());
+        tracks().forEach(t => { t.getAnimations().forEach(a => a.cancel()); t.style.transform = ''; });
+        clips().forEach(c => c.classList.remove('sliding'));
+      }, () => {});
+    }
+    if (!('IntersectionObserver' in window)) return;
+    const io = new IntersectionObserver(es => {
+      inView = es[es.length - 1].isIntersecting;
+      if (inView && !done) { tries = 0; setTimeout(hint, 600); }
+      if (done) io.disconnect();
+    }, { threshold: 0.5 });
+    io.observe(root);
+  })();
   // mouse and pen
   root.addEventListener('pointerdown', e => { if (e.pointerType !== 'touch' && e.button === 0) { start(e.clientX, e.clientY, e.target); if (drag) drag.id = e.pointerId; } });
   root.addEventListener('pointermove', e => {
@@ -2658,15 +2561,19 @@ function updateWeekNav(days) {
   }
   document.addEventListener('touchend', touchUp);
   document.addEventListener('touchcancel', touchUp);
-  // Sideways wheel: a tilt wheel, Shift + wheel, or a sideways trackpad
-  // swipe. A wheel click moves one day (quick clicks add up); a trackpad
-  // moves the days with the fingers and settles on the nearest day once it
-  // stops. Up-and-down scrolling still scrolls the page.
+  // Wheel over the days: any wheel or trackpad scroll, up/down as well as
+  // sideways, moves the days (down = later). A wheel click moves one day
+  // (quick clicks add up); a trackpad moves the days with the fingers and
+  // settles on the nearest day once it stops. At the first or last week an
+  // up/down scroll that can't move the days scrolls the page instead.
   root.addEventListener('wheel', e => {
     if (!cachedEvents || drag || e.ctrlKey || !e.target.closest || !e.target.closest('.calendar-days')) return;
     let wx = e.deltaX, wy = e.deltaY;
-    if (e.shiftKey && !wx) { wx = wy; wy = 0; }
-    if (!wx || Math.abs(wx) <= Math.abs(wy)) return;
+    if (Math.abs(wy) > Math.abs(wx)) {
+      if (!e.shiftKey && !wheelDrag && (wy < 0 ? dayOffset <= 0 : dayOffset >= maxDayOffset())) return;
+      wx = wy; wy = 0;
+    }
+    if (!wx) return;
     e.preventDefault();
     const colW = colWidth();
     const px = wx * (e.deltaMode === 1 ? 40 : e.deltaMode === 2 ? colW * 7 : 1);
@@ -2698,16 +2605,25 @@ function updateWeekNav(days) {
   });
 })();
 
-(function setupLengthButtons() {
-  const nav = document.getElementById('cal-length-nav');
-  if (!nav) return;
-  function toggle() {
-    lessonIdx = (lessonIdx + 1) % LESSON_MINUTES.length;
-    nav.setAttribute('data-active', lessonIdx);
-    renderWeek();
+// The key's Today and Holiday items show only while today / a holiday chip
+// is in the visible week.
+(function setupHolidayKey() {
+  const key = document.getElementById('legend-hol');
+  const todayKey = document.getElementById('legend-today');
+  const root = document.getElementById('root');
+  if (!key || !todayKey || !root) return;
+  let raf = 0;
+  function update() {
+    raf = 0;
+    const shown = Array.from(root.querySelectorAll('.calendar-head-cell[data-day]')).filter(c => {
+      const d = Number(c.getAttribute('data-day'));
+      return d >= dayOffset && d < dayOffset + 7;
+    });
+    key.hidden = !shown.some(c => c.querySelector('.holiday-chip'));
+    todayKey.hidden = !shown.some(c => c.classList.contains('calendar-head-cell-today'));
   }
-  nav.addEventListener('click', toggle);
-  nav.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+  new MutationObserver(() => { if (!raf) raf = requestAnimationFrame(update); }).observe(root, { childList: true, subtree: true });
+  update();
 })();
 
 // Reposition the pause notice when the viewport changes (column widths and the
