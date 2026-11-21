@@ -162,6 +162,14 @@
 		box-shadow: 1px 1px 10px var(--shadow);
 	}
 
+	/* Photos: 1px hairline inset on the image edge (follows border-radius). */
+	img.photo { outline: 1px solid rgba(0, 0, 0, 0.1); outline-offset: -1px; }
+	img.photo.round { border-radius: 50%; } /* circle-cropped transparent PNGs */
+	:root[data-theme="dark"] img.photo { outline-color: rgba(255, 255, 255, 0.12); }
+	@media (prefers-color-scheme: dark) {
+		:root:not([data-theme="light"]) img.photo { outline-color: rgba(255, 255, 255, 0.12); }
+	}
+
 	trevorkafka-announcement { display: block; }
 
 	/* ANNOUNCEMENT SPACE RESERVATION — coupled to snippets/announcement.html.
