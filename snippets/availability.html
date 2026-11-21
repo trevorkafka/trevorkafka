@@ -711,6 +711,16 @@
      the preview should snap, so the cells, hour lines and label skip it. */
   .calendar-cell, .calendar-cell-container, .lesson-preview, .lesson-preview-label { transition: none; }
   .calendar-cell.lesson-on { background: #00808A; }
+  /* Where green meets green, the grid line is a deeper green instead of the
+     tan, so an opening reads as one block rather than cut into pieces. Lines
+     on a block's edge stay tan. A day line that is green for only half its
+     length (gl-left-mix) is drawn by the two cells, half each. */
+  .calendar-week-day { --gl-green: #7fbf4f; }
+  .calendar-cell-container.gl-top { border-top-color: var(--gl-green); }
+  .calendar-cell-container.gl-left { border-left-color: var(--gl-green); }
+  .calendar-cell-container.gl-left-mix { border-left-color: transparent; }
+  .calendar-cell-container.gl-left-mix > .calendar-cell { box-shadow: -1px 0 var(--cal-border); }
+  .calendar-cell-container.gl-left-mix > .calendar-cell.gl-l { box-shadow: -1px 0 var(--gl-green); }
   .calendar-cell-container.lesson-seam { border-top-color: #00808A; }
   .lesson-preview.visible { opacity: 1; }
   .lesson-preview-label {
@@ -1575,9 +1585,16 @@
       for (let ci = startContainer; ci < endContainer; ci++) {
         const top = stateClass(grid[di][ci * 2]);
         const bot = stateClass(grid[di][ci * 2 + 1]);
-        containers.push(`<div class="calendar-cell-container">
-          <div class="calendar-cell${top}"></div>
-          <div class="calendar-cell${bot}"></div>
+        // green seams: line above (both sides green) and day line on the left
+        const g = (d, si) => !!grid[d] && grid[d][si] === 1;
+        const gTop = di > 0 && g(di, ci * 2) && g(di - 1, ci * 2);
+        const gBot = di > 0 && g(di, ci * 2 + 1) && g(di - 1, ci * 2 + 1);
+        let seams = (ci > startContainer && g(di, ci * 2) && g(di, ci * 2 - 1)) ? ' gl-top' : '';
+        if (gTop && gBot) seams += ' gl-left';
+        else if (gTop || gBot) seams += ' gl-left-mix';
+        containers.push(`<div class="calendar-cell-container${seams}">
+          <div class="calendar-cell${top}${gTop && !gBot ? ' gl-l' : ''}"></div>
+          <div class="calendar-cell${bot}${gBot && !gTop ? ' gl-l' : ''}"></div>
       </div>`);
       }
       return `<div class="calendar-week-day${days && isLastDay(days[di]) ? ' calendar-day-last' : ''}">${containers.join('')}</div>`;
