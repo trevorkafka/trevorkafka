@@ -1379,8 +1379,34 @@
     }
     html += '</div>';
     el.innerHTML = html;
+    el.dataset.shown = String(shownFrom);
     positionMiniCal();
     el.classList.add('ready');
+  }
+
+  // While the days are dragged, scrolled or tossed, the box moves with them a
+  // day at a time. No redraw: only the shown days and the month seams beside
+  // them change (the seams the same way renderMiniCal colours them).
+  function shadeMiniCal(from) {
+    const el = document.getElementById('mini-cal');
+    if (!el || !el.classList.contains('ready')) return;
+    from = Math.max(0, Math.min(maxDayOffset(), from));
+    if (el.dataset.shown === String(from)) return;
+    el.dataset.shown = String(from);
+    const byDay = [];
+    el.querySelectorAll('.mini-cal-day[data-day]').forEach(c => { byDay[Number(c.getAttribute('data-day'))] = c; });
+    const free = k => !!byDay[k] && byDay[k].classList.contains('mini-cal-day-free');
+    const bright = k => free(k) && k >= from && k <= from + 6;
+    const seam = (a, b) => !(free(a) && free(b)) ? 'grey' : (bright(a) || bright(b)) ? 'strong' : 'pale';
+    byDay.forEach((c, i) => {
+      if (!c) return;
+      c.classList.toggle('mini-cal-day-shown', i >= from && i <= from + 6);
+      for (const [side, k] of [['top', i - 7], ['left', i - 1]]) {
+        if (!c.classList.contains('mini-cal-m-' + side)) continue;
+        c.classList.remove('mini-cal-' + side + '-grey', 'mini-cal-' + side + '-pale', 'mini-cal-' + side + '-strong');
+        c.classList.add('mini-cal-' + side + '-' + seam(k, i));
+      }
+    });
   }
 
   // Clicking a day pages the calendar to the week that day belongs to.
@@ -2320,6 +2346,7 @@ function updateWeekNav(days) {
     // the week label follows the days under the pointer
     const day = dayOffset + Math.round(-dx / colWidth());
     if (day !== shownDay) { shownDay = day; updateWeekNav(buildWeek(new Date(), day)); }
+    shadeMiniCal(day);
     tracks().forEach(t => { t.style.transform = 'translateX(' + dx + 'px)'; });
     sides.forEach(sd => { sd.el.style.transform = 'translateX(' + (sd.x + dx) + 'px)'; });
   }
@@ -2470,6 +2497,14 @@ function updateWeekNav(days) {
     if (ms > 50) anims.forEach(a => { a.currentTime = 1000 / 60; });
     const g = glide = { anims, sides: d.sides, room: d.room, to, n, step: stepTo != null };
     followPauseNotices(root);
+    // the mini calendar's box keeps pace with the days as they glide
+    const follow = () => {
+      if (glide !== g) return;
+      const main = tracks()[0], clip = root.querySelector('.calendar-days');
+      if (main && clip) shadeMiniCal(dayOffset + Math.round((clip.getBoundingClientRect().left - main.getBoundingClientRect().left) / colW));
+      requestAnimationFrame(follow);
+    };
+    if (ms) requestAnimationFrame(follow);
     Promise.all(anims.map(a => a.finished)).then(() => {
       if (glide !== g) return;
       glide = null;
@@ -2478,6 +2513,7 @@ function updateWeekNav(days) {
       dayOffset = target;
       if (moved) renderWeek();
       else {
+        shadeMiniCal(dayOffset);
         d.sides.forEach(sd => sd.el.remove());
         tracks().forEach(t => { t.getAnimations().forEach(a => a.cancel()); t.style.transform = ''; });
         clips().forEach(c => c.classList.remove('sliding'));
