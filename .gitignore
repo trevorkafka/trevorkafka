@@ -17,3 +17,10 @@ italki/record.html
 
 # private sources (plaintext pages, passwords) — never published
 _private/
+
+# private Chinese ESL landing page draft (localhost only until Trevor says otherwise)
+esl-zh.html
+fonts/zh-*.woff2
+
+# private student lessons portal draft (localhost only; magic-link login not built yet)
+lessons.html

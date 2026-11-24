@@ -20,9 +20,6 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 	<script type="text/javascript" src="/script.js" defer></script>
 	<script src="/lesson-bar.js"></script> <!-- next-lesson bar for signed-in students -->
-
-	<!-- MathJax (SVG output) for the package-total formula -->
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.min.js" id="MathJax-script" async></script>
 </head>
 
 <body>
@@ -127,11 +124,52 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 		</table>
 		</div>
 
-		<p>The package price is determined by the following formula.</p>
+		<p>As always, your lesson price is based on your chosen <a href="/index.html#lesson-lengths">lesson length</a> and <a href="/index.html#pricing-faq">lesson rate</a>. <span id="pkg-own-note">Families can <a href="/login.html#next-lesson-box">link this browser</a> on the Login page to see their own package prices in the table.</span></p>
 
-		<p>\[ \text{package price} = \text{package size} \times \text{lesson price} \times \left(1 - \frac{\text{discount}}{100} \right) \]</p>
-		
-		<p>As always, your lesson price is based on your chosen <a href="/index.html#lesson-lengths">lesson length</a> and <a href="/index.html#pricing-faq">lesson rate</a>.</p>
+		<script>
+		// A linked family (the email sign-in link, see lesson-bar.js) sees each student's
+		// own package prices as extra columns: package size × their usual lesson's price
+		// (TutorBird rate × lesson length) × (1 − discount). Nothing shows for anyone else.
+		(function () {
+			var API = 'https://script.google.com/macros/s/AKfycbz0z19vvsQdhKimWMDE9T2rO-bX88sMF_DhYBMal9B7enM4x6WSHoNzjacXZPrml7X3/exec';   // same web app as lesson-bar.js
+			// ?sample: made-up prices, to preview the column without a linked browser
+			var sample = new URLSearchParams(location.search).has('sample');
+			var token = null;
+			try { token = localStorage.getItem('tk-lesson-token'); } catch (e) {}
+			if (!token && !sample) return;
+			var money = function (x) { var c = Math.round(x * 100) % 100; return '$' + x.toLocaleString('en-US', { minimumFractionDigits: c ? 2 : 0, maximumFractionDigits: c ? 2 : 0 }); };
+			(sample ? Promise.resolve({ family: [{ id: 'demo', name: 'Ava Sample', rate: 185, mode: 'Hourly', len: 60 }] })
+				: fetch(API + '?' + new URLSearchParams({ action: 'next', token: token, billing: '1' }), { cache: 'no-store' })
+				.then(function (r) { return r.ok ? r.json() : null; }))
+				.then(function (d) {
+					// a student whose lessons someone else pays for: no prices, and no "link to see your prices" either
+					if (d && d.prices === false) { var own = document.getElementById('pkg-own-note'); if (own) own.hidden = true; return; }
+					var fam = (d && d.family || []).filter(function (s) { return s.rate > 0; });
+					var table = document.querySelector('.pkg-table table');
+					if (!fam.length || !table) return;
+					table.parentElement.style.overflowX = 'auto';   // the extra columns scroll inside the frame on a phone, not clipped
+					var note = document.getElementById('pkg-own-note');
+					if (note) note.textContent = sample ? 'Sample prices (made up: $185 an hour, 60-minute lessons). Linked families see their own here.' : fam.length > 1 ?'The last columns show each student\'s own package prices.' : 'The last column shows your own package prices.';
+					fam.forEach(function (s) {
+						var hourly = /hour/i.test(s.mode || 'Hourly'), len = s.len || 60;
+						var lesson = hourly ? s.rate * len / 60 : s.rate;
+						var first = String(s.name || '').split(/\s+/)[0];
+						var th = document.createElement('th');
+						th.style.cssText = 'padding: 14px 20px; text-align: left;';
+						th.innerHTML = (sample ? 'Sample prices' : fam.length > 1 ? first + '’s price' : 'Your price') + '<br><span style="font-weight: normal; font-size: 85%;">' + len + '-min lessons</span>';
+						table.querySelector('thead tr').appendChild(th);
+						table.querySelectorAll('tbody tr').forEach(function (tr) {
+							var n = parseInt(tr.cells[0].textContent, 10), off = parseInt(tr.cells[1].textContent, 10) / 100;
+							var td = document.createElement('td');
+							td.style.cssText = 'padding: 12px 20px; white-space: nowrap;';
+							td.innerHTML = '<strong>' + money(n * lesson * (1 - off)) + '</strong><br><span style="font-size: 85%; opacity: 0.8;">' + money(lesson * (1 - off)) + ' per lesson</span>';
+							tr.appendChild(td);
+						});
+					});
+				})
+				.catch(function () { /* offline, or not linked any more: the table stays as it is */ });
+		})();
+		</script>
 
 		<div class="cta-email tk-table-frame">
 			<i class="fa-solid fa-envelope"></i>Email <trevorkafka-email></trevorkafka-email> to request a package discount.
