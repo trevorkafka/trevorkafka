@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Apply a saved light/dark choice before paint (device default handled by CSS). -->
+<script>
+try{var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.setAttribute('data-theme',t);}catch(e){}
+try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElement.classList.add('ann-collapsed');}catch(e){}
+(function(){var d=document.documentElement;d.classList.add('fonts-loading');var done=false;function fin(){if(done)return;done=true;d.classList.remove('fonts-loading');}setTimeout(fin,500);try{if(document.fonts&&document.fonts.load){Promise.all([document.fonts.load('1em Freeman'),document.fonts.load('1em "Great Vibes"')]).then(fin,fin);}else{fin();}}catch(e){fin();}})();
+</script>
+<title>Polynomial Division Practice - Tutoring with Trevor Kafka</title>
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(','\\)']] },
+  svg: { fontCache: 'global' },
+  startup: { typeset: false }
+};
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-svg.js" async></script>
+<script src="https://kit.fontawesome.com/157b2a3980.js" crossorigin="anonymous"></script>
+	<link rel="preload" href="/fonts/freeman-latin.woff2" as="font" type="font/woff2" crossorigin>
+	<link rel="preload" href="/fonts/greatvibes-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/style.css">
+<style>
+
+:root{
+  /* Inherited from style.css (flip automatically in dark mode) */
+  --paper:var(--color3);
+  --ink:var(--color1);
+  --accent:var(--defaultlink);
+  --accent-h:var(--hoverlink);
+  --tx:var(--transitiontime, .2s);
+  /* Page-specific colors (dark values in the block below) */
+  --surface:#FCF8EF;
+  --muted:#8a7a60;
+  --line:#d9c9a6;
+  --chip:rgba(212,106,83,.14);
+  --chip-line:rgba(212,106,83,.42);
+  --bad:#c0392b;
+  --ref-bg:rgba(64,128,190,.13);
+  --ref-line:rgba(64,128,190,.55);
+}
+:root[data-theme="dark"]{
+  --surface:#302838;
+  --muted:#9C8AA0;
+  --line:#ffffff24;
+  --chip:rgba(232,138,112,.16);
+  --chip-line:rgba(232,138,112,.5);
+  --bad:#ff7b6b;
+  --ref-bg:rgba(130,180,240,.15);
+  --ref-line:rgba(130,180,240,.6);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --surface:#302838;
+    --muted:#9C8AA0;
+    --line:#ffffff24;
+    --chip:rgba(232,138,112,.16);
+    --chip-line:rgba(232,138,112,.5);
+    --bad:#ff7b6b;
+    --ref-bg:rgba(130,180,240,.15);
+    --ref-line:rgba(130,180,240,.6);
+  }
+}
+*{box-sizing:border-box}
+.preset-btn{margin:0}
+.preset-btn{
+  border:1.5px solid var(--line);border-radius:999px;
+  background:none;cursor:pointer;
+  font-size:.9rem;padding:5px 14px;min-height:32px;
+  color:var(--muted);font-family:'Freeman',Arial,sans-serif;
+  transition:border-color var(--tx) ease,color var(--tx) ease;
+  user-select:none;-webkit-tap-highlight-color:transparent;
+}
+.preset-btn:hover{color:var(--ink);border-color:var(--muted)}
+.preset-btn:active{background:var(--chip);border-color:var(--chip-line);color:var(--accent)}
+.preset-btn.active{background:var(--chip);border-color:var(--chip-line);color:var(--accent)}
+.undo-preset{cursor:pointer;color:var(--muted);font-size:.85rem;padding:0 2px;align-self:center;user-select:none;-webkit-tap-highlight-color:transparent}
+.undo-preset:hover{color:var(--ink)}
+html,body{margin:0}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:Arial,Helvetica,sans-serif;
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  padding:clamp(18px,5vw,48px) 18px;
+}
+.wrap{width:100%;max-width:600px}
+
+.title{
+  font-family:'Freeman',Arial,sans-serif;
+  font-size:300%;
+  margin:50px 0 20px;
+  color:var(--ink);
+}
+
+/* collapsible options panel (same as the Unit Circle Quiz) */
+.options{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:16px;
+  position:relative;
+}
+.options > summary{
+  list-style:none;cursor:pointer;
+  display:flex;align-items:flex-start;gap:8px;
+  padding:12px 18px;
+  font-family:'Freeman',Arial,sans-serif;
+  font-size:.95rem;color:var(--muted);line-height:1;
+  user-select:none;-webkit-tap-highlight-color:transparent;
+}
+.options > summary::-webkit-details-marker{display:none}
+.options > summary .arr{transition:transform .2s;font-size:.9rem;flex:none;line-height:1;margin-top:0.35em}
+details.options[open] > summary .arr{transform:rotate(90deg)}
+details.options[open] > summary{
+  position:absolute;
+  top:8px;left:18px;
+  height:32px;
+  padding:0;
+  align-items:center;
+}
+details.options[open] > summary .arr{margin-top:0}
+.settings-sentence{
+  font-family:'Freeman',Arial,sans-serif;
+  font-size:.95rem;color:var(--muted);
+  flex:1;line-height:1.6;
+}
+details.options[open] .settings-sentence{display:none}
+.options-body{
+  padding:8px 18px 8px;
+  display:flex;flex-direction:column;gap:18px;
+}
+details.options[open] > .options-body{
+  padding-left:30px;
+}
+.grp{display:flex;align-items:flex-start;gap:14px;flex-wrap:wrap}
+.grp > .lbl{
+  font-family:'Freeman',Arial,sans-serif;
+  font-size:.95rem;
+  color:var(--muted);
+  width:88px;
+  flex:none;
+  min-height:32px;
+  display:flex;
+  align-items:center;
+}
+.grp .opts{display:flex;flex-wrap:wrap;column-gap:8px;row-gap:4px;flex:1}
+.opt{
+  position:relative;
+  display:inline-flex;align-items:center;justify-content:center;
+  min-height:32px;padding:5px 14px;border-radius:999px;
+  cursor:pointer;font-size:.98rem;
+  color:var(--muted);background:transparent;
+  border:1.5px solid transparent;
+  transition:background-color var(--tx) ease,color var(--tx) ease,border-color var(--tx) ease,opacity var(--tx) ease;
+  user-select:none;-webkit-tap-highlight-color:transparent;
+}
+.opt:hover{color:var(--ink)}
+.opt input{position:absolute;opacity:0;width:0;height:0;margin:0;pointer-events:none}
+.opt:has(input:checked){
+  background:var(--chip);
+  border-color:var(--chip-line);
+  color:var(--accent);
+}
+.opt:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.opt.off{opacity:.3;pointer-events:none}
+.opts.slide{position:relative}
+.opts.slide .pill{
+  position:absolute;left:0;top:0;width:0;height:32px;
+  background:var(--chip);border:1.5px solid var(--chip-line);
+  border-radius:999px;z-index:0;pointer-events:none;opacity:0;
+  transition:transform var(--tx) ease,width var(--tx) ease,height var(--tx) ease,opacity var(--tx) ease;
+}
+.opts.slide .opt{position:relative;z-index:1}
+.opts.slide .opt:has(input:checked){background:transparent;border-color:transparent;color:var(--accent)}
+
+/* stage */
+.stage{
+  display:flex;flex-direction:column;align-items:center;
+  text-align:center;
+  padding:10px 0;
+  margin-top:1em;
+}
+#prob{font-size:clamp(1rem,4.2vw,1.7rem);line-height:1.3;min-height:1.4em;margin:0 auto}
+.scroller.ps{margin-bottom:10px}
+#prob.done{cursor:pointer}
+/* wide work scrolls flush to the screen edge on narrow screens */
+/* equations and work may use the whole window width, and scroll only when even that is too narrow */
+html{overflow-x:clip}
+.scroller{width:100vw;margin-left:calc(50% - 50vw);margin-right:calc(50% - 50vw);padding:6px 18px 10px;overflow-x:auto;display:flex}
+.work{
+  margin:0 auto;
+  display:grid;
+  column-gap:0;row-gap:2px;
+  font-size:clamp(.82rem,3.3vw,1.2rem);
+  align-items:stretch;
+}
+.c{display:block;line-height:2.1em;padding:0 .45em;text-align:center;white-space:nowrap;position:relative}
+.c.gut{text-align:right;padding-right:.5em}
+/* one polynomial term = signed coefficient | power. Every piece sits in a line box of
+   the same height, so all terms share one baseline. */
+.t{display:grid;grid-template-columns:subgrid;align-items:start;min-height:2.1em;white-space:nowrap}
+.t .sg,.t .bd{display:block;line-height:2.1em;height:2.1em}
+/* signs line up in their own column, as if there were an & between the sign and the coefficient */
+.t .sg{justify-self:end;text-align:right;padding-left:.4em;padding-right:.222em}
+.t .sg:empty{padding:0}
+.t .bd{justify-self:start;text-align:left;padding-right:.05em}
+.t .fld{grid-column:1 / span 2;justify-self:center;align-self:center;margin-left:.4em}
+.c .fld{vertical-align:middle}
+/* rule lines are single grid items, so they never break between cells */
+.ln{pointer-events:none;min-width:0;min-height:0}
+.ln.top{border-top:1.5px solid var(--ink)}
+.ln.bot{border-bottom:1.5px solid var(--ink)}
+.ln.left{border-left:1.5px solid var(--ink)}
+.ln.right{border-right:1.5px solid var(--ink)}
+.ln.future{visibility:hidden}
+/* long-division bracket: a ")" that hangs from the left end of the bar */
+.c.bracket{padding:0;width:.75em;min-width:.75em}
+.c.bracket svg{position:absolute;left:0;top:.75px;width:100%;height:calc(100% - .2em);overflow:visible}
+.c.bracket path{fill:none;stroke:var(--ink);stroke-width:1.5;stroke-linecap:round;vector-effect:non-scaling-stroke}
+/* box method */
+.t.bx{padding:.3em .3em}
+/* the divisor terms and the remainder label share the box cells' baseline */
+.m-box .c.gut:not(.remlbl){padding-top:.3em;padding-bottom:.3em}
+.m-box .t.bx .sg{min-width:1.3em}
+.m-box .t.bx .bd{min-width:2.7em}
+.work.m-box{row-gap:0}
+.c.remlbl{color:var(--muted)}
+.c.remlbl span{font-size:.8em}
+/* synthetic division */
+.work.m-syn{row-gap:0}
+.m-syn .c:not(.gut){min-width:2.3em}
+.c.just,.t.just{color:var(--accent)}
+.c,.t{transition:color 1.2s ease}
+
+.fld{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:2.6em;height:1.75em;padding:0 .3em;
+  border:1.5px solid var(--chip-line);border-radius:8px;background:var(--chip);box-shadow:0 0 0 3px var(--chip);
+  cursor:text;
+}
+/* the answer box types in the same Computer Modern faces that MathJax draws the math in */
+@font-face{font-family:'CM Main';font-display:swap;src:url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/output/chtml/fonts/woff-v2/MathJax_Main-Regular.woff') format('woff');ascent-override:75%;descent-override:25%;line-gap-override:0%}
+@font-face{font-family:'CM Math';font-style:italic;font-display:swap;src:url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/output/chtml/fonts/woff-v2/MathJax_Math-Italic.woff') format('woff');ascent-override:75%;descent-override:25%;line-gap-override:0%}
+.fld input{
+  font:inherit;font-family:'CM Main','Times New Roman',serif;font-size:1.1em;color:inherit;background:transparent;border:0;outline:none;padding:0;margin:0;
+  text-align:center;width:1.3ch;min-width:1.3ch;
+  height:1.3em;line-height:1.3em; /* the math fonts carry no line metrics of their own */
+}
+.fld .xv{font-family:'CM Math','Times New Roman',serif;font-style:italic;font-size:1.1em;padding:0 .04em 0 .03em}
+.fld .ex{font-size:.66em;align-self:flex-start;margin-top:.1em;text-align:left;min-width:1ch}
+.fld .ex::placeholder{color:var(--chip-line);opacity:1}
+.fld.nox .xv,.fld.nox .ex{display:none}
+.fld{color:var(--ink)}
+.fld.wrong{border-color:var(--bad);animation:shake .3s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+
+#hint{color:var(--muted);font-size:.95rem;line-height:1.45;min-height:1.5em;margin-top:14px;max-width:34em;transition:opacity .2s ease}
+/* hint targets: the terms a hint talks about get a soft outline */
+.ref{position:relative;isolation:isolate}
+.refbox{position:absolute;z-index:-1;pointer-events:none;border-radius:.28em;background:var(--ref-bg);box-shadow:0 0 0 1.5px var(--ref-line)}
+.dt{display:inline-block}
+.dt+.dt{margin-left:.05em}
+.hintbtn{font:inherit;font-size:.85rem;color:var(--muted);background:transparent;border:1px solid var(--line);border-radius:999px;padding:3px 12px;cursor:pointer}
+.hintbtn:hover{color:var(--ink);border-color:var(--chip-line)}
+/* the final answer line, typed term by term when there is a remainder */
+#result.pending{visibility:hidden}
+#result .rt{display:inline-block;vertical-align:middle;margin:0 .08em}
+#result .rt.lead .sg:not(:empty){margin-right:0}
+#result .rt .sg:not(:empty){margin:0 .222em}
+#result .rq{display:inline-block;vertical-align:middle;margin:0 .2em}
+#result .fr{display:inline-flex;flex-direction:column;align-items:stretch;text-align:center;vertical-align:middle;margin-left:.15em}
+#result .fr-n{display:flex;align-items:flex-end;justify-content:center;min-height:1.9em;padding:0 .2em .15em;border-bottom:1.5px solid currentColor;min-width:2em}
+#result .fr-d{min-height:1.9em}
+#result .fr-d{padding-top:.15em}
+#result .rt.future{display:none}
+#result{color:var(--accent);font-size:clamp(1.1rem,4.5vw,1.45rem);min-height:1.6em;margin-top:6px;transition:opacity .3s ease}
+#stage-hint{
+  text-align:center;
+  color:var(--muted);
+  font-size:0.82rem;
+  margin-top:2px;
+  min-height:1.2em;
+  transition:opacity 0.6s ease;
+}
+.hint-click{display:inline}
+.hint-tap{display:none}
+@media(max-width:480px){.c{padding-left:.3em;padding-right:.3em}}
+@media(max-width:899px){
+  .hint-click{display:none}
+  .hint-tap{display:inline}
+}
+.newprob{display:flex;justify-content:flex-end;margin-top:4px}
+.newprob span{cursor:pointer;color:var(--muted);font-size:.85rem;padding:2px;user-select:none;-webkit-tap-highlight-color:transparent}
+.newprob span:hover{color:var(--ink)}
+
+/* history */
+details.hist{margin-top:22px;border-top:1px solid var(--line);padding-top:8px}
+.hist summary{
+  list-style:none;cursor:pointer;
+  font-size:.72rem;text-transform:uppercase;letter-spacing:.12em;
+  color:var(--muted);display:flex;align-items:center;gap:8px;padding:8px 2px;
+}
+.hist summary::-webkit-details-marker{display:none}
+.hist summary .arr{transition:transform .2s;font-size:.9rem}
+details.hist[open] summary .arr{transform:rotate(90deg)}
+#histList{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:8px 2px 4px}
+.hrow{display:inline-flex;align-items:center;justify-content:safe center;gap:8px;min-height:34px;padding:4px 13px;margin:0;border-radius:999px;background:var(--surface);border:1px solid var(--line);font:inherit;font-size:.95rem;color:var(--ink);max-width:100%;overflow-x:auto;cursor:pointer;transition:border-color var(--tx) ease}
+.hrow:hover{border-color:var(--chip-line)}
+.hrow .hm{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+/* history popup showing the finished work */
+.work-dlg{border:1px solid var(--line);border-radius:16px;background:var(--paper);color:var(--ink);padding:0;max-width:min(94vw,640px);width:100%;max-height:90vh}
+.work-dlg::backdrop{background:rgba(0,0,0,.35)}
+.dlg-in{position:relative;padding:18px 18px 22px;display:flex;flex-direction:column;align-items:center;text-align:center;overflow:hidden}
+.dlg-in .scroller{width:100%;margin:0;padding:6px 0 10px}
+.dlg-m{font-family:'Freeman',Arial,sans-serif;color:var(--muted);font-size:.95rem;margin-bottom:8px}
+.dlg-p{font-size:clamp(.95rem,3.8vw,1.3rem);margin:0 auto}
+.dlg-a{color:var(--accent);font-size:clamp(1rem,4vw,1.3rem);margin-top:6px}
+.dlg-x{position:absolute;top:8px;right:10px;margin:0;width:32px;height:32px;border:0;background:none;color:var(--muted);font-size:24px;line-height:1;cursor:pointer;border-radius:50%}
+.dlg-x:hover{color:var(--ink);background:var(--chip)}
+@keyframes hrow-fadein{from{opacity:0}to{opacity:1}}
+.hrow-new{animation:hrow-fadein 0.25s ease forwards}
+.hempty{font-size:.85rem;color:var(--muted);font-style:italic;padding:6px 2px;text-align:center;width:100%}
+</style>
+<!-- Cloudflare Web Analytics --><script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "389e2db315b8432fbe6d5844de5f490e"}'></script><!-- End Cloudflare Web Analytics -->
+</head>
+<body>
+<div class="wrap">
+  <h1 class="title">Polynomial Division</h1>
+
+  <details class="options" id="settingsDetails">
+    <summary>
+      <span class="arr">›</span>
+      <span id="settingsSentence" class="settings-sentence"></span>
+    </summary>
+    <div class="options-body">
+      <div class="grp">
+        <span class="lbl">Presets</span>
+        <div class="opts">
+          <button class="preset-btn" data-preset="easy">easy</button>
+          <button class="preset-btn" data-preset="medium">medium</button>
+          <button class="preset-btn" data-preset="hard">hard</button>
+          <span id="undoPreset" class="undo-preset" style="display:none">undo preset</span>
+        </div>
+      </div>
+      <div class="grp">
+        <span class="lbl">Method</span>
+        <div class="opts slide" id="methodOpts">
+          <span class="pill"></span>
+          <label class="opt"><input type="radio" name="method" value="long" checked><span>\(\text{long}\)</span></label>
+          <label class="opt"><input type="radio" name="method" value="syn"><span>\(\text{synthetic}\)</span></label>
+          <label class="opt"><input type="radio" name="method" value="box"><span>\(\text{box}\)</span></label>
+        </div>
+      </div>
+      <div class="grp" id="divisorGrp">
+        <span class="lbl">Divisor</span>
+        <div class="opts slide" id="divisorOpts">
+          <span class="pill"></span>
+          <label class="opt"><input type="radio" name="divisor" value="lin" checked><span>\(x-c\)</span></label>
+          <label class="opt"><input type="radio" name="divisor" value="ab"><span>\(ax+b\)</span></label>
+          <label class="opt"><input type="radio" name="divisor" value="quad"><span>\(x^2+bx+c\)</span></label>
+        </div>
+      </div>
+      <div class="grp">
+        <span class="lbl">Dividend</span>
+        <div class="opts slide" id="degreeOpts">
+          <span class="pill"></span>
+          <label class="opt" id="deg2"><input type="radio" name="degree" value="2"><span>\(x^2\)</span></label>
+          <label class="opt"><input type="radio" name="degree" value="3" checked><span>\(x^3\)</span></label>
+          <label class="opt"><input type="radio" name="degree" value="4"><span>\(x^4\)</span></label>
+          <label class="opt"><input type="radio" name="degree" value="5"><span>\(x^5\)</span></label>
+        </div>
+      </div>
+      <div class="grp">
+        <span class="lbl">Terms</span>
+        <div class="opts slide" id="gapsOpts">
+          <span class="pill"></span>
+          <label class="opt"><input type="radio" name="gaps" value="none" checked><span>\(\text{all present}\)</span></label>
+          <label class="opt"><input type="radio" name="gaps" value="some"><span>\(\text{some missing}\)</span></label>
+        </div>
+      </div>
+      <div class="grp">
+        <span class="lbl">Remainder</span>
+        <div class="opts slide" id="remOpts">
+          <span class="pill"></span>
+          <label class="opt"><input type="radio" name="rem" value="zero" checked><span>\(0\)</span></label>
+          <label class="opt"><input type="radio" name="rem" value="any"><span>\(\text{any}\)</span></label>
+        </div>
+      </div>
+      <div class="grp" id="qalignGrp">
+        <span class="lbl">Quotient</span>
+        <div class="opts slide" id="qalignOpts">
+          <span class="pill"></span>
+          <label class="opt"><input type="radio" name="qalign" value="like" checked><span>\(\text{over like terms}\)</span></label>
+          <label class="opt"><input type="radio" name="qalign" value="left"><span>\(\text{from the left}\)</span></label>
+        </div>
+      </div>
+      <div class="grp" id="setupGrp" style="display:none">
+        <span class="lbl">Setup row</span>
+        <div class="opts slide" id="setupOpts">
+          <span class="pill"></span>
+          <label class="opt"><input type="radio" name="setup" value="given" checked><span>\(\text{given}\)</span></label>
+          <label class="opt"><input type="radio" name="setup" value="fill"><span>\(\text{fill in}\)</span></label>
+        </div>
+      </div>
+      <div class="grp">
+        <span class="lbl">Hints</span>
+        <div class="opts slide" id="hintsOpts">
+          <span class="pill"></span>
+          <label class="opt"><input type="radio" name="hints" value="show"><span>\(\text{show}\)</span></label>
+          <label class="opt"><input type="radio" name="hints" value="hide"><span>\(\text{hide}\)</span></label>
+          <label class="opt"><input type="radio" name="hints" value="off" checked><span>\(\text{off}\)</span></label>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <div class="stage">
+    <div class="scroller ps"><div id="prob"></div></div>
+    <div class="scroller"><div class="work" id="work"></div></div>
+    <div id="hint"></div>
+    <div id="result"></div>
+  </div>
+  <div id="stage-hint"></div>
+  <div class="newprob"><span id="newProb">new problem</span></div>
+
+  <dialog id="workDlg" class="work-dlg">
+    <div class="dlg-in">
+      <button type="button" class="dlg-x" aria-label="Close">&times;</button>
+      <div id="dlgMethod" class="dlg-m"></div>
+      <div class="scroller ps"><div id="dlgProb" class="dlg-p"></div></div>
+      <div class="scroller"><div id="dlgWork" class="work"></div></div>
+      <div id="dlgAns" class="dlg-a"></div>
+    </div>
+  </dialog>
+
+  <details class="hist">
+    <summary><span class="arr">›</span> History <span id="histCount" style="margin-left:auto;font-variant-numeric:tabular-nums"></span></summary>
+    <div id="histList"></div>
+  </details>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const rndNZ=(a,b)=>{let v;do v=rnd(a,b);while(v===0);return v;};
+const gcd=(a,b)=>{a=Math.abs(a);b=Math.abs(b);while(b){[a,b]=[b,a%b];}return a;};
+
+/* ---------- polynomials: coefficient arrays, highest power first ---------- */
+function polyMul(a,b){const r=new Array(a.length+b.length-1).fill(0);a.forEach((x,i)=>b.forEach((y,j)=>r[i+j]+=x*y));return r;}
+function polyAdd(a,b){const n=Math.max(a.length,b.length),r=[];for(let i=0;i<n;i++)r.push((a[a.length-n+i]||0)+(b[b.length-n+i]||0));return r;}
+const xp=p=>p===0?'':p===1?'x':'x^{'+p+'}';
+// one term in TeX; `first` drops a leading plus and uses unary minus
+function termTex(c,p,first){
+  const a=Math.abs(c), body=(a===1&&p>0)?xp(p):a+xp(p);
+  if(first) return (c<0?'-':'')+body;
+  return '{}'+(c<0?'-':'+')+body;
+}
+function polyTex(co,keepZeros){
+  const n=co.length-1;let s='',first=true;
+  co.forEach((c,i)=>{ if(c===0&&!keepZeros)return; s+=termTex(c,n-i,first); first=false; });
+  return s||'0';
+}
+const par=s=>/^-/.test(s)?'\\left('+s+'\\right)':s;
+const num=v=>v<0?'('+v+')':String(v);
+
+/* ---------- settings ---------- */
+const DEFAULTS={method:'long',divisor:'lin',degree:3,gaps:'none',rem:'zero',setup:'given',qalign:'like',hints:'off'};
+let S=Object.assign({},DEFAULTS);
+try{Object.assign(S,JSON.parse(localStorage.getItem('poly-division-settings')||'{}'));}catch(e){}
+try{const m=new URLSearchParams(location.search).get('method');if(m==='synthetic'||m==='syn')S.method='syn';else if(m==='long'||m==='box')S.method=m;}catch(e){}
+function saveS(){try{localStorage.setItem('poly-division-settings',JSON.stringify(S));}catch(e){}}
+const divDeg=()=>S.method!=='syn'&&S.divisor==='quad'?2:1;
+
+/* ---------- problem generation ---------- */
+function genDivisor(){
+  if(S.method==='syn'||S.divisor==='lin') return [1,-rndNZ(-6,6)];
+  if(S.divisor==='ab'){const a=rnd(2,3);let b;do b=rndNZ(-5,5);while(gcd(a,b)!==1);return [a,b];}
+  return [1,rnd(-4,4),rndNZ(-5,5)];
+}
+function genProblem(){
+  const m=divDeg(), n=Math.max(S.degree,m+1), lim=n>=4?48:36;
+  let best=null;
+  for(let t=0;t<6000;t++){
+    const D=genDivisor();
+    const Q=[];for(let i=0;i<=n-m;i++)Q.push(i===0?rnd(1,4)*(Math.random()<.2?-1:1):rndNZ(-5,5));
+    let R=new Array(m).fill(0);
+    if(S.rem==='any'){R=R.map((_,i)=>i===m-1?rndNZ(-9,9):rnd(-6,6));}
+    const N=polyAdd(polyMul(D,Q),R);
+    if(N.some(c=>Math.abs(c)>lim))continue;
+    const zeros=N.slice(1).filter(c=>c===0).length;
+    if(S.gaps==='none'&&zeros)continue;
+    if(S.gaps==='some'&&(zeros===0||zeros>Math.floor(n/2)))continue;
+    best={N,D,Q,R,n,m};break;
+  }
+  if(!best){ // fallback: relax the coefficient limit
+    const D=genDivisor(),Q=[1];for(let i=0;i<n-m;i++)Q.push(rndNZ(-3,3));
+    best={N:polyAdd(polyMul(D,Q),new Array(m).fill(0)),D,Q,R:new Array(m).fill(0),n,m};
+  }
+  return best;
+}
+
+/* ---------- step lists ---------- */
+// every step: {r: grid row, col: grid column, val, hint, pow (x power, or null for a bare number), first}
+function longSteps(P){
+  const {N,D,n,m}=P, cur=N.slice(), at=p=>cur[n-p], steps=[];
+  const col=p=>3+(n-p)*2;
+  // with missing terms, the student writes out the dividend first (0 for each missing power)
+  if(S.gaps==='some')for(let p=n;p>=0;p--)steps.push({r:1,col:col(p),pow:p,val:N[n-p],first:p===n,
+    hint:N[n-p]===0?'The dividend has no '+(p?'\\('+xp(p)+'\\) term':'constant term')+'. Hold its place with \\('+(p===n?'':'+')+'0'+xp(p)+'\\).'
+      :'Write the dividend\'s '+(p?'\\('+xp(p)+'\\) term':'constant term')+'. Leave no power out: a missing one gets a 0.'});
+  for(let i=0;i<=n-m;i++){
+    const p=n-i, k=p-m, w=at(p), qk=w/D[0], rp=2+2*i, rd=3+2*i, top=i===0?1:1+2*i, qc=S.qalign==='left'?col(p):col(k);
+    steps.push({r:0,col:qc,pow:k,val:qk,first:i===0,q:true,refs:[top+','+col(p),'dv:0'],
+      hint:'Divide the leading term \\('+termTex(w,p,true)+'\\) by the divisor\'s leading term \\('+termTex(D[0],m,true)+'\\).'});
+    for(let j=0;j<=m;j++){
+      steps.push({r:rp,col:col(p-j),pow:p-j,val:qk*D[j],first:j===0,under:true,refs:['0,'+qc,'dv:'+j],
+        hint:'Multiply \\('+termTex(qk,k,true)+'\\) by the divisor term \\('+termTex(D[j],m-j,true)+'\\).'});
+    }
+    for(let t=p-1;t>=p-m;t--){
+      const top=at(t), prod=qk*D[p-t], v=top-prod;
+      steps.push({r:rd,col:col(t),pow:t,val:v,first:t===p-1,refs:[top+','+col(t),rp+','+col(t)],rem:i===n-m,
+        hint:'Subtract: \\('+termTex(top,t,true)+' - '+par(termTex(prod,t,true))+'\\).'});
+      cur[n-t]=v;
+    }
+    cur[n-p]=0;
+    if(p-m-1>=0){
+      const t=p-m-1;
+      steps.push({r:rd,col:col(t),pow:t,val:at(t),first:false,refs:['1,'+col(t)],
+        hint:'Bring down the next term of the dividend, \\('+termTex(at(t),t,true)+'\\).'});
+    }
+  }
+  return steps;
+}
+function boxSteps(P){
+  // columns = quotient terms, rows = divisor terms; cell (r,j) holds Q_j * D_r and has power n-r-j
+  const {N,D,n,m}=P, cols=n-m+1, cell=[], steps=[];
+  for(let r=0;r<=m;r++)cell.push([]);
+  const col=j=>2+2*j, diagSum=(d,skipTop)=>{let s=0;for(let r=skipTop?1:0;r<=m;r++){const j=d-r;if(j>=0&&j<cols&&cell[r][j]!==undefined)s+=cell[r][j];}return s;};
+  for(let j=0;j<cols;j++){
+    const p=n-j, k=n-m-j, before=diagSum(j,true), top=N[j]-before;
+    const dg=[];for(let r=1;r<=m&&r<=j;r++)dg.push((r+1)+','+col(j-r));
+    steps.push({r:1,col:col(j),pow:p,val:top,first:true,bx:true,refs:dg,
+      hint:j===0?'Start with the leading term of the dividend, \\('+termTex(N[0],n,true)+'\\).'
+        :'The \\('+xp(p)+'\\) terms in this diagonal must add up to the dividend\'s \\('+termTex(N[j],p,true)+'\\). Subtract what is already there: \\('+termTex(N[j],p,true)+' - '+par(termTex(before,p,true))+'\\).'});
+    cell[0][j]=top;
+    const q=top/D[0];
+    steps.push({r:0,col:col(j),pow:k,val:q,first:true,q:true,refs:['1,'+col(j),'1,1'],
+      hint:'Divide \\('+termTex(top,p,true)+'\\) by the divisor\'s leading term \\('+termTex(D[0],m,true)+'\\).'});
+    for(let r=1;r<=m;r++){
+      cell[r][j]=q*D[r];
+      steps.push({r:r+1,col:col(j),pow:p-r,val:q*D[r],first:true,bx:true,refs:['0,'+col(j),(r+1)+',1'],
+        hint:'Multiply \\('+termTex(q,k,true)+'\\) by \\('+termTex(D[r],m-r,true)+'\\).'});
+    }
+  }
+  if(S.rem!=='zero')for(let t=m-1;t>=0;t--){
+    const d=n-t, inBox=diagSum(d,false), v=N[d]-inBox;
+    const dg=[];for(let r=0;r<=m;r++){const jj=n-t-r;if(jj>=0&&jj<cols)dg.push((r+1)+','+col(jj));}
+    steps.push({r:m+2,col:col(n-m-t),pow:t,val:v,first:true,remRow:true,rem:true,refs:dg,
+      hint:'Take the dividend\'s '+(t?'\\('+xp(t)+'\\) term':'constant term')+', \\('+termTex(N[d],t,true)+'\\), minus the matching terms in the box: \\('+termTex(N[d],t,true)+' - '+par(termTex(inBox,t,true))+'\\).'});
+  }
+  return steps;
+}
+function synSteps(P){
+  const {N,D,n}=P, c=-D[1], steps=[], bottom=[];
+  if(S.setup==='fill'){
+    steps.push({r:1,col:1,pow:null,val:c,gut:true,
+      hint:'Set the divisor \\('+polyTex(D)+'\\) equal to \\(0\\) and solve for \\(x\\).'});
+    N.forEach((a,i)=>{const p=n-i;steps.push({r:0,col:i+2,pow:null,val:a,
+      hint:p>0?'Coefficient of \\('+xp(p)+'\\) in the dividend (\\(0\\) if that term is missing).':'Constant term of the dividend.'});});
+  }
+  bottom[0]=N[0];
+  steps.push({r:2,col:2,pow:null,val:N[0],q:n>0,refs:['0,2'],hint:'Bring the first coefficient straight down.'});
+  for(let i=1;i<=n;i++){
+    const pr=c*bottom[i-1];
+    steps.push({r:1,col:i+2,pow:null,val:pr,refs:['1,1','2,'+(i+1)],
+      hint:'Multiply \\('+c+'\\) by the bottom-row number to the left: \\('+c+'\\cdot'+num(bottom[i-1])+'\\).'});
+    bottom[i]=N[i]+pr;
+    steps.push({r:2,col:i+2,pow:null,val:bottom[i],rem:i===n,q:i<n,refs:['0,'+(i+2),'1,'+(i+2)],
+      hint:'Add the column: \\('+N[i]+'+'+num(pr)+'\\).'+(i===n?' This is the remainder.':'')});
+  }
+  return steps;
+}
+
+/* ---------- final answer: with a remainder, the student writes quotient + remainder/divisor ---------- */
+function answerSteps(P,work){
+  const {Q,R,n,m}=P; if(R.every(c=>c===0))return [];
+  const out=[], qd=Q.length-1, rd=R.length-1;
+  const qSrc=k=>S.method==='syn'?work.find(s=>s.q&&s.col===2+(qd-k)):work.find(s=>s.q&&s.pow===k);
+  const rSrc=t=>S.method==='syn'?work.find(s=>s.rem):work.find(s=>s.rem&&s.pow===t);
+  let first=true;
+  Q.forEach((c,i)=>{if(!c)return;const k=qd-i;out.push({ans:'q',pow:k,val:c,first,src:qSrc(k),
+    hint:'Write the quotient\'s '+(k?'\\('+xp(k)+'\\) term':'constant term')+(S.method==='syn'?', from the bottom row.':'.')});first=false;});
+  first=true;
+  R.forEach((c,i)=>{if(!c)return;const t=rd-i;out.push({ans:'r',pow:t,val:c,first,src:rSrc(t),
+    hint:'Write the remainder\'s '+(t?'\\('+xp(t)+'\\) term':'constant term')+' over the divisor.'});first=false;});
+  return out;
+}
+
+/* ---------- answer parsing ---------- */
+const SUP={'²':2,'³':3,'⁴':4,'⁵':5,'¹':1};
+function parseEntry(s,pow){
+  s=s.replace(/\s+/g,'').replace(/[−–—]/g,'-');
+  const m=s.match(/^([+-]?)(\d*)(?:([xX])(?:\^?(\d+)|([²³⁴⁵¹]))?)?$/);
+  if(!m)return null;
+  const [,sg,dg,x,pd,ps]=m;
+  if(x){
+    if(pow===null)return null;
+    const p=pd?+pd:ps?SUP[ps]:1;
+    if(p!==pow)return null;
+  } else if(pow!==null&&pow>0&&dg==='') return null;
+  if(dg===''&&!x)return sg==='-'&&(pow===null||pow===0)?-1:null;
+  const v=dg===''?1:+dg;
+  return sg==='-'?-v:v;
+}
+
+/* ---------- rendering ---------- */
+let lastTs=Promise.resolve(),doneAt=0,P=null,steps=[],cur=0,done=false,solved=[],prevHist=0,firstRuns=0,ready=false,eatOne=false;
+const work=$('work');
+function typeset(els){
+  if(!(window.MathJax&&MathJax.typesetPromise))return Promise.resolve();
+  if(MathJax.typesetClear)MathJax.typesetClear(els);
+  return MathJax.typesetPromise(els);
+}
+let cellAt={};
+function place(el,r,col,span){cellAt[r+','+col]=el;el.style.gridRow=r+1;el.style.gridColumn=span?col+' / span '+span:col;work.appendChild(el);return el;}
+function ln(r1,r2,c1,c2,cls){const d=document.createElement('div');d.className='ln '+cls;d.style.gridRow=r1+' / '+r2;d.style.gridColumn=c1+' / '+c2;work.appendChild(d);return d;}
+function cellEl(r,col,cls){const d=document.createElement('div');d.className='c'+(cls?' '+cls:'');return place(d,r,col);}
+function termEl(r,col,cls){const d=document.createElement('div');d.className='t'+(cls?' '+cls:'');return place(d,r,col,2);}
+const m$=t=>t?'\\('+t+'\\)':'';
+// sign | coefficient and power of x
+function partsHTML(c,p,first){
+  const a=Math.abs(c), num=a===1&&p>0?'':String(a);
+  const sg=c<0?'-':first?'':'+';
+  return '<span class="sg">'+m$(sg&&'{'+sg+'}')+'</span><span class="bd">'+m$(num+xp(p))+'</span>';
+}
+const IN='autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next"';
+function fieldHTML(st){
+  return '<span class="fld nox"><input class="co" '+IN+' aria-label="next value">'+
+    (st.pow===null?'':'<span class="xv">x</span><input class="ex" '+IN+' inputmode="numeric" aria-label="exponent">')+'</span>';
+}
+function build(){
+  work.innerHTML='';cellAt={};
+  work.className='work m-'+S.method;
+  const {N,D,n,m}=P, cols=n-m+1;
+  $('prob').classList.remove('done');
+  if(S.method==='long'){
+    work.style.gridTemplateColumns='auto auto '+'auto auto '.repeat(n+1);
+    // divisor written term by term so a hint can point at one of them
+    cellEl(1,1,'gut').innerHTML=D.map((a,j)=>a?'<span class="dt" data-j="'+j+'">'+m$(termTex(a,m-j,j===0))+'</span>':'').join('');
+    cellEl(1,2,'bracket').innerHTML='<svg viewBox="0 0 10 100" preserveAspectRatio="none" aria-hidden="true"><path d="M0,0 C 5.5,14 7.4,36 7.2,56 C 7,76 4.6,90 1,100"/></svg>';
+    if(S.gaps!=='some')N.forEach((a,i)=>{termEl(1,3+i*2).innerHTML=partsHTML(a,n-i,i===0);});
+    ln(2,3,2,-1,'top');
+    // one underline per product row, shown when that row starts
+    const ul={};
+    steps.forEach(st=>{if(st.under){const k=st.r;if(!ul[k]){const cs=steps.filter(x=>x.under&&x.r===k).map(x=>x.col);ul[k]=ln(k+1,k+2,Math.min(...cs),Math.max(...cs)+2,'bot future');}st.ul=ul[k];}});
+  } else if(S.method==='box'){
+    work.style.gridTemplateColumns='auto '+'auto auto '.repeat(cols);
+    D.forEach((a,r)=>{cellEl(r+1,1,'gut').innerHTML=m$(termTex(a,m-r,true));});
+    for(let r=0;r<=m;r++)for(let j=0;j<cols;j++)
+      termEl(r+1,2+2*j,'bx').dataset.k=r+','+j;
+    ln(2,m+3,2,-1,'top left');
+    if(S.rem!=='zero') cellEl(m+2,1,'gut remlbl').innerHTML='<span>remainder</span>';
+  } else {
+    work.style.gridTemplateColumns='auto repeat('+(n+1)+',auto)';
+    cellEl(0,1,'gut'); const g1=cellEl(1,1,'gut'); cellEl(2,1,'gut');
+    ln(1,3,1,2,'right'); ln(3,4,2,-1,'top'); ln(3,4,n+2,n+3,'left');
+    if(S.setup==='given'){
+      g1.innerHTML=m$(String(-D[1]));
+      N.forEach((a,i)=>cellEl(0,i+2).innerHTML=m$(String(a)));
+    }
+  }
+  buildAnswer();
+  steps.forEach((st,i)=>{
+    let el;
+    if(st.ans)return;
+    if(st.gut) el=work.querySelectorAll('.c.gut')[1];
+    else if(st.bx) el=work.querySelector('.t.bx[data-k="'+(st.r-1)+','+((st.col-2)/2)+'"]');
+    else if(st.pow!==null) el=termEl(st.r,st.col);
+    else el=cellEl(st.r,st.col);
+    el.classList.add('future');
+    st.el=el;
+  });
+  return typeset([work,$('result')]);
+}
+function buildAnswer(){
+  const res=$('result'), a=steps.filter(s=>s.ans);
+  res.innerHTML='';res.classList.toggle('pending',a.length>0);
+  if(!a.length)return;
+  const span=(cls,html)=>{const e=document.createElement('span');e.className=cls;if(html)e.innerHTML=html;return e;};
+  res.appendChild(span('rq',m$('=')));
+  a.filter(s=>s.ans==='q').forEach(s=>{s.el=res.appendChild(span('rt future'));});
+  res.appendChild(span('rq rplus',m$('+')));
+  const fr=res.appendChild(span('fr')),nu=fr.appendChild(span('fr-n'));
+  a.filter(s=>s.ans==='r').forEach(s=>{s.el=nu.appendChild(span('rt future'));});
+  fr.appendChild(span('fr-d',m$(polyTex(P.D))));
+}
+const hintMode=()=>S.hints===true?'show':S.hints===false||!S.hints?'off':S.hints;
+let hintOpen=false;
+function refEl(k){
+  if(k&&typeof k==='object')return k.el;
+  if(k.startsWith('dv:'))return work.querySelector('.dt[data-j="'+k.slice(3)+'"]');
+  return cellAt[k];
+}
+function setHint(){
+  const h=$('hint'), st=steps[cur], hm=hintMode();
+  document.querySelectorAll('.refbox').forEach(e=>e.remove());
+  document.querySelectorAll('.ref').forEach(e=>e.classList.remove('ref'));
+  if(hm==='off'||done||!st){h.innerHTML='';return;}
+  if(hm==='hide'&&!hintOpen){h.innerHTML='<button type="button" class="hintbtn">show hint</button>';return;}
+  h.innerHTML=st.hint; typeset([h]);
+  // outline the terms the hint talks about
+  const refs=st.ans?[st.src]:(st.refs||[]);
+  const at=cur;
+  Promise.all([lastTs,MathJax.typesetPromise?Promise.resolve():null]).then(()=>{if(cur!==at||done)return;
+    refs.forEach(k=>{const e=k&&refEl(k);if(e&&!e.classList.contains('future'))outline(e);});});
+}
+// a snug box around the term's ink only, not the whole cell
+function outline(e){
+  const svgs=[...e.querySelectorAll('mjx-container svg')];if(!svgs.length)return;
+  e.classList.add('ref');
+  const b=e.getBoundingClientRect(),fs=parseFloat(getComputedStyle(e).fontSize),pad=.16*fs;
+  let l=1e9,t=1e9,r=-1e9,btm=-1e9;
+  svgs.forEach(v=>{const q=v.getBoundingClientRect();l=Math.min(l,q.left);t=Math.min(t,q.top);r=Math.max(r,q.right);btm=Math.max(btm,q.bottom);});
+  const d=document.createElement('div');d.className='refbox';
+  d.style.left=(l-b.left-pad)+'px';d.style.top=(t-b.top-pad*.8)+'px';
+  d.style.width=(r-l+2*pad)+'px';d.style.height=(btm-t+1.6*pad)+'px';
+  e.appendChild(d);
+}
+$('hint').addEventListener('mousedown',e=>{if(e.target.closest('.hintbtn'))e.preventDefault();});
+$('hint').addEventListener('click',e=>{if(e.target.closest('.hintbtn')){hintOpen=true;setHint();focusCur();}});
+function focusCur(){
+  const st=steps[cur];if(done||!st||!st.el)return;
+  const f=st.el.querySelector('.fld');if(!f)return;
+  const t=f.classList.contains('nox')?f.querySelector('.co'):f.querySelector('.ex');
+  if(t&&document.activeElement!==t){try{t.focus({preventScroll:true});}catch(e){t.focus();}}
+}
+// there is nothing else on the page to type into, so a click elsewhere keeps the cursor in the box
+document.addEventListener('mousedown',e=>{
+  if(done||e.button!==0)return;
+  if(e.target.closest('input,button,summary,a,label,select,textarea,dialog,details[open] .opts,.hrow'))return;
+  e.preventDefault();focusCur();
+});
+// a typed key with the focus anywhere else (settings, history, a button) goes to the box
+document.addEventListener('keydown',e=>{
+  if(done||e.ctrlKey||e.metaKey||e.altKey||e.target.closest('input,textarea,select'))return;
+  if(e.key.length===1&&e.key!==' '||e.key==='Backspace')focusCur();
+},true);
+document.querySelectorAll('details').forEach(d=>d.addEventListener('toggle',()=>{if(!d.open)focusCur();}));
+$('workDlg').addEventListener('close',()=>focusCur());
+// the box shows a true minus sign; the checks read it as a hyphen
+const coVal=co=>co.value.replace(/\u2212/g,'-');
+const fit=inp=>{inp.style.width=Math.max(1.3,inp.value.length+.3)+'ch';};
+/* What the student may type: the signed coefficient (sign optional when positive,
+   "1" optional before x), then x and the exponent. Any key that can't lead to the
+   right answer shakes the box and is not typed. */
+function coefForms(st){
+  const v=st.val,p=st.pow,a=Math.abs(v);
+  const nums=p>0&&a===1?['','1']:[String(a)];
+  const signs=v<0?['-']:v===0?['','+','-']:['','+'];
+  const f=[];signs.forEach(sg=>nums.forEach(n=>f.push(sg+n)));
+  if(v===-1&&(p===null||p===0))f.push('-'); // "-" alone is enough for -1
+  if(v===1&&(p===null||p===0))f.push('+');  // and "+" for 1
+  return f;
+}
+const coOK=(st,t)=>coefForms(st).some(f=>f.startsWith(t));
+const coDone=(st,t)=>coefForms(st).includes(t);
+function entryText(st){
+  const f=st.el.querySelector('.fld'),co=coVal(f.querySelector('.co'));
+  if(f.classList.contains('nox'))return co;
+  return co+'x'+(f.querySelector('.ex').value);
+}
+function isCorrect(st){
+  const f=st.el.querySelector('.fld'),co=coVal(f.querySelector('.co'));
+  if(st.pow===null||st.pow===0)return f.classList.contains('nox')&&coDone(st,co);
+  if(f.classList.contains('nox')||!coDone(st,co))return false;
+  return st.pow===1||f.querySelector('.ex').value===String(st.pow);
+}
+function shake(f){f.classList.remove('wrong');void f.offsetWidth;f.classList.add('wrong');clearTimeout(f._t);f._t=setTimeout(()=>f.classList.remove('wrong'),350);}
+function activate(i){
+  const st=steps[i]; if(!st)return;
+  const el=st.el;
+  hintOpen=false;
+  if(st.ans){$('result').classList.remove('pending');if(st.first)el.classList.add('lead');}
+  el.classList.remove('future');
+  if(st.ul)st.ul.classList.remove('future');
+  el.innerHTML=fieldHTML(st);
+  const f=el.querySelector('.fld'),co=f.querySelector('.co'),ex=f.querySelector('.ex');
+  co.addEventListener('beforeinput',e=>{
+    if(e.data==null)return; // deletions etc.
+    e.preventDefault();
+    let chars=[...e.data.replace(/[−–—]/g,'-')];
+    if(eatOne&&chars[0]==='1'){chars.shift();} // the "1" of "-1" after "-" already counted
+    eatOne=false;
+    for(const ch of chars){
+      if(cur!==i)return;
+      const inEx=!f.classList.contains('nox');
+      if(inEx){ if(!typeEx(ch))return; continue; }
+      let auto=false;
+      // a later term's plus sign is filled in for the student
+      if(co.value===''&&st.pow!==null&&!st.first&&st.val>=0&&/[\dxX]/.test(ch)){co.value='+';fit(co);co.setSelectionRange(1,1);auto=true;}
+      const no=()=>{if(auto){co.value='';fit(co);}shake(f);};
+      if(/[xX]/.test(ch)){
+        if(ex&&coDone(st,coVal(co))){f.classList.remove('nox');ex.value='';fit(ex);ex.focus();check(i);continue;}
+        no();return;
+      }
+      const a=co.selectionStart??co.value.length,b=co.selectionEnd??a;
+      const t=coVal(co).slice(0,a)+ch+coVal(co).slice(b);
+      if(!/^[\d+-]$/.test(ch)||!coOK(st,t)){no();return;}
+      co.value=t.replace(/-/g,'\u2212');fit(co);co.setSelectionRange(a+1,a+1);check(i);
+    }
+  });
+  function typeEx(ch){
+    if(ch==='^')return true; // the exponent slot is already up
+    const t=ex.value+ch;
+    if(!/^\d$/.test(ch)||st.pow<2||!String(st.pow).startsWith(t)){shake(f);return false;}
+    ex.value=t;fit(ex);check(i);return true;
+  }
+  co.addEventListener('input',()=>{fit(co);check(i);});
+  if(ex){
+    ex.addEventListener('beforeinput',e=>{
+      if(e.data==null)return;
+      e.preventDefault();
+      for(const ch of e.data){if(cur!==i||!typeEx(ch))return;}
+    });
+    ex.addEventListener('input',()=>{fit(ex);check(i);});
+    ex.addEventListener('keydown',e=>{
+      if(e.key==='Backspace'&&ex.value===''){e.preventDefault();f.classList.add('nox');co.focus();check(i);}
+      else if(e.key==='ArrowLeft'&&ex.selectionStart===0){e.preventDefault();co.focus();}
+    });
+  }
+  f.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();onEnter(i);}});
+  f.addEventListener('mousedown',e=>{if(e.target===f){e.preventDefault();(f.classList.contains('nox')?co:ex).focus();}});
+  try{co.focus({preventScroll:true});}catch(e){co.focus();}
+  // keep the active box in view inside the scroller (wide problems on phones)
+  const sc=work.parentElement, r=f.getBoundingClientRect(), sr=sc.getBoundingClientRect();
+  if(!st.ans&&r.right>sr.right-12||r.left<sr.left+12) sc.scrollBy({left:(r.left+r.right)/2-(sr.left+sr.right)/2,behavior:'smooth'});
+  setHint();
+}
+function check(i){
+  if(i!==cur||done)return;
+  if(isCorrect(steps[i])) accept(i);
+}
+function onEnter(i){
+  if(i!==cur||done)return;
+  const st=steps[i];
+  if(isCorrect(st)){accept(i);return;}
+  if(entryText(st).trim()==='')return;
+  shake(st.el.querySelector('.fld'));
+}
+function accept(i){
+  const st=steps[i], el=st.el;
+  eatOne=/^[+-]$/.test(entryText(st)); // "-" or "+" alone counted as -1 or 1
+  cur=i+1;
+  if(cur<steps.length) activate(cur); // focus the next box first so phone keyboards stay open
+  el.innerHTML=st.pow===null?m$(String(st.val)):partsHTML(st.val,st.pow,st.first);
+  el.classList.add('just');
+  lastTs=typeset([el]);
+  setTimeout(()=>el.classList.remove('just'),700);
+  if(cur>=steps.length) finish();
+}
+function resultTex(){
+  const {Q,R,D,m}=P;
+  const q=polyTex(Q), rz=R.every(c=>c===0);
+  if(rz) return q;
+  const d=polyTex(D);
+  if(m===1){const r=R[0];return q+(r<0?'-':'+')+'\\dfrac{'+Math.abs(r)+'}{'+d+'}';}
+  return q+'+\\dfrac{'+polyTex(R)+'}{'+d+'}';
+}
+function finish(){
+  done=true;doneAt=Date.now();
+  setHint();
+  const res=$('result');
+  res.style.opacity='0';res.classList.remove('pending');
+  res.innerHTML='\\(='+resultTex()+'\\)';
+  typeset([res]).then(()=>{res.style.opacity='1';});
+  const rec={prob:probTex(),ans:resultTex(),method:S.method};
+  solved.push(rec);
+  // keep a copy of the finished work for the history popup
+  lastTs.then(()=>{rec.cls=work.className;rec.cols=work.style.gridTemplateColumns;rec.html=work.innerHTML.replace(/ just/g,'').replace(/<div class="refbox"[^>]*><\/div>/g,'').replace(/ ref\b/g,'');});
+  firstRuns++;
+  updateStageHint();
+  renderHist();
+  if(document.activeElement&&document.activeElement.blur)document.activeElement.blur();
+}
+function probTex(){return '\\left('+polyTex(P.N)+'\\right)\\div\\left('+polyTex(P.D)+'\\right)';}
+function updateStageHint(){
+  const el=$('stage-hint'), w='<span class="hint-click">Click</span><span class="hint-tap">Tap</span>';
+  if(done){el.innerHTML=w+' here or press Enter for a new problem';el.style.opacity='1';return;}
+  if(firstRuns>=2){el.style.opacity='0';return;}
+  el.innerHTML='Type the value for the highlighted box.';
+  el.style.opacity='1';
+}
+function newProblem(){
+  if(!ready)return;
+  P=genProblem();
+  steps=S.method==='long'?longSteps(P):S.method==='box'?boxSteps(P):synSteps(P);
+  steps=steps.concat(answerSteps(P,steps));
+  cur=0;done=false;
+  const pr=$('prob');pr.innerHTML='\\('+probTex()+'\\)';typeset([pr]);
+  build().then(()=>{activate(0);});
+  updateStageHint();
+}
+const METHOD_NAMES={long:'long',syn:'synthetic',box:'box'};
+function showWork(i){
+  const x=solved[i]; if(!x||!x.html)return;
+  const d=$('workDlg');
+  $('dlgMethod').textContent={long:'Long division',syn:'Synthetic division',box:'Box method'}[x.method];
+  $('dlgProb').innerHTML='\\('+x.prob+'\\)';
+  const w=$('dlgWork');w.className=x.cls;w.style.gridTemplateColumns=x.cols;w.innerHTML=x.html;
+  $('dlgAns').innerHTML='\\(='+x.ans+'\\)';
+  typeset([$('dlgProb'),$('dlgAns')]);
+  d.showModal();
+}
+$('histList').addEventListener('click',e=>{const b=e.target.closest('.hrow');if(b)showWork(+b.dataset.i);});
+$('workDlg').addEventListener('click',e=>{if(e.target===$('workDlg')||e.target.closest('.dlg-x'))$('workDlg').close();});
+function renderHist(){
+  const hl=$('histList'),hc=$('histCount');
+  hc.textContent=solved.length||'';
+  if(!solved.length){hl.innerHTML='<div class="hempty">No problems finished yet.</div>';prevHist=0;return;}
+  const fresh=solved.length-prevHist;prevHist=solved.length;
+  hl.innerHTML=solved.map((x,i)=>'<button type="button" class="hrow" data-i="'+i+'"><span class="hm">'+METHOD_NAMES[x.method]+'</span>\\('+x.prob+'='+x.ans.replace(/dfrac/g,'tfrac')+'\\)</button>').reverse().join('');
+  [...hl.children].slice(0,fresh).forEach(e=>e.classList.add('hrow-new'));
+  typeset([hl]);
+}
+document.addEventListener('keydown',e=>{
+  if(done&&e.key==='Enter'&&Date.now()-doneAt>600&&!e.target.closest('input,summary,button,.opt')){e.preventDefault();newProblem();}
+});
+$('stage-hint').addEventListener('click',()=>{if(done)newProblem();});
+$('prob').addEventListener('click',()=>{if(done)newProblem();});
+$('result').addEventListener('click',()=>{if(done)newProblem();});
+$('newProb').addEventListener('click',newProblem);
+
+/* ---------- settings UI (same mechanics as the Unit Circle Quiz) ---------- */
+function movePill(c,instant){
+  const pill=c.querySelector('.pill');if(!pill)return;
+  const inp=c.querySelector('input:checked'),sel=inp?inp.closest('.opt'):null;
+  if(!sel||!sel.offsetWidth){pill.style.opacity='0';return;}
+  if(instant)pill.style.transition='none';
+  pill.style.opacity='1';
+  pill.style.width=sel.offsetWidth+'px';
+  pill.style.height=sel.offsetHeight+'px';
+  pill.style.transform='translate('+sel.offsetLeft+'px,'+sel.offsetTop+'px)';
+  if(instant)requestAnimationFrame(()=>{pill.style.transition='';});
+}
+const SLIDES=['methodOpts','divisorOpts','degreeOpts','gapsOpts','remOpts','setupOpts','qalignOpts','hintsOpts'];
+function moveAll(instant){SLIDES.forEach(id=>movePill($(id),instant));}
+const DEG_NAMES={2:'quadratics',3:'cubics',4:'quartics',5:'quintics'};
+function settingsSummary(){
+  const div=S.method==='syn'||S.divisor==='lin'?'\\(x-c\\)':S.divisor==='ab'?'\\(ax+b\\)':'quadratics';
+  let s={long:'Long',syn:'Synthetic',box:'Box method'}[S.method]+' division of '+DEG_NAMES[Math.max(S.degree,divDeg()+1)]+' by '+div+
+    ' with '+(S.gaps==='none'?'no missing terms':'some missing terms')+' and '+(S.rem==='zero'?'no remainder':'a remainder');
+  if(S.method==='syn'&&S.setup==='fill')s+=', setup row included';
+  if(S.method==='long'&&S.qalign==='left')s+=', quotient written from the left';
+  return s+'. Hints '+{show:'shown',hide:'on request',off:'off'}[hintMode()]+'.';
+}
+function updateSettingsUI(){
+  $('divisorGrp').style.display=S.method!=='syn'?'':'none';
+  $('setupGrp').style.display=S.method==='syn'?'':'none';
+  $('qalignGrp').style.display=S.method==='long'?'':'none';
+  const quad=divDeg()===2;
+  $('deg2').classList.toggle('off',quad);
+  if(quad&&S.degree<3){S.degree=3;}
+  document.querySelector('input[name=degree][value="'+S.degree+'"]').checked=true;
+  const el=$('settingsSentence');el.innerHTML=settingsSummary();typeset([el]);
+  updatePresetButtons();
+  requestAnimationFrame(()=>moveAll(true));
+}
+function syncInputs(){
+  document.querySelector('input[name=method][value='+S.method+']').checked=true;
+  document.querySelector('input[name=divisor][value='+S.divisor+']').checked=true;
+  document.querySelector('input[name=degree][value="'+S.degree+'"]').checked=true;
+  document.querySelector('input[name=gaps][value='+S.gaps+']').checked=true;
+  document.querySelector('input[name=rem][value='+S.rem+']').checked=true;
+  document.querySelector('input[name=setup][value='+S.setup+']').checked=true;
+  document.querySelector('input[name=qalign][value='+S.qalign+']').checked=true;
+  document.querySelector('input[name=hints][value='+hintMode()+']').checked=true;
+}
+function bindRadio(name,key,box,conv){
+  document.querySelectorAll('input[name='+name+']').forEach(i=>i.onchange=e=>{
+    S[key]=conv?conv(e.target.value):e.target.value; saveS(); hideUndo();
+    movePill($(box)); updateSettingsUI(); newProblem();
+  });
+}
+bindRadio('method','method','methodOpts');
+bindRadio('divisor','divisor','divisorOpts');
+bindRadio('degree','degree','degreeOpts',Number);
+bindRadio('gaps','gaps','gapsOpts');
+bindRadio('rem','rem','remOpts');
+bindRadio('setup','setup','setupOpts');
+bindRadio('qalign','qalign','qalignOpts');
+document.querySelectorAll('input[name=hints]').forEach(i=>i.onchange=e=>{S.hints=e.target.value;saveS();movePill($('hintsOpts'));updateSettingsUI();hintOpen=false;setHint();focusCur();});
+function addCycleToSlide(c){
+  let pre=false;
+  c.addEventListener('mousedown',e=>{
+    const inp=e.target.closest('.opt')?.querySelector('input[type=radio]');
+    pre=inp?inp.checked:false;
+  });
+  c.addEventListener('click',e=>{
+    if(!pre)return;
+    const opt=e.target.closest('.opt');if(!opt)return;
+    const inp=opt.querySelector('input[type=radio]');if(!inp)return;
+    const all=[...c.querySelectorAll('input[type=radio]')].filter(x=>!x.closest('.opt.off'));
+    const next=all[(all.indexOf(inp)+1)%all.length];
+    next.checked=true;
+    next.dispatchEvent(new Event('change',{bubbles:true}));
+  });
+}
+SLIDES.forEach(id=>addCycleToSlide($(id)));
+const PRESETS={
+  easy:  {divisor:'lin',degree:3,gaps:'none',rem:'zero',setup:'given'},
+  medium:{divisor:'ab', degree:4,gaps:'some',rem:'any', setup:'given'},
+  hard:  {divisor:'quad',degree:5,gaps:'some',rem:'any',setup:'fill'}
+};
+function presetMatches(k){
+  const p=PRESETS[k];
+  return S.degree===p.degree&&S.gaps===p.gaps&&S.rem===p.rem&&
+    (S.method==='syn'?S.setup===p.setup:S.divisor===p.divisor);
+}
+function updatePresetButtons(){
+  document.querySelectorAll('.preset-btn').forEach(b=>b.classList.toggle('active',presetMatches(b.dataset.preset)));
+}
+let presetSnapshot=null;
+function applySettings(o){Object.assign(S,o);saveS();syncInputs();updateSettingsUI();newProblem();}
+document.querySelectorAll('.preset-btn').forEach(b=>b.addEventListener('click',()=>{
+  const snap=Object.assign({},S);
+  applySettings(PRESETS[b.dataset.preset]);
+  presetSnapshot=snap;$('undoPreset').style.display='';
+}));
+$('undoPreset').addEventListener('click',()=>{if(presetSnapshot){const s0=presetSnapshot;applySettings(s0);}hideUndo();});
+function hideUndo(){$('undoPreset').style.display='none';presetSnapshot=null;}
+$('settingsDetails').addEventListener('toggle',()=>{ if($('settingsDetails').open) requestAnimationFrame(()=>moveAll(true)); });
+$('settingsDetails').querySelector('.options-body').addEventListener('click',e=>{
+  if(!e.target.closest('.opt,.preset-btn,.undo-preset')) $('settingsDetails').open=false;
+});
+window.addEventListener('resize',()=>moveAll(true));
+
+/* init after MathJax loads */
+(function wait(){
+  if(window.MathJax&&MathJax.typesetPromise){
+    ready=true;
+    syncInputs();
+    typeset([document.querySelector('.options')]).then(()=>moveAll(true));
+    updateSettingsUI();
+    renderHist();
+    newProblem();
+  } else setTimeout(wait,60);
+})();
+</script>
+<script>
+// Floating light/dark toggle (this page has no site nav). The theme itself is
+// applied earlier in <head>; the device default is handled by CSS.
+(function(){
+  var root=document.documentElement;
+  var mq=window.matchMedia('(prefers-color-scheme: dark)');
+  // one short fade for everything while the theme flips (html.theme-switching in style.css)
+  function sw(){root.classList.add('theme-switching');clearTimeout(sw.t);sw.t=setTimeout(function(){root.classList.remove('theme-switching');},300);}
+  new MutationObserver(sw).observe(root,{attributes:true,attributeFilter:['data-theme']});
+  mq.addEventListener('change',sw);
+  function eff(){var a=root.getAttribute('data-theme');return (a==='dark'||a==='light')?a:(mq.matches?'dark':'light');}
+  var moon='<i class="fa-solid fa-moon fa-fw"></i>';
+  var sun='<i class="fa-solid fa-sun fa-fw"></i>';
+  var btn=document.createElement('button');
+  btn.type='button';
+  btn.setAttribute('aria-label','Toggle dark mode');
+  btn.style.cssText='position:fixed;top:14px;right:14px;z-index:1000;width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;box-shadow:1px 1px 10px rgba(0,0,0,.2);display:flex;align-items:center;justify-content:center;padding:0;font-size:18px;margin:0;';
+  function upd(){btn.innerHTML=eff()==='dark'?sun:moon;btn.title=eff()==='dark'?'Switch to light mode':'Switch to dark mode';}
+  btn.addEventListener('click',function(){var n=eff()==='dark'?'light':'dark';root.setAttribute('data-theme',n);try{localStorage.setItem('theme',n);}catch(e){}upd();});
+  mq.addEventListener('change',function(){if(!root.getAttribute('data-theme'))upd();});
+  document.body.appendChild(btn);
+  upd();
+})();
+</script>
+</body>
+</html>

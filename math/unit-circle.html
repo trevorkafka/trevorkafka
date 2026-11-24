@@ -108,7 +108,9 @@ details.options[open] > summary{
   top:8px;left:18px;
   height:32px;
   padding:0;
+  align-items:center;
 }
+details.options[open] > summary .arr{margin-top:0}
 .settings-sentence{
   font-family:'Freeman',Arial,sans-serif;
   font-size:.95rem;color:var(--muted);
@@ -879,6 +881,10 @@ window.addEventListener('resize',()=>{
 (function(){
   var root=document.documentElement;
   var mq=window.matchMedia('(prefers-color-scheme: dark)');
+  // one short fade for everything while the theme flips (html.theme-switching in style.css)
+  function sw(){root.classList.add('theme-switching');clearTimeout(sw.t);sw.t=setTimeout(function(){root.classList.remove('theme-switching');},300);}
+  new MutationObserver(sw).observe(root,{attributes:true,attributeFilter:['data-theme']});
+  mq.addEventListener('change',sw);
   function eff(){var a=root.getAttribute('data-theme');return (a==='dark'||a==='light')?a:(mq.matches?'dark':'light');}
   var moon='<i class="fa-solid fa-moon fa-fw"></i>';
   var sun='<i class="fa-solid fa-sun fa-fw"></i>';

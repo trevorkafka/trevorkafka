@@ -14,6 +14,15 @@
     } catch (e) {}
 
     var mq = window.matchMedia('(prefers-color-scheme: dark)');
+    // Any theme flip (nav toggle, floating toggle, device setting) puts every
+    // element on one short fade for a moment; see html.theme-switching in style.css.
+    function markThemeSwitch() {
+        root.classList.add('theme-switching');
+        clearTimeout(markThemeSwitch.t);
+        markThemeSwitch.t = setTimeout(function () { root.classList.remove('theme-switching'); }, 300);
+    }
+    new MutationObserver(markThemeSwitch).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+    mq.addEventListener('change', markThemeSwitch);
     function effective() {
         var a = root.getAttribute('data-theme');
         if (a === 'dark' || a === 'light') return a;
