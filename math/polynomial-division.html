@@ -148,6 +148,14 @@ details.options[open] > .options-body{
   align-items:center;
 }
 .grp .opts{display:flex;flex-wrap:wrap;column-gap:8px;row-gap:4px;flex:1}
+.own{display:flex;flex-direction:column;gap:10px}
+.own-f{align-items:center}
+.own-f input{flex:1;min-width:0;max-width:360px;font:inherit;font-size:1rem;text-align:left;color:var(--ink);background:var(--surface);border:1.5px solid var(--line);border-radius:10px;padding:6px 12px;outline:none;transition:border-color var(--tx) ease}
+.own-f input:focus{border-color:var(--chip-line)}
+.own-f input.bad{border-color:var(--bad)}
+.own-msg{font-size:.85rem;color:var(--muted);min-height:1.2em;padding-left:102px}
+.own-msg.bad{color:var(--bad)}
+@media (max-width:560px){.own-msg{padding-left:0}}
 .opt{
   position:relative;
   display:inline-flex;align-items:center;justify-content:center;
@@ -347,6 +355,19 @@ details.hist[open] summary .arr{transform:rotate(90deg)}
         </div>
       </div>
       <div class="grp">
+        <span class="lbl">Problem</span>
+        <div class="opts slide" id="srcOpts">
+          <span class="pill"></span>
+          <label class="opt"><input type="radio" name="src" value="rand" checked><span>\(\text{random}\)</span></label>
+          <label class="opt"><input type="radio" name="src" value="own"><span>\(\text{my own}\)</span></label>
+        </div>
+      </div>
+      <div class="own" id="ownGrp" style="display:none">
+        <label class="grp own-f"><span class="lbl">Dividend</span><input type="text" id="ownN" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="2x^3 - 5x + 3"></label>
+        <label class="grp own-f"><span class="lbl">Divisor</span><input type="text" id="ownD" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="x - 2"></label>
+        <div id="ownMsg" class="own-msg"></div>
+      </div>
+      <div class="grp">
         <span class="lbl">Method</span>
         <div class="opts slide" id="methodOpts">
           <span class="pill"></span>
@@ -364,7 +385,7 @@ details.hist[open] summary .arr{transform:rotate(90deg)}
           <label class="opt"><input type="radio" name="divisor" value="quad"><span>\(x^2+bx+c\)</span></label>
         </div>
       </div>
-      <div class="grp">
+      <div class="grp" id="degreeGrp">
         <span class="lbl">Dividend</span>
         <div class="opts slide" id="degreeOpts">
           <span class="pill"></span>
@@ -374,7 +395,7 @@ details.hist[open] summary .arr{transform:rotate(90deg)}
           <label class="opt"><input type="radio" name="degree" value="5"><span>\(x^5\)</span></label>
         </div>
       </div>
-      <div class="grp">
+      <div class="grp" id="gapsGrp">
         <span class="lbl">Terms</span>
         <div class="opts slide" id="gapsOpts">
           <span class="pill"></span>
@@ -382,7 +403,7 @@ details.hist[open] summary .arr{transform:rotate(90deg)}
           <label class="opt"><input type="radio" name="gaps" value="some"><span>\(\text{some missing}\)</span></label>
         </div>
       </div>
-      <div class="grp">
+      <div class="grp" id="remGrp">
         <span class="lbl">Remainder</span>
         <div class="opts slide" id="remOpts">
           <span class="pill"></span>
@@ -394,8 +415,8 @@ details.hist[open] summary .arr{transform:rotate(90deg)}
         <span class="lbl">Quotient</span>
         <div class="opts slide" id="qalignOpts">
           <span class="pill"></span>
-          <label class="opt"><input type="radio" name="qalign" value="like" checked><span>\(\text{over like terms}\)</span></label>
-          <label class="opt"><input type="radio" name="qalign" value="left"><span>\(\text{from the left}\)</span></label>
+          <label class="opt"><input type="radio" name="qalign" value="like"><span>\(\text{over like terms}\)</span></label>
+          <label class="opt"><input type="radio" name="qalign" value="left" checked><span>\(\text{from the left}\)</span></label>
         </div>
       </div>
       <div class="grp" id="setupGrp" style="display:none">
@@ -468,12 +489,54 @@ const par=s=>/^-/.test(s)?'\\left('+s+'\\right)':s;
 const num=v=>v<0?'('+v+')':String(v);
 
 /* ---------- settings ---------- */
-const DEFAULTS={method:'long',divisor:'lin',degree:3,gaps:'none',rem:'zero',setup:'given',qalign:'like',hints:'off'};
+const DEFAULTS={src:'rand',ownN:'',ownD:'',method:'long',divisor:'lin',degree:3,gaps:'none',rem:'zero',setup:'given',qalign:'left',hints:'off'};
 let S=Object.assign({},DEFAULTS);
 try{Object.assign(S,JSON.parse(localStorage.getItem('poly-division-settings')||'{}'));}catch(e){}
 try{const m=new URLSearchParams(location.search).get('method');if(m==='synthetic'||m==='syn')S.method='syn';else if(m==='long'||m==='box')S.method=m;}catch(e){}
 function saveS(){try{localStorage.setItem('poly-division-settings',JSON.stringify(S));}catch(e){}}
 const divDeg=()=>S.method!=='syn'&&S.divisor==='quad'?2:1;
+
+/* ---------- a student's own problem ---------- */
+// "2x^3 - 5x + 3" -> [2,0,-5,3]; null if it can't be read. Whole-number coefficients only.
+function parsePoly(str){
+  let s=String(str||'').replace(/\s+/g,'').replace(/[−–—]/g,'-').replace(/\*/g,'').replace(/X/g,'x');
+  s=s.replace(/[²³⁴⁵⁶⁷⁸¹]/g,c=>'^'+{'¹':1,'²':2,'³':3,'⁴':4,'⁵':5,'⁶':6,'⁷':7,'⁸':8}[c]).replace(/\^\{(\d+)\}/g,'^$1');
+  if(s.length>80)return null;
+  while(/^\(.*\)$/.test(s)&&s.length>2)s=s.slice(1,-1);
+  if(!s||!/^[+-]?(\d*x(\^\d+)?|\d+)([+-](\d*x(\^\d+)?|\d+))*$/.test(s))return null;
+  const co={};let deg=0;
+  for(const t of s.match(/[+-]?[^+-]+/g)){
+    const m=t.match(/^([+-]?)(\d*)(x(?:\^(\d+))?)?$/);if(!m)return null;
+    const c=(m[1]==='-'?-1:1)*(m[2]===''?1:+m[2]), p=m[3]?(m[4]!==undefined?+m[4]:1):0;
+    if(!m[3]&&m[2]==='')return null;
+    if(p>12)return null;
+    co[p]=(co[p]||0)+c; deg=Math.max(deg,p);
+  }
+  while(deg>0&&!co[deg])deg--;
+  const a=[];for(let p=deg;p>=0;p--)a.push(co[p]||0);
+  return a;
+}
+const polyStr=a=>polyTex(a).replace(/\{\}/g,'').replace(/\^\{(\d+)\}/g,'^$1');
+// divide; returns {Q,R} with whole-number quotient, or a reason it won't work here
+function ownProblem(){
+  const N=parsePoly(S.ownN), D=parsePoly(S.ownD);
+  if(!S.ownN.trim()&&!S.ownD.trim())return {err:'Type a dividend and a divisor, like \\(2x^3-5x+3\\) and \\(x-2\\).',quiet:true};
+  if(!N)return {err:S.ownN.trim()?'The dividend can\'t be read. Try something like \\(2x^3-5x+3\\).':'Type a dividend.',bad:S.ownN.trim()?'N':''};
+  if(!D)return {err:S.ownD.trim()?'The divisor can\'t be read. Try something like \\(x-2\\).':'Type a divisor.',bad:S.ownD.trim()?'D':''};
+  const n=N.length-1, m=D.length-1;
+  if(m<1)return {err:'The divisor needs an \\(x\\) in it.',bad:'D'};
+  if(S.method==='syn'&&!(m===1&&D[0]===1))return {err:'Synthetic division needs a divisor like \\(x-3\\). Switch to long or box for this one.',bad:'D'};
+  if(m>3)return {err:'Use a divisor of degree 3 or less.',bad:'D'};
+  if(n<=m)return {err:'The dividend needs a higher power of \\(x\\) than the divisor.',bad:'N'};
+  if(n>8)return {err:'Use a dividend of degree 8 or less.',bad:'N'};
+  if(N.concat(D).some(c=>Math.abs(c)>999))return {err:'Keep the numbers under 1000.'};
+  const r=N.slice(),Q=[];
+  for(let i=0;i<=n-m;i++){const q=r[i]/D[0];if(!Number.isInteger(q))return {err:'This one gives fractions in the quotient. Pick a problem whose quotient has whole numbers.'};Q.push(q);for(let j=0;j<=m;j++)r[i+j]-=q*D[j];}
+  const R=r.slice(n-m+1);
+  if(Q.concat(R).some(c=>Math.abs(c)>99999))return {err:'The numbers in this one get too large.'};
+  return {N,D,Q,R,n,m,own:true};
+}
+const isOwn=()=>S.src==='own'&&!ownProblem().err;
 
 /* ---------- problem generation ---------- */
 function genDivisor(){
@@ -482,6 +545,7 @@ function genDivisor(){
   return [1,rnd(-4,4),rndNZ(-5,5)];
 }
 function genProblem(){
+  if(S.src==='own'){const o=ownProblem();if(!o.err)return o;}
   const m=divDeg(), n=Math.max(S.degree,m+1), lim=n>=4?48:36;
   let best=null;
   for(let t=0;t<6000;t++){
@@ -503,13 +567,15 @@ function genProblem(){
   return best;
 }
 
+const gapsOn=P=>P.own?P.N.slice(1).some(c=>c===0):S.gaps==='some';
+const remOn=P=>P.own?P.R.some(c=>c!==0):S.rem!=='zero';
 /* ---------- step lists ---------- */
 // every step: {r: grid row, col: grid column, val, hint, pow (x power, or null for a bare number), first}
 function longSteps(P){
   const {N,D,n,m}=P, cur=N.slice(), at=p=>cur[n-p], steps=[];
   const col=p=>3+(n-p)*2;
   // with missing terms, the student writes out the dividend first (0 for each missing power)
-  if(S.gaps==='some')for(let p=n;p>=0;p--)steps.push({r:1,col:col(p),pow:p,val:N[n-p],first:p===n,
+  if(gapsOn(P))for(let p=n;p>=0;p--)steps.push({r:1,col:col(p),pow:p,val:N[n-p],first:p===n,
     hint:N[n-p]===0?'The dividend has no '+(p?'\\('+xp(p)+'\\) term':'constant term')+'. Hold its place with \\('+(p===n?'':'+')+'0'+xp(p)+'\\).'
       :'Write the dividend\'s '+(p?'\\('+xp(p)+'\\) term':'constant term')+'. Leave no power out: a missing one gets a 0.'});
   for(let i=0;i<=n-m;i++){
@@ -556,7 +622,7 @@ function boxSteps(P){
         hint:'Multiply \\('+termTex(q,k,true)+'\\) by \\('+termTex(D[r],m-r,true)+'\\).'});
     }
   }
-  if(S.rem!=='zero')for(let t=m-1;t>=0;t--){
+  if(remOn(P))for(let t=m-1;t>=0;t--){
     const d=n-t, inBox=diagSum(d,false), v=N[d]-inBox;
     const dg=[];for(let r=0;r<=m;r++){const jj=n-t-r;if(jj>=0&&jj<cols)dg.push((r+1)+','+col(jj));}
     steps.push({r:m+2,col:col(n-m-t),pow:t,val:v,first:true,remRow:true,rem:true,refs:dg,
@@ -638,9 +704,13 @@ function partsHTML(c,p,first){
   return '<span class="sg">'+m$(sg&&'{'+sg+'}')+'</span><span class="bd">'+m$(num+xp(p))+'</span>';
 }
 const IN='autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="next"';
+// phone keyboards: one qwerty keyboard throughout (switching between keyboards mid-term is jarring);
+// synthetic division's plain-number boxes get the number pad, except on iOS where it has no minus key
+const IOS=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
 function fieldHTML(st){
-  return '<span class="fld nox"><input class="co" '+IN+' aria-label="next value">'+
-    (st.pow===null?'':'<span class="xv">x</span><input class="ex" '+IN+' inputmode="numeric" aria-label="exponent">')+'</span>';
+  const nums=st.pow===null&&!IOS?' inputmode="numeric"':'';
+  return '<span class="fld nox"><input class="co" '+IN+nums+' aria-label="next value">'+
+    (st.pow===null?'':'<span class="xv">x</span><input class="ex" '+IN+' aria-label="exponent">')+'</span>';
 }
 function build(){
   work.innerHTML='';cellAt={};
@@ -652,7 +722,7 @@ function build(){
     // divisor written term by term so a hint can point at one of them
     cellEl(1,1,'gut').innerHTML=D.map((a,j)=>a?'<span class="dt" data-j="'+j+'">'+m$(termTex(a,m-j,j===0))+'</span>':'').join('');
     cellEl(1,2,'bracket').innerHTML='<svg viewBox="0 0 10 100" preserveAspectRatio="none" aria-hidden="true"><path d="M0,0 C 5.5,14 7.4,36 7.2,56 C 7,76 4.6,90 1,100"/></svg>';
-    if(S.gaps!=='some')N.forEach((a,i)=>{termEl(1,3+i*2).innerHTML=partsHTML(a,n-i,i===0);});
+    if(!gapsOn(P))N.forEach((a,i)=>{termEl(1,3+i*2).innerHTML=partsHTML(a,n-i,i===0);});
     ln(2,3,2,-1,'top');
     // one underline per product row, shown when that row starts
     const ul={};
@@ -663,7 +733,7 @@ function build(){
     for(let r=0;r<=m;r++)for(let j=0;j<cols;j++)
       termEl(r+1,2+2*j,'bx').dataset.k=r+','+j;
     ln(2,m+3,2,-1,'top left');
-    if(S.rem!=='zero') cellEl(m+2,1,'gut remlbl').innerHTML='<span>remainder</span>';
+    if(remOn(P)) cellEl(m+2,1,'gut remlbl').innerHTML='<span>remainder</span>';
   } else {
     work.style.gridTemplateColumns='auto repeat('+(n+1)+',auto)';
     cellEl(0,1,'gut'); const g1=cellEl(1,1,'gut'); cellEl(2,1,'gut');
@@ -889,7 +959,7 @@ function finish(){
 function probTex(){return '\\left('+polyTex(P.N)+'\\right)\\div\\left('+polyTex(P.D)+'\\right)';}
 function updateStageHint(){
   const el=$('stage-hint'), w='<span class="hint-click">Click</span><span class="hint-tap">Tap</span>';
-  if(done){el.innerHTML=w+' here or press Enter for a new problem';el.style.opacity='1';return;}
+  if(done){el.innerHTML=w+' here or press Enter for '+(isOwn()?'the same problem again':'a new problem');el.style.opacity='1';return;}
   if(firstRuns>=2){el.style.opacity='0';return;}
   el.innerHTML='Type the value for the highlighted box.';
   el.style.opacity='1';
@@ -897,12 +967,40 @@ function updateStageHint(){
 function newProblem(){
   if(!ready)return;
   P=genProblem();
+  startProblem(0);
+}
+// lay out the current problem P; the first `keep` steps are filled in already (same answers, new layout)
+function startProblem(keep){
   steps=S.method==='long'?longSteps(P):S.method==='box'?boxSteps(P):synSteps(P);
   steps=steps.concat(answerSteps(P,steps));
-  cur=0;done=false;
+  cur=0;done=false;keep=Math.min(keep||0,steps.length);
   const pr=$('prob');pr.innerHTML='\\('+probTex()+'\\)';typeset([pr]);
-  build().then(()=>{activate(0);});
+  build().then(()=>{
+    const els=[];
+    for(let i=0;i<keep;i++){
+      const st=steps[i],el=st.el;
+      el.classList.remove('future');if(st.ul)st.ul.classList.remove('future');
+      if(st.ans){$('result').classList.remove('pending');if(st.first)el.classList.add('lead');}
+      el.innerHTML=st.pow===null?m$(String(st.val)):partsHTML(st.val,st.pow,st.first);els.push(el);
+    }
+    cur=keep;
+    if(els.length)lastTs=typeset(els);
+    if(cur<steps.length){activate(cur);return;}
+    // the problem was already finished: show the answer again without adding it to the history twice
+    done=true;doneAt=Date.now();setHint();
+    const res=$('result');res.classList.remove('pending');res.innerHTML='\\(='+resultTex()+'\\)';typeset([res]);
+    updateStageHint();
+  });
   updateStageHint();
+}
+// does the current problem still fit the settings (after a method change)?
+function problemFits(){
+  if(!P)return false;
+  if(S.src==='own')return !!P.own&&!ownProblem().err;
+  if(P.own)return false;
+  const t=P.m===2?'quad':P.D[0]!==1?'ab':'lin';
+  if(S.method==='syn'?t!=='lin':t!==S.divisor)return false;
+  return P.n===Math.max(S.degree,divDeg()+1);
 }
 const METHOD_NAMES={long:'long',syn:'synthetic',box:'box'};
 function showWork(i){
@@ -946,10 +1044,15 @@ function movePill(c,instant){
   pill.style.transform='translate('+sel.offsetLeft+'px,'+sel.offsetTop+'px)';
   if(instant)requestAnimationFrame(()=>{pill.style.transition='';});
 }
-const SLIDES=['methodOpts','divisorOpts','degreeOpts','gapsOpts','remOpts','setupOpts','qalignOpts','hintsOpts'];
+const SLIDES=['srcOpts','methodOpts','divisorOpts','degreeOpts','gapsOpts','remOpts','setupOpts','qalignOpts','hintsOpts'];
 function moveAll(instant){SLIDES.forEach(id=>movePill($(id),instant));}
 const DEG_NAMES={2:'quadratics',3:'cubics',4:'quartics',5:'quintics'};
 function settingsSummary(){
+  if(S.src==='own'){
+    const o=ownProblem(), mt={long:'Long',syn:'Synthetic',box:'Box method'}[S.method]+' division';
+    return o.err?mt+' of your own problem (not set yet). Hints '+{show:'shown',hide:'on request',off:'off'}[hintMode()]+'.'
+      :mt+' of your own problem'+(S.method==='long'&&S.qalign==='left'?', quotient written from the left':'')+(S.method==='syn'&&S.setup==='fill'?', setup row included':'')+'. Hints '+{show:'shown',hide:'on request',off:'off'}[hintMode()]+'.';
+  }
   const div=S.method==='syn'||S.divisor==='lin'?'\\(x-c\\)':S.divisor==='ab'?'\\(ax+b\\)':'quadratics';
   let s={long:'Long',syn:'Synthetic',box:'Box method'}[S.method]+' division of '+DEG_NAMES[Math.max(S.degree,divDeg()+1)]+' by '+div+
     ' with '+(S.gaps==='none'?'no missing terms':'some missing terms')+' and '+(S.rem==='zero'?'no remainder':'a remainder');
@@ -958,7 +1061,11 @@ function settingsSummary(){
   return s+'. Hints '+{show:'shown',hide:'on request',off:'off'}[hintMode()]+'.';
 }
 function updateSettingsUI(){
-  $('divisorGrp').style.display=S.method!=='syn'?'':'none';
+  const own=S.src==='own';
+  $('ownGrp').style.display=own?'':'none';
+  ['degreeGrp','gapsGrp','remGrp'].forEach(id=>$(id).style.display=own?'none':'');
+  $('divisorGrp').style.display=S.method!=='syn'&&!own?'':'none';
+  ownMsg();
   $('setupGrp').style.display=S.method==='syn'?'':'none';
   $('qalignGrp').style.display=S.method==='long'?'':'none';
   const quad=divDeg()===2;
@@ -970,6 +1077,8 @@ function updateSettingsUI(){
   requestAnimationFrame(()=>moveAll(true));
 }
 function syncInputs(){
+  document.querySelector('input[name=src][value='+S.src+']').checked=true;
+  $('ownN').value=S.ownN;$('ownD').value=S.ownD;
   document.querySelector('input[name=method][value='+S.method+']').checked=true;
   document.querySelector('input[name=divisor][value='+S.divisor+']').checked=true;
   document.querySelector('input[name=degree][value="'+S.degree+'"]').checked=true;
@@ -979,19 +1088,39 @@ function syncInputs(){
   document.querySelector('input[name=qalign][value='+S.qalign+']').checked=true;
   document.querySelector('input[name=hints][value='+hintMode()+']').checked=true;
 }
-function bindRadio(name,key,box,conv){
+function bindRadio(name,key,box,conv,after){
   document.querySelectorAll('input[name='+name+']').forEach(i=>i.onchange=e=>{
     S[key]=conv?conv(e.target.value):e.target.value; saveS(); hideUndo();
-    movePill($(box)); updateSettingsUI(); newProblem();
+    movePill($(box)); updateSettingsUI(); (after||newProblem)();
   });
 }
-bindRadio('method','method','methodOpts');
+bindRadio('method','method','methodOpts',null,()=>{if(problemFits())startProblem(0);else newProblem();});
+bindRadio('src','src','srcOpts');
+document.querySelectorAll('input[name=src]').forEach(i=>i.addEventListener('change',()=>{if(S.src==='own'&&ownProblem().err)setTimeout(()=>$('ownN').focus(),50);}));
+// live check while typing; a readable problem replaces the current one after a short pause
+function ownMsg(){
+  const o=ownProblem(), el=$('ownMsg');
+  $('ownN').classList.toggle('bad',o.bad==='N');$('ownD').classList.toggle('bad',o.bad==='D');
+  el.classList.toggle('bad',!!o.err&&!o.quiet);
+  el.innerHTML=o.err||('\\(('+polyTex(o.N)+')\\div('+polyTex(o.D)+')\\)'+(o.R.some(c=>c)?' has a remainder.':' divides evenly.'));
+  typeset([el]);
+}
+let ownT=0,ownKey='';
+['ownN','ownD'].forEach(id=>$(id).addEventListener('input',()=>{
+  S.ownN=$('ownN').value;S.ownD=$('ownD').value;saveS();
+  clearTimeout(ownT);ownT=setTimeout(()=>{
+    ownMsg();const el=$('settingsSentence');el.innerHTML=settingsSummary();typeset([el]);
+    const o=ownProblem(),k=o.err?'':polyStr(o.N)+'|'+polyStr(o.D)+'|'+S.method;
+    if(k&&k!==ownKey){ownKey=k;newProblem();}
+  },450);
+}));
+['ownN','ownD'].forEach(id=>$(id).addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();if(id==='ownN')$('ownD').focus();else{ $('settingsDetails').open=false;}}}));
 bindRadio('divisor','divisor','divisorOpts');
 bindRadio('degree','degree','degreeOpts',Number);
 bindRadio('gaps','gaps','gapsOpts');
 bindRadio('rem','rem','remOpts');
-bindRadio('setup','setup','setupOpts');
-bindRadio('qalign','qalign','qalignOpts');
+bindRadio('setup','setup','setupOpts',null,()=>startProblem(0));
+bindRadio('qalign','qalign','qalignOpts',null,()=>startProblem(done?steps.length:cur));
 document.querySelectorAll('input[name=hints]').forEach(i=>i.onchange=e=>{S.hints=e.target.value;saveS();movePill($('hintsOpts'));updateSettingsUI();hintOpen=false;setHint();focusCur();});
 function addCycleToSlide(c){
   let pre=false;
@@ -1011,13 +1140,13 @@ function addCycleToSlide(c){
 }
 SLIDES.forEach(id=>addCycleToSlide($(id)));
 const PRESETS={
-  easy:  {divisor:'lin',degree:3,gaps:'none',rem:'zero',setup:'given'},
-  medium:{divisor:'ab', degree:4,gaps:'some',rem:'any', setup:'given'},
-  hard:  {divisor:'quad',degree:5,gaps:'some',rem:'any',setup:'fill'}
+  easy:  {src:'rand',divisor:'lin',degree:3,gaps:'none',rem:'zero',setup:'given'},
+  medium:{src:'rand',divisor:'ab', degree:4,gaps:'some',rem:'any', setup:'given'},
+  hard:  {src:'rand',divisor:'quad',degree:5,gaps:'some',rem:'any',setup:'fill'}
 };
 function presetMatches(k){
   const p=PRESETS[k];
-  return S.degree===p.degree&&S.gaps===p.gaps&&S.rem===p.rem&&
+  return S.src==='rand'&&S.degree===p.degree&&S.gaps===p.gaps&&S.rem===p.rem&&
     (S.method==='syn'?S.setup===p.setup:S.divisor===p.divisor);
 }
 function updatePresetButtons(){
@@ -1034,7 +1163,7 @@ $('undoPreset').addEventListener('click',()=>{if(presetSnapshot){const s0=preset
 function hideUndo(){$('undoPreset').style.display='none';presetSnapshot=null;}
 $('settingsDetails').addEventListener('toggle',()=>{ if($('settingsDetails').open) requestAnimationFrame(()=>moveAll(true)); });
 $('settingsDetails').querySelector('.options-body').addEventListener('click',e=>{
-  if(!e.target.closest('.opt,.preset-btn,.undo-preset')) $('settingsDetails').open=false;
+  if(!e.target.closest('.opt,.preset-btn,.undo-preset,.own')) $('settingsDetails').open=false;
 });
 window.addEventListener('resize',()=>moveAll(true));
 
