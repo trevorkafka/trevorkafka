@@ -155,15 +155,15 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			</center></em></p>
 		</div>
 
-		<p>This article derives the relationship between torque and angular acceleration for a rigid body moving freely in two dimensions, with torques measured about an arbitrary point that may itself be moving or even accelerating. It then pins down exactly where the familiar formula $\boldsymbol \tau^\text{ext}_p = I_p \boldsymbol \alpha$ holds. Key topics include:</p>
+		<p>This article determines the conditions under which the formula $\boldsymbol \tau = I \boldsymbol \alpha$ holds for a rigid body moving in two dimensions, with torques taken about an arbitrary point $p$. Key topics include:</p>
 		<ul>
-			<li><strong>Baseline assumptions</strong>: Newton's laws, 2D rigid-body kinematics, and the definitions of torque, center of mass, and moment of inertia.</li>
-			<li><strong>The general result</strong>: $\boldsymbol \tau^\text{ext}_p = M \mathbf r_\text{cm}' \times \mathbf a_q + I_p \boldsymbol \alpha$, valid about any point.</li>
-			<li><strong>When the high-school formula holds</strong>: three conditions, involving the center of mass, unaccelerated points, and accelerations aimed along the line to the center of mass.</li>
-			<li><strong>The circle</strong>: every such point lies on a single circle through the center of mass, fixed by $\mathbf a_\text{cm} = \mathbf d \times \boldsymbol \alpha$.</li>
-			<li><strong>Examples</strong>: animations of a pendulum, a sliding ladder, rolling bodies, a yo-yo, and more, each showing its circle as it moves.</li>
+			<li>Baseline assumptions: Newton's laws, 2D rigid-body kinematics, and the definitions of torque, center of mass, and moment of inertia.</li>
+			<li>Derivation of the general relation $\boldsymbol \tau^\text{ext}_p = M \mathbf r_\text{cm}' \times \mathbf a_q + I_p \boldsymbol \alpha$.</li>
+			<li>Necessary and sufficient conditions for $\boldsymbol \tau^\text{ext}_p = I_p \boldsymbol \alpha$.</li>
+			<li>The locus of points satisfying these conditions: a circle through the center of mass.</li>
+			<li>Animated examples.</li>
 		</ul>
-		<p>The treatment is rigorous and aimed at readers with a background in introductory mechanics and vector algebra who want to see exactly why, and where, the high-school formula works.</p>
+		<p>The formula holds about the center of mass, about any point where the coinciding point of the body has zero acceleration, and about any point where that acceleration points along the line to the center of mass. The derivation assumes familiarity with vectors, cross products, and introductory rigid-body mechanics.</p>
 
 		<!-- 2D rigid body with its center of mass (cm), a reference point (p), a particle (i), and the vectors from p to i and cm -->
 		<div class="diagram">
