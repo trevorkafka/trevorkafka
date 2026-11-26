@@ -27,12 +27,12 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
     <script type="text/javascript">
     	// MathJax Configuration
         window.MathJax = {
-        	loader: {load: ['[tex]/cancel']},
+        	loader: {load: ['[tex]/cancel', '[tex]/mathtools']},
             tex: {
             	inlineMath: [['$', '$'], ['\\(', '\\)']],
                 displayMath: [['$$', '$$'], ['\\[', '\\]']],
-                packages: {'[+]': ['cancel']},
-                tags: 'ams'  // Enables equation numbering
+                packages: {'[+]': ['cancel', 'mathtools']}, // mathtools gives \mathclap for brace labels
+                tags: 'all'  // number every display equation
             }
         };
 
@@ -75,6 +75,13 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 		padding-bottom: 1.25em;
 	}
 
+	/* keep a floated diagram near the end inside the page */
+	.content::after {
+		content: "";
+		display: block;
+		clear: both;
+	}
+
 	/* thin rounded box around the baseline assumptions list */
 	.assumptions {
 		border-radius: 20px; /* border and shadow come from the shared .glow-shadow card style */
@@ -97,6 +104,25 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 		width: min(100%, 300px);
 		margin: 1em auto;
 		container-type: inline-size; /* lets labels size with the diagram (cqw) */
+	}
+
+	/* on wide screens the diagram floats left so the intro text wraps between it and the author photo;
+	   below 1400px that middle column would get too narrow (under ~360px), so it stays centered */
+	@media (min-width: 1400px) {
+		/* the circle diagram floats right so the text after equation (18) wraps around it */
+		.diagram.diagram-center {
+			float: right;
+			margin: 0.25em 0 1em 2em;
+		}
+
+		.diagram:not(.diagram-center) {
+			float: left;
+			margin: 0.25em 2em 1em 0;
+		}
+	}
+
+	h2 {
+		clear: both;
 	}
 
 	.diagram svg {
@@ -129,63 +155,76 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			</center></em></p>
 		</div>
 
-		<p>The diagram below shows a freely moving rigid body of arbitrary shape with total mass $M$, angular velocity $\boldsymbol \omega$, and angular acceleration $\boldsymbol \alpha$. In it, $p$ is an arbitrary point about which torques are measured; it need not be fixed and may move in any way, even accelerating. Meanwhile, $q$ is the point of the body that coincides with $p$ at the instant considered. The two occupy the same location at that instant, but $q$ moves with the body while $p$ moves independently of it. The body is made up of particles labeled by $i$, each with mass $m_i$, and $\mathrm{cm}$ marks the body's center of mass (see definition <a class="ref" href="#ax-com"></a>). With $\mathbf r_i$, $\mathbf r_q$, and $\mathbf r_\text{cm}$ denoting the positions of particle $i$, point $q$, and the center of mass, the vectors $\mathbf r_i' = \mathbf r_i - \mathbf r_q$ and $\mathbf r_\text{cm}' = \mathbf r_\text{cm} - \mathbf r_q$ give the positions of particle $i$ and of the center of mass relative to $q$. Since $q$ and $p$ coincide at the instant considered, these are also the positions relative to $p$, so they can be used to compute torques about $p$.</p>
-
-		<!-- <p>Each particle $i$ experiences a total force $\mathbf F_i$, which splits into the internal force $\mathbf F^\text{int}_i$ exerted on it by the other particles of the body and the external force $\mathbf F^\text{ext}_i$ exerted on it by everything outside the body. The acceleration of particle $i$ is $\mathbf a_i$ and that of point $q$ is $\mathbf a_q$, both measured in an inertial reference frame. In Newton's 3rd Law (<a class="ref" href="#ax-n3"></a>), $\mathbf r$ denotes the position of an arbitrary point. Non-bold symbols such as $\omega$ and $r_i'$ denote the magnitudes of the corresponding bold vectors, and every sum $\sum_i$ runs over all particles of the body.</p> -->
+		<p>This article derives the relationship between torque and angular acceleration for a rigid body moving freely in two dimensions, with torques measured about an arbitrary point that may itself be moving or even accelerating. It then pins down exactly where the familiar formula $\boldsymbol \tau^\text{ext}_p = I_p \boldsymbol \alpha$ holds. Key topics include:</p>
+		<ul>
+			<li><strong>Baseline assumptions</strong>: Newton's laws, 2D rigid-body kinematics, and the definitions of torque, center of mass, and moment of inertia.</li>
+			<li><strong>The general result</strong>: $\boldsymbol \tau^\text{ext}_p = M \mathbf r_\text{cm}' \times \mathbf a_q + I_p \boldsymbol \alpha$, valid about any point.</li>
+			<li><strong>When the high-school formula holds</strong>: three conditions, involving the center of mass, unaccelerated points, and accelerations aimed along the line to the center of mass.</li>
+			<li><strong>The circle</strong>: every such point lies on a single circle through the center of mass, fixed by $\mathbf a_\text{cm} = \mathbf d \times \boldsymbol \alpha$.</li>
+			<li><strong>Examples</strong>: animations of a pendulum, a sliding ladder, rolling bodies, a yo-yo, and more, each showing its circle as it moves.</li>
+		</ul>
+		<p>The treatment is rigorous and aimed at readers with a background in introductory mechanics and vector algebra who want to see exactly why, and where, the high-school formula works.</p>
 
 		<!-- 2D rigid body with its center of mass (cm), a reference point (p), a particle (i), and the vectors from p to i and cm -->
 		<div class="diagram">
-		<svg viewBox="95 20 300 240" role="img" aria-label="An arbitrary 2D body with points cm, p, and i, and the vectors from p to i and from p to cm">
+		<svg viewBox="105 64 293 196" role="img" aria-label="An arbitrary 2D body with points cm, p, and i, and the vectors from p to i and from p to cm">
 			<defs>
-				<marker id="blob-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-					<path d="M 0 0 L 10 5 L 0 10 Z" fill="currentColor"/>
+				<marker id="blob-arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+					<path d="M 0 1 L 10 5 L 0 9 L 2.8 5 Z" fill="currentColor" stroke="none"/>
 				</marker>
 			</defs>
-			<path transform="translate(80 40)" d="M 60 70 C 80 25, 140 30, 170 50 C 200 70, 215 20, 260 35 C 305 50, 300 115, 270 140 C 245 160, 255 200, 200 200 C 160 212, 130 205, 105 192 C 50 205, 20 160, 35 125 C 45 100, 45 90, 60 70 Z" fill="none" stroke="currentColor" stroke-width="2"/>
+			<path transform="translate(80 40)" d="M 60 70 C 70 57, 84 43, 99 38 C 114 33, 134 38, 150 40 C 167 42, 182 52, 198 51 C 214 50, 230 31, 245 32 C 260 33, 280 46, 287 59 C 294 72, 294 94, 289 109 C 285 124, 269 136, 260 151 C 251 166, 246 187, 233 197 C 220 207, 197 209, 180 211 C 163 213, 146 210, 129 208 C 112 206, 94 205, 79 198 C 64 191, 44 181, 37 167 C 30 154, 34 133, 38 117 C 42 101, 50 83, 60 70 Z" fill="none" stroke="currentColor" stroke-width="2"/>
 			<g stroke="currentColor" stroke-width="1.5">
 				<line x1="171" y1="173" x2="340" y2="97" marker-end="url(#blob-arrow)"/>
 				<line x1="171" y1="177" x2="249" y2="203" marker-end="url(#blob-arrow)"/>
+				<!-- curved pointer from the M, ω, α label to the body's outline -->
+				<path d="M 370 224 C 370 211, 354 201.1, 341.6 194.2" fill="none" marker-end="url(#blob-arrow)"/>
 			</g>
 			<g fill="currentColor">
-				<circle cx="165" cy="175" r="4"/>
-				<circle cx="255" cy="205" r="4"/>
-				<circle cx="345" cy="95" r="4"/>
+				<circle cx="165" cy="175" r="3"/>
+				<circle cx="255" cy="205" r="3"/>
+				<circle cx="345" cy="95" r="3"/>
 			</g>
 		</svg>
-		<span class="diagram-label" style="left: 15%; top: 64.6%">$p, q$</span>
-		<span class="diagram-label" style="left: 81%; top: 41.6%">$i,\ m_i$</span>
-		<span class="diagram-label" style="left: 60%; top: 79.2%">$\mathrm{cm}$</span>
-		<span class="diagram-label" style="left: 36.3%; top: 43.3%">$\mathbf r_i' = \mathbf r_i - \mathbf r_q$</span>
-		<span class="diagram-label" style="left: 32.3%; top: 81.6%">$\mathbf r_\text{cm}' = \mathbf r_\text{cm} - \mathbf r_q$</span>
-		<span class="diagram-label" style="left: 86.7%; top: 10.4%">$M,\ \boldsymbol \omega,\ \boldsymbol \alpha$</span>
+		<span class="diagram-label" style="left: 11.9%; top: 56.6%">$p, q$</span>
+		<span class="diagram-label" style="left: 79.5%; top: 28.5%">$i,\ m_i$</span>
+		<span class="diagram-label" style="left: 58.0%; top: 74.5%">$\mathrm{cm}$</span>
+		<span class="diagram-label" style="left: 33.8%; top: 30.6%">$\mathbf r_i' = \mathbf r_i - \mathbf r_q$</span>
+		<span class="diagram-label" style="left: 29.7%; top: 77.5%">$\mathbf r_\text{cm}' = \mathbf r_\text{cm} - \mathbf r_q$</span>
+		<span class="diagram-label" style="left: 87.7%; top: 87.2%">$M,\ \boldsymbol \omega,\ \boldsymbol \alpha$</span>
 		</div>
+
+		<p>The diagram shows a freely moving rigid body of arbitrary shape with total mass $M$, angular velocity $\boldsymbol \omega$, and angular acceleration $\boldsymbol \alpha$. In it, $p$ is an arbitrary point about which torques are measured; it need not be fixed and may move in any way, even accelerating. Meanwhile, $q$ is the point of the body that coincides with $p$ at the instant considered. The two occupy the same location at that instant, but $q$ moves with the body while $p$ moves independently of it. The body is made up of particles labeled by $i$, each with mass $m_i$, and $\mathrm{cm}$ marks the body's center of mass (see definition <a class="ref" href="#ax-com"></a>). All of these particles lie in the plane of motion, so every position vector below lies in that plane as well. With $\mathbf r_i$, $\mathbf r_q$, and $\mathbf r_\text{cm}$ denoting the positions of particle $i$, point $q$, and the center of mass, the vectors $\mathbf r_i' = \mathbf r_i - \mathbf r_q$ and $\mathbf r_\text{cm}' = \mathbf r_\text{cm} - \mathbf r_q$ give the positions of particle $i$ and of the center of mass relative to $q$. Since $q$ and $p$ coincide at the instant considered, these are also the positions relative to $p$, so they can be used to compute torques about $p$.</p>
+
+		<!-- <p>Each particle $i$ experiences a total force $\mathbf F_i$, which splits into the internal force $\mathbf F^\text{int}_i$ exerted on it by the other particles of the body and the external force $\mathbf F^\text{ext}_i$ exerted on it by everything outside the body. The acceleration of particle $i$ is $\mathbf a_i$ and that of point $q$ is $\mathbf a_q$, both measured in an inertial reference frame. In Newton's 3rd Law <a class="ref" href="#ax-n3"></a>, $\mathbf r$ denotes the position of an arbitrary point. Non-bold symbols such as $\omega$ and $r_i'$ denote the magnitudes of the corresponding bold vectors, and every sum $\sum_i$ runs over all particles of the body.</p> -->
+
 
 		<h2>Baseline Assumptions</h2>
 
 		<p>In order to derive the main results presented in this article, we must first establish a baseline set of axioms, kinematic results, and definitions. Here, $\text{int}$ and $\text{ext}$ serve to label internal and external forces and torques, respectively.</p>
 
-		<div class="assumptions glow-shadow" data-ref-box>
+		<div class="assumptions glow-shadow" data-ref-box data-ref-prefix="A">
 
 		<h3>Axioms</h3>
 
 		<ol>
 			<li id="ax-n2">Newton's 2nd Law: $\mathbf F_i = \mathbf F^\text{int}_i + \mathbf F^\text{ext}_i = m_i \mathbf a_i$</li>
-			<li id="ax-n3">Newton's 3rd Law (Strong Form): $\forall \mathbf r : \sum_i (\mathbf r_i - \mathbf r) \times \mathbf F^\text{int}_i = 0$</li>
+			<li id="ax-n3">Newton's 3rd Law (Strong Form): $\forall \mathbf r : \sum_i (\mathbf r_i - \mathbf r) \times \mathbf F^\text{int}_i = \mathbf 0$</li>
 		</ol>
 
 		<h3>Rigid-Body Kinematics in 2D</h3>
 
 		<ol start="3">
-			<li id="ax-accel">2D Rigid-Body Acceleration: $\mathbf a_i = \mathbf a_q + \boldsymbol \alpha \times \mathbf r_i' - \omega^2 \mathbf r_i'$</li>
-			<li id="ax-planar">2D Motion Identity: $\mathbf r_i' \times (\boldsymbol \alpha \times \mathbf r_i') = {r_i'}^2 \boldsymbol \alpha$</li>
+			<li id="ax-accel">2D Rigid-Body Acceleration Transformation: $\mathbf a_i = \mathbf a_q + \boldsymbol \alpha \times \mathbf r_i' - \omega^2 \mathbf r_i'$</li>
+			<li id="ax-planar">2D Motion Identity: $\mathbf r_i' \times (\boldsymbol \alpha \times \mathbf r_i') = r_i'^2 \boldsymbol \alpha$</li>
 		</ol>
 
 		<h3>Definitions</h3>
 
 		<ol start="5">
 			<li id="ax-torque">Torque: $\boldsymbol \tau^\text{ext}_{p,i} = \mathbf r_i' \times \mathbf F^\text{ext}_i$</li>
-			<li id="ax-com">Center of Mass: $\sum_i m_i \mathbf r_i' = M \mathbf r_\text{cm}'$</li>
-			<li id="ax-inertia">Moment of Inertia About $p$: $I_p = \sum_i m_i {r_i'}^2$</li>
+			<li id="ax-com">Center of Mass: $\mathbf r_\text{cm}' = \frac{1}{M} \sum_i m_i \mathbf r_i'$</li>
+			<li id="ax-inertia">Moment of Inertia About $p$: $I_p = \sum_i m_i r_i'^2$</li>
 		</ol>
 
 		</div>
@@ -210,7 +249,7 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 
 			Expand the resulting vector product using the identity $\mathbf A \times (\mathbf B \times \mathbf C) = \mathbf B (\mathbf A \cdot \mathbf C) - \mathbf C (\mathbf A \cdot \mathbf B)$. The first term of the expansion vanishes since $\boldsymbol \omega \perp \mathbf r_i'$ for 2D motion.
 
-			$$\mathbf a_i' = \boldsymbol \alpha \times \mathbf r_i' + \underbrace{\boldsymbol \omega ( \boldsymbol \omega \cdot \mathbf r_i' )}_0 - \omega^2 \mathbf r_i'$$
+			$$\mathbf a_i' = \boldsymbol \alpha \times \mathbf r_i' + \underbrace{\boldsymbol \omega ( \boldsymbol \omega \cdot \mathbf r_i' )}_{\mathbf 0} - \omega^2 \mathbf r_i'$$
 
 			$$\mathbf a_i' = \boldsymbol \alpha \times \mathbf r_i' - \omega^2 \mathbf r_i'$$
 
@@ -224,49 +263,961 @@ try{if(localStorage.getItem('tk-announcement-collapsed'))document.documentElemen
 			<summary>Show derivation of item 4</summary>
 			<p>Expand the vector triple product using the identity $\mathbf A \times (\mathbf B \times \mathbf C) = \mathbf B (\mathbf A \cdot \mathbf C) - \mathbf C (\mathbf A \cdot \mathbf B)$.
 
-			$$\mathbf r_i' \times (\boldsymbol \alpha \times \mathbf r_i') = \boldsymbol \alpha (\mathbf r_i' \cdot \mathbf r_i') - \mathbf r_i' (\underbrace{\mathbf r_i' \cdot \boldsymbol \alpha}_{0}) = {r_i'}^2 \boldsymbol \alpha$$
+			$$\mathbf r_i' \times (\boldsymbol \alpha \times \mathbf r_i') = \boldsymbol \alpha (\mathbf r_i' \cdot \mathbf r_i') - \mathbf r_i' (\underbrace{\mathbf r_i' \cdot \boldsymbol \alpha}_{0}) = r_i'^2 \boldsymbol \alpha$$
 
 			The last term vanishes since $\mathbf r_i' \perp \boldsymbol \alpha$ for 2D motion.</p>
 		</details>
 
 		<h2>Derivation of the Relationship Between Torque and Angular Acceleration</h2>
 
-		<p>First, begin with the definition of torque (<a class="ref" href="#ax-torque"></a>) to compute the net external torque $\boldsymbol \tau^\text{ext}_p$ about point $p$.</p>
+		<p>Begin with the definition of torque <a class="ref" href="#ax-torque"></a> to compute the net external torque $\boldsymbol \tau^\text{ext}_p$ about point $p$.</p>
 
 		$$\boldsymbol \tau^\text{ext}_p = \sum_i \boldsymbol \tau^\text{ext}_{p,i} = \sum_i \mathbf r_i' \times \mathbf F^\text{ext}_i$$
 
-		<p>Substitute in Newton's 2nd Law (<a class="ref" href="#ax-n2"></a>). The second term vanishes by the strong form of Newton's 3rd Law (<a class="ref" href="#ax-n3"></a>).</p>
+		<p>Substitute in Newton's 2nd Law <a class="ref" href="#ax-n2"></a>. The second term vanishes by the strong form of Newton's 3rd Law <a class="ref" href="#ax-n3"></a>.</p>
 
-		$$\boldsymbol \tau^\text{ext}_p = \sum_i \mathbf r_i' \times m_i \mathbf a_i - \underbrace{\sum_i \mathbf r_i' \times \mathbf F^\text{int}_i}_{0}$$
+		$$\boldsymbol \tau^\text{ext}_p = \sum_i \mathbf r_i' \times m_i \mathbf a_i - \underbrace{\sum_i \mathbf r_i' \times \mathbf F^\text{int}_i}_{\mathbf 0}$$
 
 
-		<p>Substitute the 2D rigid-body acceleration (<a class="ref" href="#ax-accel"></a>), resulting in three terms: a translational term, a tangential term, and a centripetal term.</p>
+		<p>Substitute the 2D rigid-body acceleration relation <a class="ref" href="#ax-accel"></a>, resulting in three terms: a translational term, a tangential term, and a centripetal term.</p>
 
 		<ul>
-			<li>The translational term can be rewritten in terms of the center of mass by means of its definition (<a class="ref" href="#ax-com"></a>).</li>
-			<li>The tangential term simplifies by the 2D motion identity (<a class="ref" href="#ax-planar"></a>), which can furthermore be simplified by means of the definition of the moment of inertia (<a class="ref" href="#ax-inertia"></a>).</li>
+			<li>The translational term can be rewritten in terms of the center of mass by means of its definition <a class="ref" href="#ax-com"></a>.</li>
+			<li>The tangential term simplifies by the 2D motion identity <a class="ref" href="#ax-planar"></a> and can then be further simplified by means of the definition of the moment of inertia <a class="ref" href="#ax-inertia"></a>.</li>
 			<li>The centripetal term vanishes as a direct consequence of the nature of its cross product.</li>
 		</ul>
 		
-		$$\boldsymbol \tau^\text{ext}_p = \overbrace{\underbrace{ \sum_i m_i \mathbf r_i' }_{M \mathbf r_\text{cm}'} \times \mathbf a_q}^\text{translational term} + \overbrace{\underbrace{\sum_i m_i \underbrace{\mathbf r_i' \times (\boldsymbol \alpha \times \mathbf r_i')}_{{r_i'}^2 \boldsymbol \alpha}}_{I_p \boldsymbol \alpha}}^\text{tangential term} - \overbrace{\omega^2 \sum_i m_i \underbrace{\mathbf r_i' \times \mathbf r_i'}_0}^\text{centripetal term}$$
+		$$\boldsymbol \tau^\text{ext}_p = \overbrace{\rule{0pt}{1.6em}\underbrace{ \sum_i m_i \mathbf r_i' }_{M \mathbf r_\text{cm}'} \times \mathbf a_q}^\text{translational term} + \overbrace{\rule{0pt}{1.6em}\underbrace{\sum_i m_i \underbrace{\rule[-1em]{0pt}{1em} \mathbf r_i' \times (\boldsymbol \alpha \times \mathbf r_i')}_{r_i'^2 \boldsymbol \alpha}}_{I_p \boldsymbol \alpha}}^\text{tangential term} - \overbrace{\rule{0pt}{1.6em}\omega^2 \sum_i m_i \underbrace{\rule[-1em]{0pt}{1em} \mathbf r_i' \times \mathbf r_i'}_{\mathbf 0}}^\text{centripetal term}$$
 
-		$$\boxed{\boldsymbol \tau^\text{ext}_p = M \mathbf r_\text{cm}' \times \mathbf a_q + I_p \boldsymbol \alpha}$$
+		$$\boxed{\rule[-0.7em]{0pt}{2.2em} \quad \boldsymbol \tau^\text{ext}_p = M \mathbf r_\text{cm}' \times \mathbf a_q + I_p \boldsymbol \alpha \quad}$$
 
-		<h2>When Does the High School Formula $\boldsymbol \tau^\text{ext}_p = I_p \boldsymbol \alpha$ Hold?</h2>
+		<h2>When Does the High-School Formula $\boldsymbol \tau^\text{ext}_p = I_p \boldsymbol \alpha$ Hold?</h2>
 
-		<p>Based on the final result of the previous section, the high school formula $\boldsymbol \tau^\text{ext}_p = I_p \boldsymbol \alpha$ holds only when $M \mathbf r_\text{cm}' \times \mathbf a_q$ vanishes, which occurs when $\mathbf r_\text{cm}' = 0$, $\mathbf a_q=0$, or $\mathbf r_\text{cm}' \parallel \mathbf a_q$. In words, these three conditions are as follows.</p>
+		<p>Based on the final result of the previous section, the high-school formula $\boldsymbol \tau^\text{ext}_p = I_p \boldsymbol \alpha$ holds only when $\mathbf r_\text{cm}' \times \mathbf a_q$ vanishes, which occurs when $\mathbf r_\text{cm}' = \mathbf 0$, $\mathbf a_q = \mathbf 0$, or $\mathbf r_\text{cm}' \parallel \mathbf a_q$. In words, these three conditions are as follows.</p>
 
-		<div class="assumptions glow-shadow">
+		<div class="assumptions glow-shadow" data-ref-prefix="T">
 
 		<p><strong>Theorem.</strong> For a rigid object moving in two dimensions, $\boldsymbol \tau^\text{ext}_p = I_p \boldsymbol \alpha$ if and only if any one of the following conditions is satisfied.</p>
 		<ol>
-			<li>Point $p$ is the center of mass of the object.</li>
-			<li>The velocity of the point of the body that coincides with point $p$ is instantaneously constant.</li>
-			<li>The nonzero acceleration of the point of the body that coincides with point $p$ points either directly towards or away from the center of mass of the object.</li>
+			<li id="thm-cm">Point $p$ is the center of mass of the object.</li>
+			<li id="thm-unaccel">The velocity of the point of the body that coincides with point $p$ is instantaneously constant.</li>
+			<li id="thm-parallel">The nonzero acceleration of the point of the body that coincides with point $p$ points either directly toward or away from the center of mass of the object.</li>
 		</ol>
 
 		</div>
 
+		<p>We can nail down further detail: $\mathbf a_q$ can be related to the acceleration of the center of mass by the 2D rigid-body acceleration relation stated earlier <a class="ref" href="#ax-accel"></a>, using the center of mass as point $i$.</p>
+
+		$$\mathbf a_\text{cm} = \mathbf a_q + \boldsymbol \alpha \times \mathbf r_\text{cm}' - \omega^2 \mathbf r_\text{cm}' \label{eq:a-cm}$$
+
+		<p>Substituting this result into $\mathbf r_\text{cm}' \times \mathbf a_q = \mathbf 0$ once again gives a translational term, a tangential term, and a centripetal term, each of which simplifies in a manner similar to what we saw in the previous section.</p>
+
+		$$\overbrace{\rule{0pt}{1.6em} \mathbf r_\text{cm}' \times \mathbf a_\text{cm}}^{\mathclap{\text{translational term}}} - \overbrace{\rule{0pt}{1.6em} \underbrace{\rule[-1em]{0pt}{1em} \mathbf r_\text{cm}' \times (\boldsymbol \alpha \times \mathbf r_\text{cm}')}_{r_\text{cm}'^2 \boldsymbol \alpha}}^\text{tangential term} + \overbrace{\rule{0pt}{1.6em} \omega^2 \underbrace{\rule[-1em]{0pt}{1em} \mathbf r_\text{cm}' \times \mathbf r_\text{cm}'}_{\mathbf 0}}^\text{centripetal term} = \mathbf 0$$
+
+		$$\mathbf r_\text{cm}' \times \mathbf a_\text{cm} = r_\text{cm}'^2 \boldsymbol \alpha \label{eq:cm-condition}$$
+
+		<p>Taking magnitudes, with $\theta$ the angle between $\mathbf r_\text{cm}'$ and $\mathbf a_\text{cm}$, gives the following. If either vector is $\mathbf 0$, the angle $\theta$ is undefined, but both sides then vanish, so the equation holds for any choice of $\theta$.</p>
+
+		$$ r_\text{cm}' a_\text{cm} \sin \theta = r_\text{cm}'^2 \alpha$$
+
+		<p>This gives the polar equation of a circle of diameter $d = \frac{a_\text{cm}}{\alpha}$.</p>
+
+		$$r_\text{cm}' = d \sin \theta$$
+
+		<p>The locus of all points described by <a class="ref" href="#thm-cm"></a>, <a class="ref" href="#thm-unaccel"></a>, and <a class="ref" href="#thm-parallel"></a> is hence this circle. The accompanying figure shows a possible circle for our example body: the acceleration $\mathbf a_q$ of the point of the body coinciding with $p$, which lies along the line toward the center of mass; the center of mass with its acceleration $\mathbf a_\text{cm}$ tangent to the circle; the vector $\mathbf d$ running from the center of mass across the diameter of the circle to the point $\xi$; and the resulting right triangle with angle $\theta$ and side lengths $r_\text{cm}'$ and $d$.</p>
+
+		<!-- the circle of points p where tau = I_p alpha holds: diameter d = a_cm / alpha through the center of mass, perpendicular to a_cm; alpha points out of the page -->
+		<div class="diagram diagram-center">
+		<svg viewBox="105 64 293 196" role="img" aria-label="The rigid body with a dashed circle through its center of mass, tangent there to the acceleration of the center of mass. A diameter of length d runs to the opposite point; a third point p, q on the circle has its acceleration a q pointing along the dotted line to the center of mass, forming a right triangle; theta is the angle between that line, extended past the center of mass, and a cm.">
+			<defs>
+				<marker id="circ-arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+					<path d="M 0 1 L 10 5 L 0 9 L 2.8 5 Z" fill="currentColor" stroke="none"/>
+				</marker>
+			</defs>
+			<path transform="translate(80 40)" d="M 60 70 C 70 57, 84 43, 99 38 C 114 33, 134 38, 150 40 C 167 42, 182 52, 198 51 C 214 50, 230 31, 245 32 C 260 33, 280 46, 287 59 C 294 72, 294 94, 289 109 C 285 124, 269 136, 260 151 C 251 166, 246 187, 233 197 C 220 207, 197 209, 180 211 C 163 213, 146 210, 129 208 C 112 206, 94 205, 79 198 C 64 191, 44 181, 37 167 C 30 154, 34 133, 38 117 C 42 101, 50 83, 60 70 Z" fill="none" stroke="currentColor" stroke-width="2"/>
+			<circle cx="221.7" cy="154.8" r="60.2" fill="none" stroke="var(--defaultlink)" stroke-width="1.8"/>
+			<g stroke="currentColor" stroke-width="1.5" fill="none">
+				<!-- a_cm at the center of mass, tangent to the circle -->
+				<line x1="259.2" y1="202.2" x2="300.8" y2="174.6" marker-end="url(#circ-arrow)"/>
+				<!-- the diameter as the vector d, from the center of mass to the theta = pi/2 point -->
+				<line x1="252.8" y1="201.7" x2="190.7" y2="108.0" marker-end="url(#circ-arrow)"/>
+				<!-- a general point p on the circle: the dotted line along its r'_cm to the center of mass, with a_q (parallel to r'_cm by T3) on top of it -->
+				<line x1="165.0" y1="175.0" x2="255.0" y2="205.0" stroke-dasharray="0.1 4" stroke-linecap="round"/>
+				<line x1="168.8" y1="176.3" x2="201.0" y2="187.0" marker-end="url(#circ-arrow)"/>
+				<line x1="188.4" y1="104.7" x2="165.0" y2="175.0" stroke-dasharray="0.1 4" stroke-linecap="round"/>
+				<!-- r'_cm extended past the center of mass, and theta between it and a_cm -->
+				<line x1="260.7" y1="206.9" x2="320.6" y2="226.9" stroke-dasharray="0.1 4" stroke-linecap="round"/>
+				<path d="M 271.1 210.4 A 17 17 0 0 0 269.2 195.6" stroke-width="1"/>
+				<path d="M 167.2 168.4 L 173.9 170.6 L 171.6 177.2" stroke-width="1"/>
+				<!-- right angle between the diameter and a_cm at the center of mass -->
+				<path d="M 251.1 199.2 L 257.0 195.3 L 260.8 201.1" stroke-width="1"/>
+				<!-- theta at the top vertex too -->
+				<path d="M 200.0 122.2 A 21 21 0 0 1 181.8 124.6" stroke-width="1"/>
+				<!-- brace marking the length r'_cm from p to the center of mass -->
+				<path d="M 155.8 202.7 Q 154.9 205.5, 159.9 207.2 L 194.8 218.8 Q 199.8 220.5, 198.9 223.3 Q 199.8 220.5, 205.0 222.2 L 239.8 233.9 Q 244.9 235.5, 245.8 232.7" stroke-width="1"/>
+				<!-- dotted leaders from the ends of the brace to p and the center of mass -->
+				<line x1="156.4" y1="200.8" x2="163.7" y2="178.8" stroke-dasharray="0.1 4" stroke-linecap="round"/>
+				<line x1="246.4" y1="230.8" x2="253.7" y2="208.8" stroke-dasharray="0.1 4" stroke-linecap="round"/>
+			</g>
+			<g fill="currentColor">
+				<circle cx="255.0" cy="205.0" r="3" fill="var(--defaultlink)"/>
+				<circle cx="188.4" cy="104.7" r="3" fill="var(--defaultlink)"/>
+				<circle cx="165.0" cy="175.0" r="3"/>
+				<!-- alpha out of the page -->
+				<circle cx="130" cy="84" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/>
+				<circle cx="130" cy="84" r="1.8"/>
+				<!-- counterclockwise sense of the angular acceleration, following the outline -->
+				<path d="M 174.5 69.0 L 170.0 70.8 L 165.8 73.0 L 161.8 75.3 L 158.1 77.9 L 154.5 80.6 L 151.1 83.4 L 147.9 86.4 L 144.7 89.4 L 141.7 92.5 L 138.8 95.7 L 136.1 98.9 L 133.4 102.2 L 130.7 105.7 L 128.2 109.3 L 125.8 113.0 L 123.6 116.7 L 121.5 120.4 L 119.5 124.3 L 117.7 128.1 L 116.0 132.0 L 114.3 136.0" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round" marker-end="url(#circ-arrow)"/>
+			</g>
+		</svg>
+		<span class="diagram-label" style="left: 11.9%; top: 56.6%">$p, q$</span>
+		<span class="diagram-label" style="left: 25.6%; top: 14.4%; color: var(--defaultlink)">$\xi$</span>
+		<span class="diagram-label" style="left: 54.4%; top: 79.2%; color: var(--defaultlink)">$\mathrm{cm}$</span>
+		<span class="diagram-label" style="left: 66.5%; top: 48.2%">$\mathbf a_\text{cm}$</span>
+		<span class="diagram-label" style="left: 43.2%; top: 43.0%">$\mathbf d$</span>
+		<span class="diagram-label" style="left: 29.0%; top: 53.9%">$\mathbf a_q$</span>
+		<span class="diagram-label" style="left: 31.0%; top: 85.9%">$r_\text{cm}'$</span>
+		<span class="diagram-label" style="left: 61.3%; top: 69.9%">$\theta$</span>
+		<span class="diagram-label" style="left: 30.0%; top: 38.0%">$\theta$</span>
+		<span class="diagram-label" style="left: 3.4%; top: 10.2%">$\boldsymbol \alpha$</span>
+		</div>
+
+		<p>The points corresponding to $\theta = 0$ and $\theta = \frac{\pi}{2}$ are the center of mass and point $\xi$, respectively. When $p$ is at $\xi$, we have $r_\text{cm}' = d$, giving $r_\text{cm}' \alpha = a_\text{cm}$. Accounting for the mutual orthogonality, relative magnitudes, and relative orientations of the three vectors $\mathbf a_\text{cm}$, $\boldsymbol \alpha$, and $\mathbf r_\text{cm}'$, we can compare with \eqref{eq:cm-condition} to obtain the following.</p>
+
+		$$\mathbf a_\text{cm} = \boldsymbol \alpha \times \mathbf r_\text{cm}' \label{eq:a-cm-xi}$$
+
+		<p>For $p$ at $\xi$, we have $\mathbf r_\text{cm}' = -\mathbf d$. Subtracting \eqref{eq:a-cm-xi} from equation \eqref{eq:a-cm} leaves $\mathbf a_q - \omega^2 \mathbf r_\text{cm}' = \mathbf 0$, so $\mathbf a_q = \omega^2 \mathbf r_\text{cm}' = -\omega^2 \mathbf d$, which points from $\xi$ directly toward the center of mass, consistent with <a class="ref" href="#thm-parallel"></a>.</p>
+
+		<p>The vector $\mathbf d$ can also be expressed directly in terms of the motion of the body. Substituting $\mathbf r_\text{cm}' = -\mathbf d$ into the expression for $\mathbf a_\text{cm}$ above gives the following.</p>
+
+		$$\boxed{\rule[-0.7em]{0pt}{2.2em} \quad \mathbf a_\text{cm} = \mathbf d \times \boldsymbol \alpha \quad}$$
+
+		<p>Since $\mathbf d$ lies in the plane of motion, this equation uniquely defines $\mathbf d$ and hence the entire circle itself (given $\boldsymbol \alpha \neq \mathbf 0$).</p>
+
+
+		<h2>Examples</h2>
+
+		<style type="text/css">
+	/* animated diagram: an SVG redrawn every frame, with MathJax labels laid over it (left/top are % of the SVG) */
+	.anim {
+		position: relative;
+		width: min(100%, 560px);
+		margin: 1em auto 0;
+		container-type: inline-size; /* lets labels size with the drawing (cqw) */
+	}
+
+	.anim svg {
+		display: block;
+		width: 100%;
+	}
+
+	.anim .diagram-label {
+		position: absolute;
+		transform: translate(-50%, -50%);
+		white-space: nowrap;
+		font-size: 2.5cqw; /* 14px at full size, scaling with the drawing so label offsets stay clear of the dots */
+	}
+
+	/* names of the three bars: right-aligned in one column, ending just left of the bars */
+	/* the key under the bars: its label starts just right of its dot */
+	.anim .diagram-label.gauge-key {
+		transform: translate(0, -50%);
+	}
+
+	.anim .diagram-label.gauge-name {
+		transform: translate(-100%, -50%);
+	}
+
+	/* one tab per situation; only the selected panel is shown (and animated) */
+	.anim-tabs {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.4em;
+		margin: 1.5em 0 0.5em;
+	}
+
+	.anim-tabs button {
+		font: inherit;
+		color: inherit;
+		background: none;
+		border: 1px solid transparent;
+		border-radius: 999px;
+		padding: 0.2em 0.9em;
+		cursor: pointer;
+		opacity: 0.65;
+	}
+
+	.anim-tabs button:hover {
+		opacity: 1;
+	}
+
+	.anim-tabs button[aria-selected="true"] {
+		border-color: var(--defaultlink);
+		color: var(--defaultlink);
+		opacity: 1;
+	}
+
+	.anim-panel[hidden] {
+		display: none;
+	}
+
+	.anim-controls {
+		display: flex;
+		gap: 1em;
+		justify-content: center;
+		flex-wrap: wrap;
+		margin: 0.5em 0 1em;
+		font-size: 0.9em;
+	}
+
+	.anim-params {
+		display: grid;
+		grid-template-columns: auto 1fr auto;
+		gap: 0.3em 0.8em;
+		align-items: center;
+		width: min(100%, 460px);
+		margin: 0 auto 1em;
+		font-size: 0.9em;
+	}
+
+	.anim-params label {
+		display: contents;
+	}
+
+	.anim-params input {
+		width: 100%;
+		padding: 0;
+		accent-color: var(--defaultlink);
+	}
+
+	.anim-params output {
+		min-width: 4.5em;
+		text-align: right;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.anim-controls button {
+		font: inherit;
+		color: inherit;
+		background: none;
+		border: 1px solid currentColor;
+		border-radius: 6px;
+		padding: 0.15em 0.8em;
+		cursor: pointer;
+	}
+
+	.anim-controls button:disabled {
+		opacity: 0.4;
+		cursor: default;
+	}
+		</style>
+
+		<p>Each animation shows a rigid body moving under gravity together with its circle: the set of points $p$ about which $\boldsymbol \tau^\text{ext}_p = I_p \boldsymbol \alpha$ holds at that instant. As in the figure above, the circle has the center of mass and $\xi$ at opposite ends of the diameter $\mathbf d$, and $\mathbf a_\text{cm} = \mathbf d \times \boldsymbol \alpha$. The black dot on the circle is the point of the body with zero acceleration (<a class="ref" href="#thm-unaccel"></a>), and the bars in the corner show $\alpha$, $a_\text{cm}$, and $d$, with the $\alpha$ bar filling toward $\odot$ when $\boldsymbol \alpha$ points out of the page and toward $\otimes$ when it points in. The animations run at a quarter of real speed, and the Slower button slows them to a twelfth.</p>
+
+		<div class="anim-tabs" role="tablist"></div>
+		<div id="figures"></div>
+
 	</div>
+
+
+<script>
+// circle animations for the Examples section (moved from torque-circle-animations-draft.html)
+(() => {
+"use strict";
+const g = 9.8;
+
+// ---------- scenes ----------
+// Each scene is a 1-DOF rigid body: cm(q) -> [x, y], beta(q) -> body angle (CCW),
+// mass m, moment of inertia about the cm I. Constraints are workless, so
+// Lagrange's equations with T = ½(m|cm'|² + Iβ'²)q̇² and V = m g y_cm give the motion.
+const scenes = [
+	{
+		title: 'Physical pendulum',
+		tab: 'Pendulum',
+		t2Fixed: true, // the pivot is always the zero-acceleration point, so its trace would be a single dot
+		caption: 'A uniform rod swinging about a fixed pivot. The pivot never accelerates, so it is always the zero-acceleration point and the circle always passes through it. At the bottom of the swing, $\\alpha = 0$ and the circle opens up into a straight line.',
+		L: 1.5, m: 1, get I() { return this.L ** 2 / 12; },
+		cm(q) { return [this.L / 2 * Math.sin(q), -this.L / 2 * Math.cos(q)]; },
+		beta: q => q,
+		q0: 2.0, qd0: 0,
+		params: [{ key: 'q0', label: 'Starting angle', min: 5, max: 175, step: 1, unit: '°', k: Math.PI / 180 }],
+		view: [-1.9, 1.9, -1.9, 0.75],
+		draw(c, q) {
+			return c.rod([0, 0], [this.L * Math.sin(q), -this.L * Math.cos(q)]) + c.pin([0, 0]);
+		},
+	},
+	{
+		title: 'Ladder sliding down a frictionless wall',
+		tab: 'Ladder',
+		caption: 'Both ends slide without friction. Once the ladder\'s top has dropped to two-thirds of its starting height, the wall would have to pull to keep it in contact, so the ladder leaves the wall. From then on there is no horizontal force, so the center of mass drifts sideways at a constant speed while the ladder falls to the floor.',
+		L: 2, m: 1, get I() { return this.L ** 2 / 12; },
+		// phase 1: both ends in contact; phase 2: off the wall, cm drifting at constant horizontal speed vx
+		phase: 1, xc: 0, vx: 0,
+		reset() { this.phase = 1; },
+		cm(q) { return [this.phase === 1 ? this.L / 2 * Math.sin(q) : this.xc, this.L / 2 * Math.cos(q)]; },
+		advance(dt) { if (this.phase === 2) this.xc += this.vx * dt; },
+		beta: q => q,
+		q0: 0.25, qd0: 0,
+		params: [{ key: 'q0', label: 'Starting angle from the wall', min: 2, max: 60, step: 1, unit: '°', k: Math.PI / 180 }],
+		view: [-0.5, 2.7, -0.9, 2.25], // room below the floor: the circle and a_cm dip under it near the end
+		gauge: [430, 46],
+		stop(st) {
+			if (this.phase === 1 && st.a[0] < 0) { // the wall's push would turn into a pull
+				this.vx = this.L / 2 * Math.cos(st.q) * st.qd; this.xc = st.r[0]; this.phase = 2;
+				return false;
+			}
+			return st.q >= Math.PI / 2;
+		},
+		qMax: Math.PI / 2,
+		draw(c, q) {
+			const r = this.cm(q), h = this.L / 2;
+			return c.surface([0, 0], [0, 2.25], 1) + c.surface([0, 0], [2.7, 0], -1) + c.corner([0, 0], -1, -1)
+				+ c.rod([r[0] + h * Math.sin(q), r[1] - h * Math.cos(q)], [r[0] - h * Math.sin(q), r[1] + h * Math.cos(q)]);
+		},
+	},
+	{
+		title: 'Rod falling on frictionless ice',
+		tab: 'Falling rod',
+		caption: 'With no horizontal force, the center of mass falls straight down while the bottom end slides outward.',
+		L: 2, m: 1, get I() { return this.L ** 2 / 12; },
+		cm(q) { return [0, this.L / 2 * Math.cos(q)]; },
+		beta: q => q,
+		q0: 0.12, qd0: 0,
+		params: [{ key: 'q0', label: 'Starting tilt', min: 2, max: 60, step: 1, unit: '°', k: Math.PI / 180 }],
+		view: [-1.6, 1.6, -0.9, 2.25], // room below the floor: the circle and a_cm dip under it near the end
+		qMax: Math.PI / 2,
+		stop(st) { return st.q >= Math.PI / 2; },
+		draw(c, q) {
+			const h = this.L / 2;
+			return c.surface([-1.6, 0], [1.6, 0], -1)
+				+ c.rod([h * Math.sin(q), 0], [-h * Math.sin(q), 2 * h * Math.cos(q)]);
+		},
+	},
+	{
+		title: 'Rocking half-disk',
+		tab: 'Half-disk',
+		caption: 'A solid half-disk rocking on the floor without slipping. Its center of mass sits $4R/3\\pi$ below the center of the flat face.',
+		R: 0.6, m: 1,
+		get b() { return 4 * this.R / (3 * Math.PI); },
+		get I() { return (0.5 - (4 / (3 * Math.PI)) ** 2) * this.R ** 2; },
+		cm(q) { return [-this.R * q + this.b * Math.sin(q), this.R - this.b * Math.cos(q)]; },
+		beta: q => q,
+		q0: 0.7, qd0: 0,
+		params: [
+			{ key: 'q0', label: 'Starting tilt', min: 5, max: 85, step: 1, unit: '°', k: Math.PI / 180 },
+			{ key: 'qd0', label: 'Starting spin', min: -4, max: 4, step: 0.25, unit: ' rad/s', k: 1 },
+		],
+		view: [-1.3, 1.3, -0.25, 1.15],
+		draw(c, q) {
+			return c.surface([-1.3, 0], [1.3, 0], -1) + c.halfDisk([-this.R * q, this.R], this.R, q);
+		},
+	},
+	{
+		title: 'Rolling hoop with an off-center mass',
+		tab: 'Lopsided hoop',
+		caption: 'A thin hoop with a smooth bulge of extra mass on one side, rolling without slipping. The drawn thickness follows the mass per unit length, $\\lambda \\propto 0.04 + e^{16(\\cos\\phi - 1)}$, measured from the heaviest point. It speeds up as the heavy side swings down and slows as it climbs back over the top, and the circle changes size dramatically over each turn. The camera stays fixed to the ground, so the hoop rolls across the screen. After each full turn it reappears at the left edge in exactly the same position relative to its own rotation.',
+		R: 0.5, m: 2,
+		// mass per unit length around the rim (peak 1 at φ = 0, the heaviest point): a thin uniform hoop plus a smooth bump
+		lam: phi => (0.04 + Math.exp(16 * (Math.cos(phi) - 1))) / 1.04,
+		get b() { // distance of the cm from the hoop's middle, R⟨cos φ⟩ weighted by λ
+			if (this._b === undefined) {
+				let num = 0, den = 0;
+				for (let i = 0; i < 720; i++) { const phi = i / 720 * 2 * Math.PI, l = this.lam(phi); num += l * Math.cos(phi); den += l; }
+				this._b = this.R * num / den;
+			}
+			return this._b;
+		},
+		get I() { return this.m * (this.R ** 2 - this.b ** 2); }, // all the mass at radius R, moved to the cm by the parallel-axis theorem
+		cm(q) { return [-this.R * q - this.b * Math.sin(q), this.R + this.b * Math.cos(q)]; },
+		beta: q => q,
+		q0: -0.3, qd0: -1.2,
+		params: [ // the hoop turns clockwise (negative q) as it rolls to the right
+			{ key: 'qd0', label: 'Starting roll rate', min: -8, max: 8, step: 0.2, unit: ' rad/s', k: -1 },
+		],
+		// fixed camera, except that the view jumps by one circumference (a full turn, so the hoop looks the same) when the hoop leaves the frame
+		view: [-0.8, 3.6, -0.3, 1.9],
+		follow(q) { const P = 2 * Math.PI * this.R; return Math.floor((-this.R * q + 0.2) / P) * P; },
+		draw(c, q) {
+			const C = [-this.R * q, this.R];
+			const o = this.follow(q);
+			return c.surface([o - 1, 0], [o + 4, 0], -1) + c.wheel(C, this.R, q) + c.ring(C, this.R, q + Math.PI / 2, this.lam);
+		},
+	},
+	{
+		title: 'Yo-yo falling from a fixed string',
+		tab: 'Yo-yo',
+		caption: 'The string unwinds from the axle. The acceleration and angular acceleration stay constant, so the circle keeps the same size and stays attached to the yo-yo: its diameter runs from the center of mass to the point where the string leaves the axle. As the spin builds up, the zero-acceleration point slides around the circle toward the center of mass.',
+		R: 0.15, r: 0.08, m: 1,
+		get I() { return 0.5 * this.R ** 2; },
+		cm(q) { return [this.r, this.r * q]; },
+		beta: q => q,
+		get q0() { return -0.25 / this.r; }, qd0: 0, // starts with its center 25 cm below the ceiling
+		params: [
+			{ key: 'r', label: 'Axle radius', min: 2, max: 14, step: 0.5, unit: ' cm', k: 0.01 },
+			{ key: 'qd0', label: 'Starting downward speed', min: 0, max: 3, step: 0.1, unit: ' m/s', k: -1, perR: true },
+		],
+		view: [-0.6, 0.75, -1.25, 0.1],
+		gauge: [40, 92],
+		stop(st) { return st.q * this.r < -1.05; },
+		draw(c, q) {
+			return c.surface([-0.6, 0], [0.75, 0], 1) + c.line([0, 0], [0, this.r * q], 1)
+				+ c.wheel([this.r, this.r * q], this.R, q, this.r);
+		},
+	},
+	{
+		title: 'Disk rolling inside a bowl',
+		tab: 'Disk in a bowl',
+		caption: 'A uniform disk rolling back and forth without slipping inside a fixed circular bowl.',
+		Rb: 1, r: 0.3, m: 1,
+		get I() { return 0.5 * this.r ** 2; },
+		cm(q) { const k = this.Rb - this.r; return [k * Math.sin(q), -k * Math.cos(q)]; },
+		beta(q) { return -(this.Rb - this.r) / this.r * q; },
+		q0: 1.1, qd0: 0,
+		params: [
+			{ key: 'q0', label: 'Starting angle', min: 5, max: 85, step: 1, unit: '°', k: Math.PI / 180 },
+			{ key: 'r', label: 'Disk radius', min: 10, max: 50, step: 1, unit: ' cm', k: 0.01 },
+		],
+		view: [-1.3, 1.3, -1.25, 0.35],
+		draw(c, q) {
+			return c.bowl(this.Rb) + c.wheel(this.cm(q), this.r, this.beta(q));
+		},
+	},
+	{
+		title: 'The blob, pushed around',
+		tab: 'Pushed blob',
+		caption: 'The body from the start of the article, floating freely with no gravity, while forces switch on and off to shove it around and keep it in view. A single push off the center of mass both accelerates and spins it. A push aimed through the center of mass gives $\\alpha = 0$, so the circle opens into a line. A couple (two equal and opposite pushes) gives $\\mathbf a_\\text{cm} = \\mathbf 0$, so the circle shrinks to the center of mass. With no force at all, every point satisfies the condition and no circle is drawn.',
+		custom: true, m: 1,
+		strength: 1,    // multiplies every push
+		params: [{ key: 'strength', label: 'Push strength', min: 0.5, max: 1.5, step: 0.05, unit: '×', k: 1 }],
+		view: [-3.7, 3.7, -2.8, 2.8],
+		aScale: 0.32,   // world length per unit of acceleration
+		get alMax() { return 4.5 * this.strength; }, // |α| that fills its bar (about the 99th percentile over a long run)
+		get aMax() { return 3.2 * this.strength; },  // the largest a_cm a single push can give
+		dMax: 1,        // d that half fills its bar
+		fScale: 0.55,   // world length per unit of force
+		// the outline of the article's blob, in its SVG coordinates (drawn there with translate(80 40))
+		outline: 'M 60 70 C 70 57, 84 43, 99 38 C 114 33, 134 38, 150 40 C 167 42, 182 52, 198 51 C 214 50, 230 31, 245 32 C 260 33, 280 46, 287 59 C 294 72, 294 94, 289 109 C 285 124, 269 136, 260 151 C 251 166, 246 187, 233 197 C 220 207, 197 209, 180 211 C 163 213, 146 210, 129 208 C 112 206, 94 205, 79 198 C 64 191, 44 181, 37 167 C 30 154, 34 133, 38 117 C 42 101, 50 83, 60 70 Z',
+		setup() { // outline in body coordinates about the centroid (1 m = 100 SVG units), plus I for a uniform lamina
+			if (this.ctrl) return;
+			const n = this.outline.match(/-?[\d.]+/g).map(Number), pts = [];
+			for (let i = 0; i < n.length; i += 2) pts.push([(n[i] + 80) / 100, -(n[i + 1] + 40) / 100]);
+			const bez = (p0, p1, p2, p3, t) => { const u = 1 - t; return [0, 1].map(k => u * u * u * p0[k] + 3 * u * u * t * p1[k] + 3 * u * t * t * p2[k] + t * t * t * p3[k]); };
+			let poly = [];
+			for (let i = 0; i + 3 < pts.length; i += 3) for (let t = 0; t < 1; t += 0.125) poly.push(bez(pts[i], pts[i + 1], pts[i + 2], pts[i + 3], t));
+			let A = 0, cx = 0, cy = 0;
+			poly.forEach((p, i) => { const q = poly[(i + 1) % poly.length], x = p[0] * q[1] - q[0] * p[1]; A += x / 2; cx += (p[0] + q[0]) * x / 6; cy += (p[1] + q[1]) * x / 6; });
+			cx /= A; cy /= A;
+			this.ctrl = pts.map(p => [p[0] - cx, p[1] - cy]);
+			this.poly = poly.map(p => [p[0] - cx, p[1] - cy]);
+			let J = 0;
+			this.poly.forEach((p, i) => { const q = this.poly[(i + 1) % this.poly.length], x = p[0] * q[1] - q[0] * p[1]; J += x * (p[0] ** 2 + p[0] * q[0] + q[0] ** 2 + p[1] ** 2 + p[1] * q[1] + q[1] ** 2) / 12; });
+			this.I = this.m * J / A;
+		},
+		turn(st, v, sgn = 1) { const c = Math.cos(st.b), s = sgn * Math.sin(st.b); return [c * v[0] - s * v[1], s * v[0] + c * v[1]]; },
+		toWorld(st, p) { const c = Math.cos(st.b), s = Math.sin(st.b); return [st.r[0] + c * p[0] - s * p[1], st.r[1] + s * p[0] + c * p[1]]; },
+		homing(st, nudge) { return [-1.2 * st.r[0] - 1.8 * st.v[0] + nudge[0], -2 * st.r[1] - 2 * st.v[1] + nudge[1]]; },
+		force(st, f) { return f.F; }, // each force is constant while it acts, fixed in magnitude and direction
+		init(st) {
+			this.setup();
+			Object.assign(st, { r: [-1.2, 0.3], v: [0.6, -0.2], b: 0.3, w: 0.4, a: [0, 0], al: 0, forces: [], timer: 0.4, on: false, q: 0 });
+		},
+		// choose the next burst of force: a damped pull toward the middle of the frame plus a random nudge,
+		// applied at whichever point gives a torque that keeps the spin moderate
+		schedule(st) {
+			st.on = !st.on;
+			st.forces = [];
+			if (!st.on) { st.timer = 0.15 + 0.3 * Math.random(); return; }
+			st.timer = 0.5 + 0.4 * Math.random();
+			const nudge = [(Math.random() - 0.5) * 1.4, (Math.random() - 0.5) * 1.4];
+			const D = this.homing(st, nudge);
+			const Dm = Math.hypot(...D) || 1, u = [D[0] / Dm, D[1] / Dm], F = this.m * this.strength * Math.min(Math.max(Dm, 2), 3.2);
+			// candidate points of application: spread through the body, from near the cm out to the outline
+			const world = this.poly.filter((_, i) => i % 3 === 0).map(p => {
+				const k = 0.3 + 0.7 * Math.random(), local = [p[0] * k, p[1] * k], q = this.toWorld(st, local);
+				return { local, rel: [q[0] - st.r[0], q[1] - st.r[1]] };
+			});
+			const tauGoal = -this.I * 1.5 * st.w + (Math.random() - 0.5) * 1.2; // torque that would pull the spin back toward zero, plus a nudge
+			const far = Math.abs(st.r[0] + 0.6 * st.v[0]) > 1.3 || Math.abs(st.r[1] + 0.6 * st.v[1]) > 0.6, roll = Math.random();
+			if (!far && (roll < 0.2 || Math.abs(st.w) > 2.5)) { // a couple: pure torque, no net force
+				const p = world[Math.floor(Math.random() * world.length)];
+				const opp = world.reduce((best, x) => (x.rel[0] * p.rel[0] + x.rel[1] * p.rel[1] < best.rel[0] * p.rel[0] + best.rel[1] * p.rel[1] ? x : best));
+				const L = Math.hypot(...p.rel) + Math.hypot(...opp.rel);
+				const sgn = Math.sign(tauGoal) || 1, f = Math.min(Math.abs(tauGoal) / L + 0.5, 1.5) * this.m * this.strength;
+				const t = [-p.rel[1] / Math.hypot(...p.rel) * sgn * f, p.rel[0] / Math.hypot(...p.rel) * sgn * f];
+				st.forces = [{ local: p.local, F: t }, { local: opp.local, F: [-t[0], -t[1]] }];
+			} else if (!far && roll < 0.4 && Math.abs(st.w) < 1) { // straight through the center of mass, from the back of the body
+				const p = world[Math.floor(Math.random() * world.length)], L = Math.hypot(...p.rel);
+				const sgn = p.rel[0] * u[0] + p.rel[1] * u[1] > 0 ? 1 : -1; // along the line through p and the cm, in the direction closest to u
+				st.forces = [{ local: p.local, F: [sgn * p.rel[0] / L * F, sgn * p.rel[1] / L * F] }];
+			} else { // one push off center, at the point whose torque best matches the goal
+				const pick = world.reduce((best, x) => {
+					const tx = (x.rel[0] * u[1] - x.rel[1] * u[0]) * F, tb = (best.rel[0] * u[1] - best.rel[1] * u[0]) * F;
+					return Math.abs(tx - tauGoal) < Math.abs(tb - tauGoal) ? x : best;
+				});
+				st.forces = [{ local: pick.local, F: [u[0] * F, u[1] * F] }];
+			}
+		},
+		accel(st) {
+			let a = [0, 0], tau = 0;
+			for (const f of st.forces) {
+				const p = this.toWorld(st, f.local);
+				const F = this.force(st, f);
+				a[0] += F[0] / this.m; a[1] += F[1] / this.m;
+				tau += (p[0] - st.r[0]) * F[1] - (p[1] - st.r[1]) * F[0];
+			}
+			st.a = a; st.al = tau / this.I;
+		},
+		update(st, T) {
+			const n = Math.ceil(T / 0.002), dt = T / n;
+			for (let i = 0; i < n; i++) {
+				st.timer -= dt;
+				if (!st.on && (Math.abs(st.r[0]) > 1.6 || Math.abs(st.r[1]) > 0.8)) st.timer = 0; // drifting toward the edge: push now
+				if (st.timer <= 0) this.schedule(st);
+				this.accel(st);
+				st.v[0] += st.a[0] * dt; st.v[1] += st.a[1] * dt; st.w += st.al * dt;
+				st.r = [st.r[0] + st.v[0] * dt, st.r[1] + st.v[1] * dt]; st.b += st.w * dt;
+			}
+			this.accel(st);
+		},
+		draw(c, q, st) {
+			const w = this.ctrl.map(p => this.toWorld(st, p));
+			let d = `M ${c.px(w[0])}`;
+			for (let i = 1; i + 2 < w.length; i += 3) d += ` C ${c.px(w[i])}, ${c.px(w[i + 1])}, ${c.px(w[i + 2])}`;
+			let s = `<path d="${d} Z" fill="none" stroke="currentColor" stroke-width="2"/>`;
+			for (const f of st.forces) { // each arrow starts at its point of application
+				const p = this.toWorld(st, f.local), F = this.force(st, f);
+				s += c.force(p, [F[0] * this.fScale, F[1] * this.fScale]) + c.dot(p, 'var(--color4)');
+			}
+			return s;
+		},
+	},
+];
+
+// ---------- dynamics ----------
+const d1 = (f, q, h = 1e-4) => (f(q + h) - f(q - h)) / (2 * h);
+const d2 = (f, q, h = 1e-3) => (f(q + h) - 2 * f(q) + f(q - h)) / (h * h);
+const vd1 = (f, q, h = 1e-4) => { const a = f(q + h), b = f(q - h); return [(a[0] - b[0]) / (2 * h), (a[1] - b[1]) / (2 * h)]; };
+const vd2 = (f, q, h = 1e-3) => { const a = f(q + h), o = f(q), b = f(q - h); return [(a[0] - 2 * o[0] + b[0]) / (h * h), (a[1] - 2 * o[1] + b[1]) / (h * h)]; };
+
+function massFn(sc) {
+	const cm = q => sc.cm(q), beta = q => sc.beta(q);
+	return q => { const r = vd1(cm, q), b = d1(beta, q); return sc.m * (r[0] ** 2 + r[1] ** 2) + sc.I * b * b; };
+}
+
+function qdd(sc, M, q, qd) {
+	const Vp = sc.m * g * vd1(q => sc.cm(q), q)[1];
+	return -(0.5 * d1(M, q, 1e-3) * qd * qd + Vp) / M(q);
+}
+
+function step(sc, M, st, dt) {
+	const f = (q, v) => [v, qdd(sc, M, q, v)];
+	const k1 = f(st.q, st.qd);
+	const k2 = f(st.q + dt / 2 * k1[0], st.qd + dt / 2 * k1[1]);
+	const k3 = f(st.q + dt / 2 * k2[0], st.qd + dt / 2 * k2[1]);
+	const k4 = f(st.q + dt * k3[0], st.qd + dt * k3[1]);
+	st.q += dt / 6 * (k1[0] + 2 * k2[0] + 2 * k3[0] + k4[0]);
+	st.qd += dt / 6 * (k1[1] + 2 * k2[1] + 2 * k3[1] + k4[1]);
+}
+
+// kinematics of the body at the current state: r_cm, a_cm, ω, α
+function kin(sc, M, st) {
+	const q = st.q, v = st.qd, acc = qdd(sc, M, q, v);
+	const cm = q => sc.cm(q), beta = q => sc.beta(q);
+	const r1 = vd1(cm, q), r2 = vd2(cm, q), b1 = d1(beta, q), b2 = d2(beta, q);
+	st.r = sc.cm(q);
+	st.a = [r2[0] * v * v + r1[0] * acc, r2[1] * v * v + r1[1] * acc];
+	st.w = b1 * v;
+	st.al = b2 * v * v + b1 * acc;
+}
+
+// circle geometry: d = (k × a_cm)/α, ξ = cm + d; zero-acceleration point measured from the cm
+function geometry(s) {
+	const kxa = [-s.a[1], s.a[0]];
+	const den = s.w ** 4 + s.al ** 2;
+	const pole = den > 1e-12 ? [s.r[0] + (s.w ** 2 * s.a[0] + s.al * kxa[0]) / den, s.r[1] + (s.w ** 2 * s.a[1] + s.al * kxa[1]) / den] : null;
+	if (Math.abs(s.al) < 1e-9) return { line: true, pole };
+	const d = [kxa[0] / s.al, kxa[1] / s.al];
+	return { d, xi: [s.r[0] + d[0], s.r[1] + d[1]], center: [s.r[0] + d[0] / 2, s.r[1] + d[1] / 2], rad: Math.hypot(d[0], d[1]) / 2, pole };
+}
+
+// ---------- drawing ----------
+const SPEED = 0.25, SLOWER = 1 / 3; // normal playback is a quarter of real time; the Slower button cuts that to a third
+const W = 560;      // SVG user units across, so strokes match the static diagrams at full size
+let figCount = 0, gradCount = 0;
+
+// speed and trail settings are shared by every situation, so they carry over when switching tabs
+const prefs = { slow: false, trail: false, t2: false, samples: false };
+function syncPrefButtons() {
+	document.querySelectorAll('[data-act=slow]').forEach(b => b.textContent = prefs.slow ? 'Normal speed' : 'Slower');
+	document.querySelectorAll('[data-act=trail]').forEach(b => b.textContent = prefs.trail ? 'Hide trail' : 'Show trail');
+	document.querySelectorAll('[data-act=t2]').forEach(b => b.textContent = prefs.t2 ? 'Hide T2 trace' : 'Show T2 trace');
+	document.querySelectorAll('[data-act=samples]').forEach(b => b.textContent = prefs.samples ? 'Hide sample accelerations' : 'Show sample accelerations');
+}
+
+function makeFigure(sc) {
+	const id = 'anim' + figCount++;
+	const [vx0, vx1, vy0, vy1] = sc.view;
+	const sx = W / (vx1 - vx0), H = (vy1 - vy0) * sx;
+	const [gx, gy] = sc.gauge || [40, 46]; // where the α symbol and the three bars sit, in SVG units
+	const M = massFn(sc);
+
+	const fig = document.createElement('div');
+	fig.className = 'anim-panel';
+	fig.setAttribute('role', 'tabpanel');
+	fig.innerHTML = `<div class="anim">
+			<svg viewBox="0 0 ${W} ${H.toFixed(1)}" role="img" aria-label="${sc.title}, animated, with its circle"></svg>
+			<span class="diagram-label" data-l="cm" style="color: var(--defaultlink)">$\\mathrm{cm}$</span>
+			${sc.custom ? `<span class="diagram-label" data-l="F0" style="color: var(--color4)">$\\mathbf F$</span>
+			<span class="diagram-label" data-l="F1" style="color: var(--color4)">$-\\mathbf F$</span>` : ''}
+			<span class="diagram-label" data-l="xi" style="color: var(--defaultlink)">$\\xi$</span>
+			<span class="diagram-label gauge-key" style="left: ${((gx + 10) / W * 100).toFixed(2)}%; top: ${((gy + 57) / H * 100).toFixed(2)}%">$\\mathbf a = \\mathbf 0$</span>
+			<span class="diagram-label" data-l="a">$\\mathbf a_\\text{cm}$</span>
+			<span class="diagram-label" data-l="d">$\\mathbf d$</span>
+			<span class="diagram-label" style="left: ${((gx + 59) / W * 100).toFixed(2)}%; top: ${((gy - 22) / H * 100).toFixed(2)}%">$\\mathbf a_\\text{cm} = \\mathbf d \\times \\boldsymbol \\alpha$</span>
+			<span class="diagram-label gauge-name" data-l="alpha" style="left: ${((gx - 10) / W * 100).toFixed(2)}%; top: ${(gy / H * 100).toFixed(2)}%">$\\boldsymbol \\alpha$</span>
+			<span class="diagram-label gauge-name" style="left: ${((gx - 10) / W * 100).toFixed(2)}%; top: ${((gy + 19) / H * 100).toFixed(2)}%">$a_\\text{cm}$</span>
+			<span class="diagram-label gauge-name" style="left: ${((gx - 10) / W * 100).toFixed(2)}%; top: ${((gy + 37) / H * 100).toFixed(2)}%">$d$</span>
+		</div>
+		<div class="anim-controls">
+			<button data-act="play">Pause</button>
+			<button data-act="restart">Restart</button>
+			<button data-act="slow">Slower</button>
+			<button data-act="trail">Show trail</button>
+			<button data-act="t2">Show T2 trace</button>
+			<button data-act="samples">Show sample accelerations</button>
+		</div>
+		<div class="anim-params"></div>
+		<p><b>${sc.title}.</b> ${sc.caption}</p>`;
+	document.getElementById('figures').appendChild(fig);
+
+	const svg = fig.querySelector('svg');
+	const labels = {};
+	fig.querySelectorAll('[data-l]').forEach(el => labels[el.dataset.l] = el);
+
+	let st, trail, trace, hold, ox = 0, playing = true, visible = false, last = null, trailClock = 0;
+	const X = x => (x - vx0 - ox) * sx, Y = y => (vy1 - y) * sx;
+	const f1 = v => v.toFixed(1);
+
+	// SVG snippets in the style of the static diagrams
+	const c = {
+		line(a, b, w = 1.5, extra = '') {
+			return `<line x1="${f1(X(a[0]))}" y1="${f1(Y(a[1]))}" x2="${f1(X(b[0]))}" y2="${f1(Y(b[1]))}" stroke="currentColor" stroke-width="${w}" ${extra}/>`;
+		},
+		dotted(a, b) { return c.line(a, b, 1.5, 'stroke-dasharray="0.1 4" stroke-linecap="round"'); },
+		// fixed surface from a to b, with a faint band fading away from it on the side given by the sign of `side`;
+		// `vary` makes the band's strength rise and fall along the surface at fixed world positions,
+		// so a moving view shows the surface sliding past
+		surface(a, b, side, vary = false) {
+			const x1 = X(a[0]), y1 = Y(a[1]), x2 = X(b[0]), y2 = Y(b[1]), w = 14;
+			const L = Math.hypot(x2 - x1, y2 - y1), ux = (x2 - x1) / L, uy = (y2 - y1) / L;
+			const nx = uy * side, ny = -ux * side; // normal, pointing to the shaded side
+			const gid = `${id}-g${gradCount++}`, band = `M ${f1(x1)} ${f1(y1)} L ${f1(x2)} ${f1(y2)} L ${f1(x2 + nx * w)} ${f1(y2 + ny * w)} L ${f1(x1 + nx * w)} ${f1(y1 + ny * w)} Z`;
+			const fade = (op) => `<linearGradient id="${gid}" gradientUnits="userSpaceOnUse" x1="${f1(x1)}" y1="${f1(y1)}" x2="${f1(x1 + nx * w)}" y2="${f1(y1 + ny * w)}">`
+				+ `<stop offset="0" stop-color="${op}" stop-opacity="${op === 'white' ? 1 : 0.12}"/><stop offset="1" stop-color="${op}" stop-opacity="0"/></linearGradient>`;
+			if (!vary) return fade('currentColor') + `<path d="${band}" fill="url(#${gid})"/>` + c.line(a, b, 1.5);
+			// the fade away from the surface becomes a mask; under it, a gradient along the surface repeats every 1.2 m
+			const hid = `${id}-g${gradCount++}`, mid = `${id}-g${gradCount++}`, period = 1.2 * sx, ox0 = X(0);
+			return fade('white') + `<mask id="${mid}" maskUnits="userSpaceOnUse"><path d="${band}" fill="url(#${gid})"/></mask>`
+				+ `<linearGradient id="${hid}" gradientUnits="userSpaceOnUse" spreadMethod="repeat" x1="${f1(ox0)}" y1="0" x2="${f1(ox0 + period)}" y2="0">`
+				+ `<stop offset="0" stop-color="currentColor" stop-opacity="0.04"/><stop offset="0.5" stop-color="currentColor" stop-opacity="0.22"/><stop offset="1" stop-color="currentColor" stop-opacity="0.04"/></linearGradient>`
+				+ `<path d="${band}" fill="url(#${hid})" mask="url(#${mid})"/>` + c.line(a, b, 1.5);
+		},
+		// fills the outside of a corner where two surfaces meet, so their fading bands join smoothly around it;
+		// (sx, sy) are the signs of the world directions the bands extend toward
+		corner(p, dxs, dys) {
+			const x = X(p[0]), y = Y(p[1]), w = 14, gid = `${id}-g${gradCount++}`;
+			const ex = x + dxs * w, ey = y - dys * w, sweep = dxs * -dys > 0 ? 1 : 0;
+			return `<radialGradient id="${gid}" gradientUnits="userSpaceOnUse" cx="${f1(x)}" cy="${f1(y)}" r="${w}">`
+				+ `<stop offset="0" stop-color="currentColor" stop-opacity="0.12"/><stop offset="1" stop-color="currentColor" stop-opacity="0"/></radialGradient>`
+				+ `<path d="M ${f1(x)} ${f1(y)} L ${f1(ex)} ${f1(y)} A ${w} ${w} 0 0 ${sweep} ${f1(x)} ${f1(ey)} Z" fill="url(#${gid})"/>`;
+		},
+		// a slender rod drawn as an outlined capsule
+		rod(a, b) {
+			const x1 = X(a[0]), y1 = Y(a[1]), x2 = X(b[0]), y2 = Y(b[1]), r = 5;
+			const L = Math.hypot(x2 - x1, y2 - y1), nx = -(y2 - y1) / L * r, ny = (x2 - x1) / L * r;
+			return `<path d="M ${f1(x1 + nx)} ${f1(y1 + ny)} L ${f1(x2 + nx)} ${f1(y2 + ny)} A ${r} ${r} 0 0 0 ${f1(x2 - nx)} ${f1(y2 - ny)} L ${f1(x1 - nx)} ${f1(y1 - ny)} A ${r} ${r} 0 0 0 ${f1(x1 + nx)} ${f1(y1 + ny)} Z" fill="none" stroke="currentColor" stroke-width="2"/>`;
+		},
+		circle(p, r, attrs) { return `<circle cx="${f1(X(p[0]))}" cy="${f1(Y(p[1]))}" r="${f1(r * sx)}" fill="none" ${attrs}/>`; },
+		pin(p) { return `<circle cx="${f1(X(p[0]))}" cy="${f1(Y(p[1]))}" r="2" fill="currentColor"/>`; },
+		// a hoop drawn with its thickness following its mass per unit length lam(φ − heavy), which peaks at 1;
+		// the outer edge stays a true circle (it is what rolls), so the extra thickness bulges inward
+		ring(C, R, heavy, lam) {
+			const t = phi => (2 + 7 * lam(phi - heavy)) / sx; // thickness: 2 (a normal outline) plus a part proportional to λ
+			const pt = (phi, r) => c.px([C[0] + r * Math.cos(phi), C[1] + r * Math.sin(phi)]);
+			let outer = '', inner = '';
+			for (let i = 0; i <= 180; i++) {
+				const phi = i / 180 * 2 * Math.PI;
+				outer += `${i ? 'L' : 'M'} ${pt(phi, R + 1 / sx)} `;
+				inner = `L ${pt(phi, R + 1 / sx - t(phi))} ` + inner;
+			}
+			return `<path d="${outer}${inner.replace('L', 'M')}Z" fill="currentColor" fill-rule="evenodd"/>`;
+		},
+		// a disk outline with two opposite quarters faintly shaded, like a crash-test-dummy marker, so its rotation shows
+		wheel(C, R, beta, axle = 0, mark = true) {
+			let s = '';
+			if (mark) {
+				const at = t => [C[0] + R * Math.cos(t), C[1] + R * Math.sin(t)];
+				const atr = (t, r) => [C[0] + r * Math.cos(t), C[1] + r * Math.sin(t)];
+				for (const t0 of [beta, beta + Math.PI]) {
+					if (!axle) s += `<path d="M ${c.px(C)} L ${c.px(at(t0))} A ${f1(R * sx)} ${f1(R * sx)} 0 0 0 ${c.px(at(t0 + Math.PI / 2))} Z" fill="currentColor" fill-opacity="0.08" stroke="none"/>`;
+					else { // with an axle, the shaded quarters of the outer ring swap inside the axle, so the two parts read as reversed
+						s += `<path d="M ${c.px(atr(t0, axle))} L ${c.px(at(t0))} A ${f1(R * sx)} ${f1(R * sx)} 0 0 0 ${c.px(at(t0 + Math.PI / 2))} L ${c.px(atr(t0 + Math.PI / 2, axle))} A ${f1(axle * sx)} ${f1(axle * sx)} 0 0 1 ${c.px(atr(t0, axle))} Z" fill="currentColor" fill-opacity="0.08" stroke="none"/>`;
+						s += `<path d="M ${c.px(C)} L ${c.px(atr(t0 + Math.PI / 2, axle))} A ${f1(axle * sx)} ${f1(axle * sx)} 0 0 0 ${c.px(atr(t0 + Math.PI, axle))} Z" fill="currentColor" fill-opacity="0.08" stroke="none"/>`;
+					}
+				}
+			}
+			s += `<circle cx="${f1(X(C[0]))}" cy="${f1(Y(C[1]))}" r="${f1(R * sx)}" fill="none" stroke="currentColor" stroke-width="2"/>`;
+			if (axle) s += `<circle cx="${f1(X(C[0]))}" cy="${f1(Y(C[1]))}" r="${f1(axle * sx)}" fill="none" stroke="currentColor" stroke-width="1.5"/>`;
+			return s;
+		},
+		halfDisk(C, R, beta) {
+			const a = [C[0] + R * Math.cos(beta), C[1] + R * Math.sin(beta)], b = [C[0] - R * Math.cos(beta), C[1] - R * Math.sin(beta)];
+			return `<path d="M ${f1(X(a[0]))} ${f1(Y(a[1]))} A ${f1(R * sx)} ${f1(R * sx)} 0 0 1 ${f1(X(b[0]))} ${f1(Y(b[1]))} Z" fill="none" stroke="currentColor" stroke-width="2"/>`;
+		},
+		bowl(R) { // the bowl's wall, with the same fading band outside it as the flat surfaces
+			const w = 14 / sx, gid = `${id}-g${gradCount++}`;
+			const a = [-R * Math.sin(1.5), -R * Math.cos(1.5)], b = [R * Math.sin(1.5), -R * Math.cos(1.5)];
+			const ao = [-(R + w) * Math.sin(1.5), -(R + w) * Math.cos(1.5)], bo = [(R + w) * Math.sin(1.5), -(R + w) * Math.cos(1.5)];
+			return `<radialGradient id="${gid}" gradientUnits="userSpaceOnUse" cx="${f1(X(0))}" cy="${f1(Y(0))}" r="${f1((R + w) * sx)}">`
+				+ `<stop offset="${(R / (R + w)).toFixed(4)}" stop-color="currentColor" stop-opacity="0.12"/><stop offset="1" stop-color="currentColor" stop-opacity="0"/></radialGradient>`
+				+ `<path d="M ${c.px(a)} A ${f1(R * sx)} ${f1(R * sx)} 0 0 0 ${c.px(b)} L ${c.px(bo)} A ${f1((R + w) * sx)} ${f1((R + w) * sx)} 0 0 1 ${c.px(ao)} Z" fill="url(#${gid})"/>`
+				+ `<path d="M ${f1(X(a[0]))} ${f1(Y(a[1]))} A ${f1(R * sx)} ${f1(R * sx)} 0 0 0 ${f1(X(b[0]))} ${f1(Y(b[1]))}" fill="none" stroke="currentColor" stroke-width="1.5"/>`;
+		},
+		arrow(p, v) {
+			if (Math.hypot(v[0], v[1]) * sx < 4) return '';
+			return `<line x1="${f1(X(p[0]))}" y1="${f1(Y(p[1]))}" x2="${f1(X(p[0] + v[0]))}" y2="${f1(Y(p[1] + v[1]))}" stroke="currentColor" stroke-width="1.5" marker-end="url(#${id}-arrow)"/>`;
+		},
+		force(p, v) {
+			if (Math.hypot(v[0], v[1]) * sx < 4) return '';
+			return `<line x1="${f1(X(p[0]))}" y1="${f1(Y(p[1]))}" x2="${f1(X(p[0] + v[0]))}" y2="${f1(Y(p[1] + v[1]))}" stroke="var(--color4)" stroke-width="3" marker-end="url(#${id}-force)"/>`;
+		},
+		px(p) { return `${f1(X(p[0]))} ${f1(Y(p[1]))}`; },
+		dot(p, color = 'currentColor') { return `<circle cx="${f1(X(p[0]))}" cy="${f1(Y(p[1]))}" r="3" fill="${color}"/>`; },
+	};
+
+	// a_cm arrows: scale so the largest acceleration over the motion draws about a quarter of the frame
+	// and find the largest |α|, which fills the bar beside the α symbol
+	let aScale, alMax, aMax, dMax;
+	const computeScales = () => [aScale, alMax, aMax, dMax] = sc.custom ? [sc.aScale, sc.alMax, sc.aMax, sc.dMax] : (() => {
+		const s = { q: sc.q0, qd: sc.qd0 };
+		let amax = 0, almax = 0;
+		const ds = [];
+		for (let t = 0; t < 8; t += 0.002) {
+			step(sc, M, s, 0.002); if (sc.advance) sc.advance(0.002); kin(sc, M, s);
+			amax = Math.max(amax, Math.hypot(s.a[0], s.a[1]));
+			almax = Math.max(almax, Math.abs(s.al));
+			if (Math.abs(s.al) > 1e-9) ds.push(Math.hypot(s.a[0], s.a[1]) / Math.abs(s.al));
+			if (sc.stop && sc.stop(s)) break;
+		}
+		if (sc.reset) sc.reset();
+		// d blows up wherever α passes through zero, so its bar runs from 0 to ∞ and is half full at the median d
+		ds.sort((x, y) => x - y);
+		return [0.27 * Math.min(vx1 - vx0, vy1 - vy0) / (amax || 1), almax || 1, amax || 1, ds[Math.floor(ds.length * 0.5)] || 1];
+	})();
+	computeScales();
+
+	function reset() { if (sc.reset) sc.reset(); st = { q: sc.q0, qd: sc.qd0 }; if (sc.init) sc.init(st); else kin(sc, M, st); trail = []; trace = []; hold = 0; trailClock = 0; }
+	reset();
+
+	function circleSVG(s, G, opacity, width) {
+		const am = Math.hypot(s.a[0], s.a[1]);
+		if (am < 1e-6) return '';
+		if (G.line || G.rad * sx > 2e4) { // α ≈ 0: the circle opens into the line through the cm along a_cm
+			const u = [s.a[0] / am * 50, s.a[1] / am * 50];
+			return `<line x1="${f1(X(s.r[0] - u[0]))}" y1="${f1(Y(s.r[1] - u[1]))}" x2="${f1(X(s.r[0] + u[0]))}" y2="${f1(Y(s.r[1] + u[1]))}" stroke="var(--defaultlink)" stroke-width="${width}" opacity="${opacity}"/>`;
+		}
+		return `<circle cx="${f1(X(G.center[0]))}" cy="${f1(Y(G.center[1]))}" r="${f1(G.rad * sx)}" fill="none" stroke="var(--defaultlink)" stroke-width="${width}" opacity="${opacity}"/>`;
+	}
+
+	function place(name, p) { // p in world units, or null to hide
+		const el = labels[name];
+		if (!p) { el.style.display = 'none'; return; }
+		const x = X(p[0]) / W * 100, y = Y(p[1]) / H * 100;
+		if (x < 2 || x > 98 || y < 2 || y > 98) { el.style.display = 'none'; return; }
+		el.style.display = ''; el.style.left = x.toFixed(2) + '%'; el.style.top = y.toFixed(2) + '%';
+	}
+
+	function render() {
+		ox = sc.follow ? sc.follow(st.q) : 0;
+		const G = geometry(st), px = 1 / sx; // one SVG unit, in world units
+		const am = Math.hypot(st.a[0], st.a[1]), ah = am > 1e-9 ? [st.a[0] / am, st.a[1] / am] : [0, 0];
+		const aVec = [st.a[0] * aScale, st.a[1] * aScale];
+		const finite = !G.line && G.rad * sx < 2e4, shown = finite && G.rad * sx > 3; // ξ is only worth marking once it separates from the cm
+
+		let s = `<defs><marker id="${id}-arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 L 2.8 5 Z" fill="currentColor" stroke="none"/></marker><marker id="${id}-force" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 1 L 10 5 L 0 9 L 2.8 5 Z" fill="var(--color4)" stroke="none"/></marker></defs>`;
+		if (prefs.t2 && !sc.t2Fixed && trace.length > 1) { // the path of the zero-acceleration point, broken where it jumps
+			let d = '', prev = null;
+			for (const p of trace) {
+				d += `${!prev || Math.hypot(p[0] - prev[0], p[1] - prev[1]) * sx > 40 ? 'M' : 'L'} ${c.px(p)} `;
+				prev = p;
+			}
+			s += `<path d="${d}" fill="none" stroke="currentColor" stroke-width="1" stroke-opacity="0.55" stroke-linejoin="round"/>`;
+		}
+		if (prefs.trail) trail.forEach((t, i) => s += circleSVG(t, t.G, (0.1 + 0.3 * i / trail.length).toFixed(2), 1));
+		s += sc.draw(c, st.q, st);
+		s += circleSVG(st, G, 1, 1.8);
+		// sample points of the body on the circle: each one's acceleration a_q = a_cm + α × (q − cm) − ω²(q − cm)
+		// lies along the dotted line from it to the cm (T3)
+		if (prefs.samples && finite && G.rad * sx > 12) {
+			const u = [G.d[0] / (2 * G.rad), G.d[1] / (2 * G.rad)];
+			// the arrow tips lie on a circle too: tip = cm + s a_cm + (1 + s z)(q − cm) with z = −ω² + iα, a rotation
+			// and scaling of the circle, so it passes through the a = 0 point and the tip of the a_cm arrow
+			const A = 1 - aScale * st.w ** 2, B = aScale * st.al, v = [G.center[0] - st.r[0], G.center[1] - st.r[1]];
+			const tc = [st.r[0] + aScale * st.a[0] + A * v[0] - B * v[1], st.r[1] + aScale * st.a[1] + A * v[1] + B * v[0]];
+			s += c.circle(tc, Math.hypot(A, B) * G.rad, 'stroke="currentColor" stroke-width="1.2" stroke-dasharray="0.1 4" stroke-linecap="round" opacity="0.6"');
+			for (let k = 1; k < 8; k++) {
+				if (k === 4) continue; // that one is the cm itself
+				const t = k * Math.PI / 4, dir = [u[0] * Math.cos(t) - u[1] * Math.sin(t), u[0] * Math.sin(t) + u[1] * Math.cos(t)];
+				const p = [G.center[0] + G.rad * dir[0], G.center[1] + G.rad * dir[1]], rel = [p[0] - st.r[0], p[1] - st.r[1]];
+				const aq = [st.a[0] - st.al * rel[1] - st.w ** 2 * rel[0], st.a[1] + st.al * rel[0] - st.w ** 2 * rel[1]];
+				s += `<g opacity="0.75">` + c.dotted(p, st.r) + c.arrow(p, [aq[0] * aScale, aq[1] * aScale]) + c.dot(p) + `</g>`;
+			}
+		}
+		if (finite && G.rad * sx > 6) s += c.arrow(st.r, G.d);
+		s += c.arrow(st.r, aVec);
+		s += c.dot(st.r, 'var(--defaultlink)');
+		if (shown) s += c.dot(G.xi, 'var(--defaultlink)');
+		if (G.pole) s += c.dot(G.pole);
+		// the ends of α's signed bar are marked ⊗ (into the page) on the left and ⊙ (out of the page) on the right
+		const ax = gx, ay = gy;
+		const into = (x, y) => `<circle cx="${x}" cy="${y}" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/>`
+			+ `<path d="M ${x - 4.2} ${y - 4.2} L ${x + 4.2} ${y + 4.2} M ${x - 4.2} ${y + 4.2} L ${x + 4.2} ${y - 4.2}" stroke="currentColor" stroke-width="1.2"/>`;
+		const out = (x, y) => `<circle cx="${x}" cy="${y}" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="${x}" cy="${y}" r="1.8" fill="currentColor"/>`;
+		s += into(ax, ay) + out(ax + 118, ay);
+		// bars for |α|, a_cm, and d, each full at the largest value reached in this situation
+		const bar = (y, frac) => {
+			const bw = 90, fill = Math.min(Math.max(frac, 0), 1) * bw;
+			return `<rect x="${ax + 14}" y="${y - 4}" width="${bw}" height="8" rx="2" fill="none" stroke="currentColor" stroke-width="1"/>`
+				+ (fill > 0.5 ? `<rect x="${ax + 14}" y="${y - 4}" width="${f1(fill)}" height="8" rx="2" fill="currentColor"/>` : '');
+		};
+		const dNow = am < 1e-9 ? 0 : (finite ? 2 * G.rad : Infinity);
+		// α's bar is signed: it fills right of its center tick for α out of the page and left for α into it
+		const alBar = (y, frac) => {
+			const bw = 90, x0 = ax + 14, mid = x0 + bw / 2, w = Math.min(Math.abs(frac), 1) * bw / 2;
+			return `<rect x="${x0}" y="${y - 4}" width="${bw}" height="8" rx="2" fill="none" stroke="currentColor" stroke-width="1"/>`
+				+ (w > 0.5 ? `<rect x="${f1(frac > 0 ? mid : mid - w)}" y="${y - 4}" width="${f1(w)}" height="8" fill="currentColor"/>` : '')
+				+ `<line x1="${mid}" y1="${y - 6}" x2="${mid}" y2="${y + 6}" stroke="currentColor" stroke-width="1"/>`;
+		};
+		s += alBar(ay, st.al / alMax) + bar(ay + 19, am / aMax) + bar(ay + 37, dNow === Infinity ? 1 : dNow / (dNow + dMax));
+		const tick = (x, y, t) => `<text x="${x}" y="${y + 4}" text-anchor="middle" font-family="serif" font-size="12" fill="currentColor">${t}</text>`;
+		s += `<circle cx="${ax}" cy="${ay + 57}" r="3" fill="currentColor"/>`; // key for the zero-acceleration dot
+		s += tick(ax + 6, ay + 19, '0') + tick(ax + 122, ay + 19, 'max') + tick(ax + 6, ay + 37, '0') + tick(ax + 118, ay + 37, '∞');
+		svg.innerHTML = s;
+
+		// labels: cm away from both arrows, ξ beyond the end of d, a_cm past its tip, d beside its midpoint
+		const dh = finite && G.rad > 1e-12 ? [G.d[0] / (2 * G.rad), G.d[1] / (2 * G.rad)] : [0, 0]; // a couple gives d = 0 exactly
+		let away = [-(ah[0] + dh[0]), -(ah[1] + dh[1])], al = Math.hypot(away[0], away[1]);
+		if (!(al > 1e-6)) { away = [0, -1]; al = 1; } // nothing to avoid: put the label below the dot
+		// "cm" is wide, so it sits farther off when it is beside the dot than above or below it
+		const cmGap = 13 + 9 * Math.abs(away[0] / al);
+		place('cm', [st.r[0] + away[0] / al * cmGap * px, st.r[1] + away[1] / al * cmGap * px]);
+		if (sc.custom) [0, 1].forEach(i => { // force labels just past each arrow's tip: F, and −F for the second force of a couple
+			const f = st.forces[i];
+			if (!f) return place('F' + i, null);
+			const p = sc.toWorld(st, f.local), F = sc.force(st, f), m = Math.hypot(F[0], F[1]) || 1;
+			const tip = [p[0] + F[0] * sc.fScale, p[1] + F[1] * sc.fScale];
+			place('F' + i, [tip[0] + F[0] / m * 13 * px, tip[1] + F[1] / m * 13 * px]);
+		});
+		place('xi', shown ? [G.xi[0] + dh[0] * 13 * px, G.xi[1] + dh[1] * 13 * px] : null);
+		place('a', Math.hypot(...aVec) * sx > 12 ? [st.r[0] + aVec[0] + ah[0] * 15 * px, st.r[1] + aVec[1] + ah[1] * 15 * px] : null);
+		place('d', finite && G.rad * sx > 25 ? [st.r[0] + G.d[0] / 2 - ah[0] * 11 * px, st.r[1] + G.d[1] / 2 - ah[1] * 11 * px] : null);
+	}
+
+	function frame(t) {
+		if (!visible) { last = null; return; }
+		requestAnimationFrame(frame);
+		const dtReal = last === null ? 0 : Math.min((t - last) / 1000, 0.05);
+		last = t;
+		if (playing) {
+			if (hold > 0) { hold -= dtReal; if (hold <= 0) reset(); }
+			else {
+				const T = dtReal * SPEED * (prefs.slow ? SLOWER : 1), n = Math.ceil(T / 0.0005);
+				if (sc.update) sc.update(st, T);
+				else {
+					for (let i = 0; i < n; i++) { step(sc, M, st, T / n); if (sc.advance) sc.advance(T / n); }
+					kin(sc, M, st);
+				}
+				trailClock += T;
+				const G = geometry(st);
+				if (G.pole) { trace.push(G.pole); if (trace.length > 600) trace.shift(); }
+				if (trailClock > 0.04) { trailClock = 0; trail.push({ r: st.r, a: st.a, w: st.w, al: st.al, G: geometry(st) }); if (trail.length > 12) trail.shift(); }
+				if (sc.stop && sc.stop(st)) { // lying on the floor: show it there, then start over
+					if (sc.qMax !== undefined && st.q > sc.qMax) { st.q = sc.qMax; kin(sc, M, st); }
+					hold = 1.5;
+				}
+			}
+		}
+		render();
+	}
+
+	fig.querySelector('[data-act=play]').onclick = e => { playing = !playing; e.target.textContent = playing ? 'Pause' : 'Play'; };
+	fig.querySelector('[data-act=restart]').onclick = () => { reset(); render(); };
+
+	// parameter sliders: each change restarts the situation with the new value
+	const box = fig.querySelector('.anim-params');
+	for (const p of sc.params || []) {
+		const toSim = v => v * p.k * (p.perR ? 1 / sc.r : 1); // perR: a speed given in m/s, turned into a spin rate about the axle
+		const fromSim = () => +(sc[p.key] / p.k * (p.perR ? sc.r : 1)).toFixed(4) || 0;
+		const row = document.createElement('label');
+		row.innerHTML = `<span>${p.label}</span><input type="range" min="${p.min}" max="${p.max}" step="${p.step}"><output></output>`;
+		const input = row.querySelector('input'), out = row.querySelector('output');
+		input.value = fromSim();
+		const show = () => out.textContent = (+input.value).toFixed(p.step < 1 ? (p.step < 0.1 ? 2 : 1) : 0) + p.unit;
+		show();
+		input.oninput = () => {
+			if (p.perR) sc[p.key] = toSim(+input.value);
+			else {
+				const speed = sc.params.find(o => o.perR), v = speed && -sc.qd0 * sc.r; // keep the speed when the radius changes
+				sc[p.key] = toSim(+input.value);
+				if (speed) sc.qd0 = -v / sc.r;
+			}
+			show(); computeScales(); reset(); render();
+		};
+		box.appendChild(row);
+	}
+	fig.querySelector('[data-act=slow]').onclick = () => { prefs.slow = !prefs.slow; syncPrefButtons(); };
+	fig.querySelector('[data-act=trail]').onclick = () => { prefs.trail = !prefs.trail; syncPrefButtons(); render(); };
+	fig.querySelector('[data-act=t2]').onclick = () => { prefs.t2 = !prefs.t2; syncPrefButtons(); render(); };
+	fig.querySelector('[data-act=samples]').onclick = () => { prefs.samples = !prefs.samples; syncPrefButtons(); render(); };
+	if (sc.t2Fixed) { // nothing to trace when the zero-acceleration point never moves
+		const b = fig.querySelector('[data-act=t2]');
+		b.disabled = true;
+		b.title = 'The zero-acceleration point stays at the pivot';
+	}
+
+	render();
+	new IntersectionObserver(es => {
+		const was = visible; visible = es[0].isIntersecting;
+		if (visible && !was) requestAnimationFrame(frame);
+	}).observe(svg);
+
+	return { sc, M, get st() { return st; }, aScale, fig, restart() { reset(); render(); } };
+}
+
+window.figs = scenes.map(makeFigure);
+
+// tabs: switching restarts the chosen situation from the beginning
+(() => {
+	const bar = document.querySelector('.anim-tabs');
+	const tabs = figs.map((f, i) => {
+		const b = document.createElement('button');
+		b.setAttribute('role', 'tab');
+		b.textContent = f.sc.tab;
+		b.onclick = () => select(i);
+		bar.appendChild(b);
+		return b;
+	});
+	function select(i) {
+		figs.forEach((f, j) => {
+			f.fig.hidden = j !== i;
+			tabs[j].setAttribute('aria-selected', j === i);
+		});
+		figs[i].restart();
+	}
+	select(0);
+})();
+})();
+</script>
 
 </body>
