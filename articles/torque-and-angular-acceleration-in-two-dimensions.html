@@ -540,7 +540,7 @@ const scenes = [
 		L: 1.5, m: 1, get I() { return this.L ** 2 / 12; },
 		cm(q) { return [this.L / 2 * Math.sin(q), -this.L / 2 * Math.cos(q)]; },
 		beta: q => q,
-		q0: 2.0, qd0: 0,
+		q0: 75 * Math.PI / 180, qd0: 0, // starts below horizontal, so the rod never swings up into the key
 		params: [{ key: 'q0', label: 'Starting angle', min: 5, max: 175, step: 1, unit: '°', k: Math.PI / 180 }],
 		view: [-1.9, 1.9, -1.9, 0.75],
 		draw(c, q) {
@@ -560,7 +560,7 @@ const scenes = [
 		beta: q => q,
 		q0: 0.25, qd0: 0,
 		params: [{ key: 'q0', label: 'Starting angle from the wall', min: 2, max: 60, step: 1, unit: '°', k: Math.PI / 180 }],
-		view: [-0.5, 2.7, -0.9, 2.25], // room below the floor: the circle and a_cm dip under it near the end
+		view: [-0.5, 3.1, -0.35, 2.15], // wider and shorter than before, so the figure takes less height; only a little room below the floor
 		gauge: [430, 46],
 		stop(st) {
 			if (this.phase === 1 && st.a[0] < 0) { // the wall's push would turn into a pull
@@ -585,7 +585,7 @@ const scenes = [
 		beta: q => q,
 		q0: 0.12, qd0: 0,
 		params: [{ key: 'q0', label: 'Starting tilt', min: 2, max: 60, step: 1, unit: '°', k: Math.PI / 180 }],
-		view: [-1.6, 1.6, -0.9, 2.25], // room below the floor: the circle and a_cm dip under it near the end
+		view: [-1.8, 1.8, -0.35, 2.15], // wider and shorter than before, so the figure takes less height; only a little room below the floor
 		qMax: Math.PI / 2,
 		stop(st) { return st.q >= Math.PI / 2; },
 		draw(c, q) {
@@ -637,6 +637,7 @@ const scenes = [
 		],
 		// fixed camera, except that the view jumps by one circumference (a full turn, so the hoop looks the same) when the hoop leaves the frame
 		view: [-0.8, 3.6, -0.3, 1.9],
+		cmPrefer(st) { return [-this.R * st.q - st.r[0], this.R - st.r[1]]; }, // toward the hoop's middle, away from the bulge
 		follow(q) { const P = 2 * Math.PI * this.R; return Math.floor((-this.R * q + 0.2) / P) * P; },
 		draw(c, q) {
 			const C = [-this.R * q, this.R];
@@ -1109,6 +1110,10 @@ function makeFigure(sc) {
 		const dh = finite && G.rad > 1e-12 ? [G.d[0] / (2 * G.rad), G.d[1] / (2 * G.rad)] : [0, 0]; // a couple gives d = 0 exactly
 		let away = [-(ah[0] + dh[0]), -(ah[1] + dh[1])], al = Math.hypot(away[0], away[1]);
 		if (!(al > 1e-6)) { away = [0, -1]; al = 1; } // nothing to avoid: put the label below the dot
+		if (sc.cmPrefer) { // a scene can pull the label toward a preferred side (e.g. off the hoop's heavy bulge)
+			const v = sc.cmPrefer(st), vl = Math.hypot(v[0], v[1]);
+			if (vl > 1e-9) { away = [away[0] / al + 2 * v[0] / vl, away[1] / al + 2 * v[1] / vl]; al = Math.hypot(away[0], away[1]) || 1; }
+		}
 		// "cm" is wide, so it sits farther off when it is beside the dot than above or below it
 		const cmGap = 13 + 9 * Math.abs(away[0] / al);
 		place('cm', [st.r[0] + away[0] / al * cmGap * px, st.r[1] + away[1] / al * cmGap * px]);
